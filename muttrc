@@ -376,7 +376,7 @@ macro index \Cy "<limit>~y .*\n" "View All Labeled Messages"
 # --- mu searching ---
 # --------------------
 
-macro index <F9>  "<sync-mailbox><shell-escape>offlineimap -c ~/.priv/.offlineimaprc -u TTY.TTYUI<enter>" "offlineimap"
+macro index <F9>  "<sync-mailbox><shell-escape>offlineimap -c ~/.priv/offlineimaprc -u TTY.TTYUI<enter>" "offlineimap"
 macro index <F10> "<shell-escape>mu index<enter>" "mu index"
 macro index <F11> "<shell-escape>mu find -c -l ~/Maildir/search " "mu find"
 macro index <F12> "<change-folder-readonly>=search<enter>" "mu results"

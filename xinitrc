@@ -84,7 +84,7 @@ if test $HOSTNAME == "eadmaka" ; then
     while true
     do
         killall -q gxmessage
-        $HOME/github/gcalcli/gcalcli --config=~/.priv/.gcalclirc --cal="davis" remind; sleep 300
+        $HOME/github/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind; sleep 300
         #/usr/bin/yad --image=gtk-dialog-warning --center --wrap --button=gtk-ok:1 --title="gcalcli" --text="foo"
     done &
   fi
