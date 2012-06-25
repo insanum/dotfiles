@@ -18,5 +18,5 @@ export XKL_XMODMAP_DISABLE=1
 
 urxvt &
 
-exec /usr/bin/openbox-session
+exec /usr/bin/pekwm
 
