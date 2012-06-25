@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [[ $1 == c ]]; then
+  sudo brcmfcoeadm create-fcoe-port bnxe$2
+elif [[ $1 == d ]]; then
+  sudo brcmfcoeadm delete-fcoe-port bnxe$2
+elif [[ $1 == l ]]; then
+  sudo brcmfcoeadm list-fcoe-port bnxe$2
+elif [[ $1 == h ]]; then
+  sudo fcinfo hba-port
+elif [[ $1 == r ]]; then
+  sudo fcinfo remote-port -lsp $2
+else
+  echo "Usage: fcoe <cmd>"
+  echo "  c <#>    brcmfcoeadm create-fcoe-port bnxe<#>"
+  echo "  d <#>    brcmfcoeadm delete-fcoe-port bnxe<#>"
+  echo "  l <#>    brcmfcoeadm list-fcoe-port bnxe<#>"
+  echo "  h        fcinfo hba-port"
+  echo "  r <wwn>  fcinfo remote-port <wwn>"
+fi
+

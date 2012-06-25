@@ -1,0 +1,42 @@
+#!/bin/bash
+
+LTRX=10.13.106.70
+
+if [ -z $1 ]; then
+    CMD=`basename $0`
+    echo "Usage: $CMD [-h] < sunny | amd | intel | m3k | t5220t | t5220m | t5220b | sparky >"
+    exit
+fi
+
+if [ $1 = "-h" ]; then
+   HORIZ=$1
+   shift
+fi
+
+function tmuxopen()
+{
+    tmux new-window -n $1 "$2" \; split-window $HORIZ
+}
+
+if [ $1 = sunny ]; then
+    tmuxopen $1 "telnet $LTRX 10001"
+elif [ $1 = amd ]; then
+    tmuxopen $1 "telnet $LTRX 10002"
+elif [ $1 = intel ]; then
+    tmuxopen $1 "telnet $LTRX 10003"
+elif [ $1 = t4 ]; then
+    tmuxopen $1 "ssh root@10.13.106.61"
+elif [ $1 = m3k ]; then
+    tmuxopen $1 "ssh edavis@10.13.106.60"
+elif [ $1 = t5220t ]; then
+    tmuxopen $1 "ssh root@10.13.106.69"
+elif [ $1 = t5220m ]; then
+    tmuxopen $1 "ssh root@10.13.106.68"
+elif [ $1 = t5220b ]; then
+    tmuxopen $1 "ssh root@10.13.106.67"
+elif [ $1 = sparky ]; then
+    tmuxopen $1 "ssh root@10.13.106.66"
+elif [ $1 = foo ]; then
+    tmuxopen $1 "cu --speed 115200 -l /dev/ttyUSB0"
+fi
+

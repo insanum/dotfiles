@@ -1,0 +1,33 @@
+
+#application/x-chess; /folk/edavis/usr/bin/cmail -xreuse -coords -highlight -size Small
+#application/x-chess-pgn; /folk/edavis/usr/bin/cmail -xreuse -coords -highlight -size Small
+
+application/x-tar-gz; gunzip -c %s | tar -tf -; copiousoutput
+application/x-gtar; tar -ztf %s; copiousoutput
+application/zip; unzip -l %s; copiousoutput
+
+#application/msword; antiword %s; copiousoutput
+#application/msword; catdoc %s; copiousoutput
+application/msword; soffice %s
+#application/vnd.ms-excel; xls2csv %s; copiousoutput
+
+application/pdf; evince %s; copiousoutput
+application/postscript; evince %s; copiousoutput
+
+#text/*; less -X; copiousoutput
+#text/*; less -X; print="a2ps --medium=Letter -Pb2-2145c"
+
+#text/plain; less -X; copiousoutput
+text/plain; cat; copiousoutput
+
+#text/html; /folk/edavis/usr/netscape/netscape -remote 'openURL(%s)'; print="a2ps --medium=Letter -Pb2-2145c"
+#text/html; links -dump -html-numbered-links 1 %s; copiousoutput; nametemplate=%s.html
+#text/html; w3m -dump -T text/html %s; copiousoutput; nametemplate=%s.html
+text/html; elinks -dump %s; copiousoutput; nametemplate=%s.html; print = surf %s
+
+# use qiv for all images
+image/*; feh -. -B white %s
+#image/*; qiv -t %s
+
+audio/*; mplayer %s
+

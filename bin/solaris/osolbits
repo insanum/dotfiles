@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+  echo "ERROR: $0 [ build_name ]"
+  exit
+fi
+
+if [[ -d $1 ]]; then
+  echo "ERROR: $1 already exists"
+  exit
+fi
+
+mkdir $1
+
+cd $1
+ln -s ../packages/i386/nightly nightly
+ln -s ../usr/src/tools/proto/root_i386-nd/opt/onbld onbld
+cd ..
+
+gtar -zchvf $1.tgz $1
+
+cd $1
+rm nightly onbld
+cd ..
+
+rmdir $1
+

@@ -1,0 +1,136 @@
+# MUTTPRINT configuration file
+#
+# ~/.muttprintrc or /etc/Muttprintrc
+
+#
+# Here you can configure your printer
+# To print in a file, use the following entry:
+# PRINTER="TO_FILE:/home/berwal/test.ps"
+PRINTER="lp"
+
+#
+# Here you can set the print command
+# $PRINTER is substituted by the PRINTER
+# variable
+# CUPS: Either "CUPS" or an arbitrary command which
+# contains $CUPS_OPTIONS which is replaced by the
+# options used for CUPS
+#PRINT_COMMAND="lpr -P$PRINTER"
+#PRINT_COMMAND="CUPS"
+#PRINT_COMMAND="ggv -"
+#PRINT_COMMAND="lpr -Pprt-irv-028"
+PRINT_COMMAND="lpr"
+
+#
+# Here you can set the path to the penguin image
+PENGUIN="off"
+
+#
+# Turn printing of X-Face picture on/off
+XFACE="off"
+
+#
+# Here you can turn the duplex print on or off.
+# Possible values are "off" or "on"
+#
+# For Postscript duplex printer set it to "printer"
+DUPLEX="printer"
+
+#
+# Here you can turn on or off the paper save mode
+# (printing 2 pages on 1 page)
+# Set it to 'optional' if you only want papersave mode
+# if more than one page is printed.
+PAPERSAVE="on"
+
+#
+# Here you can set the printing speed in seconds
+# per page
+SPEED="30"
+
+#
+# Choose a font:
+# - Latex (EC-Fonts)
+# - Latex-bright (CM-bright)
+# - Times
+# - Utopia
+# - Palatino
+# - Charter
+# - Bookman
+# - AvantGarde
+# - CentSchool
+# - Chancery
+# - Helvetica
+FONT="Latex"
+
+
+#
+# Choose a style for the first page
+# - plain       no rules
+# - border      rule after the headers
+# - fbox        simple box around the mail headers
+# - shadowbox   shadowbox around the header
+# - ovalbox     box with rounded corners around the header (thin lines)
+# - Ovalbox     same as "ovalbox" but thicker lines
+# - doublebox   box with double lines around the header
+# - grey        grey background behind the headers
+# - greybox     same as "grey" but with a additional black box
+FRONTSTYLE="border"
+
+#
+# Should there be a rule after the header (not first page)
+HEADRULE="off"
+
+#
+# Should there be a rule over the footer
+FOOTRULE="off"
+
+#
+# Choose a paper format:
+# - A4
+# - letter
+PAPER="letter"
+
+#
+# prints no signatures which were separated by "-- "
+REM_SIG="off"
+
+#
+# prints no quoting
+REM_QUOTE="off"
+
+#
+# Choose of the printed headers, separation with "_"
+# /Header/ : italic printing
+# *Header* : bold printing
+# If the header does not exist, it is not printed.
+#PRINTED_HEADERS="Date_To_From_CC_Newsgroups_*Subject*"
+PRINTED_HEADERS="/Date/_To_*From*_CC_*Subject*"
+
+# 
+# Writes error messages of LaTeX and dvips to /tmp/muttprint.log
+DEBUG="0"
+
+#
+# Font size: 10pt, 11pt or 12pt
+FONTSIZE="10pt"
+
+#
+# Longest line
+WRAPMARGIN="80"
+
+#
+# Date (format of printed date)
+# original, local
+DATE="local"
+
+#
+# Date format string (only if DATE=local)
+# See strftime(3) for details
+DATE_FORMAT="%c"
+
+#
+# should muttprint run in the background after reading the mail
+# data (prints no error messages anymore)
+BACKGROUND="off"
+

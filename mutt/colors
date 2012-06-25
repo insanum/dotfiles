@@ -1,0 +1,64 @@
+
+color tree red default
+color search white blue
+color status white brightblack
+color tilde blue default
+color signature green default
+color hdrdefault cyan default
+color header green default From:
+color header green default Reply-To:
+color header red default Subject:
+color header yellow default Date:
+color header magenta default "^X-Label:"
+color header black brightred "^X-MMS-Spam-Confidence:"
+color attachment green default
+
+color quoted  cyan default
+color quoted1 green default
+color quoted2 yellow default
+color quoted3 magenta default
+color quoted4 red default
+color quoted5 blue default
+color quoted6 cyan default
+color quoted7 green default
+
+color normal white default
+color error white red
+color indicator black red
+
+# order here matters (last takes priority)
+#color index yellow default '~p | ~P'               # to or from me
+#color index green default '~v'                     # collapsed thread
+color index yellow magenta '~y .* | ~(~y .*)'      # contains an X-Label message/thread
+color index yellow default '~N | ~(~N) | ~O | ~(~O)' # new/old message/thread (unread)
+color index magenta default '~F | ~(~F)'           # flagged message/thread
+#color index white red '~(~F) ~(~N)'                # new message under flagged thread
+#color index white red '~(~F) ~(~O)'                # old message under flagged thread
+color index red default '~D'                       # deleted
+
+# email & urls
+color body cyan default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
+color body cyan default "(http|https|ftp|news|telnet|finger)://[^ \">\t\r\n]*"
+color body cyan default "mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
+
+# Misc things I want to stand out in the message body for Clearquest emails
+color body red default "^Software:\s*.*$"
+color body white blue "^Owner:.*edavis.*$"
+color body green default "^[0-9]*/[0-9]*/[0-9]*\s*.*Action:\s*.*By:.*$"
+#color body magenta default "^Old Broadcom_Only_Note:"
+color body magenta default "^New Broadcom_Only_Note:"
+color body magenta default "^New Reported_By:"
+color body magenta default "^New Visibility:"
+color body magenta default "^New OS:"
+color body magenta default "^New Software_1:"
+color body magenta default "^New AttachmentsBRCM:"
+color body magenta default "^New Description:"
+color body magenta default "^New Owner:"
+color body magenta default "^Old State:.*New State:.*$"
+
+# Various smilies and standouts
+color body white blue "[;:]-*[)>(<|]"                                       # :-) etc...
+color body cyan default "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" # *Bold* text.
+color body cyan default "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"     # _Underlined_ text.
+color body cyan default "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"     # /Italic/ text.
+

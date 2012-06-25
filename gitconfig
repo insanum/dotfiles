@@ -1,0 +1,17 @@
+[user]
+	email = edavis@insanum.com
+	name = Eric Davis
+[git-p4]
+	user = edavis
+	port = pf-irva-ecs.broadcom.com:1666
+[core]
+	editor = vim
+[color]
+	diff = always
+	grep = always
+[grep]
+	extendRegexp = true
+	lineNumber = true
+[alias]
+	g = grep --break --heading --line-number
+	d = diff --patch-with-stat -U10

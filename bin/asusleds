@@ -1,0 +1,37 @@
+#!/bin/bash
+
+leds=( /sys/class/leds/asus::gaming/brightness
+       /sys/class/leds/asus::mail/brightness
+       /sys/class/leds/asus::touchpad/brightness )
+
+function leds_set()
+{
+    for led in ${leds[@]}; do
+        echo $1 > $led
+    done
+}
+
+function usleep()
+{
+    perl -e 'select(undef,undef,undef,.05)'
+}
+
+if [ -z $1 ]; then
+    echo "Usage: sudo asusleds [ on | off | blink <cnt> ]"
+elif [ $1 == "ps1" ]; then
+    leds_set 1
+    usleep
+    leds_set 0
+elif [ $1 == "blink" ]; then
+    for (( i = 0 ; i < $2 ; i++)); do
+        leds_set 1
+        usleep
+        leds_set 0
+        usleep
+    done
+elif [ $1 == "on" ]; then
+    leds_set 1
+elif [ $1 == "off" ]; then
+    leds_set 0
+fi
+

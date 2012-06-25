@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/head -2 /tmp/gcalcli_agenda.txt | /usr/bin/tail -1

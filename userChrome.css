@@ -1,0 +1,62 @@
+
+/* Global UI font */
+* {
+  font-size: 10pt !important;
+  font-family: Helvetica !important;
+}
+
+/* light cyan, high-contrast, zebra stripes in message list */
+/*
+#threadTree treechildren::-moz-tree-row(odd)
+{
+  -moz-appearance: none !important;
+  background-image: none !important;
+  background-color: #DDEEFF !important;
+}
+
+#threadTree treechildren::-moz-tree-row(odd, selected)
+{
+  background-color: Highlight !important;
+}
+*/
+
+/* increase font size in header pane */
+/*
+#msgHeaderView
+{
+  font-size: 14px !important; font-family: Segoe UI !important;
+}
+*/
+
+treechildren::-moz-tree-cell-text(folderNameCol, newMessages-true)
+{
+  color: red !important;
+}
+
+treechildren::-moz-tree-cell {border-bottom:1px solid #fff !important;}
+
+treechildren::-moz-tree-cell(lc-FF0000) { border-bottom:1px solid #FF0000 !important; background-color: #FFCCCC !important;}
+treechildren::-moz-tree-cell-text(lc-FF0000) { color: #000 !important; }
+treechildren::-moz-tree-cell(lc-FF0000, selected) { background-color: #FF0000 !important; }
+treechildren::-moz-tree-cell-text(lc-FF0000, selected) { color: #FFF !important; }
+
+treechildren::-moz-tree-cell(lc-FF9900) { border-bottom:1px solid #FF9900 !important; background-color: #FFCC99 !important;}
+treechildren::-moz-tree-cell-text(lc-FF9900) { color: #000 !important; }
+treechildren::-moz-tree-cell(lc-FF9900, selected) { background-color: #FF9900 !important; }
+treechildren::-moz-tree-cell-text(lc-FF9900, selected) { color: #FFF !important; }
+
+treechildren::-moz-tree-cell(lc-009900) { border-bottom:1px solid #009900 !important; background-color: #99FF99 !important;}
+treechildren::-moz-tree-cell-text(lc-009900) { color: #000 !important; }
+treechildren::-moz-tree-cell(lc-009900, selected) { background-color: #009900 !important; }
+treechildren::-moz-tree-cell-text(lc-009900, selected) { color: #FFF !important; }
+
+treechildren::-moz-tree-cell(lc-3333FF) { border-bottom:1px solid #3333FF !important; background-color: #CCCCFF !important;}
+treechildren::-moz-tree-cell-text(lc-3333FF) { color: #000 !important; }
+treechildren::-moz-tree-cell(lc-3333FF, selected) { background-color: #3333FF !important; }
+treechildren::-moz-tree-cell-text(lc-3333FF, selected) { color: #FFF !important; }
+
+treechildren::-moz-tree-cell(lc-993399) { border-bottom:1px solid #993399 !important; background-color: #FFCCFF !important;}
+treechildren::-moz-tree-cell-text(lc-993399) { color: #000 !important; }
+treechildren::-moz-tree-cell(lc-993399, selected) { background-color: #993399 !important; }
+treechildren::-moz-tree-cell-text(lc-993399, selected) { color: #FFF !important; }
+

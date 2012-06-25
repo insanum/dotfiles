@@ -1,0 +1,109 @@
+#!/bin/bash
+
+if [[ -z $1 || $1 = "-h" ]]; then
+    PRG=`basename $0`
+    echo "Usage: $PRG"
+    echo ""
+    echo "  This help text:"
+    echo "      $PRG -h"
+    echo ""
+    echo "  List availabed network devices with their IDs and"
+    echo "  the current test plan:"
+    echo "      $PRG -l"
+    echo ""
+    echo "  Create the test plan. [-n] just prints out what will be"
+    echo "  executed without doing it. [-m] includes mpflip in each"
+    echo "  of the test groups. List each device to test [<id>+]"
+    echo "  seperated by spaces."
+    echo "      $PRG [-n] [-m] <id>+"
+    echo ""
+    exit
+fi
+
+if [[ $1 = "-l" ]]; then
+    echo -e "\n**** NETWORK DEVICES ****\n"
+    hctsclid list-device sanity
+    echo -e "\n**** CURRENT TESTPLAN ****\n"
+    hctsclid show-testplan
+    echo ""
+    exit
+fi
+
+NOEXEC=''
+
+if [[ $1 = '-n' ]]; then
+    NOEXEC=echo
+    shift
+fi
+
+MPFLIP=0
+
+if [[ $1 = '-m' ]]; then
+    MPFLIP=1
+    shift
+fi
+
+TID=1
+
+function AddTestCase()
+{
+    TEST=$1
+    shift
+
+    TIME=$1
+    shift
+
+    if [[ $NOEXEC != 'echo' ]]; then
+        echo -n "Add test for $TEST [y/n]: "
+        read text
+        if [[ $text != 'y' ]]; then
+            return
+        fi
+        echo -n "Time in seconds [$TIME]: "
+        read text
+        if [[ $text != '' ]]; then
+            if ! [[ $text =~ ^[0-9]+$ ]]; then
+                echo "ERROR: invalid value"
+                exit
+            fi
+            TIME=$text
+        fi
+    else
+        echo "Add test for $TEST [y/n]: y"
+        echo "Time in seconds [$TIME]: $TIME"
+    fi
+
+    $NOEXEC hctsclid add-group foobar_$TEST
+
+    for i in "$@"; do
+        $NOEXEC hctsclid add-testcase -g foobar_$TEST -d $i $TEST
+    done
+
+    if [[ $MPFLIP -eq 1 ]]; then
+        $NOEXEC hctsclid add-testcase -g foobar_$TEST -d 1 mpflip
+    fi
+
+    for i in "$@"; do
+        $NOEXEC hctsclid set -p run_time=$TIME -g foobar_$TEST $TID
+        ((TID++))
+    done
+
+    if [[ $MPFLIP -eq 1 ]]; then
+        $NOEXEC hctsclid set -p run_time=$TIME -g foobar_$TEST $TID
+        ((TID++))
+    fi
+}
+
+# note that "set-category" clears out the current testplan
+$NOEXEC hctsclid set-category Network
+
+AddTestCase sanity    300  $@
+AddTestCase CON5_net  1200 $@
+AddTestCase cl3se3    300  $@
+AddTestCase scp       300  $@
+AddTestCase ftpstress 1200 $@
+AddTestCase lsalr     300  $@
+AddTestCase spray     300  $@
+
+$NOEXEC hctsclid show-testplan
+

@@ -1,0 +1,90 @@
+#!/bin/bash
+
+SUDO=sudo
+if [ `id | sed "s/.*uid=\([0-9]*\).*/\1/"` -eq 0 ]; then SUDO=""; fi
+
+function usage()
+{
+    echo "Usage: mnc_test <iface> <n> [ping]"
+    echo "  <iface>  network interface to work on"
+    echo "  <n>      number of mcast addresses"
+    echo "  ping     ping all mcast addresses (used from client)"
+    echo ""
+    exit 1
+}
+
+if [ -z "$1" ]; then usage; fi
+IFACE=$1
+shift
+if [ -z "$1" ]; then usage; fi
+CNT=$1
+shift
+PING=0
+if [ "$1" = ping ]; then PING=1; fi
+
+# ensure sudo auth is primed
+$SUDO bash -c 'echo "" > /dev/null'
+
+# get the ip address of IFACE
+ifconfig $IFACE &> /dev/null
+if [ $? -ne 0 ]; then
+    echo "Invalid interface: $IFACE"
+    exit 1
+fi
+LIP=`ifconfig $IFACE | grep inet | awk '{ print $2; }'`
+
+function client_side()
+{
+    net=0
+    for ((i = 1; i <= $CNT; i++)); do
+        ((host = i % 256))
+        if [ $host -eq 0 ]; then
+            ((net++))
+            continue
+        fi
+        ping -i $IFACE 225.0.${net}.${host} 2
+    done
+}
+
+function server_side()
+{
+    # note that "01:00:5e:00:00:01" is already registered when plumbed
+    pids=""
+    net=0
+    for ((i = 1; i <= $CNT; i++)); do
+        ((host = i % 256))
+        if [ $host -eq 0 ]; then
+            ((net++))
+            continue
+        fi
+        mnc -l -i $IFACE -p $((2000 + $i)) 225.0.${net}.${host} &
+        pids="$pids $!"
+    done
+
+    echo "Number of mnc servers started: $CNT"
+    echo "PIDs:$pids"
+
+    echo -n "Press [Enter] to stop:"
+    read text
+
+    for p in $pids; do
+        kill $p
+    done
+}
+
+# create the multicast routes
+for ((i = 0; i <= ($CNT / 256); i++)); do
+    $SUDO route add -interface 225.0.${i}.0 $LIP
+done
+
+if [ $PING -ne 0 ]; then
+    client_side
+else
+    server_side
+fi
+
+# delete the multicast routes
+for ((i = 0; i <= ($CNT / 256); i++)); do
+    $SUDO route delete -interface 225.0.${i}.0 $LIP
+done
+

@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [[ -z $1 || -z $2 || ( $1 != "i386" && $1 != "sparc" ) ]]; then
+  echo "ERROR: $0 [ i386 | sparc ] [ build ]"
+  echo "  build = b134, b142, current, etc"
+  exit
+fi
+
+MACH=$1
+BLD=$2
+
+CRYPTO="http://dlc.sun.com/osol/on/downloads/nightly-crypto"
+CLOSED="http://dlc.sun.com/osol/on/downloads/$BLD"
+
+function get_crypto()
+{
+   /bin/rm -f $1.$MACH.tar.bz2
+   wget $CRYPTO/$1.$MACH.tar.bz2
+}
+
+function get_closed()
+{
+   /bin/rm -f $1.$MACH.tar.bz2
+   wget $CLOSED/$1.$MACH.tar.bz2
+}
+
+get_crypto on-crypto-latest-nd
+get_crypto on-crypto-latest
+
+get_closed on-closed-bins-nd
+get_closed on-closed-bins
+
+gtar -jxvf on-closed-bins-nd.$MACH.tar.bz2
+gtar -jxvf on-closed-bins.$MACH.tar.bz2
+

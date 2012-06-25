@@ -1,0 +1,517 @@
+#!/bin/bash
+
+# for GAWK column identifiers see the KEYS array from "perftest_omni"
+
+CMD=`basename $0`
+
+if [[ -z $1 || -z $2 || -z $3 ]]; then
+    echo ""
+    echo "Usage: $CMD <datadir> <smp> <prefix>"
+    echo "  <datadir>    directory where all the data files are"
+    echo "  <smp>        number of simultateous netperfs run for the tests"
+    echo "  <prefix>     parse all filenames for each test with this prefix"
+    echo "  <prefix2>    parse all filenames for each test with this prefix also (compare)"
+    echo ""
+    exit
+fi
+
+DIR=$1
+SMP=$2
+PRX=$3
+PRX2=$4
+
+DATADIR=${DIR}/data
+PLOTDIR=${DIR}/plots
+
+mkdir -p $PLOTDIR
+
+
+# this array MUST be an exact copy from "perftest_omni"
+
+tests=(
+        "UDP STREAM 65k"   "-T udp -m 65k"
+        "UDP STREAM 1b"    "-T udp -m 1"
+        "UDP RR 65k"       "-T udp -r 65k,65k"
+        "UDP RR 1b"        "-T udp -r 1,1"
+        "UDP RR BURST 65k" "-T udp -r 65k,65k -b 16"
+        "UDP RR BURST 1b"  "-T udp -r 1,1 -b 16"
+        "TCP STREAM"       "-T tcp"
+        "TCP RR NO BURST"  "-T tcp -r 1,1"
+        "TCP RR BURST"     "-T tcp -r 1,1 -b 16"
+      )
+
+num_tests=${#tests[@]}
+
+
+#
+# The function uses awk to aggregate all needed data.  Arguments are:
+#
+#   $1 - file to parse
+#   $2 - rate column (throughput for STREAM and transactions for RR)
+#   $3 - cpu column (local/dut cpu utilization)
+#   $4 - tx rate (tx throughput for STREAM and tx calls for RR)
+#   $5 - rx rate (rx throughput for STREAM and rx calls for RR)
+#
+
+function aggregate()
+{
+    data=`gawk -v xrate=$2 \
+               -v xcpu=$3  \
+               -v xtx=$4   \
+               -v xrx=$5   \
+               'BEGIN     {
+                            FS    =",";
+                            cnt   = 0;
+                            trate = 0;
+                            tcpu  = 0;
+                            ttx   = 0;
+                            trx   = 0;
+                          }
+                END       {
+                            printf "%.2f %.2f %.2f %.2f",
+                                   trate,
+                                   trate / cnt,
+                                   ((tcpu / cnt) > 99) ? 99 : (tcpu / cnt),
+                                   100 - (((ttx == trx) ?
+                                           1            :
+                                           (ttx < trx)  ?
+                                           (ttx / trx)  :
+                                           (trx / ttx)) * 100);
+                          }
+               /^[0-9]+/  {
+                            cnt++;
+                            trate += $(xrate);
+                            tcpu  += $(xcpu);
+                            ttx   += $(xtx);
+                            trx   += $(xrx);
+                          }' $1`
+
+    if [[ -z $data ]]; then
+      data="0 0 0 0"
+    fi
+
+    echo "$data"
+}
+
+
+#
+# Aggregate TX data...
+# Files to aggregate from are denoted by the prefix (arg = $1).
+#
+
+function aggregate_tx()
+{
+  for (( t = 0; t < $num_tests; t+=2 )); do
+
+    tname=`echo "${tests[${t}]}" | sed "s/ /_/g"`
+    AGGFILE="${PLOTDIR}/${1}_TX_00_${tname}.txt"
+
+    /bin/rm -f $AGGFILE
+
+    if [[ $tname =~ STREAM ]]; then
+
+      for (( i = 1; i <= $SMP; i++ )); do
+
+        SMPCNT=`printf "%02d" $i`
+        data=`aggregate ${DATADIR}/${1}_TX_${SMPCNT}_${tname}.txt 1 8 13 14`
+
+        echo "$i $data" >> $AGGFILE
+
+      done
+
+    elif [[ $tname =~ RR ]]; then
+
+      for (( i = 1; i <= $SMP; i++ )); do
+
+        SMPCNT=`printf "%02d" $i`
+        data=`aggregate ${DATADIR}/${1}_TX_${SMPCNT}_${tname}.txt 10 8 17 18`
+
+        echo "$i $data" >> $AGGFILE
+
+      done
+
+    else
+
+      echo "ERROR: Unknown test data ($tname)"
+      exit
+
+    fi
+
+  done
+}
+
+
+#
+# Aggregate RX data...
+# Files to aggregate from are denoted by the prefix (arg = $1).
+#
+
+function aggregate_rx()
+{
+  for (( t = 0; t < $num_tests; t+=2 )); do
+
+    tname=`echo "${tests[${t}]}" | sed "s/ /_/g"`
+    AGGFILE="${PLOTDIR}/${1}_RX_00_${tname}.txt"
+
+    /bin/rm -f $AGGFILE
+
+    if [[ $tname =~ STREAM ]]; then
+
+      for (( i = 1; i <= $SMP; i++ )); do
+
+        SMPCNT=`printf "%02d" $i`
+        data=`aggregate ${DATADIR}/${1}_RX_${SMPCNT}_${tname}.txt 1 9 14 13`
+
+        echo "$i $data" >> $AGGFILE
+
+      done
+
+    elif [[ $tname =~ RR ]]; then
+
+      for (( i = 1; i <= $SMP; i++ )); do
+
+        SMPCNT=`printf "%02d" $i`
+        data=`aggregate ${DATADIR}/${1}_RX_${SMPCNT}_${tname}.txt 10 9 18 17`
+
+        echo "$i $data" >> $AGGFILE
+
+      done
+
+    else
+
+      echo "ERROR: Unknown test data ($tname)"
+      exit
+
+    fi
+
+  done
+}
+
+
+aggregate_tx $PRX
+aggregate_rx $PRX
+
+if [[ -n $PRX2 ]]; then
+  aggregate_tx $PRX2
+  aggregate_rx $PRX2
+fi
+
+
+# assumes prefix/prefix2 formatted as "arch_driver_mtu"
+
+arch=`echo "$PRX" | sed "s/\(.*\)_.*_.*/\1/"`
+driver=`echo "$PRX" | sed "s/.*_\(.*\)_.*/\1/"`
+mtu=`echo "$PRX" | sed "s/.*_.*_\(.*\)/\1/"`
+
+if [[ -n $PRX2 ]]; then
+  arch2=`echo "$PRX2" | sed "s/\(.*\)_.*_.*/\1/"`
+  driver2=`echo "$PRX2" | sed "s/.*_\(.*\)_.*/\1/"`
+  mtu2=`echo "$PRX2" | sed "s/.*_.*_\(.*\)/\1/"`
+
+  if [[ $arch != $arch2 || $mtu != $mtu2 ]]; then
+    echo "ERROR: prefixes don't share same arch/mtu!"
+    exit
+  fi
+fi
+
+
+# create gnuplot files and graphs...
+
+export GDFONTPATH=/usr/share/fonts/TTF
+
+for (( t = 0; t < $num_tests; t+=2 )); do
+
+  tname=`echo "${tests[${t}]}" | sed "s/ /_/g"`
+
+  #PLOTF="${PLOTDIR}/${arch}_${mtu}_plot_${tname}.plt"
+  PLOTG="${PLOTDIR}/${arch}_${mtu}_plot_${tname}.eps"
+
+  #defaultfont='"Helvetica" 10'
+  #titlefont='Helvetica=18'
+  #labelfont='Helvetica=14'
+  #keyfont='Helvetica=8'
+
+  # for eps all sizes are halved (see gnuplot 'help postscript')
+  defaultfont='"Helvetica" 20'
+  titlefont='Helvetica=36'
+  labelfont='Helvetica=28'
+  keyfont='Helvetica=16'
+
+  # default impulse lineweight
+  #ilw=5
+  ilw=10
+
+  # offset/space for impulse bars
+  impoff=0.15
+  impspace=0.05
+
+  # default linespoints lineweight
+  #lplw=2
+  lplw=4
+
+  if [[ $tname =~ STREAM ]]; then
+
+      if [[ $tname = "UDP_STREAM_1b" ]]; then
+          raterange='[0:10]'
+          ratetics='0,1,10'
+      else
+          raterange='[0:10000]'
+          ratetics='0,1000,10000'
+      fi
+
+      keylabel="Tput"
+      ratelabel="throughput (10^6)"
+
+      rxy2tics="unset y2tics"
+      txytics="unset ytics"
+
+  else
+
+      raterange='[*:*]'
+      ratetics='autofreq'
+
+      keylabel="Trans"
+      ratelabel="transactions (per sec)"
+
+      rxy2tics="set y2tics 0,10,100 offset -5 out nomirror"
+      txytics="set ytics ${ratetics} offset 8 out nomirror"
+ 
+  fi
+
+
+  rxPRX=$( cat << EOF
+"${PLOTDIR}/${PRX}_RX_00_${tname}.txt" u (column(1)-(2*${impoff})):2 axes x2y1 \
+                                       t "{/${keyfont} ${driver} Rx Total ${keylabel}}" \
+                                       w imp lw ${ilw} lc rgbcolor "blue", \
+"${PLOTDIR}/${PRX}_RX_00_${tname}.txt" u (column(1)-${impoff}+${impspace}):3 axes x2y1 \
+                                       t "{/${keyfont} ${driver} Rx Avg ${keylabel}}" \
+                                       w imp lw ${ilw} lc rgbcolor "red", \
+"${PLOTDIR}/${PRX}_RX_00_${tname}.txt" u 1:4 axis x2y2 \
+                                       t "{/${keyfont} ${driver} Rx Avg CPU}" \
+                                       w linespoints lw ${lplw} lc rgbcolor "purple"
+EOF
+)
+
+  rxerrPRX=$( cat << EOF
+"${PLOTDIR}/${PRX}_RX_00_${tname}.txt" u (column(1)-${impoff}):5 axes x1y1 \
+                                       t "{/${keyfont} ${driver} Rx Error}" \
+                                       w imp lw ${ilw} lc rgbcolor "red"
+EOF
+)
+
+  txPRX=$( cat << EOF
+"${PLOTDIR}/${PRX}_TX_00_${tname}.txt" u (column(1)-(2*${impoff})):2 axes x2y1 \
+                                       t "{/${keyfont} ${driver} Tx Total ${keylabel}}" \
+                                       w imp lw ${ilw} lc rgbcolor "blue", \
+"${PLOTDIR}/${PRX}_TX_00_${tname}.txt" u (column(1)-${impoff}+${impspace}):3 axes x2y1 \
+                                       t "{/${keyfont} ${driver} Tx Avg ${keylabel}}" \
+                                       w imp lw ${ilw} lc rgbcolor "red", \
+"${PLOTDIR}/${PRX}_TX_00_${tname}.txt" u 1:4 axis x2y2 t "{/${keyfont} ${driver} Tx Avg CPU}" \
+                                       w linespoints lw ${lplw} lc rgbcolor "purple"
+EOF
+)
+
+  txerrPRX=$( cat << EOF
+"${PLOTDIR}/${PRX}_TX_00_${tname}.txt" u (column(1)-${impoff}):5 axes x1y2 \
+                                       t "{/${keyfont} ${driver} Tx Error}" \
+                                       w imp lw ${ilw} lc rgbcolor "red"
+EOF
+)
+
+
+  if [[ -n $PRX2 ]]; then
+
+    rxPRX2=$( cat << EOF
+, \
+"${PLOTDIR}/${PRX2}_RX_00_${tname}.txt" u (column(1)+${impoff}-${impspace}):2 axes x2y1 \
+                                        t "{/${keyfont} ${driver2} Rx Total ${keylabel}}" \
+                                        w imp lw ${ilw} lc rgbcolor "green", \
+"${PLOTDIR}/${PRX2}_RX_00_${tname}.txt" u (column(1)+(2*${impoff})):3 axes x2y1 \
+                                        t "{/${keyfont} ${driver2} Rx Avg ${keylabel}}" \
+                                        w imp lw ${ilw} lc rgbcolor "orange", \
+"${PLOTDIR}/${PRX2}_RX_00_${tname}.txt" u 1:4 axis x2y2 \
+                                        t "{/${keyfont} ${driver2} Rx Avg CPU}" \
+                                        w linespoints lw ${lplw} lc rgbcolor "cyan"
+EOF
+)
+
+    rxerrPRX2=$( cat << EOF
+, \
+"${PLOTDIR}/${PRX2}_RX_00_${tname}.txt" u (column(1)+${impoff}):5 axes x1y1 \
+                                        t "{/${keyfont} ${driver2} Rx Error}" \
+                                        w imp lw ${ilw} lc rgbcolor "orange"
+EOF
+)
+
+    txPRX2=$( cat << EOF
+, \
+"${PLOTDIR}/${PRX2}_TX_00_${tname}.txt" u (column(1)+${impoff}-${impspace}):2 axes x2y1 \
+                                        t "{/${keyfont} ${driver2} Tx Total ${keylabel}}" \
+                                        w imp lw ${ilw} lc rgbcolor "green", \
+"${PLOTDIR}/${PRX2}_TX_00_${tname}.txt" u (column(1)+(2*${impoff})):3 axes x2y1 \
+                                        t "{/${keyfont} ${driver2} Tx Avg ${keylabel}}" \
+                                        w imp lw ${ilw} lc rgbcolor "orange", \
+"${PLOTDIR}/${PRX2}_TX_00_${tname}.txt" u 1:4 axis x2y2 \
+                                        t "{/${keyfont} ${driver2} Tx Avg CPU}" \
+                                        w linespoints lw ${lplw} lc rgbcolor "cyan"
+EOF
+)
+
+  txerrPRX2=$( cat << EOF
+, \
+"${PLOTDIR}/${PRX2}_TX_00_${tname}.txt" u (column(1)+${impoff}):5 axes x1y2 \
+                                        t "{/${keyfont} ${driver2} Tx Error}" \
+                                        w imp lw ${ilw} lc rgbcolor "orange"
+EOF
+)
+
+  fi
+
+
+
+#cat > $PLOTF << GnuplotHereDoc
+gnuplot << GnuplotHereDoc
+
+set terminal postscript enhanced eps butt solid size 9.25,7 color ${defaultfont}
+
+set output "$PLOTG"
+
+set multiplot title "{/${titlefont} ${arch} ${mtu} ${tests[${t}]}}"
+
+set key top left box width -4 height 0.5 samplen 3 spacing 1
+set grid x x2 y y2
+
+## TOP LEFT RX PERF GRAPH...
+
+set size 0.5, 0.75
+set origin 0.0, 0.2
+set bmargin 1
+set rmargin 1.5
+set lmargin 10
+
+unset xlabel
+unset xrange
+unset xtics
+
+unset x2label
+set x2range [0:17]
+set x2tics 1,1,16 out nomirror
+
+set ylabel offset 1 "{/${labelfont} ${ratelabel}}"
+set yrange ${raterange}
+set ytics ${ratetics} out nomirror
+
+unset y2label
+set y2range [0:100]
+${rxy2tics}
+
+set title "{/${labelfont} RX}" offset 0,-1
+plot ${rxPRX} ${rxPRX2}
+
+unset bmargin
+unset rmargin
+unset lmargin
+
+## BOTTOM LEFT RX CPU GRAPH...
+
+set size 0.5, 0.2
+set origin 0, 0
+set tmargin 0
+set rmargin 1.5
+set lmargin 10
+
+set xlabel "{/${labelfont} processes}"
+set xrange [0:17]
+set xtics 1,1,16 out nomirror
+
+unset x2label
+unset x2range
+unset x2tics
+
+set ylabel "{/${labelfont} error (%)}"
+set yrange [0:100]
+set ytics 0,20,100 out nomirror
+
+unset y2label
+unset y2range
+unset y2tics
+
+unset title
+plot ${rxerrPRX} ${rxerrPRX2}
+
+unset tmargin
+unset rmargin
+unset lmargin
+
+## TOP RIGHT TX PERF GRAPH...
+
+set size 0.5, 0.75
+set origin 0.5, 0.2
+set bmargin 1
+set lmargin 1.5
+set rmargin 10 
+
+unset xlabel
+unset xrange
+unset xtics
+
+unset x2label
+set x2range [0:17]
+set x2tics 1,1,16 out nomirror
+
+unset ylabel
+set yrange ${raterange}
+${txytics}
+
+set y2label "{/${labelfont} cpu utilization (%)}"
+set y2range [0:100]
+set y2tics 0,10,100 out nomirror
+
+set title "{/${labelfont} TX}" offset 0,-1
+plot ${txPRX} ${txPRX2}
+
+unset bmargin
+unset lmargin
+unset rmargin
+
+## BOTTOM RIGHT TX CPU GRAPH...
+
+set size 0.5, 0.2
+set origin 0.5, 0
+set tmargin 0
+set lmargin 1.5
+set rmargin 10 
+
+set xlabel "{/${labelfont} processes}"
+set xrange [0:17]
+set xtics 1,1,16 out nomirror
+
+unset x2label
+unset x2range
+unset x2tics
+
+unset ylabel
+unset yrange
+unset ytics
+
+set y2label "{/${labelfont} error (%)}"
+set y2range [0:100]
+set y2tics 0,20,100 out nomirror
+
+unset title
+plot ${txerrPRX} ${txerrPRX2}
+
+unset tmargin
+unset lmargin
+unset rmargin
+
+## DONE...
+
+unset multiplot
+
+GnuplotHereDoc
+
+  #gnuplot $PLOTF
+
+done # for each test
+

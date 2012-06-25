@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ -d $HOME/Maildir/INBOX/new ]]; then
+  ls $HOME/Maildir/INBOX/new | wc -l;
+else
+  echo 'n/a';
+fi
+

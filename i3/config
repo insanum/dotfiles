@@ -1,0 +1,201 @@
+
+#colorclass border background text
+
+#client.focused          #21D9ED #21D9ED #000000
+#client.focused_inactive #506CA6 #506CA6 #ffffff
+#client.unfocused        #7F8085 #7F8085 #ffffff
+#client.urgent           #ff0000 #ff0000 #000000
+
+#client.focused          #DA6F00 #DA6F00 #000000
+#client.focused_inactive #333333 #333333 #999999
+#client.unfocused        #333333 #333333 #999999
+#client.urgent           #FF0000 #8C5665 #999999
+
+#client.focused          #1793D1 #1793D1 #ffffff
+#client.focused_inactive #666666 #666666 #ffffff
+#client.unfocused        #333333 #333333 #ffffff
+#client.urgent           #D11931 #D11931 #ffffff
+
+#client.focused          #990000 #990000 #ffffff
+#client.focused_inactive #666666 #666666 #ffffff
+#client.unfocused        #333333 #333333 #ffffff
+#client.urgent           #D11931 #D11931 #ffffff
+
+#client.focused          #7a5ada #7a5ada #ffffff
+#client.focused_inactive #45347b #45347b #ffffff
+#client.unfocused        #333333 #333333 #ffffff
+#client.urgent           #D11931 #D11931 #ffffff
+
+client.focused          #AACCBB #2C2D2E #AACCBB
+client.focused_inactive #2C2D2E #2C2D2E #AACCBB
+client.unfocused        #2C2D2E #2C2D2E #707678
+client.urgent           #FEA63C #4D4D4D #FFE863
+
+
+# ISO 10646 = Unicode
+#font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+font -*-terminus-bold-r-*-*-18-*-*-*-*-*-*-*
+
+focus_follows_mouse yes
+
+# Switch between tiling layer and floating layer
+bindsym Mod4+Shift+t focus mode_toggle
+
+# move/resize floating windows (left/right press)
+floating_modifier Mod4
+
+# Toggle tiling/floating of the current window
+bindsym Mod4+Shift+space floating toggle
+
+# Borders!
+bindsym Mod4+b border toggle
+
+# Fullscreen
+bindsym Mod4+f fullscreen
+# Global Fullscreen!
+bindsym Mod4+Shift+f fullscreen global
+
+# Stacking
+bindsym Mod4+s layout stacking
+
+# Tabbed
+bindsym Mod4+t layout tabbed
+
+# Default
+bindsym Mod4+d layout default
+
+# Focus
+bindsym Mod4+h focus left
+bindsym Mod4+j focus down
+bindsym Mod4+k focus up
+bindsym Mod4+l focus right
+
+# Move
+bindsym Mod4+Shift+h move left
+bindsym Mod4+Shift+j move down
+bindsym Mod4+Shift+k move up
+bindsym Mod4+Shift+l move right
+
+# Snap
+bindsym Mod4+Control+h layout stacking
+bindsym Mod4+Control+j layout stacking
+bindsym Mod4+Control+k layout stacking
+bindsym Mod4+Control+l layout stacking
+
+# Focus Container
+bindsym Mod4+Control+a focus parent; focus left
+bindsym Mod4+Control+s focus parent; focus down
+bindsym Mod4+Control+w focus parent; focus up
+bindsym Mod4+Control+d focus parent; focus right
+
+# Move Container
+bindsym Mod4+Shift+a focus parent; move left
+bindsym Mod4+Shift+s focus parent; move down
+bindsym Mod4+Shift+w focus parent; move up
+bindsym Mod4+Shift+d focus parent; move right
+
+# Workspace
+bindsym Mod4+F1 workspace 1
+bindsym Mod4+F2 workspace 2
+bindsym Mod4+F3 workspace 3
+bindsym Mod4+F4 workspace 4
+bindsym Mod4+F5 workspace 5
+bindsym Mod4+F6 workspace 6
+bindsym Mod4+F7 workspace 7
+bindsym Mod4+F8 workspace 8
+bindsym Mod4+F9 workspace 9
+bindsym Mod4+F10 workspace 10
+bindsym Mod4+F11 workspace 11
+bindsym Mod4+F12 workspace 12
+
+# Move to Workspace
+bindsym Mod4+Shift+F1 move workspace 1
+bindsym Mod4+Shift+F2 move workspace 2
+bindsym Mod4+Shift+F3 move workspace 3
+bindsym Mod4+Shift+F4 move workspace 4
+bindsym Mod4+Shift+F5 move workspace 5
+bindsym Mod4+Shift+F6 move workspace 6
+bindsym Mod4+Shift+F7 move workspace 7
+bindsym Mod4+Shift+F8 move workspace 8
+bindsym Mod4+Shift+F9 move workspace 9
+bindsym Mod4+Shift+F10 move workspace 10
+bindsym Mod4+Shift+F11 move workspace 12
+bindsym Mod4+Shift+F12 move workspace 12
+
+#mode "resize" {
+#    # These bindings trigger as soon as you enter the resize mode
+#
+#    bindsym h resize left -10
+#    bindsym Shift+h resize left +10
+#
+#    bindsym j resize bottom +10
+#    bindsym Shift+j resize bottom -10
+#
+#    bindsym k resize top -10
+#    bindsym Shift+k resize top +10
+#
+#    bindsym l resize right +10
+#    bindsym Shift+l resize right -10
+#
+#    bindsym Return mode default
+#}
+## Enter resize mode
+#bindsym Mod4+r mode resize
+
+# kill the current client
+bindsym Mod4+Shift+c kill
+
+# Exit i3
+bindsym Mod4+Shift+q exit
+# Restart i3 (inplace)
+bindsym Mod4+Control+q restart
+# Reload i3
+bindsym Mod4+q reload
+
+bindsym Mod4+Return exec /usr/bin/urxvtc -tr -tn screen-256color
+bindsym Mod4+p exec dwm_launch prog
+bindsym Mod4+Shift+p exec dwm_launch mpc
+bindsym Mod4+Control+p exec gmrun
+bindsym XF86AudioPrev exec amixer sset Master 2-
+bindsym XF86AudioNext exec amixer sset Master 2+
+bindsym XF86AudioLowerVolume exec amixer sset Master 2-
+bindsym XF86AudioRaiseVolume exec amixer sset Master 2+
+bindsym Mod4+Down exec amixer sset Master 2-
+bindsym Mod4+Up exec amixer sset Master 2+
+
+assign "Chromium"                       1
+assign "Opera"                          1
+assign "Lanikai"                        1
+assign "Xchm"                           3
+assign "Kchmviewer"                     3
+assign "Xpdf"                           3
+assign "Acroread"                       3
+assign "Apvlv"                          3
+assign "Evince"                         3
+assign "Lyx"                            3
+assign "Inkscape"                       3
+assign "OpenOffice"                     3
+assign "OpenOffice.org 3.2"             3
+assign "freemind-main-FreeMindStarter"  3
+assign "rdesktop"                      ~5
+assign "Vncviewer"                     ~5
+assign "VirtualBox"                    ~6
+assign "Mangler"                       ~8
+assign "Wireshark"                      11
+assign "P4v.bin"                        11
+assign "weka-gui-GUIChooser"           ~11
+assign "Wine"                          ~12
+assign "Gxmessage"                     ~
+assign "Gimp"                          ~
+assign "Mplayer"                       ~
+assign "Smplayer"                      ~
+assign "feh"                           ~
+assign "Gmrun"                         ~
+
+#workspace 1  www
+#workspace 2  email
+#workspace 3  doc
+#workspace 9  work
+
+ipc-socket ~/.i3/ipc.sock
+exec /usr/bin/i3bar -f "-*-terminus-bold-r-*-*-20-*-*-*-*-*-*-*" -c "conky -c /home/$USER/.conkyrc.i3"

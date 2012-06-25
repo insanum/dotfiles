@@ -1,0 +1,93 @@
+#!/usr/bin/python
+
+import sys, os, string, re, stat
+
+_CVSROOT = '-d :pserver:edavis@sandtrap.int.lantronix.com:/var/cvs/irvine'
+
+def ecvs_usage():
+    print """
+Usage: ecvs lsp   <module, [module...]>   - list all private files in module(s)
+       ecvs scrub <module, [module...]>   - remove all private files in module(s)
+       ecvs mods  <module, [module...]>   - list all modified files in module(s)
+"""
+    sys.exit()
+
+
+def ecvs_cvs_status(module):
+    cmd = 'cvs ' + _CVSROOT + ' -Q status ' + module
+    print cmd
+    toChild, fromChild, errChild = os.popen3(cmd)
+    return fromChild.readlines();
+
+
+def ecvs_rm(removeIt, path):
+    if removeIt:
+        if os.path.isdir(path):
+            os.rmdir(path)
+        else:
+            os.remove(path)
+        print "rm", path
+    else:
+        print path
+    return
+
+
+def ecvs_rm_recurse(removeIt, path):
+    if os.path.isdir(path):
+        for f in os.listdir(path):
+            ecvs_rm_recurse(removeIt, path + '/' + f)
+    ecvs_rm(removeIt, path)
+    return
+
+
+def ecvs_scrub(removeIt, module):
+    r1 = re.compile(r'^\? (.*)$')
+    for line in ecvs_cvs_status(module):
+        m = r1.match(line)
+        if m:
+            ecvs_rm_recurse(removeIt, m.group(1))
+    return
+
+
+def ecvs_mods(module):
+    r1 = re.compile(r'^File: (.*)Status: (.*)$')
+    data = ecvs_cvs_status(module)
+    for i in range(len(data)):
+        m = r1.match(data[i])
+        if m and m.group(2) == 'Locally Added':
+            print m.group(2), "-", m.group(1)
+        elif m and m.group(2) != 'Up-to-date':
+            i += 3
+            r2 = re.compile(r'.*?([/_\.a-zA-Z0-9]*),v')
+            mm = r2.match(data[i])
+            if mm:
+                print m.group(2), "-", mm.group(1)
+            else:
+                print data[i]
+    return
+
+
+if len(sys.argv) < 3:
+    ecvs_usage()
+
+elif sys.argv[1] == 'scrub':
+    for module in sys.argv[2:]:
+        print "--> Module:", module
+        ecvs_scrub(1, module)
+
+elif sys.argv[1] == 'lsp':
+    for module in sys.argv[2:]:
+        print "--> Module:", module
+        ecvs_scrub(0, module)
+
+elif sys.argv[1] == 'mods':
+    for module in sys.argv[2:]:
+        print "--> Module:", module
+        ecvs_mods(module)
+
+else:
+    ecvs_usage()
+
+sys.exit()
+
+

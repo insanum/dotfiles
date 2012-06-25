@@ -1,0 +1,11 @@
+#!/bin/sh
+
+MEMFREE=`cat /proc/meminfo | grep "^MemFree:" | awk -F" " '{print $2}'`
+BUFFERS=`cat /proc/meminfo | grep "^Buffers:" | awk -F" " '{print $2}'`
+CACHED=`cat /proc/meminfo | grep "^Cached:" | awk -F" " '{print $2}'`
+RAM=$(($MEMFREE + $BUFFERS + $CACHED))
+RAM=$(($RAM / 1000))
+SWAP=`cat /proc/meminfo | grep "SwapFree" | awk -F" " '{print $2}'`
+SWAP=$(($SWAP / 1000))
+echo -n "${RAM}MB/ram ${SWAP}MB/swap"
+

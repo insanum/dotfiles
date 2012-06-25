@@ -1,0 +1,15 @@
+
+Config
+    {
+    font = "xft:terminus:bold:size=12",
+    bgColor = "black",
+    fgColor = "white",
+    position = BottomW L 100,
+    lowerOnStart = True,
+    commands =
+        [
+        Run StdinReader
+        ],
+    template = "%StdinReader%"
+    }
+

@@ -1,0 +1,25 @@
+
+set bell-style none
+
+set show-all-if-ambiguous On
+set print-completions-horizontally On
+set visible-stats On
+
+"\C-x\C-r": re-read-init-file
+"\C-l": redraw-current-line
+"\C-e": alias-expand-line
+
+set editing-mode vi
+"\C-n": vi-movement-mode
+#"\C-j": vi-movement-mode
+#"\C-k": complete
+
+# bind -p
+#"\M-.": dump-functions
+
+# bind -v
+#"\M-.": dump-variables
+
+# bind -s
+#"\M-.": dump-macros
+

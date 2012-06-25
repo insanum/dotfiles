@@ -1,0 +1,87 @@
+
+# !       $spoolfile
+# + or =  $folder
+# >       $mbox
+# <       $record
+# ^       current mailbox
+# - or !! last mailbox
+# ~       $HOME
+
+set delete=yes
+
+set imap_user=edavis
+set imap_idle=yes
+##set folder={imap.broadcom.com}
+#set folder=imaps://imap.broadcom.com:993
+#set folder=imaps://irvexchcas01.broadcom.com:993
+#set folder=imaps://owa.broadcom.com:993
+set folder=~/Maildir
+set spoolfile==INBOX
+set postponed==Drafts
+set move=no
+
+#fcc-hook * =Sent
+#set record==Sent
+#folder-hook . 'set record=^'
+my_hdr Bcc: edavis@broadcom.com (Eric Davis)
+
+set sendmail="/usr/bin/msmtp -C $HOME/.mutt/rc_brcm_msmtp"
+set header_cache=$HOME/.muttcache
+
+set imap_check_subscribed=yes
+#mailboxes =INBOX =Trash =Drafts =Sent ="Junk E-mail" =bugs =etc =clearquest-HW =clearquest-SW
+
+alias edavis Eric Davis <edavis@broadcom.com>
+lists sun-broadcom-nic-ext@sun.com
+lists sun-broadcom-fcoe-ext@sun.com
+
+set hostname="broadcom.com"
+#set realname="Eric A. Davis"
+my_hdr From: edavis@broadcom.com (Eric Davis)
+my_hdr Reply-To: edavis@broadcom.com (Eric Davis)
+
+set query_command = "$HOME/.mutt/ldap '%s'"
+
+# --------------------------------
+# --- Delete / Trash / Archive ---
+# --------------------------------
+
+macro index,pager ,d "<delete-message>" "Smart Delete: Permanently Delete Message"
+
+# Deleted messages go to the 'Archive'
+#folder-hook . 'macro index,pager d "<save-message>=Archive<enter>"'
+#folder-hook . 'macro index,pager D "<tag-thread><tag-prefix><save-message>=Archive<enter>"'
+
+# Deleted messages go to the 'save-hook'
+folder-hook . 'macro index,pager d "<save-message><enter>" "Smart Delete: Save Message to Archive or Trash"'
+folder-hook . 'macro index,pager D "<tag-thread><tag-prefix><save-message><enter>" "Smart Delete: Save Thread to Archive or Trash"'
+
+#folder-hook =Archive 'macro index,pager d "<delete-message>" "Smart Delete: Permanently Delete Message from Archive"'
+#folder-hook =Archive 'macro index,pager D "<delete-thread>" "Smart Delete: Permanently Delete Thread from Archive"'
+
+#folder-hook =Trash   'macro index,pager d "<delete-message>" "Smart Delete: Permanently Delete Message from Trash"'
+#folder-hook =Trash   'macro index,pager D "<delete-thread>" "Smart Delete: Permanently Delete Thread from Trash"'
+
+# Save-Hooks to skip Archive and filter to folder (leave default '.*' hook last)
+save-hook '~f lan-clearquest (~t Chip-List | ~t Board-List | ~t SW-List)' =clearquest
+save-hook '~f lan-clearquest ~s "^Cont00"' =clearquest
+save-hook '~s "^Perforce change"' =perforce
+save-hook '.*' =Archive
+
+# ---------------------------
+# --- Limit Search Macros ---
+# ---------------------------
+
+folder-hook . 'macro index ,l "<limit>all<enter>" "Remove Filter"'
+
+folder-hook '!' 'macro index ,qm "<limit>~f lan-clearquest ~b edavis<enter>=" "Clearquest: My Name In Body"'
+folder-hook '!' 'macro index ,qf "<limit>~f lan-clearquest ~b Software:.*FTSK<enter>=" "Clearquest: FTSK"'
+folder-hook '!' 'macro index ,qi "<limit>~f lan-clearquest ~b Software:.*iSCSI.*HBA.*-.*Windows<enter>=" "Clearquest: iSCSI Windows"'
+folder-hook '!' 'macro index ,qh "<limit>~f lan-clearquest (~t Chip-List | ~t Board-List) !~b edavis<enter>=" "Clearquest: Hardware"'
+folder-hook '!' 'macro index ,qs "<limit>~f lan-clearquest ~t SW-List !~b edavis<enter>=" "Clearquest: Software"'
+folder-hook '!' 'macro index ,p  "<limit>~s ^Perforce.change<enter>=" "Perforce commits"'
+
+folder-hook '!' 'macro index ,yb "<limit>~y bug<enter>=" "[ACTION: Bugs]"'
+folder-hook '!' 'macro index ,yt "<limit>~y todo<enter>=" "[ACTION: Todo]"'
+folder-hook '!' 'macro index ,yr "<limit>~y reply<enter>=" "[ACTION: Reply]"'
+

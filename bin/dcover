@@ -1,0 +1,10 @@
+#!/bin/bash
+
+TMP=`mktemp`
+
+wget -O $TMP $1
+
+convert $TMP cover.png
+
+/bin/rm -f $TMP
+

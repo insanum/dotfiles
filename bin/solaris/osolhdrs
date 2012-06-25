@@ -1,0 +1,33 @@
+#!/bin/bash
+
+files="
+devops.h
+dld_impl.h
+dld.h
+mac_ether.h
+mac_flow.h
+mac_provider.h
+mac.h
+netlb.h
+pattr.h
+types.h
+vlan.h
+"
+
+if [[ `id -u` != "0" ]]; then
+  echo "ERROR: Must run as root!"
+  exit
+fi
+
+DIR="osolhdrs.$$"
+mkdir -p $DIR
+cd $DIR
+
+for f in $files; do
+  wget http://src.opensolaris.org/source/raw/onnv/onnv-gate/usr/src/uts/common/sys/$f
+  cp -f $f /usr/include/sys
+  chmod 644 /usr/include/sys/$f
+done
+
+cd -
+

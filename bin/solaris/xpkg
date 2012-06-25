@@ -1,0 +1,86 @@
+#!/bin/bash
+
+SUDO=sudo
+if [ `id | sed "s/.*uid=\([0-9]*\).*/\1/"` -eq 0 ]; then SUDO=""; fi
+
+function Usage()
+{
+  echo "ERROR: xpkg [ add | rem ] <driver> [dbg]"
+  exit
+}
+
+function solver()
+{
+    OSREL=`uname -r`
+    OSVER=`uname -v`
+    if [ "${OSVER}" = "Generic_137137-09" ]; then
+        echo "Solaris_10u6"
+    elif [ "${OSVER}" = "Generic_139556-08" ]; then
+        echo "Solaris_10u7"
+    elif [ "${OSVER}" = "Generic_141445-09" ]; then
+        echo "Solaris_10u8"
+    elif [ "${OSVER}" = "Generic_142910-17" ] ||
+         [ "${OSVER}" = "Generic_142909-17" ]; then
+        echo "Solaris_10u9"
+    elif [ "${OSVER}" = "Generic_147441-01" ] ||
+         [ "${OSVER}" = "Generic_147440-01" ]; then
+        echo "Solaris_10u10"
+    elif [ "${OSREL}" = "5.11" ]; then
+        echo "Solaris_11"
+    else
+        echo "ERROR: UNKNOWN VERSION OF SOLARIS"
+        exit
+    fi
+}
+
+if [ -z $1 ]; then
+  Usage
+fi
+
+# ensure sudo auth is primed
+$SUDO bash -c 'echo "" > /dev/null'
+
+if [ $1 = "add" ]; then
+
+  if [ -z $2 ]; then
+    Usage
+  fi
+
+  MAJ=`grep "MAJVERSION =" Makefile.inc | sed "s/MAJVERSION = \([0-9]*\)/\1/"`
+  MIN=`grep "MINVERSION =" Makefile.inc | sed "s/MINVERSION = \([0-9]*\)/\1/"`
+  REV=`grep "REVVERSION =" Makefile.inc | sed "s/REVVERSION = \([0-9]*\)/\1/"`
+
+  DBG=""
+  if [ "$3" = dbg ]; then DBG="-dbg"; fi
+
+  PKG=BRCM${2}-`solver`-`uname -p`-$MAJ.$MIN.$REV$DBG.pkg
+
+  expect -c "
+spawn $SUDO pkgadd -d pkg/${PKG}
+expect \"Select package(s) you wish to process\" { send \"\r\"; exp_continue }            \
+       \"Do you want to install these conflicting files\" { send \"y\r\"; exp_continue }  \
+       \"Do you want to continue with the installation of\" {send \"y\r\"; exp_continue }
+"
+
+elif [ $1 = "rem" ]; then
+
+  if [ -z $2 ]; then
+    Usage
+  fi
+
+  expect -c "
+spawn $SUDO pkgrm BRCM${2}
+expect \"Do you want to remove this package\" { send \"y\r\"; exp_continue }                       \
+       \"Do you want to continue with the removal of this package\" { send \"y\r\"; exp_continue }
+"
+
+elif [ $1 = "boot" ]; then
+
+  $SUDO bootadm update-archive
+
+else
+
+  Usage
+
+fi
+

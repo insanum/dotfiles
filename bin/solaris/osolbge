@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [[ -z $1 ]]; then
+  echo "ERROR: $0 [ build ]"
+  echo "  build = current, b134, b142, etc"
+  exit
+fi
+
+BUILD=""
+if [[ $1 != "current" ]]; then
+  BUILD="-$1"
+fi
+
+ONNV=/export/home/edavis/onnv$BUILD/usr/src/uts/common/io/bge
+
+if [[ ! -d $ONNV ]]; then
+  echo "ERROR: $ONNV does not exist"
+  exit
+fi
+
+if [[ ! -f bge_atomic.c ]]; then
+  echo "ERROR: not in bge src directory"
+  exit
+fi
+
+for i in *; do
+
+  diff $i $ONNV/$i
+  rc=$?
+
+  if [[ $rc -eq 0 ]]; then
+    echo "No change for $i"
+  fi
+
+  if [[ $rc -eq 1 ]]; then
+    vimdiff $i $ONNV/$i
+  fi
+
+  if [[ $rc -eq 2 ]]; then
+    echo "ERROR: diff failed for $i"
+  fi
+
+done
+

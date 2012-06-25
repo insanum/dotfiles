@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#MIN_SMP=1
+MIN_SMP=14
+MAX_SMP=16
+RUNTIME=10
+
+function Usage()
+{
+  echo "Usage: nictest <prefix> < RX | TX > <datadir>"
+  echo " NOTE: prefix string formatting must be <arch>_<driver>_<mtu>"
+  exit
+}
+
+if [[ -z $1 || -z $2 || -z $3 ]]; then
+  Usage
+fi
+
+if [[ $2 != "TX" && $2 != "RX" ]]; then
+  Usage
+fi
+
+if [[ $HOSTNAME = "eadsunx" ]]; then
+
+  if [[ $2 = "RX" ]]; then
+    SSH='eadsunz'
+  fi
+
+  LIP="172.16.0.20"
+  RIP="172.16.0.10"
+
+elif [[ $HOSTNAME = "opensolaris" ]]; then
+
+  if [[ $2 = "RX" ]]; then
+    SSH='unixgrp-03'
+  fi
+
+  LIP="172.16.0.20"
+  RIP="172.16.0.10"
+
+elif [[ $HOSTNAME = "sparc-t5120-test" ]]; then
+
+  if [[ $2 = "RX" ]]; then
+    SSH='unixgrp-03'
+  fi
+
+  LIP="192.168.0.20"
+  RIP="192.168.0.10"
+
+else
+
+  echo "ERROR: unknown local host"
+  exit
+
+fi
+
+mkdir -p $3
+
+echo "$2 tests..."
+
+for (( count = $MIN_SMP ; count <= $MAX_SMP ; count++ )); do
+    echo "starting netperf $2 smp $count..."
+    omni run $count $RUNTIME $LIP $RIP $1 $SSH
+    /bin/mv -f ${1}_${2}_* $3
+    echo "done"
+done
+

@@ -1,0 +1,6 @@
+[extensions]
+hgext.convert =
+hgext.graphlog =
+hgk =
+fetch =
+color =

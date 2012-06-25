@@ -1,0 +1,72 @@
+#!/usr/bin/python2
+
+import sys
+
+class CLR:
+    def __str__(self):
+        return self.color
+
+class CLR_DEF     (CLR): color = "\033[0m";
+
+class CLR_FG_BLK  (CLR): color = "\033[30m";  name = "  blk"
+class CLR_FG_BRBLK(CLR): color = "\033[90m";  name = "brblk"
+class CLR_FG_RED  (CLR): color = "\033[31m";  name = "  red"
+class CLR_FG_BRRED(CLR): color = "\033[91m";  name = "brred"
+class CLR_FG_GRN  (CLR): color = "\033[32m";  name = "  grn"
+class CLR_FG_BRGRN(CLR): color = "\033[92m";  name = "brgrn"
+class CLR_FG_YLW  (CLR): color = "\033[33m";  name = "  ylw"
+class CLR_FG_BRYLW(CLR): color = "\033[93m";  name = "brylw"
+class CLR_FG_BLU  (CLR): color = "\033[34m";  name = "  blu"
+class CLR_FG_BRBLU(CLR): color = "\033[94m";  name = "brblu"
+class CLR_FG_MAG  (CLR): color = "\033[35m";  name = "  mag"
+class CLR_FG_BRMAG(CLR): color = "\033[95m";  name = "brmag"
+class CLR_FG_CYN  (CLR): color = "\033[36m";  name = "  cyn"
+class CLR_FG_BRCYN(CLR): color = "\033[96m";  name = "brcyn"
+class CLR_FG_WHT  (CLR): color = "\033[37m";  name = "  wht"
+class CLR_FG_BRWHT(CLR): color = "\033[97m";  name = "brwht"
+class CLR_FG_DEF  (CLR): color = "\033[39m";  name = "  def"
+
+class CLR_BG_BLK  (CLR): color = "\033[40m";  name = "blk  "
+class CLR_BG_BRBLK(CLR): color = "\033[100m"; name = "brblk"
+class CLR_BG_RED  (CLR): color = "\033[41m";  name = "red  "
+class CLR_BG_BRRED(CLR): color = "\033[101m"; name = "brred"
+class CLR_BG_GRN  (CLR): color = "\033[42m";  name = "grn  "
+class CLR_BG_BRGRN(CLR): color = "\033[102m"; name = "brgrn"
+class CLR_BG_YLW  (CLR): color = "\033[43m";  name = "ylw  "
+class CLR_BG_BRYLW(CLR): color = "\033[103m"; name = "brylw"
+class CLR_BG_BLU  (CLR): color = "\033[44m";  name = "ble  "
+class CLR_BG_BRBLU(CLR): color = "\033[104m"; name = "brblu"
+class CLR_BG_MAG  (CLR): color = "\033[45m";  name = "mag  "
+class CLR_BG_BRMAG(CLR): color = "\033[105m"; name = "brmag"
+class CLR_BG_CYN  (CLR): color = "\033[46m";  name = "cyn  "
+class CLR_BG_BRCYN(CLR): color = "\033[106m"; name = "brcyn"
+class CLR_BG_WHT  (CLR): color = "\033[47m";  name = "wht  "
+class CLR_BG_BRWHT(CLR): color = "\033[107m"; name = "brwht"
+class CLR_BG_DEF  (CLR): color = "\033[49m";  name = "def  "
+
+def PrintMsg(fg, bg, idx, width):
+    if not (idx % width): print ''
+    print fg, bg, "**", fg.name, "on", bg.name, "**", CLR_DEF(),
+
+FGs = [ CLR_FG_BLK(), CLR_FG_BRBLK(), CLR_FG_RED(), CLR_FG_BRRED(),
+        CLR_FG_GRN(), CLR_FG_BRGRN(), CLR_FG_YLW(), CLR_FG_BRYLW(),
+        CLR_FG_BLU(), CLR_FG_BRBLU(), CLR_FG_MAG(), CLR_FG_BRMAG(),
+        CLR_FG_CYN(), CLR_FG_BRCYN(), CLR_FG_WHT(), CLR_FG_BRWHT() ]
+
+BGs = [ CLR_BG_BLK(), CLR_BG_BRBLK(), CLR_BG_RED(), CLR_BG_BRRED(),
+        CLR_BG_GRN(), CLR_BG_BRGRN(), CLR_BG_YLW(), CLR_BG_BRYLW(),
+        CLR_BG_BLU(), CLR_BG_BRBLU(), CLR_BG_MAG(), CLR_BG_BRMAG(),
+        CLR_BG_CYN(), CLR_BG_BRCYN(), CLR_BG_WHT(), CLR_BG_BRWHT() ]
+
+WIDTH = 2
+
+for i, fg in zip(xrange(len(FGs)), FGs):
+    PrintMsg(fg, CLR_BG_DEF(), i, WIDTH)
+
+for i, bg in zip(xrange(len(BGs)), BGs):
+    PrintMsg(CLR_FG_DEF(), bg, i, WIDTH)
+
+for i, fg in zip(xrange(len(FGs)), FGs):
+    for j, bg in zip(xrange(len(BGs)), BGs):
+        PrintMsg(fg, bg, j, WIDTH)
+

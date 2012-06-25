@@ -1,0 +1,14 @@
+
+background no
+update_interval 3
+
+out_to_console yes
+out_to_x no
+
+#use_spacer none
+#double_buffer yes
+#text_buffer_size 2048
+#no_buffers yes
+
+TEXT
+^bg(black)^fg(white)^i($HOME/xbm8x8/mail.xbm) ${new_mails $HOME/Maildir/INBOX} ^fg(red)${time %a %m/%d %H:%M} ^fg(green)^i($HOME/xbm8x8/cpu.xbm) ${cpu cpu0}% ${loadavg 2} ^fg(yellow)^i($HOME/xbm8x8/mem.xbm) ${memperc}% ${swapperc}% ^fg(magenta)^i($HOME/xbm8x8/net_down_03.xbm) ${downspeedf eth1}K/s ^i($HOME/xbm8x8/net_up_03.xbm) ${upspeedf eth1}K/s ^fg(orange)^i($HOME/xbm8x8/diskette.xbm) / ${fs_used_perc /}% ${texeci 60 $HOME/bin/procrast_dzen} ^fg(cyan)^i($HOME/xbm8x8/arch_10x10.xbm)  

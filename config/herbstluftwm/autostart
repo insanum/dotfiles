@@ -1,0 +1,65 @@
+#!/bin/bash
+
+function hc() {
+    herbstclient "$@"
+}
+
+# keybindings
+Mod=Mod4
+hc keybind $Mod-q quit
+hc keybind $Mod-Shift-r reload
+hc keybind $Mod-Shift-c close
+hc keybind $Mod-Return spawn urxvtc
+hc keybind $Mod-p spawn dwm_launch prog
+
+# tags
+hc rename default 1 || true
+for i in {1..9} ; do
+    hc add "$i"
+    hc keybind "$Mod-$i" use "$i"
+    hc keybind "$Mod-Shift-$i" move "$i"
+done
+
+# layouting
+hc keybind $Mod-r remove
+hc keybind $Mod-space cycle_layout 1
+hc keybind $Mod-u split vertical 0.5
+hc keybind $Mod-o split horizontal 0.5
+
+# resizing
+RESIZESTEP=0.05
+hc keybind $Mod-Control-h resize left +$RESIZESTEP
+hc keybind $Mod-Control-j resize down +$RESIZESTEP
+hc keybind $Mod-Control-k resize up +$RESIZESTEP
+hc keybind $Mod-Control-l resize right +$RESIZESTEP
+
+# focus
+hc keybind $Mod-BackSpace   cycle_monitor
+hc keybind $Mod-Tab         cycle_all +1
+hc keybind $Mod-Shift-Tab   cycle_all -1
+hc keybind $Mod-c cycle
+hc keybind $Mod-h focus left
+hc keybind $Mod-j focus down
+hc keybind $Mod-k focus up
+hc keybind $Mod-l focus right
+hc keybind $Mod-Shift-h shift left
+hc keybind $Mod-Shift-j shift down
+hc keybind $Mod-Shift-k shift up
+hc keybind $Mod-Shift-l shift right
+
+hc set focus_follows_mouse 1
+hc set swap_monitors_to_get_tag 0
+
+# colors
+hc set frame_border_active_color '#49351D'
+hc set frame_border_normal_color '#73532D'
+hc set frame_bg_normal_color '#BD9768'
+hc set frame_bg_active_color '#BD8541'
+hc set frame_border_width 2
+hc set window_border_width 2
+hc set window_border_normal_color '#AE8451'
+hc set window_border_active_color '#F6FF00'
+
+hc move_monitor 0 1600x1200+0+0
+hc add_monitor 1600x1200+1600+0 2
+

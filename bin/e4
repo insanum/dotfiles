@@ -1,0 +1,528 @@
+#!/usr/bin/python2
+
+p4bin      = '$HOME/p4/p4'
+p4port_isr = 'pf-irva-ecs:1900' # israel depot
+p4port_irv = 'pf-irva-ecs:1666' # irvine depot
+p4port_def = 'pf-irva-ecs.broadcom.com:1666'
+
+
+import os, sys, re, marshal, getopt
+
+
+def Usage():
+    sys.stdout.write('''\
+
+Usage: p4 [args] command [command args]
+
+args:
+    -h      this help text
+    -d      print out all perforce command line strings
+    -I      use the Irvine depot (default Israel)
+    -w      ignore whitespace for diff output
+    -p      ignore 'P' flag files that don't exist in workspace
+    -q      don't print out connection and client spec info
+    --nc    don't use colors
+
+commands:
+    login   login to the perforce depot
+
+    mods    show all modified files that are not in sync
+            flag legend:
+                M  - modified in the depot and needs to be sync'ed
+                X  - deleted in depot but exists in workspace
+                N  - new file added in workspace but does not exist in depot
+                P  - new file added in depot but does not exist in workspace
+                V  - the file was most likely moved in the depot
+                Oa - opened for add
+                Oe - opened for edit
+                Od - opened for delete
+                Ob - opened for branch
+                Oi - opened for integrate
+
+    update  update all modified files that are not in sync (only 'M'/'X')
+
+    [p4]    any existing perforce commmand
+
+''')
+    sys.exit(1)
+
+
+class CLR:
+
+    useColor = True
+
+    def __str__(self):
+        if self.useColor: return self.color
+        else: return ""
+
+class CLR_NRM(CLR):   color = "\033[0m"
+class CLR_BLK(CLR):   color = "\033[0;30m"
+class CLR_BRBLK(CLR): color = "\033[30;1m"
+class CLR_RED(CLR):   color = "\033[0;31m"
+class CLR_BRRED(CLR): color = "\033[31;1m"
+class CLR_GRN(CLR):   color = "\033[0;32m"
+class CLR_BRGRN(CLR): color = "\033[32;1m"
+class CLR_YLW(CLR):   color = "\033[0;33m"
+class CLR_BRYLW(CLR): color = "\033[33;1m"
+class CLR_BLU(CLR):   color = "\033[0;34m"
+class CLR_BRBLU(CLR): color = "\033[34;1m"
+class CLR_MAG(CLR):   color = "\033[0;35m"
+class CLR_BRMAG(CLR): color = "\033[35;1m"
+class CLR_CYN(CLR):   color = "\033[0;36m"
+class CLR_BRCYN(CLR): color = "\033[36;1m"
+class CLR_WHT(CLR):   color = "\033[0;37m"
+class CLR_BRWHT(CLR): color = "\033[37;1m"
+
+
+def PrintErrMsg(msg):
+    if CLR.useColor:
+        sys.stdout.write(str(CLR_BRRED()))
+        sys.stdout.write(msg)
+        sys.stdout.write(str(CLR_NRM()))
+    else:
+        sys.stdout.write(msg)
+    sys.stdout.flush()
+
+
+def PrintMsg(color, msg):
+    if CLR.useColor:
+        sys.stdout.write(str(color))
+        sys.stdout.write(msg)
+        sys.stdout.write(str(CLR_NRM()))
+    else:
+        sys.stdout.write(msg)
+    sys.stdout.flush()
+
+
+cmdDebug = False
+noHeader = False
+ignoreWhitespace = False
+ignoreP = False
+
+def Cmd(cmd):
+    global cmdDebug
+    if (cmdDebug):
+        PrintMsg(CLR_GRN(), cmd + '\n')
+    return os.popen(cmd)
+
+def CmdSys(cmd):
+    global cmdDebug
+    if (cmdDebug):
+        PrintMsg(CLR_GRN(), cmd + '\n')
+    os.system(cmd)
+
+
+# set default depot (changed via the -I command line arg)
+p4port = p4port_def
+
+
+# Process the command options
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:], 'hdpqIw', ['nc'])
+except getopt.error:
+    Usage()
+
+for opt, arg in opts:
+    if (opt == '-h'):
+        Usage()
+    elif (opt == '-d'):
+        cmdDebug = True
+    elif (opt == '-q'):
+        noHeader = True
+    elif (opt == '-p'):
+        ignoreP = True
+    elif (opt == '-w'):
+        ignoreWhitespace = True
+    elif (opt == '--nc'):
+        CLR.useColor = False
+    elif (opt == '-I'):
+        p4port = p4port_irv
+
+if (len(args) == 0):
+   Usage()
+
+
+# get the client workspace name
+
+try:
+    clientName = re.match('^.*/work/([-_.0-9a-zA-Z]*)($|/.*$)',
+                          os.getcwd()).group(1)
+except AttributeError:
+    clientName = ''
+    #PrintErrMsg('Bite me...\n')
+    #sys.exit(1)
+
+
+# display the p4port and client name info
+if (not noHeader):
+    PrintMsg(CLR_BRYLW(), '[ ' + p4port + ' -> ' + clientName + ' ]\n')
+
+
+# initial command line with P4PORT
+p4 = p4bin + ' -p ' + p4port
+
+
+# if this is a login command then do it now
+if (args[0] == 'login'):
+    CmdSys(p4 + ' login -a')
+    sys.exit(1)
+
+
+# build full command line with P4PORT and P4CLIENT
+if not clientName:
+    p4 = p4
+else:
+    p4 = p4 + ' -c ' + clientName
+
+
+# convert the current workspace view into a string
+
+client = marshal.load(Cmd(p4 + ' -G client -o'))
+view = ''
+for k in client.keys():
+    # get views (and exclude overlays/excludes)
+    if re.match('^View[0-9]*$', k) and not re.match('^[+-]', client[k]):
+        view = view + ' ' + client[k].split(' ')[1]
+
+if (view == ''):
+    PrintErrMsg('Error: failed to get workspace view\n')
+    sys.exit(1)
+
+
+# flatten the rest of the command line args
+
+cmdArgs = ''
+if (len(args) > 1):
+    for a in args[1:]:
+        cmdArgs = cmdArgs + ' ' + a
+
+
+# doooo it
+
+if ((args[0] == 'mods') or (args[0] == 'update')):
+
+    if not clientName:
+        PrintErrMsg('Bite me...\n')
+        sys.exit(1)
+
+    pout = Cmd(p4 + ' -G fstat ' + view)
+
+    while 1:
+
+        try:
+            data = marshal.load(pout)
+        except EOFError:
+            break
+
+        # 'headRev/haveRev' 'flags' 'fileName'
+        fmt = '%3s/%-3s %-3s %s\n'
+
+        fullFileName = data['clientFile']
+        relFileName = re.match('^.*/work/' + clientName + '/(.*)$',
+                               fullFileName).group(1)
+
+        openFlagNone   = '  '
+        deleteFlagNone = ' '
+        modFlagNone    = ' '
+
+        openFlag = openFlagNone
+        if ('action' in data):
+            # one of add, edit, delete, branch, or integrate
+            if (data['action'] == 'add'):
+                openFlag = 'Oa'
+            elif (data['action'] == 'edit'):
+                openFlag = 'Oe'
+            elif (data['action'] == 'delete'):
+                openFlag = 'Od'
+            elif (data['action'] == 'branch'):
+                openFlag = 'Ob'
+            elif (data['action'] == 'integrate'):
+                openFlag = 'Oi'
+
+        deleteFlag = deleteFlagNone
+        if (not 'headAction' in data):
+            if ('haveRev' in data):
+                # the file was most likely moved
+                deleteFlag = 'V'
+            else:
+                # new file added in the workspace that needs to be submitted
+                deleteFlag = 'N'
+        elif (data['headAction'] == 'move/delete'):
+            # file has been moved (ignore it)
+            continue
+        elif (data['headAction'] == 'delete'):
+            if (os.path.exists(fullFileName)):
+                # file was deleted from depot but still exists in the
+                # local workspace
+                deleteFlag = 'X'
+            elif (openFlag == openFlagNone):
+                # file previously deleted, is not opened, and doesn't exist
+                # in the local workspace
+                continue
+        elif (not 'haveRev' in data):
+            # file was added to depot and has not yet been pulled down
+            if (ignoreP):
+                continue
+            deleteFlag = 'P'
+
+        if ((openFlag == openFlagNone) and
+            (deleteFlag == deleteFlagNone) and
+            (('haveRev' in data) and (data['headRev'] == data['haveRev']))):
+            # file is not opened or deleted and is in sync with the depot
+            continue
+
+        modFlag = modFlagNone
+        if (('haveRev' in data) and ('headRev' in data) and
+            (int(data['headRev']) > int(data['haveRev']))):
+            modFlag = 'M'
+
+        if (args[0] == 'mods'):
+
+            if ('headRev' in data): headRev = data['headRev']
+            else:                   headRev = '.'
+            if ('haveRev' in data): haveRev = data['haveRev']
+            else:                   haveRev = '.'
+
+            PrintMsg(CLR_NRM(), fmt % (headRev,
+                                       haveRev,
+                                       str(CLR_BRCYN()) +
+                                         openFlag +
+                                       str(CLR_BRBLU()) +
+                                         modFlag +
+                                       str(CLR_BRRED()) +
+                                         deleteFlag +
+                                       str(CLR_NRM()),
+                                       relFileName))
+
+        else: # (args[0] == 'update')
+
+            if (openFlag != openFlagNone):
+                # if the file is opened then skip it
+                continue
+
+            # sync file from the depot
+            try:
+                os.unlink(fullFileName)
+            except:
+                blah = '' # ignore exception
+
+            PrintMsg(CLR_BRCYN(), 'Sync: ' + relFileName + '\n')
+            psync = Cmd(p4 + ' sync "' + fullFileName + '"')
+            for l in psync.readlines():
+                PrintMsg(CLR_NRM(), l)
+
+elif (args[0] == 'diff'):
+
+    if not clientName:
+        PrintErrMsg('Bite me...\n')
+        sys.exit(1)
+
+    if re.match('sunos.*$', sys.platform):
+        if (ignoreWhitespace):
+            CmdSys('export P4DIFF=diff;' + p4 + ' ' + args[0] + ' -d\'wU10\' ' + cmdArgs)
+        else:
+            CmdSys('export P4DIFF=diff;' + p4 + ' ' + args[0] + ' -d\'U10\' ' + cmdArgs)
+    else:
+        if (ignoreWhitespace):
+            CmdSys('export P4DIFF=colordiff;' + p4 + ' ' + args[0] + ' -d\'wU10\' ' + cmdArgs)
+        else:
+            CmdSys('export P4DIFF=colordiff;' + p4 + ' ' + args[0] + ' -d\'U10\' ' + cmdArgs)
+
+else:
+
+    # generic perforce command
+    CmdSys(p4 + ' ' + args[0] + ' ' + cmdArgs)
+
+
+##############################################################################
+#                               P4 FSTAT DATA                                #
+##############################################################################
+#
+# clientFile
+#
+#     local path to file (in local syntax by default, or in Perforce syntax with
+#     the -Op option)
+#
+#     /staff/userid/src/file.c
+#     (or //workspace/src/file.c in Perforce syntax)
+#
+# depotFile
+#
+#     depot path to file
+#
+#     //depot/src/file.c
+#
+# path
+#
+#     local path to file
+#
+#     //workspace/src/file.c
+#
+# headAction
+#
+#     action taken at head revision, if in depot
+#
+#     one of add, edit, delete, branch, or integrate
+#
+# headChange
+#
+#     head revision changelist number, if in depot
+#
+#     1, 2, 3... n
+#
+# headRev
+#
+#     head revision number, if in depot
+#
+#     1, 2, 3... n
+#
+# headTime
+#
+#     Head revision changelist time, if in depot. Time is measured in seconds
+#     since 00:00:00 UTC, January 1, 1970
+#
+#     919283152 is a date in early 1999
+#
+# headRevModTime
+#
+#     Head revision modification time, if in depot. Time is measured in seconds
+#     since 00:00:00 UTC, January 1, 1970
+#
+#     919283152 is a date in early 1999
+#
+# headType
+#
+#     head revision type, if in depot
+#
+#     text, binary, text+k, etc. (see the chapter on File Types.)
+#
+# haveRev
+#
+#     revision last synced to workspace, if on workspace
+#
+#     1, 2, 3... n
+#
+# desc
+#
+#     changelist description (if using -e changelist and if the file was part of
+#     changelist)
+#
+#     A Perforce changelist
+#
+# digest
+#
+#     MD5 digest of a file (requires -Ol option)
+#
+#     A 32 hexadecimal digit string
+#
+# fileSize
+#
+#     file length in bytes (requires -Ol option)
+#
+#     63488
+#
+# action
+#
+#     open action, if opened in your workspace
+#
+#     one of add, edit, delete, branch, or integrate
+#
+# type
+#
+#     open type, if opened in your workspace
+#
+#     A Perforce file type
+#
+# actionOwner
+#
+#     the user who opened the file, if open
+#
+#     A Perforce username
+#
+# change
+#
+#     open changelist number, if opened in your workspace
+#
+#     1, 2, 3... n
+#
+# resolved
+#
+#     the number, if any, of resolved integration records
+#
+#     1, 2, 3... n
+#
+# unresolved
+#
+#     the number, if any, of unresolved integration records
+#
+#     1, 2, 3... n
+#
+# otherOpen
+#
+#     the number of other users who have the file open, blank if no other users
+#     have the file open
+#
+#     1, 2, 3... n, preceded by n records listing the users (0 through n-1) with
+#     otherOpenn, otherActionn, and otherLockn fields as applicable. For
+#     example:
+#     ... otherOpen 3
+#     ...... otherOpen0 user1@cws1
+#     ...... otherOpen1 user2@cws2
+#     ...... otherOpen2 user3@cws3
+#
+# otherOpenn
+#
+#     for each user with the file open, the workspace and user with the open
+#     file
+#
+#     user123@workstation9
+#
+# otherLock
+#
+#     present and set to null if another user has the file locked, otherwise not
+#     present
+#
+#     unset (... otherLock) or not present
+#
+# otherLockn
+#
+#     for each user with the file locked, the workspace and user holding the
+#     lock
+#
+#     user123@workstation9
+#     Because only one user at a time, may lock a file, if n is set, n is always
+#     0.
+#
+# otherActionn
+#
+#     for each user with the file open, the action taken
+#
+#     one of add, edit, delete, branch, or integrate
+#
+# otherChangen
+#
+#     for every changelist with the file open, the changelist
+#
+#     A changelist number
+#
+# ourLock
+#
+#     present and set to null if the current user has the file locked, otherwise
+#     not present
+#
+#     unset (... ourLock) or not present
+#
+# resolveActionn
+# resolveBaseFilen
+# resolveFromFilen
+# resolveStartFromRevn
+# resolveEndFromRevn
+#
+#     Pending integration action, base file, base revision number, from file,
+#     starting, and ending revision, respectively.
+#
+#     For pending integration record information, use the -Or option.
+#
+##############################################################################
+

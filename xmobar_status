@@ -1,0 +1,25 @@
+
+Config
+    {
+    font = "xft:terminus:bold:size=12",
+    bgColor = "black",
+    fgColor = "white",
+    position = TopW L 100,
+    lowerOnStart = True,
+    commands =
+        [
+        Run Weather "KLAX" ["-t","<tempF>F","-L","70","-H","90","--low","cyan","--normal","yellow","--high","red"] 36000,
+        Run Cpu ["-t","Cpu:<total>","-L","3","-H","50","--low","green","--normal","yellow","--high","red"] 10,
+        Run Memory ["-t","Mem:<usedratio>%","-L","20","-H","50","--low","green","--normal","yellow","--high","red"] 10,
+        Run Swap ["-t","Swp:<usedratio>"] 10,
+        Run Network "eth0" ["-t","Rx:<rx> | Tx:<tx>","-L","1","-H","5","--low","green","--normal","yellow","--high","red"] 10,
+        --Run Com "hostname" [""] "hostname" 36000,
+        Run Com "bash" ["$HOME/bin/mailcheck"] "mail" 600,
+        Run Com "bash" ["$HOME/bin/procrast_xmobar"] "procrast" 600
+        ],
+    sepChar = "%",
+    alignSep = "}{",
+    --template = "<fc=cyan>%hostname%</fc> %procrast% }{ <fc=magenta>Mail:%mail%</fc> | %cpu% | %memory% | %swap% | %KLAX% | <fc=#ee9a00>%date%</fc>"
+    template = "%procrast% }{ <fc=magenta>Mail:%mail%</fc> | %cpu% | %eth0% | %memory% | %swap% | %KLAX% | <fc=#ee9a00>%date%</fc>"
+    }
+
