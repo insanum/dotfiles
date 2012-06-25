@@ -40,10 +40,10 @@ elif [[ $OSTYPE == linux-gnu ]]; then
   }
 fi
 
-if [[ -d "$HOME/.bin" ]]; then
-    for d in `ls "$HOME/.bin"`; do
-        [[ ! -d "$d" ]] && continue
-        export PATH=$d:$PATH
+if [[ -d "$HOME/.bin/" ]]; then
+    for d in `ls "$HOME/.bin/"`; do
+        [[ ! -d "$HOME/.bin/$d" ]] && continue
+        export PATH=$HOME/.bin/$d:$PATH
     done
 fi
 
