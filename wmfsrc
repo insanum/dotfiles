@@ -1,10 +1,5 @@
-#
-# This is the default wmfs config file, copy it to
-# ~/.config/wmfs/wmfsrc and edit it.
-#
 
-# Include file to split configuration
-# @include "~/.config/wmfs/menu-wmfsrc"
+# @include "..."
 
 [misc]
     use_xft               = true

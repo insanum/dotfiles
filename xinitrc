@@ -106,10 +106,10 @@ fi
 #cairo-compmgr &
 
 #exec awesome
-#exec wmfs
+#exec wmfs -C ~/.wmfsrc
 #exec xmonad
 #exec scrotwm
-#exec herbstluftwm
+#exec herbstluftwm --autostart ~/.herbstluftwm
 #exec i3 --force-xinerama -V > ~/.i3/i3log 2>&1
 
 while true
