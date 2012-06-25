@@ -1,1 +1,0 @@
-vncserver :13 -PasswordFile ~/.priv/vnc_passwd -depth 24 -geometry 1590x990 -alwaysshared -name foobar
