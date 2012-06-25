@@ -117,7 +117,7 @@ alias print4="enscript -G -U2 -2 -r --mark-wrapped-lines=box -E -DDuplex:true"
 alias print2="enscript -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true"
 alias print1="enscript -G -1 --mark-wrapped-lines=box -E -DDuplex:true"
 function manprint() { groff -t -man -Tps $1 | lpr -Pprt-irv-028; }
-alias vnc="`cat ~/.vnc/cmd.txt`"
+alias vnc="\`cat ~/.vnc/cmd.txt\`"
 alias vnckill="vncserver -kill :13"
 alias ldap="$HOME/.mutt/ldap"
 alias socks='ssh -ND 9999 edavis@insanum.com'
