@@ -50,16 +50,29 @@ hc keybind $Mod-Shift-l shift right
 hc set focus_follows_mouse 1
 hc set swap_monitors_to_get_tag 0
 
-# colors
-hc set frame_border_active_color '#49351D'
-hc set frame_border_normal_color '#73532D'
-hc set frame_bg_normal_color '#BD9768'
-hc set frame_bg_active_color '#BD8541'
-hc set frame_border_width 2
-hc set window_border_width 2
-hc set window_border_normal_color '#AE8451'
-hc set window_border_active_color '#F6FF00'
+##########
+# colors #
+##########
 
-hc move_monitor 0 1600x1200+0+0
-hc add_monitor 1600x1200+1600+0 2
+hc set frame_bg_transparent 1
+#hc set frame_bg_active_color      '#000'
+#hc set frame_bg_normal_color      '#000'
+hc set frame_border_width         2
+hc set frame_border_active_color  '#FA0'
+hc set frame_border_normal_color  '#000'
+hc set window_border_width        2
+hc set window_border_active_color '#000'
+hc set window_border_normal_color '#000'
+
+#####################
+# multiple monitors #
+#####################
+
+if [[ $HOSTNAME = eadmaka ]]; then
+    hc move_monitor 0 1920x1080+0+0
+    hc add_monitor 1080x1920+1920+0 2
+elif [[ $HOSTNAME = jackshrimp ]]; then
+    hc move_monitor 0 1680x1050+0+0
+    hc add_monitor 1080x1920+1680+0 2
+fI
 

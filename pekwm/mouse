@@ -133,9 +133,9 @@ ScreenEdge {
 
 Client {
 	# Remove the following line and uncomment the alternative if windows should raise when clicked.
-	ButtonPress = "1" { Actions = "Focus" }
+	# ButtonPress = "1" { Actions = "Focus" }
 	# Uncomment the following line if windows should raise when clicked.
-	# ButtonPress = "1" { Actions = "Focus; Raise" }
+	ButtonPress = "1" { Actions = "Focus; Raise" }
 
 	ButtonRelease = "Mod1 1" { Actions = "Focus; Raise" }
 	ButtonRelease = "Mod4 1" { Actions = "Lower" }

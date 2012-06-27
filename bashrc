@@ -26,17 +26,16 @@ elif [[ $OSTYPE == linux-gnu ]]; then
       PRJ=`basename $PWD`
       if [ -f ../${PRJ}_p4 ] && [ -d ./.git ]; then
           source ../${PRJ}_p4
-          /usr/share/git/fast-import/git-p4 $@
+          git p4 $@
       else
           echo "Moo!"
       fi
   }
   function gitp4clone()
   {
-      /usr/share/git/fast-import/git-p4 clone \
-          --verbose \
-          --destination $P4GITPATH \
-          --use-client-spec $P4GITDEPOTS
+      git p4 clone --verbose \
+                   --destination $P4GITPATH \
+                   --use-client-spec $P4GITDEPOTS
   }
 fi
 
@@ -46,7 +45,7 @@ if [[ -d "$HOME/.bin/" ]]; then
         export PATH=$HOME/.bin/$d:$PATH
     done
 fi
-
+export PATH=$HOME/.bin:$PATH
 export PATH=$HOME/.priv/bin:$PATH
 
 umask 022

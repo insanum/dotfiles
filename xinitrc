@@ -53,9 +53,9 @@ xmodmap -e "remove mod1 = Super_L"  # make sure X keeps it out of the mod1 group
 #Esetroot -bgcolor black $HOME/wallpaper/hallowsend09_1600x.jpg
 #Esetroot -bgcolor black $HOME/.priv/kole_evo_2.png
 if test $HOSTNAME == "eadmaka" ; then
-    Esetroot -bgcolor black $HOME/.priv/kole_evo_1920x1080.png
+    Esetroot -bgcolor black $HOME/Dropbox/kole_evo_1920x1080.png
 else
-    Esetroot -bgcolor black $HOME/.priv/kole_evo_1680x1050.png
+    Esetroot -bgcolor black $HOME/Dropbox/kole_evo_1680x1050.png
 fi
 
 #$HOME/bin/mpc_osd_py &
@@ -94,23 +94,28 @@ fi
 #conky -c $HOME/.conkyrc.gcal &
 #( conky -c $HOME/.conkyrc.dzen | dzen2 -p -e "button3" -ta r -fn xft:terminus:bold:size=12 ) &
 
-#exec startkde
-#exec startxfce4
-#exec gnome-session
-#exec startlxde
-#exec blackbox
-#exec startfluxbox
-#exec openbox-session
+#exec startkde         # /facepalm o.O
+#exec gnome-session    # /facepalm o.O
+#exec startxfce4       # better than kde and gnome...
+#exec startlxde        # phfffft
+#exec blackbox         # old and true
+#exec startfluxbox     # blackbox with gizmos
+#exec openbox-session  # Why can't I move my config out from under XDG!?!?
+#exec pekwm            # lean and mean (perfect for vnc)
 
 #xcompmgr -c &
 #cairo-compmgr &
 
-#exec awesome
+#exec ratpoison # Lots of good times, but the love affair evaporated...
+#exec musca     # I love you musca but damn you for not supporting xrandr correctly!
+#exec awesome   # awesome... you suck SO bad!
+#exec xmonad    # xmonad, you rule... but Haskell? Really!?!?
+#exec spectrwm
 #exec wmfs -C ~/.wmfsrc
-#exec xmonad
-#exec scrotwm
-#exec herbstluftwm --autostart ~/.herbstluftwm
+exec herbstluftwm --autostart ~/.herbstluftwm
 #exec i3 --force-xinerama -V > ~/.i3/i3log 2>&1
+
+# I seem to always fall back to DWM... :-)
 
 while true
 do

@@ -60,7 +60,7 @@ Did you...
 
 function PerforceLabel()
 {
-  E4=${HOME}/bin/e4
+  E4=${HOME}/.bin/e4
   TAGGED=0
   echo "----------------------------------------"
   if [ -x $E4 ]; then
@@ -96,9 +96,9 @@ mkdir -p $SRCDESTDIR
 /bin/cp -f release.txt $PKGDESTDIR
 /bin/cp -f readme.txt $PKGDESTDIR
 
-TMPDIR=`mktemp -d --tmpdir=/tmp`
+TMPDEST=`mktemp -d`
 SRCDIR="${PKG}-${VER}-src"
-TMPSRCDIR="${TMPDIR}/${SRCDIR}"
+TMPSRCDIR="${TMPDEST}/${SRCDIR}"
 
 mkdir $TMPSRCDIR
 /bin/cp -r . $TMPSRCDIR
@@ -107,14 +107,14 @@ make clean
 cd ..
 zip -r ${SRCDESTDIR}/${SRCDIR}.zip $SRCDIR
 popd
-/bin/rm -rf ${TMPDIR}
+/bin/rm -rf ${TMPDEST}
 #/bin/cp -f ${SRCDESTDIR}/${SRCDIR}.zip $PKGDESTDIR
 
 pushd $PKGDESTDIR
 md5sum * > md5sum.txt
 popd
 
-MAILMSG=`mktemp --tmpdir=/tmp`
+MAILMSG=`mktemp`
 
 set +o xtrace
 
