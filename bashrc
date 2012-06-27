@@ -123,6 +123,15 @@ alias socks='ssh -ND 9999 edavis@insanum.com'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
 
+source /etc/bash_completion.d/herbstclient-completion
+alias hc=herbstclient
+_hc_complete() {
+  COMPREPLY=(
+    $(herbstclient -q complete "$((COMP_CWORD-1))" "${COMP_WORDS[@]:1}")
+  )
+}
+complete -F _hc_complete hc
+
 function cmdfu()
 {
     local t=~/cmdfu;

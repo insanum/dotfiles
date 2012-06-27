@@ -13,12 +13,12 @@ MoveResize {
     EdgeResist = "10"
     WindowAttract = "5"
     WindowResist = "5"
-    OpaqueMove = "True"
+    OpaqueMove = "False"
     OpaqueResize = "False"
 }
 
 Screen {
-    Workspaces = "2"
+    Workspaces = "3"
     WorkspacesPerRow = "3"
     #WorkspaceNames = "Main;Web;E-mail;Music;Work 05;Work 06;Work 07;Work 08;Work 09"
     WorkspaceNames = "Work 01;Work 02;Work 03;Work 04;Work 05;Work 06;Work 07;Work 08;Work 09"
@@ -26,7 +26,7 @@ Screen {
     ShowStatusWindow = "True"
     ShowStatusWindowCenteredOnRoot = "False"
     ShowClientID = "False"
-    ShowWorkspaceIndicator = "500"
+    ShowWorkspaceIndicator = "2000"
     PlaceNew = "True"
     FocusNew = "True"
 
