@@ -68,8 +68,8 @@ hc keybind $Mod-Shift-k     shift up
 hc keybind $Mod-Shift-l     shift right
 
 hc mousebind $Mod-Button1 move
-hc mousebind $Mod-Button2 resize
-hc mousebind $Mod-Button3 zoom
+hc mousebind $Mod-Button2 zoom
+hc mousebind $Mod-Button3 resize
 
 hc set focus_follows_mouse 1
 hc set swap_monitors_to_get_tag 0
@@ -92,14 +92,15 @@ hc rule class=Acroread           tag=3
 hc rule class=Evince             tag=3
 hc rule class=Okular             tag=3
 hc rule class=Vncviewer          tag=5
+hc rule class=rdesktop           tag=5
 hc rule class=Wine               tag=4 fullscreen=on
 hc rule class=URxvt title=work1  tag=8 # tmux session work1
 hc rule class=URxvt title=work2  tag=9 # tmux session work2
 hc rule class=Gxmessage          manage=off
 
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
-#hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
-#hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK)' manage=off
+hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG'                  focus=on
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK)'     manage=off
 
 if [[ $HOSTNAME = eadmaka ]]; then
     hc remove_monitor 1

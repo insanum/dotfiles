@@ -5,12 +5,13 @@ INCLUDE = "vars"
 
 RootMenu = "Pekwm" {
     Entry = "run" { Actions = "ShowCmdDialog" }
-    Entry = "Terminal" { Actions = "Exec $TERM &" }
+    #Entry = "Terminal" { Actions = "Exec $TERM &" }
     Entry = "urxvt" { Actions = "Exec urxvt &" }
 
     Separator {}
 
     Entry = "perforce" { Actions = "Exec p4v &" }
+    Entry = "virtualbox" { Actions = "Exec VirtualBox &" }
 
     Separator {}
 
