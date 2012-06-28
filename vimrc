@@ -4,7 +4,7 @@
 
 let ostype=system('echo -n $OSTYPE')
 
-if filereadable(expand("$HOME/.vim/vundle.git/autoload/vundle.vim"))
+if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   " Vundle/Vim Scripts
   " http://vim-scripts.org/vim/scripts.html
@@ -17,7 +17,7 @@ if filereadable(expand("$HOME/.vim/vundle.git/autoload/vundle.vim"))
   "   % ruby extconf.rb
   "   % make
 
-  set rtp+=$HOME/.vim/vundle.git/ 
+  set rtp+=$HOME/.vim/vundle/
   call vundle#rc()
 
   Bundle "ack.vim"

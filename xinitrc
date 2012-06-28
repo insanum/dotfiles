@@ -80,11 +80,11 @@ xset m 2/1 50
 xsetroot -cursor_name left_ptr
 
 if test $HOSTNAME == "eadmaka" ; then
-  if [ -x $HOME/github/gcalcli/gcalcli ] ; then 
+  if [ -x $HOME/src/gcalcli/gcalcli ] ; then 
     while true
     do
         killall -q gxmessage
-        $HOME/github/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind; sleep 300
+        $HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind; sleep 300
         #/usr/bin/yad --image=gtk-dialog-warning --center --wrap --button=gtk-ok:1 --title="gcalcli" --text="foo"
     done &
   fi
@@ -107,15 +107,14 @@ fi
 #cairo-compmgr &
 
 #exec ratpoison # Lots of good times, but the love affair evaporated...
-#exec musca     # I love you musca but damn you for not supporting xrandr correctly!
-#exec awesome   # awesome... you suck SO bad!
+#exec musca     # I love you, I hate you for not supporting multiple monitors!
+#exec awesome   # Awesome => You suck SO bad!
 #exec xmonad    # xmonad, you rule... but Haskell? Really!?!?
-#exec spectrwm
-#exec wmfs -C ~/.wmfsrc
-exec herbstluftwm --autostart ~/.herbstluftwm
-#exec i3 --force-xinerama -V > ~/.i3/i3log 2>&1
+#exec wmfs -C ~/.wmfsrc # Yikes, bar happy and a bit over-engineered no?
+#exec i3 --force-xinerama -V > ~/.i3/i3log 2>&1 # Meh.
+exec herbstluftwm --autostart ~/.herbstluftwm # :-) :-) :-)
 
-# I seem to always fall back to DWM... :-)
+# I seem to always fall back to DWM...
 
 while true
 do

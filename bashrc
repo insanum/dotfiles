@@ -126,11 +126,24 @@ alias httpdir='python -m SimpleHTTPServer'
 source /etc/bash_completion.d/herbstclient-completion
 alias hc=herbstclient
 _hc_complete() {
-  COMPREPLY=(
-    $(herbstclient -q complete "$((COMP_CWORD-1))" "${COMP_WORDS[@]:1}")
-  )
+    COMPREPLY=(
+        $(herbstclient -q complete "$((COMP_CWORD-1))" "${COMP_WORDS[@]:1}")
+    )
 }
 complete -F _hc_complete hc
+function hcs() # dump current herbstluftwm settings
+{
+    for s in `herbstclient complete 1 set`; do
+        echo "$s = `herbstclient get $s`"
+    done
+}
+function hcl() # dump current herbstluftwm layout for all tags
+{
+    for t in `herbstclient complete 1 use`; do
+        echo "Tag $t:"
+        herbstclient layout $t
+    done
+}
 
 function cmdfu()
 {
@@ -245,9 +258,9 @@ alias h="history"
 alias where="type -a"
 alias which="type -a"
 alias www="w3m http://www.insanum.com"
-alias gcalcli="$HOME/github/gcalcli/gcalcli --config=~/.priv/gcalclirc"
-alias bitter="$HOME/github/bitter/bitter"
-alias nostalgic="$HOME/github/nostalgic/nostalgic"
+alias gcalcli="$HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc"
+alias bitter="$HOME/src/bitter/bitter"
+alias nostalgic="$HOME/src/nostalgic/nostalgic"
 #alias sokoban="/usr/local/bin/vim -c ':SokobanH'"
 #function cedega() { export CEDEGA_UPDATER_PATH=`pwd`; usr/bin/cedega; }
 
