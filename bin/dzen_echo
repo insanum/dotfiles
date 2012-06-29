@@ -16,7 +16,7 @@ OUTPUT=`mktemp`
 
 echo "" > $OUTPUT
 IFS=''
-$* | while read -r L; do
+eval "$*" | while read -r L; do
   echo "  $L" >> $OUTPUT
 done
 unset IFS

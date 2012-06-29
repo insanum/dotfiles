@@ -12,6 +12,7 @@ hc unrule      --all
 hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
+hc keybind $Mod-Shift-o spawn bash -c hclo
 hc keybind $Mod-Return  spawn urxvtc
 hc keybind $Mod-p       spawn dwm_launch prog
 hc keybind $Mod-m       spawn                               \

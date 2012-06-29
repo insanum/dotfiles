@@ -1,0 +1,81 @@
+#!/bin/bash
+
+source /etc/bash_completion.d/herbstclient-completion
+
+# alias hc and add completion for it
+function _hc_complete() {
+    COMPREPLY=(
+        $(herbstclient -q complete "$((COMP_CWORD-1))" "${COMP_WORDS[@]:1}")
+    )
+}
+complete -F _hc_complete hc
+alias hc=herbstclient
+
+function hcs() # dump current herbstluftwm settings
+{
+    for s in `herbstclient complete 1 set`; do
+        echo "$s = `herbstclient get $s`"
+    done
+}
+
+function hc_cur_tag()
+{
+    herbstclient tag_status | /bin/grep -oP "\t#[^\t]*" | cut -b 3
+}
+
+function hcl() # dump current herbstluftwm layout for all tags
+{
+    local TAGC="${1:+`tput setaf 5`}"
+    local WINDOWC="${1:+`tput setaf 3`}"
+    local TITLEC="${1:+`tput setaf 4`}"
+    local CLEAR="${1:+`tput sgr0`}"
+
+    herbstclient complete 1 use |
+    while read t; do
+        TAG="$t: "
+        indent=$(echo -n "$TAG" | sed 's/./ /g')
+        TAG="${TAGC}${TAG}${CLEAR}"
+
+        LAYOUT=`herbstclient layout $t`
+
+        echo -e "${TAG}${LAYOUT}" \
+            | sed "2,\$ s/^/$indent/" \
+            | sed "s/\(0x[0-9a-f]\{1,\}\)/${WINDOWC}\1${CLEAR}/g"
+
+        echo -e "$LAYOUT" | /bin/grep -oE "0x[0-9a-f]{1,}" |
+        while read w; do
+            echo -n "$indent${WINDOWC}$w${CLEAR} - "
+            echo    "${TITLEC}`xdotool getwindowname $w`${CLEAR}"
+        done
+    done
+}
+
+function hcosd()
+{
+    local FGCLR=white
+    local OLCLR=blue
+    local OUTL=2
+    local DELAY=10
+    local FONT='-*-terminus-bold-r-*-*-22-*-*-*-*-*-*-*'
+
+    echo -e "$1"                            \
+        | osd_cat -A left                   \
+                  -i 0                      \
+                  -o 5                      \
+                  -d $DELAY                 \
+                  -O $OUTL                  \
+                  -c $FGCLR                 \
+                  -u $OLCLR                 \
+                  -l `echo -e "$1" | wc -l` \
+                  -f $FONT
+}
+
+function hclo()
+{
+    local TS=`herbstclient get tree_style`
+    herbstclient set tree_style '*| +`--.'
+    local TXT=`hcl`
+    herbstclient set tree_style "$TS"
+    hcosd "$TXT"
+}
+

@@ -123,27 +123,9 @@ alias socks='ssh -ND 9999 edavis@insanum.com'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
 
-source /etc/bash_completion.d/herbstclient-completion
-alias hc=herbstclient
-_hc_complete() {
-    COMPREPLY=(
-        $(herbstclient -q complete "$((COMP_CWORD-1))" "${COMP_WORDS[@]:1}")
-    )
-}
-complete -F _hc_complete hc
-function hcs() # dump current herbstluftwm settings
-{
-    for s in `herbstclient complete 1 set`; do
-        echo "$s = `herbstclient get $s`"
-    done
-}
-function hcl() # dump current herbstluftwm layout for all tags
-{
-    for t in `herbstclient complete 1 use`; do
-        echo "Tag $t:"
-        herbstclient layout $t
-    done
-}
+if [[ -f $HOME/.herbstluftwm_hacks ]]; then
+    source $HOME/.herbstluftwm_hacks
+fi
 
 function cmdfu()
 {
@@ -177,14 +159,6 @@ elif [[ $OSTYPE == linux-gnu ]]; then
   alias t100='tail -100 /var/log/everything.log'
   alias tf='tail -f /var/log/everything.log'
 fi
-
-function aviget()
-{
-  rsync -r -v --progress \
-      edavis@insanum.com:/scratch/torrents/*.avi \
-      edavis@insanum.com:/scratch/torrents/*.srt \
-      .
-}
 
 if [[ $OSTYPE =~ solaris ]]; then
   alias fixpy='export PYTHONPATH=/opt/csw/lib/python/site-packages'
