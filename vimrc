@@ -4,6 +4,10 @@
 
 let ostype=system('echo -n $OSTYPE')
 
+" cd ~/.vim
+" git clone https://github.com/gmarik/vundle.git
+" vim -c ":BundleInstall"
+
 if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   " Vundle/Vim Scripts
