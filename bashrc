@@ -80,9 +80,9 @@ unset MAILCHECK
 unset MAILPATH
 unset MAIL
 
-export HISTSIZE=100
-unset HISTFILE
-unset HISTFILESIZE
+export HISTSIZE=500
+export HISTFILE=~/.bash_history
+export HISTFILESIZE=5000
 export HISTCONTROL=ignoredups
 export HISTTIMEFORMAT='[%F/%T] '
 
