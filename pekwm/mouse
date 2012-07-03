@@ -14,10 +14,10 @@ FrameTitle {
 	ButtonRelease = "Ctrl 4" { Actions = "MoveClientRel 1" }
 	ButtonRelease = "Ctrl 5" { Actions = "MoveClientRel -1" }
 	ButtonRelease = "Ctrl Mod1 1" { Actions = "Focus; Raise True" }
-	DoubleClick = "2" { Actions = "Toggle Shaded" }
-	DoubleClick = "Mod1 2" { Actions = "Toggle Shaded" }
-	DoubleClick = "1" { Actions = "MaxFill True True" }
-	DoubleClick = "Mod1 1" { Actions = "Toggle Maximized True True" }
+	DoubleClick = "1" { Actions = "Toggle Shaded" }
+	DoubleClick = "Mod1 1" { Actions = "Toggle Shaded" }
+	DoubleClick = "2" { Actions = "MaxFill True True" }
+	DoubleClick = "Mod1 2" { Actions = "Toggle Maximized True True" }
 	Motion = "1" { Threshold = "4"; Actions = "Raise; Move" }
 	Motion = "Mod1 1" { Threshold = "4"; Actions = "Raise; Move" }
 	Motion = "Mod4 1" { Threshold = "4"; Actions = "Raise; Move" }
