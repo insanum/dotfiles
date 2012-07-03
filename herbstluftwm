@@ -14,6 +14,7 @@ hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
 hc keybind $Mod-Shift-o spawn bash -c hclo
+hc keybind $Mod-Shift-s spawn bash -c hc_smplayer
 hc keybind $Mod-Return  spawn urxvtc
 hc keybind $Mod-p       spawn dwm_launch prog
 hc keybind $Mod-Shift-p spawn dwm_launch smplayer
