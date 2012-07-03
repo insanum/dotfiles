@@ -80,14 +80,18 @@ xset m 2/1 50
 xsetroot -cursor_name left_ptr
 
 if test $HOSTNAME == "eadmaka" ; then
+
+  ssh -f -N -D 9999 edavis@insanum.com # stupid corporate firewalls...
+
   if [ -x $HOME/src/gcalcli/gcalcli ] ; then 
     while true
     do
         killall -q gxmessage
-        $HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind; sleep 300
-        #/usr/bin/yad --image=gtk-dialog-warning --center --wrap --button=gtk-ok:1 --title="gcalcli" --text="foo"
+        $HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind
+        sleep 300
     done &
   fi
+
 fi
 
 #conky -c $HOME/.conkyrc &
