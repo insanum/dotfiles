@@ -44,9 +44,9 @@ xmodmap -e "keycode 108 = Super_L"  # reassign Alt_R to Super_L
 xmodmap -e "remove mod1 = Super_L"  # make sure X keeps it out of the mod1 group
 
 if [[ $HOSTNAME = eadmaka ]]; then
-    feh --bg-center $HOME/Dropbox/kole_evo_1920x1080.png
+    feh --bg-tile $HOME/Dropbox/kole_evo_1920x1080.png
 else
-    feh --bg-center $HOME/Dropbox/kole_evo_1680x1050.png
+    feh --bg-tile $HOME/Dropbox/kole_evo_1680x1050.png
 fi
 
 #$HOME/bin/mpc_osd_py &
@@ -66,7 +66,9 @@ xsetroot -cursor_name left_ptr
 
 [[ -x /usr/bin/dropbox ]] && dropboxd &
 
-if test $HOSTNAME == "eadmaka" ; then
+[[ -x /usr/bin/wmname ]] && wmname LG3D
+
+if [[ $HOSTNAME = eadmaka ]]; then
 
   ssh -f -N -D 9999 edavis@insanum.com # stupid corporate firewalls...
 

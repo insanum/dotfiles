@@ -126,3 +126,5 @@ elif [[ $HOSTNAME = jackshrimp ]]; then
     hc add_monitor 1080x1920+1680+0 9
 fi
 
+[[ -x $HOME/.herbstluftwm_panel ]] && $HOME/.herbstluftwm_panel &
+
