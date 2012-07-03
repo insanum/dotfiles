@@ -61,7 +61,7 @@ function hcosd()
     echo -e "$1"                            \
         | osd_cat -A left                   \
                   -i 0                      \
-                  -o 5                      \
+                  -o 30                     \
                   -d $DELAY                 \
                   -O $OUTL                  \
                   -c $FGCLR                 \

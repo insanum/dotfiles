@@ -3,6 +3,7 @@
 function hc() { herbstclient "$@"; }
 
 hc emit_hook reload
+hc set default_frame_layout 1 # horizontal
 
 Mod=Mod4
 hc keyunbind   --all
@@ -19,6 +20,9 @@ hc keybind $Mod-m       spawn                               \
     /usr/share/doc/herbstluftwm/examples/herbstcommander.sh \
         -fn xft:terminus:bold:size=14                       \
         -nb \#000 -nf \#FA0 -sb \#000 -sf \#0F0
+
+hc keybind $Mod-Up   spawn amixer -q sset Master 1+
+hc keybind $Mod-Down spawn amixer -q sset Master 1-
 
 TAG_NAMES=( {1..9} )
 TAG_KEYS=( {1..9} 0 )
@@ -78,7 +82,7 @@ hc set focus_follows_mouse      1
 hc set gapless_grid             0
 hc set swap_monitors_to_get_tag 0
 hc set smart_frame_surroundings 1
-hc set smart_window_borders     1
+hc set smart_window_borders     0
 #hc set tree_style               "*| +`--."
 #hc set tree_style               "X|:#+*-."
 hc set tree_style               "╾│ ├└╼─┐"
@@ -89,7 +93,7 @@ hc set frame_bg_normal_color      '#000'
 hc set frame_border_width         2
 hc set frame_border_active_color  '#FA0'
 hc set frame_border_normal_color  '#000'
-hc set window_border_width        2
+hc set window_border_width        1
 hc set window_border_active_color '#0F0'
 hc set window_border_normal_color '#000'
 
@@ -107,8 +111,8 @@ hc rule class=URxvt title=work1  tag=8 # tmux session work1
 hc rule class=URxvt title=work2  tag=9 # tmux session work2
 hc rule class=Gxmessage          manage=off
 
-#hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
-hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' manage=off
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
+#hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' manage=off
 #hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG'                  focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK)'     manage=off
 
