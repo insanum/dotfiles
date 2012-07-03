@@ -1,0 +1,252 @@
+#!/bin/bash
+
+# this dzen panel script is based on the one provided with herbstluftwm
+# ... but this one has been chomping on steroid candy :-)
+
+# disable path name expansion so globs not expanded in "cmd=( $line )"
+set -f
+
+monitor=${1:-0}
+geometry=( $(herbstclient monitor_rect "$monitor") )
+if [[ -z "$geometry" ]] ;then
+    echo "ERROR: Invalid monitor $monitor"
+    exit 1
+fi
+
+# geometry has the format: WxH+X+Y
+x=${geometry[0]}
+y=${geometry[1]}
+pw=${geometry[2]} # panel width
+ph=22             # panel height
+bw=60             # dzen gdbar width
+bh=$((ph / 2))    # dzen gdbar height
+font="-*-terminus-bold-r-*-*-20-*-*-*-*-*-iso10646-*"
+bgcolor="#000"
+selbg="#0F0"
+selfg="#000"
+
+NET_SLEEP=1
+NETI=eth0
+[[ $HOSTNAME = "eadmaka" ]] && NETI=eth1
+[[ $HOSTNAME = "tiburon" ]] && NETI=wlan0
+IFDATA=(${NETI} 0 0 0 0) # array stores previous byte counts and rates
+
+function uniq_linebuffered()
+{
+    awk '$0 != l { print ; l=$0 ; fflush(); }' "$@"
+}
+
+function linebuffered_with_cpu_prefix()
+{
+    awk '{ printf "cpu %s\n",$0; fflush(); }' "$@"
+}
+
+function network_bandwidth()
+{
+    # get new rx/tx counts
+    RXB=`cat /sys/class/net/${1}/statistics/rx_bytes`
+    TXB=`cat /sys/class/net/${1}/statistics/tx_bytes`
+
+    # calculate the rates, format the values to four digit fields
+    RXR=$(((RXB - $2) / 1024 / $6))
+    TXR=$(((TXB - $3) / 1024 / $6))
+
+    echo "$1 $RXB $TXB $RXR $TXR"
+}
+
+function memory_usage()
+{
+    awk '/MemTotal:/  {mtotal=$2};    # total usable ram
+         /MemFree:/   {mfree=$2};     # total ram that is free
+         /Active:/    {mactive=$2};   # total ram that is active/used
+         /Inactive:/  {minactive=$2}; # total ram that is inactive/unused
+         /^Cached:/   {mcached=$2};   # total ram used for caching
+         /SwapTotal:/ {swtotal=$2};   # total usable swap
+         /SwapFree:/  {swfree=$2};    # total swap that is free
+         END {
+             printf("mem %d %d %d %d %d\n",
+                    (100 - ((mfree     / mtotal)  * 100)),  # mem used
+                    (       (mactive   / mtotal)  * 100),   # mem active
+                    (       (minactive / mtotal)  * 100),   # mem inactive
+                    (       (mcached   / mtotal)  * 100),   # mem cached
+                    (100 - ((swfree    / swtotal) * 100))); # swap used
+         }' /proc/meminfo
+}
+
+function disk_usage()
+{
+    echo "disk `df / | tail -1 | awk '{ print $5; }' | cut -d% -f1`"
+}
+
+herbstclient pad $monitor $ph
+
+{
+    # Gatherers that spew events...
+    # -> each event line formatted as "<tag> <data>\n"
+
+    # date
+    while true ; do
+        date +'date ^fg(#efefef)%H:%M ^fg(#909090)%m-^fg(#efefef)%d'
+        sleep 1 || break
+    done > >(uniq_linebuffered) &
+    date_pid=$!
+
+    # cpu
+    gcpubar -s o                                              \
+            -h $bh                                            \
+            -w $bw                                            \
+            -fg darkorange                                    \
+            -bg darkgreen > >(linebuffered_with_cpu_prefix) &
+    cpu_pid=$!
+
+    # network
+    while true ; do
+        IFDATA=( `network_bandwidth ${IFDATA[@]} $NET_SLEEP` )
+        echo "net ${IFDATA[0]} ${IFDATA[3]} ${IFDATA[4]}" 
+        sleep $NET_SLEEP || break
+    done > >(uniq_linebuffered) &
+    network_pid=$!
+
+    # memory
+    while true ; do
+        memory_usage
+        sleep 5 || break
+    done > >(uniq_linebuffered) &
+    network_pid=$!
+
+    # disk
+    while true ; do
+        disk_usage
+        sleep 60 || break
+    done > >(uniq_linebuffered) &
+    network_pid=$!
+
+    herbstclient --idle
+
+    kill $date_pid
+    kill $cpu_pid
+    kill $network_pid
+} \
+2> /dev/null | \
+{
+    TAGS=( $(herbstclient tag_status $monitor) )
+    visible=true
+    date=""
+    cpu=""
+    net=""
+    mem=""
+    disk=""
+    windowtitle=""
+    separator="^bg()^fg(magenta) .:. "
+
+    while true ; do
+
+        echo -n "^fg(cyan)^i(/usr/share/icons/stlarch_icons/arch1.xbm) "
+
+        echo -n "^bg()^fg(green)^i(/usr/share/icons/stlarch_icons/cpu13.xbm) ${cpu} "
+
+        echo -n "^fg(yellow)^i(/usr/share/icons/stlarch_icons/mem1.xbm) "
+        echo -n "`echo ${mem[0]} | gdbar -s o -h $bh -w $bw -fg darkcyan -bg darkgreen` "
+        echo -n "`echo ${mem[1]} | gdbar -s o -h $bh -w $bw -fg darkred -bg darkgreen` "
+        echo -n "`echo ${mem[2]} | gdbar -s o -h $bh -w $bw -fg darkgreen -bg darkgreen` "
+        echo -n "`echo ${mem[3]} | gdbar -s o -h $bh -w $bw -fg darkmagenta -bg darkgreen` "
+        echo -n "`echo ${mem[4]} | gdbar -s o -h $bh -w $bw -fg red -bg darkgreen` "
+
+        echo -n "^fg(orange)^i(/usr/share/icons/stlarch_icons/file1.xbm) "
+        echo -n "`echo $disk | gdbar -s o -h $bh -w $bw -fg brown -bg darkgreen` "
+
+        echo -n "^fg(magenta)^i(/usr/share/icons/stlarch_icons/downarrow1.xbm) "
+        echo -n "^fg(darkmagenta)${net[1]} kB/s "
+        echo -n "^fg(magenta)^i(/usr/share/icons/stlarch_icons/uparrow1.xbm) "
+        echo -n "^fg(darkmagenta)${net[2]} kB/s "
+
+        # get herbstluftwm tag status
+
+        tagtext="${separator}"
+
+        for i in "${TAGS[@]}" ; do
+            tagit=true
+            case ${i:0:1} in
+                ':')     tagtext+="^bg()^fg(#ffffff)"        ;;
+                '#'|'%') tagtext+="^bg($selbg)^fg($selfg)"   ;;
+                '+'|'-') tagtext+="^bg($selfg)^fg($selbg)"   ;;
+                '!')     tagtext+="^bg(#FF0675)^fg(#141414)" ;;
+                *)       tagit=false                         ;;
+            esac
+            if $tagit; then
+                tagtext+="^ca(1, herbstclient focus_monitor $monitor && herbstclient use ${i:1}) ${i:1} ^ca()"
+            fi
+        done
+
+        tagtext+="${separator}"
+
+        # compute width of right aligned text for absolute positioning
+        # escape '^' in window title for dzen2
+        # nasty sed regex extracts text (removes '^^' and '^xx(xx)')
+        right="^bg()^fg()${windowtitle//^/^^}${tagtext}^bg()${date}${separator}"
+        right_text=$(echo -n "$right" | sed -r 's.\^(\^|[^(^]*\([^)^]*\))..g')
+
+        width=$(textwidth "$font" "$right_text")
+
+        echo -n "^pa($((pw - width)))${right}"
+        echo # eol
+
+        # wait for and process the next event
+
+        read line || break
+        #echo "-> $line" >> /tmp/foo # debug
+
+        cmd=( $line )
+
+        case "${cmd[0]}" in
+            tag*)
+                TAGS=( $(herbstclient tag_status $monitor) )
+                ;;
+            date)
+                date="${cmd[@]:1}"
+                ;;
+            cpu)
+                cpu="${cmd[@]:1}"
+                ;;
+            net)
+                net=( ${cmd[@]:1} )
+                ;;
+            mem)
+                mem=( ${cmd[@]:1} )
+                ;;
+            disk)
+                disk="${cmd[@]:1}"
+                ;;
+            quit_panel)
+                exit
+                ;;
+            togglehidepanel)
+                echo "^togglehide()"
+                if $visible; then
+                    visible=false
+                    herbstclient pad $monitor 0
+                else
+                    visible=true
+                    herbstclient pad $monitor $ph
+                fi
+                ;;
+            reload)
+                exit
+                ;;
+            focus_changed|window_title_changed)
+                windowtitle="${cmd[@]:2}"
+                ;;
+        esac
+    done
+} \
+2> /dev/null | \
+dzen2 -x  $x         \
+      -y  $y         \
+      -w  $pw        \
+      -h  $ph        \
+      -fn "$font"    \
+      -ta l          \
+      -bg "$bgcolor" \
+      -fg "#efefef"  \
+      -e  "Button3"
+
