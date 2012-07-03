@@ -24,6 +24,7 @@ font="-*-terminus-bold-r-*-*-20-*-*-*-*-*-iso10646-*"
 bgcolor="#000"
 selbg="#0F0"
 selfg="#000"
+ICONS=/usr/share/icons/stlarch_icons
 
 NET_SLEEP=1
 NETI=eth0
@@ -112,20 +113,22 @@ herbstclient pad $monitor $ph
         memory_usage
         sleep 5 || break
     done > >(uniq_linebuffered) &
-    network_pid=$!
+    memory_pid=$!
 
     # disk
     while true ; do
         disk_usage
         sleep 60 || break
     done > >(uniq_linebuffered) &
-    network_pid=$!
+    disk_pid=$!
 
     herbstclient --idle
 
     kill $date_pid
     kill $cpu_pid
     kill $network_pid
+    kill $memory_pid
+    kill $disk_pid
 } \
 2> /dev/null | \
 {
@@ -141,23 +144,23 @@ herbstclient pad $monitor $ph
 
     while true ; do
 
-        echo -n "^fg(cyan)^i(/usr/share/icons/stlarch_icons/arch1.xbm) "
+        echo -n "^fg(cyan)^i(${ICONS}/arch1.xbm) "
 
-        echo -n "^bg()^fg(green)^i(/usr/share/icons/stlarch_icons/cpu13.xbm) ${cpu} "
+        echo -n "^bg()^fg(green)^i(${ICONS}/cpu13.xbm) ${cpu} "
 
-        echo -n "^fg(yellow)^i(/usr/share/icons/stlarch_icons/mem1.xbm) "
+        echo -n "^fg(yellow)^i(${ICONS}/mem1.xbm) "
         echo -n "`echo ${mem[0]} | gdbar -s o -h $bh -w $bw -fg darkcyan -bg darkgreen` "
         echo -n "`echo ${mem[1]} | gdbar -s o -h $bh -w $bw -fg darkred -bg darkgreen` "
         echo -n "`echo ${mem[2]} | gdbar -s o -h $bh -w $bw -fg darkgreen -bg darkgreen` "
         echo -n "`echo ${mem[3]} | gdbar -s o -h $bh -w $bw -fg darkmagenta -bg darkgreen` "
         echo -n "`echo ${mem[4]} | gdbar -s o -h $bh -w $bw -fg red -bg darkgreen` "
 
-        echo -n "^fg(orange)^i(/usr/share/icons/stlarch_icons/file1.xbm) "
+        echo -n "^fg(orange)^i(${ICONS}/file1.xbm) "
         echo -n "`echo $disk | gdbar -s o -h $bh -w $bw -fg brown -bg darkgreen` "
 
-        echo -n "^fg(magenta)^i(/usr/share/icons/stlarch_icons/downarrow1.xbm) "
+        echo -n "^fg(magenta)^i(${ICONS}/downarrow1.xbm) "
         echo -n "^fg(darkmagenta)${net[1]} kB/s "
-        echo -n "^fg(magenta)^i(/usr/share/icons/stlarch_icons/uparrow1.xbm) "
+        echo -n "^fg(magenta)^i(${ICONS}/uparrow1.xbm) "
         echo -n "^fg(darkmagenta)${net[2]} kB/s "
 
         # get herbstluftwm tag status
