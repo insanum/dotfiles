@@ -16,6 +16,7 @@ hc keybind $Mod-Shift-c close
 hc keybind $Mod-Shift-o spawn bash -c hclo
 hc keybind $Mod-Return  spawn urxvtc
 hc keybind $Mod-p       spawn dwm_launch prog
+hc keybind $Mod-Shift-p spawn dwm_launch smplayer
 hc keybind $Mod-m       spawn                               \
     /usr/share/doc/herbstluftwm/examples/herbstcommander.sh \
         -fn xft:terminus:bold:size=14                       \
@@ -42,13 +43,13 @@ hc keybind $Mod-comma        use_index  -1 --skip-visible
 hc keybind $Mod-Shift-period move_index +1 --skip-visible
 hc keybind $Mod-Shift-comma  move_index -1 --skip-visible
 
-hc keybind $Mod-r       remove
-hc keybind $Mod-space   cycle_layout 1
-hc keybind $Mod-u       split vertical 0.5
-hc keybind $Mod-o       split horizontal 0.5
-hc keybind $Mod-s       floating toggle
-hc keybind $Mod-f       fullscreen toggle
-hc keybind $Mod-Shift-p pseudotile toggle
+hc keybind $Mod-r         remove
+hc keybind $Mod-space     cycle_layout 1
+hc keybind $Mod-u         split vertical 0.5
+hc keybind $Mod-o         split horizontal 0.5
+hc keybind $Mod-s         floating toggle
+hc keybind $Mod-f         fullscreen toggle
+hc keybind $Mod-Control-p pseudotile toggle
 
 RESIZESTEP=0.02
 hc keybind $Mod-Control-h resize left  +$RESIZESTEP
