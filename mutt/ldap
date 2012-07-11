@@ -23,7 +23,7 @@ use vars qw { $ldapserver $domain $username $password $basedn };
 #$username = "myuser";
 #$password = "mypassword";
 #$basedn = "ou=companyxy,dc=companyxy,dc=tld";
-$ldapserver = "ldap1.broadcom.com";
+$ldapserver = "ldap.broadcom.com";
 $domain = "BROADCOM";
 #$username = "edavis";
 #$password = "mypassword";

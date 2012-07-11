@@ -80,8 +80,9 @@ set mail_check=10
 set timeout=20
 #set ssl_verify_host=no
 
-auto_view text/plain text/html application/x-tar-gz application/x-gtar application/zip application/msword
-alternative_order text/html text/plain
+#auto_view text/plain text/html application/x-tar-gz application/x-gtar application/zip application/msword
+auto_view text/html
+alternative_order text/plain text/enriched text/html
  
 # %?<sequence_char>?<optional_string>?
 # 
@@ -372,9 +373,9 @@ macro index \Cy "<limit>~y .*\n" "View All Labeled Messages"
 #<edit><sync-mailbox><next-undeleted>\
 #<enter-command>set editor=\"$my_default_editor\"<enter><save-message>=ACTION" "Add Label and save to ACTION"
 
-# --------------------
-# --- mu searching ---
-# --------------------
+# --------------------------------------------------------
+# --- mu searching (non-IMAP, offlinemap to ~/Maildir) ---
+# --------------------------------------------------------
 
 macro index <F9>  "<sync-mailbox><shell-escape>offlineimap -c ~/.priv/offlineimaprc -u TTY.TTYUI<enter>" "offlineimap"
 macro index <F10> "<shell-escape>mu index<enter>" "mu index"
