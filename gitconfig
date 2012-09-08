@@ -15,3 +15,5 @@
 [alias]
 	g = grep --break --heading --line-number
 	d = diff --patch-with-stat -U10
+	tree = log --graph --decorate --pretty=oneline
+	diffe = difftool -x vimdiff

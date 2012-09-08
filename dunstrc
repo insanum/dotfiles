@@ -15,16 +15,6 @@
     # Show how many messages are currently hidden (because of geometry)
     indicate_hidden = yes
 
-    # keybindings to remove notification
-    # available modifiers are 'ctrl', 'mod1' (the alt-key), 'mod2', 'mod3'
-    # and 'mod4' (windows-key)
-    modifier = ctrl
-
-    # use xev to find the names for keys
-    key = space
-    # key to redisplay last message(s)
-    history_key = grave
-
     # alignment of message text.
     # Possible values are "left", "center" and "right"
     alignment = left
@@ -32,6 +22,7 @@
     # show age of message if message is older than show_age_threshold seconds.
     # set to -1 to disable
     show_age_threshold = 60;
+
 
     # the geometry of the window
     # geometry [{width}]x{height}][+/-{x}+/-{y}]
@@ -42,7 +33,7 @@
     # the window expands to the longest message displayed.
     # A positive x is measured from the left, a negative from the
     # right side of the screen.  Y is measured from the top and down respectevly.
-    geometry = "0x16-30+40"
+    geometry = "0x16-30+100"
 
     # Don't remove messages, if the user is idle (no mouse or keyboard input)
     # for longer than idle_threshold seconds.
@@ -52,10 +43,37 @@
     # Which monitor should the notifications be displayed one
     monitor = 0
 
+    # Display notification on focused monitor. Possible modes are:
+    # mouse: follow mouse pointer
+    # keyboard: follow window with keyboard focus
+    # none: don't follow anything
+    #
+    # "keyboard" needs a windowmanager that exports the _NET_ACTIVE_WINDOW property.
+    # This should be the case for almost all modern windowmanagers.
+    #
+    # If this option is set to mouse or keyboard, the monitor option will be
+    # ignored.
+    follow = none
+
     # should a notification popped up from history be sticky or
     # timeout as if it would normally down
     sticky_history = yes
 
+[shortcuts]
+    # shortcuts are specified as [modifier+][modifier+]...key
+    # available modifiers are 'ctrl', 'mod1' (the alt-key), 'mod2', 'mod3'
+    # and 'mod4' (windows-key)
+    # xev might be helpful to find names for keys
+
+    # close notification
+    close = ctrl+space
+
+    # close all notifications
+    close_all = ctrl+shift+space
+
+    # redisplay last message(s)
+    # On the US keyboard layout 'grave' is normally above TAB and left of '1'.
+    history = ctrl+grave
 
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.

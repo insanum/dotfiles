@@ -73,6 +73,8 @@ export TEMP=/tmp
 export TMPDIR=/tmp
 #export MIBS=all
 #export MIBDIRS=/usr/local/share/snmp/mibs
+export TASKRC=$HOME/Dropbox/task/taskrc
+export TASKDATA=$HOME/Dropbox/task/tasks
 
 TIMEFORMAT="%R real %U user %S system (%%%P cpu)"
 
@@ -227,6 +229,7 @@ fi
 #alias vi=/usr/local/bin/vim
 #alias vim=/usr/local/bin/vim
 alias vi=vim
+alias vit="vi -c ':CommandT'"
 alias bashrc="source $HOME/.bashrc"
 alias h="history"
 alias where="type -a"
@@ -272,7 +275,8 @@ alias nostalgic="$HOME/src/nostalgic/nostalgic"
 #    fi
 #}
 
-function rdesk() { rdesktop -g 80% -K -0 -u $2 -p $3 $1; }
+#function rdesk() { rdesktop -g 80% -K -0 -u $2 -p $3 $1; }
+function rdesk() { rdesktop -g 80% -K -0 $1; }
 function findsuid() { find $1 -xdev -type f \( -perm -u=s -o -perm -g=s \) -exec ls -l {} \;; }
 
 alias mypydoc="epydoc --html --no-frames --show-imports --graph=all -o mypydoc __builtin__ os sys commands string shlex getopt datetime urllib urllib2 httplib urlparse time re atom dateutil pytz gdata"

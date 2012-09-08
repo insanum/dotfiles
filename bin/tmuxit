@@ -4,7 +4,7 @@ LTRX=10.13.106.70
 
 if [ -z $1 ]; then
     CMD=`basename $0`
-    echo "Usage: $CMD [-h] < sunny | amd | intel | m3k | t5220t | t5220m | t5220b | sparky >"
+    echo "Usage: $CMD [-h] < all | sunny | amd | intel | m3k | t5220t | t5220m | t5220b | sparky >"
     exit
 fi
 
@@ -15,28 +15,49 @@ fi
 
 function tmuxopen()
 {
-    tmux new-window -n $1 "$2" \; split-window $HORIZ
+    if [[ $1 -ne 0 ]]; then
+        TGT="-t $1"
+    fi
+    tmux new-window $TGT -n $2 "$3" \; split-window $HORIZ
 }
 
-if [ $1 = sunny ]; then
-    tmuxopen $1 "telnet $LTRX 10001"
-elif [ $1 = amd ]; then
-    tmuxopen $1 "telnet $LTRX 10002"
-elif [ $1 = intel ]; then
-    tmuxopen $1 "telnet $LTRX 10003"
-elif [ $1 = t4 ]; then
-    tmuxopen $1 "ssh root@10.13.106.61"
-elif [ $1 = m3k ]; then
-    tmuxopen $1 "ssh edavis@10.13.106.60"
-elif [ $1 = t5220t ]; then
-    tmuxopen $1 "ssh root@10.13.106.69"
-elif [ $1 = t5220m ]; then
-    tmuxopen $1 "ssh root@10.13.106.68"
-elif [ $1 = t5220b ]; then
-    tmuxopen $1 "ssh root@10.13.106.67"
-elif [ $1 = sparky ]; then
-    tmuxopen $1 "ssh root@10.13.106.66"
-elif [ $1 = foo ]; then
-    tmuxopen $1 "cu --speed 115200 -l /dev/ttyUSB0"
+if [[ $1 = all || $1 = t4 ]]; then
+    tmuxopen 3 t4 "ssh root@10.13.106.61"
+fi
+
+if [[ $1 = all || $1 = m3k ]]; then
+    tmuxopen 4 m3k "ssh edavis@10.13.106.60"
+fi
+
+if [[ $1 = all || $1 = t5220t ]]; then
+    tmuxopen 5 t5220t "ssh root@10.13.106.69"
+fi
+
+if [[ $1 = all || $1 = sparky ]]; then
+    tmuxopen 6 sparky "ssh root@10.13.106.66"
+fi
+
+if [[ $1 = all || $1 = sunny ]]; then
+    tmuxopen 7 sunny "telnet $LTRX 10001"
+fi
+
+if [[ $1 = all || $1 = intel ]]; then
+    tmuxopen 8 intel "telnet $LTRX 10003"
+fi
+
+if [[ $1 = all || $1 = amd ]]; then
+    tmuxopen 9 amd "telnet $LTRX 10002"
+fi
+
+if [[ $1 = t5220m ]]; then
+    tmuxopen 0 t5220m "ssh root@10.13.106.68"
+fi
+
+if [[ $1 = t5220b ]]; then
+    tmuxopen 0 t5220b "ssh root@10.13.106.67"
+fi
+
+if [[ $1 = foo ]]; then
+    tmuxopen 0 foo "cu --speed 115200 -l /dev/ttyUSB0"
 fi
 

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source /etc/bash_completion.d/herbstclient-completion
+if [[ -f /etc/bash_completion.d/herbstclient-completion ]]; then
+    source /etc/bash_completion.d/herbstclient-completion
+fi
 
 # alias hc and add completion for it
 function _hc_complete() {
@@ -93,13 +95,13 @@ function hc_smplayer()
     herbstclient focus down
 
     herbstclient spawn smplayer
-    sleep 1
+    sleep 2
 
     herbstclient split horizontal 0.3
     herbstclient focus right
 
     herbstclient spawn urxvtc
-    sleep 1
+    sleep 2
 
     herbstclient focus up
     smplayer -send-action open_file

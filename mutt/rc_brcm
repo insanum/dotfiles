@@ -73,14 +73,14 @@ save-hook '.*' =Archives
 
 folder-hook . 'macro index ,l "<limit>all<enter>" "Remove Filter"'
 
-folder-hook '!' 'macro index ,qm "<limit>~f lan-clearquest ~b edavis<enter>=" "Clearquest: My Name In Body"'
-folder-hook '!' 'macro index ,qf "<limit>~f lan-clearquest ~b Software:.*FTSK<enter>=" "Clearquest: FTSK"'
-folder-hook '!' 'macro index ,qi "<limit>~f lan-clearquest ~b Software:.*iSCSI.*HBA.*-.*Windows<enter>=" "Clearquest: iSCSI Windows"'
-folder-hook '!' 'macro index ,qh "<limit>~f lan-clearquest (~t Chip-List | ~t Board-List) !~b edavis<enter>=" "Clearquest: Hardware"'
-folder-hook '!' 'macro index ,qs "<limit>~f lan-clearquest ~t SW-List !~b edavis<enter>=" "Clearquest: Software"'
-folder-hook '!' 'macro index ,p  "<limit>~s ^Perforce.change<enter>=" "Perforce commits"'
+#folder-hook '!' 'macro index ,qm "<limit>~f lan-clearquest ~b edavis<enter>=" "Clearquest: My Name In Body"'
+#folder-hook '!' 'macro index ,qf "<limit>~f lan-clearquest ~b Software:.*FTSK<enter>=" "Clearquest: FTSK"'
+#folder-hook '!' 'macro index ,qi "<limit>~f lan-clearquest ~b Software:.*iSCSI.*HBA.*-.*Windows<enter>=" "Clearquest: iSCSI Windows"'
+#folder-hook '!' 'macro index ,qh "<limit>~f lan-clearquest (~t Chip-List | ~t Board-List) !~b edavis<enter>=" "Clearquest: Hardware"'
+#folder-hook '!' 'macro index ,qs "<limit>~f lan-clearquest ~t SW-List !~b edavis<enter>=" "Clearquest: Software"'
+#folder-hook '!' 'macro index ,p  "<limit>~s ^Perforce.change<enter>=" "Perforce commits"'
 
-folder-hook '!' 'macro index ,yb "<limit>~y bug<enter>=" "[ACTION: Bugs]"'
-folder-hook '!' 'macro index ,yt "<limit>~y todo<enter>=" "[ACTION: Todo]"'
-folder-hook '!' 'macro index ,yr "<limit>~y reply<enter>=" "[ACTION: Reply]"'
+#folder-hook '!' 'macro index ,yb "<limit>~y bug<enter>=" "[ACTION: Bugs]"'
+#folder-hook '!' 'macro index ,yt "<limit>~y todo<enter>=" "[ACTION: Todo]"'
+#folder-hook '!' 'macro index ,yr "<limit>~y reply<enter>=" "[ACTION: Reply]"'
 

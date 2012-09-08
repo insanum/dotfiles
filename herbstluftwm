@@ -18,6 +18,8 @@ hc keybind $Mod-Shift-s spawn bash -c hc_smplayer
 hc keybind $Mod-Return  spawn urxvtc
 hc keybind $Mod-p       spawn dwm_launch prog
 hc keybind $Mod-Shift-p spawn dwm_launch smplayer
+hc keybind $Mod-q       spawn smplayer -send-action stop
+hc keybind $Mod-a       spawn smplayer -send-action play
 hc keybind $Mod-m       spawn                               \
     /usr/share/doc/herbstluftwm/examples/herbstcommander.sh \
         -fn xft:terminus:bold:size=14                       \
@@ -99,19 +101,23 @@ hc set window_border_width        1
 hc set window_border_active_color '#0F0'
 hc set window_border_normal_color '#000'
 
-hc rule                          focus=off # default do not focus new clients
-hc rule class=Chromium           tag=1
-hc rule class=Firefox            tag=1
-hc rule class=Thunderbird        tag=2
-hc rule class=Acroread           tag=3
-hc rule class=Evince             tag=3
-hc rule class=Okular             tag=3
-hc rule class=Vncviewer          tag=5
-hc rule class=rdesktop           tag=5
-hc rule class=Wine               tag=4 fullscreen=on
-hc rule class=URxvt title=work1  tag=8 # tmux session work1
-hc rule class=URxvt title=work2  tag=9 # tmux session work2
-hc rule class=Gxmessage          manage=off
+hc rule                           focus=off # default do not focus new clients
+hc rule class=Chromium            tag=1
+hc rule class=Chrome              tag=1
+hc rule class=Firefox             tag=1
+hc rule class=Thunderbird         tag=2
+hc rule class=Thunderbird-nightly tag=2
+hc rule class=Acroread            tag=3
+hc rule class=Evince              tag=3
+hc rule class=Okular              tag=3
+hc rule class=Vncviewer           tag=5
+hc rule class=NXAgent             tag=5
+hc rule class=Opennx              tag=5
+hc rule class=rdesktop            tag=6
+hc rule class=Wine                tag=4 fullscreen=on
+hc rule class=URxvt title=work1   tag=8 # tmux session work1
+hc rule class=URxvt title=work2   tag=9 # tmux session work2
+hc rule class=Gxmessage           manage=off
 
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
 #hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' manage=off

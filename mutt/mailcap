@@ -15,13 +15,12 @@ application/pdf; epdfview %s
 #text/plain; less -X; copiousoutput
 text/plain; cat; copiousoutput
 
-#text/html; /folk/edavis/usr/netscape/netscape -remote 'openURL(%s)'; print="a2ps --medium=Letter -Pb2-2145c"
+#text/html; vimprobable2 %s; test=test -n "$DISPLAY"; copiousoutput; needsterminal
+text/html; bash -c "herbstclient split vertical 0.5 \; herbstclient focus down \; vimprobable2 %s \; herbstclient remove"; test=test -n "$DISPLAY"; needsterminal
 #text/html; links -dump -html-numbered-links 1 %s; copiousoutput; nametemplate=%s.html
-#text/html; w3m -dump -T text/html %s; copiousoutput; nametemplate=%s.html
-#text/html; elinks -dump %s; copiousoutput; nametemplate=%s.html; print = surf %s
-#text/html; pandoc -f html -t markdown %s; copiousoutput
-text/html; vimprobable2 %s; test=test -n "$DISPLAY"; needsterminal
-text/html; w3m -dump -I %{charset} -cols 70 -T text/html %s; copiousoutput
+#text/html; pandoc -f html -t plain %s; copiousoutput
+#text/html; elinks -dump -dump-color-mode 3 -dump-charset %{charset} -force-html %s; copiousoutput
+text/html; w3m -dump -I %{charset} -cols 72 -S -T text/html %s; copiousoutput
 
 image/*; feh -. -B white %s
 

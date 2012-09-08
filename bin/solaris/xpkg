@@ -55,8 +55,8 @@ if [ $1 = "add" ]; then
 
   PKG=BRCM${2}-`solver`-`uname -p`-$MAJ.$MIN.$REV$DBG.pkg
 
-  expect -c "
-spawn $SUDO pkgadd -d pkg/${PKG}
+  $SUDO expect -c "
+spawn pkgadd -d pkg/${PKG}
 expect \"Select package(s) you wish to process\" { send \"\r\"; exp_continue }            \
        \"Do you want to install these conflicting files\" { send \"y\r\"; exp_continue }  \
        \"Do you want to continue with the installation of\" {send \"y\r\"; exp_continue }
@@ -68,8 +68,8 @@ elif [ $1 = "rem" ]; then
     Usage
   fi
 
-  expect -c "
-spawn $SUDO pkgrm BRCM${2}
+  $SUDO expect -c "
+spawn pkgrm BRCM${2}
 expect \"Do you want to remove this package\" { send \"y\r\"; exp_continue }                       \
        \"Do you want to continue with the removal of this package\" { send \"y\r\"; exp_continue }
 "

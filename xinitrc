@@ -32,7 +32,7 @@ if [[ $HOSTNAME = eadvb ]]; then
     #/usr/bin/vmware-user &
     /usr/bin/VBoxClient --clipboard
     /usr/bin/VBoxClient --autoresize
-    xmodmap -e "keycode 94 = Alt_L"     # for my kensington keyboard
+    #xmodmap -e "keycode 94 = Alt_L"     # for my kensington keyboard
 fi
 
 xhost +localhost

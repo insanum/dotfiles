@@ -16,8 +16,9 @@ RootMenu = "Pekwm" {
     Separator {}
 
     Entry = "thunderbird" { Actions = "Exec thunderbird &" }
-    Entry = "claws-mail" { Actions = "Exec claws-mail &" }
+    Entry = "thunderbird-nightly" { Actions = "Exec thunderbird-nightly &" }
     Entry = "chromium" { Actions = "Exec chromium &" }
+    Entry = "chromium-dev" { Actions = "Exec chromium-browser &" }
     Entry = "firefox" { Actions = "Exec firefox &" }
 
     Separator {}

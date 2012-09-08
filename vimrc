@@ -1,3 +1,4 @@
+" vim:foldmethod=marker
 
 " VIM config file - Eric Davis
 "------------------------------------------------
@@ -38,7 +39,12 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "surround.vim"
   Bundle "taglist.vim"
   Bundle "The-NERD-tree"
-  Bundle "vimwiki"
+  "Bundle "vimwiki"
+  "Bundle "https://github.com/tomtom/tlib_vim.git"
+  "Bundle "https://github.com/tomtom/trag_vim.git"
+  "Bundle "https://github.com/tomtom/viki_vim.git"
+  "Bundle "https://github.com/tomtom/vikitasks_vim.git"
+  Bundle "https://github.com/vimoutliner/vimoutliner.git"
   Bundle "YankRing.vim"
   Bundle "ZoomWin"
 
@@ -499,13 +505,12 @@ endfunction
 
 " These are available with 'changeColorScheme.vim' and 'Color-Sampler-Pack' (via vundle)
 "map <F11> :call NextColorScheme()<CR>:call MyFixedHighlights()<CR>
-"map <F11> :call NextColorScheme()<CR>
+map <F11> :call NextColorScheme()<CR>
 "map <S-F11> :call PreviousColorScheme()<CR>
 "map <C-F11> :call RandomColorScheme()<CR>
 
 call SetColorScheme('molokai')
 "call SetColorScheme('solarized')
-autocmd filetype vo_base highlight OL1 ctermfg=cyan cterm=bold
 autocmd syntax * runtime syntax/RainbowParenthsis.vim
 
 " netrw stuff
@@ -537,9 +542,6 @@ let g:Tlist_Enable_Fold_Column=0
 let g:Tlist_Display_Prototype=0
 nnoremap <silent> <F8> :Tlist<CR>
 nnoremap <silent> <F9> :TlistSync<CR>
-
-autocmd Syntax vo_base highlight Folded ctermbg=DarkGrey
-let g:vo_modules_load = "checkbox:hoist"
 
 let g:EnhCommentifyPretty='yes'
 let g:EnhCommentifyAlignRight='yes'
@@ -653,13 +655,14 @@ command! -nargs=0 -complete=command MC call EMake('clean')
 "let g:loadVssPlugin=0
 ""call VssLoad()
 
-let g:vimwiki_folding=1
-let g:vimwiki_fold_lists=1
-let g:vimwiki_fold_trailing_empty_lines=0
+"let g:vimwiki_list=[{'path': '~/Dropbox/vimwiki/', 'path_html': '~/Dropbox/vimwiki_html/'}]
+"let g:vimwiki_folding=1
+"let g:vimwiki_fold_lists=1
+"let g:vimwiki_fold_trailing_empty_lines=0
 
 let g:miniBufExplMaxSize=3
 
-"-------------------------- ORG MODE STUFF -----------------------------------
+"-------------------------- ORG MODE STUFF (vim-orgmode) ---------------------
 
 let g:org_todo_keywords=
 \ [
@@ -732,7 +735,7 @@ function! OrgWrapSource()
 endfunction
 vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
 
-"-------------------------- ORG MODE STUFF -----------------------------------
+"-------------------------- ORG MODE STUFF (VimOrganizer) --------------------
 
 "let g:org_todo_setup="TODO NEXT STARTED | DONE CANCELED"
 ""let g:org_tag_setup="{home(o) brcm(k)} \n {high(1) medium(2) low(3)} \n {easy(y) meh(m) hard(h)} \n {bnxe(a) bnx(b) bge(c) misc(d) meeting(e)}"
@@ -853,73 +856,164 @@ if has("cscope")
   " f  file     - find the file under cursor
   " i  includes - find files that include the filename under cursor
 
-  "nmap <C-@>s :scscope find s <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@>d :scscope find d <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@>c :scscope find c <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@>t :scscope find t <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@>i :scscope find i <C-R>=expand("<cfile>")<CR><CR>
-  "nmap <C-@><C-@>s :cscope find s <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@><C-@>d :cscope find d <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@><C-@>c :cscope find c <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@><C-@>t :cscope find t <C-R>=expand("<cword>")<CR><CR>
-  "nmap <C-@><C-@>i :cscope find i <C-R>=expand("<cfile>")<CR><CR>
+  set cscopequickfix=s-,d-,c-,t-,e-,i-
 
-  if (usequickfix)
+  nmap <C-c>s      :call CscopeCmd(cs_split, "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>S      :call CscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>,m<C-W>k
+  nmap <C-c><C-c>s :call CscopeCmd(cs_none,  "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    set cscopequickfix=s-,d-,c-,t-,e-,i-
+  nmap <C-c>d      :call CscopeCmd(cs_split, "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>D      :call CscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>,m<C-W>k
+  nmap <C-c><C-c>d :call CscopeCmd(cs_none,  "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-@>s      :call CscopeCmd(cs_split, "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-@>S      :call CscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-@><C-@>s :call CscopeCmd(cs_none,  "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>c      :call CscopeCmd(cs_split, "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>C      :call CscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>,m<C-W>k
+  nmap <C-c><C-c>c :call CscopeCmd(cs_none,  "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-@>d      :call CscopeCmd(cs_split, "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-@>D      :call CscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-@><C-@>d :call CscopeCmd(cs_none,  "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>t      :call CscopeCmd(cs_split, "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>T      :call CscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>,m<C-W>k
+  nmap <C-c><C-c>t :call CscopeCmd(cs_none,  "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-@>c      :call CscopeCmd(cs_split, "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-@>C      :call CscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-@><C-@>c :call CscopeCmd(cs_none,  "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>i      :call CscopeCmd(cs_split, "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>I      :call CscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>,m<C-W>k
+  nmap <C-c><C-c>i :call CscopeCmd(cs_none,  "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-@>t      :call CscopeCmd(cs_split, "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-@>T      :call CscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-@><C-@>t :call CscopeCmd(cs_none,  "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
+  nmap <C-c>g           :call CscopeCmd(cs_split,  "g", expand("<cword>"))<CR>
+  nmap <C-c>G           :call CscopeCmd(cs_tab,    "g", expand("<cword>"))<CR>
+  nmap <C-c><C-c>g      :call CscopeCmd(cs_vsplit, "g", expand("<cword>"))<CR>
+  nmap <C-c><C-c><C-c>g :call CscopeCmd(cs_none,   "g", expand("<cword>"))<CR>
 
-    nmap <C-@>i      :call CscopeCmd(cs_split, "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
-    nmap <C-@>I      :call CscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>,m<C-W>k
-    nmap <C-@><C-@>i :call CscopeCmd(cs_none,  "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
-
-  else
-
-    nmap <C-@>s      :call CscopeCmd(cs_split, "s", expand("<cword>"))<CR>
-    nmap <C-@>S      :call CscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>
-    nmap <C-@><C-@>s :call CscopeCmd(cs_none,  "s", expand("<cword>"))<CR>
-
-    nmap <C-@>d      :call CscopeCmd(cs_split, "d", expand("<cword>"))<CR>
-    nmap <C-@>D      :call CscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>
-    nmap <C-@><C-@>d :call CscopeCmd(cs_none,  "d", expand("<cword>"))<CR>
-
-    nmap <C-@>c      :call CscopeCmd(cs_split, "c", expand("<cword>"))<CR>
-    nmap <C-@>C      :call CscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>
-    nmap <C-@><C-@>c :call CscopeCmd(cs_none,  "c", expand("<cword>"))<CR>
-
-    nmap <C-@>t      :call CscopeCmd(cs_split, "t", expand("<cword>"))<CR>
-    nmap <C-@>T      :call CscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>
-    nmap <C-@><C-@>t :call CscopeCmd(cs_none,  "t", expand("<cword>"))<CR>
-
-    nmap <C-@>i      :call CscopeCmd(cs_split, "i", expand("<cfile>"))<CR>
-    nmap <C-@>I      :call CscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>
-    nmap <C-@><C-@>i :call CscopeCmd(cs_none,  "i", expand("<cfile>"))<CR>
-
-  endif
-
-  nmap <C-@>g           :call CscopeCmd(cs_split,  "g", expand("<cword>"))<CR>
-  nmap <C-@>G           :call CscopeCmd(cs_tab,    "g", expand("<cword>"))<CR>
-  nmap <C-@><C-@>g      :call CscopeCmd(cs_vsplit, "g", expand("<cword>"))<CR>
-  nmap <C-@><C-@><C-@>g :call CscopeCmd(cs_none,   "g", expand("<cword>"))<CR>
-
-  nmap <C-@>f      :call CscopeCmd(cs_split, "f", expand("<cfile>"))<CR>
-  nmap <C-@>F      :call CscopeCmd(cs_tab,   "f", expand("<cfile>"))<CR>
-  nmap <C-@><C-@>f :call CscopeCmd(cs_none,  "f", expand("<cfile>"))<CR>
+  nmap <C-c>f      :call CscopeCmd(cs_split, "f", expand("<cfile>"))<CR>
+  nmap <C-c>F      :call CscopeCmd(cs_tab,   "f", expand("<cfile>"))<CR>
+  nmap <C-c><C-c>f :call CscopeCmd(cs_none,  "f", expand("<cfile>"))<CR>
 
 endif
+
+"------------------------- VimOutliner STUFF ---------------------------------
+
+function! VOColors()
+  highlight OL1 ctermfg=lightblue
+  highlight OL2 ctermfg=red
+  highlight OL3 ctermfg=brown
+  highlight OL4 ctermfg=yellow
+  highlight OL5 ctermfg=lightblue
+  highlight OL6 ctermfg=red
+  highlight OL7 ctermfg=brown
+  highlight OL8 ctermfg=yellow
+  highlight OL8 ctermfg=white
+
+  " colors for tags
+  highlight outlTags ctermfg=darkred
+
+  " color for body text
+  for i in range(1, 9)
+     execute "highlight BT" . i . " ctermfg=lightgreen"
+  endfor
+
+  " color for pre-formatted text
+  for i in range(1, 9)
+     execute "highlight PT" . i . " ctermfg=lightcyan"
+  endfor
+
+  " color for tables
+  for i in range(1, 9)
+     execute "highlight TA" . i . " ctermfg=yellow"
+  endfor
+
+  " color for user text (wrapping)
+  for i in range(1, 9)
+     execute "highlight UT" . i . " ctermfg=lightgreen"
+  endfor
+
+  " color for user text (non-wrapping)
+  for i in range(1, 9)
+     execute "highlight UB" . i . " ctermfg=lightcyan"
+  endfor
+
+  " colors for folded sections
+  highlight Folded ctermbg=black ctermfg=green cterm=bold
+  highlight FoldColumn ctermfg=darkgrey ctermbg=black cterm=bold
+endfunction
+autocmd BufEnter *.otl call VOColors()
+
+"let g:vo_modules_load = "checkbox:smart_paste"
+let g:vo_modules_load = "checkbox"
+autocmd BufNewFile,BufRead *.otl setlocal tabstop=2 shiftwidth=2
+
+" ,,x inserts the data after the checkbox
+autocmd BufNewFile,BufRead *.otl iab xdate <C-R>=strftime("%Y-%m-%d")<CR>
+autocmd BufNewFile,BufRead *.otl nmap ,,x ^Wixdate <ESC>
+
+" Calendar {{{1
+let g:vo_use_calendar = 1
+
+function! s:two_digit_num(num)
+  if a:num < 10
+    return '0'.a:num
+  endif
+  return a:num
+endfunction
+
+function! VO_calendar_action(day, month, year, week, dir)
+  let l:day = s:two_digit_num(a:day)
+  let l:month = s:two_digit_num(a:month)
+  let l:entry_date = a:year.'-'.l:month.'-'.l:day
+  wincmd p
+
+  " search for the Journal outline (wrap search and moves cursor)
+  let l:journal = search("^Journal$", "cw")
+  if l:journal == 0
+      " journal not found so make one at the end of the the file
+      exe "normal GoJournal\<cr>\<esc>"
+      exe "normal i\<tab>".a:year."\<cr>\<esc>"
+      exe "normal i\<tab>\<tab>".a:year."-".l:month."\<cr>\<esc>"
+      exe "normal i\<tab>\<tab>\<tab>".a:year."-".l:month."-".l:day."\<esc>^"
+      return
+  endif
+
+  " journal found now search for the entry
+  if search("^\t\t\t".l:entry_date."$", "cW") != 0
+      " entry found, unfold it
+      normal zv^
+  endif
+
+  " entry not found, add a new entry
+
+  " search for y
+  " if not found then add y / y-m / y-m-d and sort on y, then jump to entry
+  " if y found then
+  "   search for y-m
+  "   if not found then add y-m / y-m-d and sort on y-m, then jump to entry
+  "   if y-m found then
+  "     search for day
+  "     if not found then add y-m-d and sort on y-m-d, then jump to entry
+  "     if y-m-d found... not possible
+
+endfunction
+
+function! VO_calendar_sign(day, month, year)
+  let l:day = s:two_digit_num(a:day)
+  let l:month = s:two_digit_num(a:month)
+  let l:savecursor = getpos(".") " save cursor
+
+  " search for the Journal outline (wrap search and moves cursor)
+  let l:journal = search("^Journal$", "cw")
+  if l:journal == 0
+      call setpos(".", l:savecursor)
+      return 0
+  endif
+
+  " search for the entry from Journal start (nowrap search)
+  let l:sign = search("^\t\t\t".a:year."-".l:month."-".l:day."$", "cW")
+
+  call setpos(".", l:savecursor) " reset cursor
+  return l:sign
+endfunction
+
+if g:vo_use_calendar
+  let g:calendar_action = 'VO_calendar_action'
+  let g:calendar_sign = 'VO_calendar_sign'
+endif
+
+" Calendar }}}1
 
