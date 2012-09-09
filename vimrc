@@ -662,7 +662,7 @@ command! -nargs=0 -complete=command MC call EMake('clean')
 
 let g:miniBufExplMaxSize=3
 
-"-------------------------- ORG MODE STUFF (vim-orgmode) ---------------------
+"------------------- ORG MODE STUFF (vim-orgmode) ------------------- {{{1
 
 let g:org_todo_keywords=
 \ [
@@ -735,7 +735,9 @@ function! OrgWrapSource()
 endfunction
 vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
 
-"-------------------------- ORG MODE STUFF (VimOrganizer) --------------------
+" End of ORG MODE STUFF (vim-orgmode) }}}1
+
+"------------------- ORG MODE STUFF (VimOrganizer) ------------------- {{{1
 
 "let g:org_todo_setup="TODO NEXT STARTED | DONE CANCELED"
 ""let g:org_tag_setup="{home(o) brcm(k)} \n {high(1) medium(2) low(3)} \n {easy(y) meh(m) hard(h)} \n {bnxe(a) bnx(b) bge(c) misc(d) meeting(e)}"
@@ -778,7 +780,9 @@ vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
 "let g:CCTreeKeyDepthPlus='<localleader>='
 "let g:CCTreeKeyDepthMinus='<localleader>-'
 
-"-------------------------- CSCOPE STUFF -----------------------------------
+" End of ORG MODE STUFF (VimOrganizer) }}}1
+
+"------------------- CSCOPE STUFF ------------------- {{{1
 
 " location of tag files
 "set tags=./tags,tags,/vob/infra/tags
@@ -889,7 +893,9 @@ if has("cscope")
 
 endif
 
-"------------------------- VimOutliner STUFF ---------------------------------
+" End of CSCOPE STUFF }}}1
+
+"------------------- VimOutliner STUFF ------------------- {{{1
 
 function! VOColors()
   highlight OL1 ctermfg=lightblue
@@ -936,84 +942,9 @@ function! VOColors()
 endfunction
 autocmd BufEnter *.otl call VOColors()
 
-"let g:vo_modules_load = "checkbox:smart_paste"
-let g:vo_modules_load = "checkbox"
-autocmd BufNewFile,BufRead *.otl setlocal tabstop=2 shiftwidth=2
-
 " ,,x inserts the data after the checkbox
 autocmd BufNewFile,BufRead *.otl iab xdate <C-R>=strftime("%Y-%m-%d")<CR>
 autocmd BufNewFile,BufRead *.otl nmap ,,x ^Wixdate <ESC>
 
-" Calendar {{{1
-let g:vo_use_calendar = 1
-
-function! s:two_digit_num(num)
-  if a:num < 10
-    return '0'.a:num
-  endif
-  return a:num
-endfunction
-
-function! VO_calendar_action(day, month, year, week, dir)
-  let l:day = s:two_digit_num(a:day)
-  let l:month = s:two_digit_num(a:month)
-  let l:entry_date = a:year.'-'.l:month.'-'.l:day
-  wincmd p
-
-  " search for the Journal outline (wrap search and moves cursor)
-  let l:journal = search("^Journal$", "cw")
-  if l:journal == 0
-      " journal not found so make one at the end of the the file
-      exe "normal GoJournal\<cr>\<esc>"
-      exe "normal i\<tab>".a:year."\<cr>\<esc>"
-      exe "normal i\<tab>\<tab>".a:year."-".l:month."\<cr>\<esc>"
-      exe "normal i\<tab>\<tab>\<tab>".a:year."-".l:month."-".l:day."\<esc>^"
-      return
-  endif
-
-  " journal found now search for the entry
-  if search("^\t\t\t".l:entry_date."$", "cW") != 0
-      " entry found, unfold it
-      normal zv^
-  endif
-
-  " entry not found, add a new entry
-
-  " search for y
-  " if not found then add y / y-m / y-m-d and sort on y, then jump to entry
-  " if y found then
-  "   search for y-m
-  "   if not found then add y-m / y-m-d and sort on y-m, then jump to entry
-  "   if y-m found then
-  "     search for day
-  "     if not found then add y-m-d and sort on y-m-d, then jump to entry
-  "     if y-m-d found... not possible
-
-endfunction
-
-function! VO_calendar_sign(day, month, year)
-  let l:day = s:two_digit_num(a:day)
-  let l:month = s:two_digit_num(a:month)
-  let l:savecursor = getpos(".") " save cursor
-
-  " search for the Journal outline (wrap search and moves cursor)
-  let l:journal = search("^Journal$", "cw")
-  if l:journal == 0
-      call setpos(".", l:savecursor)
-      return 0
-  endif
-
-  " search for the entry from Journal start (nowrap search)
-  let l:sign = search("^\t\t\t".a:year."-".l:month."-".l:day."$", "cW")
-
-  call setpos(".", l:savecursor) " reset cursor
-  return l:sign
-endfunction
-
-if g:vo_use_calendar
-  let g:calendar_action = 'VO_calendar_action'
-  let g:calendar_sign = 'VO_calendar_sign'
-endif
-
-" Calendar }}}1
+" End of VimOutliner STUFF }}}1
 
