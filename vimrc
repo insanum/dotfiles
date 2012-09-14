@@ -44,7 +44,8 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "https://github.com/tomtom/trag_vim.git"
   "Bundle "https://github.com/tomtom/viki_vim.git"
   "Bundle "https://github.com/tomtom/vikitasks_vim.git"
-  Bundle "https://github.com/vimoutliner/vimoutliner.git"
+  Bundle "-b development https://github.com/vimoutliner/vimoutliner.git"
+  Bundle "https://github.com/insanum/votl.git"
   Bundle "YankRing.vim"
   Bundle "ZoomWin"
 
@@ -490,6 +491,11 @@ function! SetColorScheme(scheme)
     "highlight User1 ctermfg=White ctermbg=DarkGrey cterm=bold
     "highlight User2 ctermfg=Yellow cterm=bold
     "highlight DiffChange ctermbg=0
+
+    highlight clear IncSearch
+    highlight IncSearch ctermbg=fg ctermfg=bg
+    highlight clear Search
+    highlight Search ctermbg=Red ctermfg=Yellow
   elseif (a:scheme == 'solarized') "&& exists("g:solarized")
     set background=dark
     let g:solarized_termtrans=1
@@ -895,9 +901,9 @@ endif
 
 " End of CSCOPE STUFF }}}1
 
-"------------------- VimOutliner STUFF ------------------- {{{1
+"------------------- VOTL STUFF ------------------- {{{1
 
-function! VOColors()
+function! VotlColors()
   highlight OL1 ctermfg=lightblue
   highlight OL2 ctermfg=red
   highlight OL3 ctermfg=brown
@@ -908,15 +914,12 @@ function! VOColors()
   highlight OL8 ctermfg=yellow
   highlight OL8 ctermfg=white
 
-  " colors for tags
-  highlight outlTags ctermfg=darkred
-
   " color for body text
   for i in range(1, 9)
      execute "highlight BT" . i . " ctermfg=lightgreen"
   endfor
 
-  " color for pre-formatted text
+  " color for pre-formatted body text
   for i in range(1, 9)
      execute "highlight PT" . i . " ctermfg=lightcyan"
   endfor
@@ -926,25 +929,26 @@ function! VOColors()
      execute "highlight TA" . i . " ctermfg=yellow"
   endfor
 
-  " color for user text (wrapping)
+  " color for user text
   for i in range(1, 9)
      execute "highlight UT" . i . " ctermfg=lightgreen"
   endfor
 
-  " color for user text (non-wrapping)
+  " color for pre-formatted user text
   for i in range(1, 9)
      execute "highlight UB" . i . " ctermfg=lightcyan"
   endfor
 
-  " colors for folded sections
-  highlight Folded ctermbg=black ctermfg=green cterm=bold
-  highlight FoldColumn ctermfg=darkgrey ctermbg=black cterm=bold
+  highlight VotlTags       ctermfg=cyan
+  highlight VotlDate       ctermfg=magenta
+  highlight VotlTime       ctermfg=magenta
+  highlight VotlChecked    ctermfg=white
+  highlight VotlCheckbox   ctermfg=magenta
+  highlight VotlPercentage ctermfg=darkgreen
 endfunction
-autocmd BufEnter *.otl call VOColors()
+autocmd FileType votl call VotlColors()
 
-" ,,x inserts the data after the checkbox
-autocmd BufNewFile,BufRead *.otl iab xdate <C-R>=strftime("%Y-%m-%d")<CR>
-autocmd BufNewFile,BufRead *.otl nmap ,,x ^Wixdate <ESC>
+autocmd FileType votl setlocal nospell
 
 " End of VimOutliner STUFF }}}1
 

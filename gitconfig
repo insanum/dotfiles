@@ -17,3 +17,4 @@
 	d = diff --patch-with-stat -U10
 	tree = log --graph --decorate --pretty=oneline
 	diffe = difftool -x vimdiff
+	s = status
