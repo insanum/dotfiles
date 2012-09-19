@@ -406,12 +406,12 @@ autocmd FileType c,cc,cpp set comments+=f://
 autocmd FileType vim set comments-=:\"
 autocmd FileType vim set comments+=f:\"
 
-autocmd BufReadPre,FileReadPre *.txt,*.org set textwidth=79
+autocmd BufReadPre,FileReadPre *.txt,*.org,*.otl,*.votl set textwidth=79
 "autocmd BufReadPre,FileReadPre *.html set textwidth=75
 
 autocmd Syntax qf set textwidth=0
 
-autocmd Syntax python,perl,php setlocal textwidth=81
+autocmd Syntax python,perl,php setlocal textwidth=80
 
 autocmd BufNewFile,BufReadPost *.txt setlocal spell spelllang=en_us
 autocmd Syntax mail setlocal spell spelllang=en_us
@@ -439,7 +439,7 @@ function! MyFixedHighlights()
   highlight IncSearch ctermbg=fg ctermfg=bg
 
   highlight clear Search
-  highlight Search ctermbg=Red ctermfg=Yellow
+  highlight Search ctermbg=DarkYellow ctermfg=Black
 
   " keep these the same color
   highlight clear VertSplit
@@ -495,7 +495,7 @@ function! SetColorScheme(scheme)
     highlight clear IncSearch
     highlight IncSearch ctermbg=fg ctermfg=bg
     highlight clear Search
-    highlight Search ctermbg=Red ctermfg=Yellow
+    highlight Search ctermbg=DarkYellow ctermfg=Black
   elseif (a:scheme == 'solarized') "&& exists("g:solarized")
     set background=dark
     let g:solarized_termtrans=1
