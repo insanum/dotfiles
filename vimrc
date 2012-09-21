@@ -44,10 +44,15 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "https://github.com/tomtom/trag_vim.git"
   "Bundle "https://github.com/tomtom/viki_vim.git"
   "Bundle "https://github.com/tomtom/vikitasks_vim.git"
-  Bundle "-b development https://github.com/vimoutliner/vimoutliner.git"
+  "Bundle "-b development https://github.com/vimoutliner/vimoutliner.git"
   Bundle "https://github.com/insanum/votl.git"
   Bundle "YankRing.vim"
   Bundle "ZoomWin"
+
+  " make sure the vim_bridge python plugin is installed
+  " cd ~/.vim/bundle/vim-rst-tables/ftplugin
+  " ln -s rst_tables.vim votl_tables.vim
+  Bundle "https://github.com/nvie/vim-rst-tables.git"
 
   "Bundle "changeColorScheme.vim"
   "Bundle "Color-Sampler-Pack"
@@ -921,7 +926,7 @@ function! VotlColors()
 
   " color for pre-formatted body text
   for i in range(1, 9)
-     execute "highlight PT" . i . " ctermfg=lightcyan"
+     execute "highlight BP" . i . " ctermfg=lightcyan"
   endfor
 
   " color for tables
@@ -936,15 +941,16 @@ function! VotlColors()
 
   " color for pre-formatted user text
   for i in range(1, 9)
-     execute "highlight UB" . i . " ctermfg=lightcyan"
+     execute "highlight UP" . i . " ctermfg=lightcyan"
   endfor
 
   highlight VotlTags       ctermfg=cyan
   highlight VotlDate       ctermfg=magenta
   highlight VotlTime       ctermfg=magenta
-  highlight VotlChecked    ctermfg=white
-  highlight VotlCheckbox   ctermfg=magenta
+  highlight VotlChecked    ctermfg=magenta
+  highlight VotlCheckbox   ctermfg=lightmagenta
   highlight VotlPercentage ctermfg=darkgreen
+  highlight VotlTableLines ctermfg=darkgrey
 endfunction
 autocmd FileType votl call VotlColors()
 
