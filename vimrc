@@ -805,6 +805,8 @@ if has("cscope")
   let ostype=system('echo -n $OSTYPE')
   if ostype == "solaris2.10" || ostype == "solaris2.11"
     set csprg=/opt/csw/bin/cscope
+  elseif ostype == "freebsd9.0"
+    set csprg=/usr/local/bin/cscope
   else
     set csprg=/usr/bin/cscope
   endif
