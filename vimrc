@@ -52,7 +52,8 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   " make sure the vim_bridge python plugin is installed
   " cd ~/.vim/bundle/vim-rst-tables/ftplugin
   " ln -s rst_tables.vim votl_tables.vim
-  Bundle "https://github.com/nvie/vim-rst-tables.git"
+  "Bundle "https://github.com/nvie/vim-rst-tables.git"
+  Bundle "https://github.com/insanum/vim-rst-tables.git"
 
   "Bundle "changeColorScheme.vim"
   "Bundle "Color-Sampler-Pack"
