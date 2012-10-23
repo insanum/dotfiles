@@ -337,7 +337,8 @@ function makecscope()
         echo "*** FINDING SOURCE FILES: $TMP";
         /bin/rm -f $CSCOPE_FILES $CSCOPE_OUT*;
 
-        find $CODE_ROOT_DIR/$TMP -follow -type f \( -name '*.[ch]' -o -name '*.cpp' \) -print | tee -a $CSCOPE_FILES;
+        #find $CODE_ROOT_DIR/$TMP -follow -type f \( -name '*.[ch]' -o -name '*.cpp' \) -print | tee -a $CSCOPE_FILES;
+        find $CODE_ROOT_DIR/$TMP -type f \( -name '*.[ch]' -o -name '*.cpp' \) -print | tee -a $CSCOPE_FILES;
 
         sort $CSCOPE_FILES > $CSCOPE_TEMP;
         mv -f $CSCOPE_TEMP $CSCOPE_FILES;
@@ -345,8 +346,10 @@ function makecscope()
         echo "*** BUILDING CSCOPE DATABASE: $TMP";
         cscope -q -b -k -f $CSCOPE_OUT -i $CSCOPE_FILES;
 
-        echo "*** BUILDING CTAGS DATABASE: $TMP";
-        $CTAGS -f $CSCOPE_TAGS -L $CSCOPE_FILES;
+        if [[ ! $OSTYPE =~ freebsd ]]; then
+            echo "*** BUILDING CTAGS DATABASE: $TMP";
+            $CTAGS -f $CSCOPE_TAGS -L $CSCOPE_FILES;
+        fi
 
         echo "*** DONE: $TMP";
     done
