@@ -64,7 +64,7 @@ xsetroot -cursor_name left_ptr
 
 [[ -x /usr/bin/dunst ]] && dunst -config $HOME/.dunstrc &
 
-[[ -x /usr/bin/dropbox ]] && dropboxd &
+[[ -x /usr/bin/dropbox ]] && dropbox start &
 
 [[ -x /usr/bin/wmname ]] && wmname LG3D
 

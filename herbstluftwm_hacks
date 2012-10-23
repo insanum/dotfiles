@@ -22,7 +22,7 @@ function hcs() # dump current herbstluftwm settings
 
 function hc_cur_tag()
 {
-    herbstclient tag_status | /bin/grep -oP "\t#[^\t]*" | cut -b 3
+    herbstclient tag_status | grep -oP "\t#[^\t]*" | cut -b 3
 }
 
 function hcl() # dump current herbstluftwm layout for all tags
@@ -44,7 +44,7 @@ function hcl() # dump current herbstluftwm layout for all tags
             | sed "2,\$ s/^/$indent/" \
             | sed "s/\(0x[0-9a-f]\{1,\}\)/${WINDOWC}\1${CLEAR}/g"
 
-        echo -e "$LAYOUT" | /bin/grep -oE "0x[0-9a-f]{1,}" |
+        echo -e "$LAYOUT" | grep -oE "0x[0-9a-f]{1,}" |
         while read w; do
             echo -n "$indent${WINDOWC}$w${CLEAR} - "
             echo    "${TITLEC}`xdotool getwindowname $w`${CLEAR}"
@@ -83,7 +83,7 @@ function hclo()
 
 function hc_smplayer()
 {
-    if [[ `herbstclient list_monitors | tail -1 | /bin/grep -q "^1"` -eq 1 ]]; then
+    if [[ `herbstclient list_monitors | tail -1 | grep -q "^1"` -eq 1 ]]; then
         notify-send -u critical -a herbstclient "no second monitor"
         return
     fi

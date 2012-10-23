@@ -182,6 +182,7 @@ client = marshal.load(Cmd(p4 + ' -G client -o'))
 view = ''
 for k in client.keys():
     # get views (and exclude overlays/excludes)
+    #print 'Client ' + k + ': ' + client[k]
     if re.match('^View[0-9]*$', k) and not re.match('^[+-]', client[k]):
         view = view + ' ' + client[k].split(' ')[1]
 
@@ -206,7 +207,8 @@ if ((args[0] == 'mods') or (args[0] == 'update')):
         PrintErrMsg('Bite me...\n')
         sys.exit(1)
 
-    pout = Cmd(p4 + ' -G fstat ' + view)
+    #pout = Cmd(p4 + ' -G fstat ' + view)
+    pout = Cmd(p4 + ' -G fstat ...')
 
     while 1:
 
