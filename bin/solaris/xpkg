@@ -12,25 +12,7 @@ function Usage()
 function solver()
 {
     OSREL=`uname -r`
-    OSVER=`uname -v`
-    if [ "${OSVER}" = "Generic_137137-09" ]; then
-        echo "Solaris_10u6"
-    elif [ "${OSVER}" = "Generic_139556-08" ]; then
-        echo "Solaris_10u7"
-    elif [ "${OSVER}" = "Generic_141445-09" ]; then
-        echo "Solaris_10u8"
-    elif [ "${OSVER}" = "Generic_142910-17" ] ||
-         [ "${OSVER}" = "Generic_142909-17" ]; then
-        echo "Solaris_10u9"
-    elif [ "${OSVER}" = "Generic_147441-01" ] ||
-         [ "${OSVER}" = "Generic_147440-01" ]; then
-        echo "Solaris_10u10"
-    elif [ "${OSREL}" = "5.11" ]; then
-        echo "Solaris_11"
-    else
-        echo "ERROR: UNKNOWN VERSION OF SOLARIS"
-        exit
-    fi
+    echo "$OSREL" | sed 's/5\./S/'
 }
 
 if [ -z $1 ]; then
@@ -46,9 +28,9 @@ if [ $1 = "add" ]; then
     Usage
   fi
 
-  MAJ=`grep "MAJVERSION =" Makefile.inc | sed "s/MAJVERSION = \([0-9]*\)/\1/"`
-  MIN=`grep "MINVERSION =" Makefile.inc | sed "s/MINVERSION = \([0-9]*\)/\1/"`
-  REV=`grep "REVVERSION =" Makefile.inc | sed "s/REVVERSION = \([0-9]*\)/\1/"`
+  MAJ=`grep MAJVERSION src_bnxe/version.h | awk '{ print $3 }'`
+  MIN=`grep MINVERSION src_bnxe/version.h | awk '{ print $3 }'`
+  REV=`grep REVVERSION src_bnxe/version.h | awk '{ print $3 }'`
 
   DBG=""
   if [ "$3" = dbg ]; then DBG="-dbg"; fi
