@@ -159,13 +159,6 @@ set vb t_vb=
 
 " Mappings
 
-" prevent escape key carpal tunnel syndrome
-nmap <C-n> <ESC>
-vmap <C-n> <ESC>
-omap <C-n> <ESC>
-imap <C-n> <ESC>
-cmap <C-n> <ESC>
-
 nmap <C-l> :w<CR>
 nmap <Leader><C-l> :redraw!<CR>
 

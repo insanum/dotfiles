@@ -1,13 +1,24 @@
 #!/bin/bash
 
-if [ ! -f Makefile.inc ]; then
-    echo "ERROR: Makefile.inc not found (bad current working directory)!"
+if [ -f src/bge.h ]; then
+    VP=src
+elif [ -f src/bnx.h ]; then
+    VP=src
+elif [ -f src_bnxe/bnxe.h ]; then
+    VP=src_bnxe
+else
+  echo "ERROR: Unknown driver (bad current working directory)!"
+  exit
+fi
+
+if [ ! -f ${VP}/version.h ]; then
+    echo "ERROR: version.h not found (bad current working directory)!"
     exit
 fi
 
-MAJ=`grep "MAJVERSION =" Makefile.inc | sed "s/MAJVERSION = \([0-9]*\)/\1/"`
-MIN=`grep "MINVERSION =" Makefile.inc | sed "s/MINVERSION = \([0-9]*\)/\1/"`
-REV=`grep "REVVERSION =" Makefile.inc | sed "s/REVVERSION = \([0-9]*\)/\1/"`
+MAJ=`grep MAJVERSION ${VP}/version.h | awk '{ print $3 }'`
+MIN=`grep MINVERSION ${VP}/version.h | awk '{ print $3 }'`
+REV=`grep REVVERSION ${VP}/version.h | awk '{ print $3 }'`
 
 VER=${MAJ}.${MIN}.${REV}
 
@@ -47,7 +58,7 @@ function DidYou()
 {
   echo "
 Did you...
- 1. Makefile.inc - increment version and commit
+ 1. version.h    - increment version and commit
  2. release.txt  - add notes for new version and commit
  3. dmake
 "
