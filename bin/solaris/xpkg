@@ -28,9 +28,20 @@ if [ $1 = "add" ]; then
     Usage
   fi
 
-  MAJ=`grep MAJVERSION src_bnxe/version.h | awk '{ print $3 }'`
-  MIN=`grep MINVERSION src_bnxe/version.h | awk '{ print $3 }'`
-  REV=`grep REVVERSION src_bnxe/version.h | awk '{ print $3 }'`
+  if [ "$2" = bnxe ]; then
+    VP=src_bnxe
+  elif [ "$2" = bnx ]; then
+    VP=src
+  elif [ "$2" = bge ]; then
+    VP=src
+  else
+    echo "ERROR: Unknown driver"
+    exit
+  fi
+
+  MAJ=`grep MAJVERSION ${VP}/version.h | awk '{ print $3 }'`
+  MIN=`grep MINVERSION ${VP}/version.h | awk '{ print $3 }'`
+  REV=`grep REVVERSION ${VP}/version.h | awk '{ print $3 }'`
 
   DBG=""
   if [ "$3" = dbg ]; then DBG="-dbg"; fi
