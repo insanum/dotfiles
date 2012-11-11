@@ -23,6 +23,7 @@ static const Rule rules[] = {
     /* class                instance    title           tags mask    isfloating    monitor */
 
     { "Chromium",           NULL,       NULL,           1<<0,       False,         -1 },
+    { "Chrome",             NULL,       NULL,           1<<0,       False,         -1 },
     { "Miramar",            NULL,       NULL,           1<<0,       False,         -1 },
     { "Opera",              NULL,       NULL,           1<<0,       False,         -1 },
     { "Arora",              NULL,       NULL,           1<<0,       False,         -1 },
@@ -57,9 +58,8 @@ static const Rule rules[] = {
     { "Wireshark",          NULL,       NULL,           1<<6,       False,         -1 },
     { "P4v",                NULL,       NULL,           1<<6,       False,         -1 },
 
-    { "URxvt",              NULL,       "maka",         1<<7,       False,         -1 },
-
-    { "URxvt",              NULL,       "tmux",         1<<8,       False,         -1 },
+    { "URxvt",              NULL,       "work1",        1<<7,       False,         -1 },
+    { "URxvt",              NULL,       "work2",        1<<8,       False,         -1 },
 
     { "URxvt",              NULL,       "org",          ~0,         True,         -1 },
     { "Gxmessage",          NULL,       NULL,           ~0,         True,          -1 },
@@ -162,21 +162,21 @@ static Key keys[] = {
     /* give/move client on a specific tag (Mod-Shift-#) (0 = PUT ON ALL TAGS) */
     /* make client sticky (toggle) on more than one tag (Mod-Ctrl-Shift-#) */
     //{ MODKEY,               XK_F11,     spawn,          {.v = orgcmd} },
-    { MODKEY,               XK_F12,     view,           {.ui = ~0} },
-    { MODKEY|ShiftMask,     XK_F12,     tag,            {.ui = ~0} },
+    { MODKEY,               XK_0,       view,           {.ui = ~0} },
+    { MODKEY|ShiftMask,     XK_0,       tag,            {.ui = ~0} },
     { MODKEY,               XK_w,       focusmon,       {.ui = 0 } },
     { MODKEY,               XK_e,       focusmon,       {.ui = 1 } },
     { MODKEY|ShiftMask,     XK_w,       tagmon,         {.ui = 0 } },
     { MODKEY|ShiftMask,     XK_e,       tagmon,         {.ui = 1 } },
-    TAGKEYS(                XK_F1,                      0)
-    TAGKEYS(                XK_F2,                      1)
-    TAGKEYS(                XK_F3,                      2)
-    TAGKEYS(                XK_F4,                      3)
-    TAGKEYS(                XK_F5,                      4)
-    TAGKEYS(                XK_F6,                      5)
-    TAGKEYS(                XK_F7,                      6)
-    TAGKEYS(                XK_F8,                      7)
-    TAGKEYS(                XK_F9,                      8)
+    TAGKEYS(                XK_1,                       0)
+    TAGKEYS(                XK_2,                       1)
+    TAGKEYS(                XK_3,                       2)
+    TAGKEYS(                XK_4,                       3)
+    TAGKEYS(                XK_5,                       4)
+    TAGKEYS(                XK_6,                       5)
+    TAGKEYS(                XK_7,                       6)
+    TAGKEYS(                XK_8,                       7)
+    TAGKEYS(                XK_9,                       8)
 
     /* quit dwm */
     { MODKEY|ShiftMask,     XK_q,       quit,           {0} },
