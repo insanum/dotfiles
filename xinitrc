@@ -1,14 +1,32 @@
 #!/bin/bash
 
-xset +fp /usr/share/fonts/100dpi
-xset +fp /usr/share/fonts/75dpi
-xset +fp /usr/share/fonts/cyrillic
-xset +fp /usr/share/fonts/encodings
-xset +fp /usr/share/fonts/local
-xset +fp /usr/share/fonts/misc
-xset +fp /usr/share/fonts/TTF
-xset +fp /usr/share/fonts/Type1
-xset +fp /usr/share/fonts/util
+if [[ $OSTYPE =~ freebsd ]]; then
+    xset +fp /usr/local/lib/X11/fonts/100dpi
+    xset +fp /usr/local/lib/X11/fonts/75dpi
+    xset +fp /usr/local/lib/X11/fonts/cyrillic
+    xset +fp /usr/local/lib/X11/fonts/encodings
+    xset +fp /usr/local/lib/X11/fonts/local
+    xset +fp /usr/local/lib/X11/fonts/misc
+    xset +fp /usr/local/lib/X11/fonts/TTF
+    xset +fp /usr/local/lib/X11/fonts/Type1
+    xset +fp /usr/local/lib/X11/fonts/util
+    xset +fp /usr/local/lib/X11/fonts/OTF
+    xset +fp /usr/local/lib/X11/fonts/URW
+    xset +fp /usr/local/lib/X11/fonts/bitstream-vera
+    xset +fp /usr/local/lib/X11/fonts/terminus-font
+    LOCAL=/local
+else
+    xset +fp /usr/share/fonts/100dpi
+    xset +fp /usr/share/fonts/75dpi
+    xset +fp /usr/share/fonts/cyrillic
+    xset +fp /usr/share/fonts/encodings
+    xset +fp /usr/share/fonts/local
+    xset +fp /usr/share/fonts/misc
+    xset +fp /usr/share/fonts/TTF
+    xset +fp /usr/share/fonts/Type1
+    xset +fp /usr/share/fonts/util
+    LOCAL=
+fi
 
 if [[ $HOSTNAME = eadmaka ]]; then
     #xrandr --output DVI-I-1 --right-of DP-0 --output DP-0 --rotate left --output DVI-I-1 --rotate left
@@ -52,21 +70,21 @@ fi
 #$HOME/bin/mpc_osd_py &
 #pidgin &
 
-#[[ -x /usr/bin/xbindkeys ]] && xbindkeys
+#[[ -x /usr${LOCAL}/bin/xbindkeys ]] && xbindkeys
 
-[[ -x /usr/bin/xautolock && -x /usr/bin/slock ]] && \
+[[ -x /usr${LOCAL}/bin/xautolock && -x /usr${LOCAL}/bin/slock ]] && \
     xautolock -resetsaver -time 10 -locker slock &
 
-[[ -x /usr/bin/urxvtd ]] && urxvtd -f -o
+[[ -x /usr${LOCAL}/bin/urxvtd ]] && urxvtd -f -o
 
 xset m 2/1 50
 xsetroot -cursor_name left_ptr
 
-[[ -x /usr/bin/dunst ]] && dunst -config $HOME/.dunstrc &
+[[ -x /usr${LOCAL}/bin/dunst ]] && dunst -config $HOME/.dunstrc &
 
-[[ -x /usr/bin/dropbox ]] && dropbox start &
+[[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start &
 
-[[ -x /usr/bin/wmname ]] && wmname LG3D
+[[ -x /usr${LOCAL}/bin/wmname ]] && wmname LG3D
 
 if [[ $HOSTNAME = eadmaka ]]; then
 
@@ -95,6 +113,9 @@ fi
 #exec startfluxbox     # blackbox with gizmos
 #exec openbox-session  # Why can't I move my config out from under XDG!?!?
 #exec pekwm            # lean and mean (perfect for vnc)
+if [[ $OSTYPE =~ freebsd ]]; then
+    exec pekwm # running this under vbox 
+fi
 
 #xcompmgr -c &
 #cairo-compmgr &
