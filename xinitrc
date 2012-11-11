@@ -58,7 +58,11 @@ xhost +localhost
 xrdb -load $HOME/.Xdefaults
 
 xmodmap $HOME/.Xmodmap
-xmodmap -e "keycode 108 = Super_L"  # reassign Alt_R to Super_L
+if [[ $OSTYPE =~ freebsd ]]; then
+    xmodmap -e "keycode 113 = Super_L"  # reassign Alt_R to Super_L
+else
+    xmodmap -e "keycode 108 = Super_L"  # reassign Alt_R to Super_L
+fi
 xmodmap -e "remove mod1 = Super_L"  # make sure X keeps it out of the mod1 group
 
 if [[ $HOSTNAME = eadmaka ]]; then
@@ -113,9 +117,6 @@ fi
 #exec startfluxbox     # blackbox with gizmos
 #exec openbox-session  # Why can't I move my config out from under XDG!?!?
 #exec pekwm            # lean and mean (perfect for vnc)
-if [[ $OSTYPE =~ freebsd ]]; then
-    exec pekwm # running this under vbox 
-fi
 
 #xcompmgr -c &
 #cairo-compmgr &

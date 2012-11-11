@@ -537,7 +537,7 @@ if [[ -n "$PS1" ]]; then
   export MAGENTA="\[\e[0;35m\]"
   export CLEAR="\[\e[0m\]"
 
-  if [[ $OSTYPE =~ solaris || $OSTYPE =~ freebsd ]]; then
+  if [[ $OSTYPE =~ solaris || ( $OSTYPE =~ freebsd && ( `tty` == /dev/ttyu0 || `tty` == /dev/ttyv0 ) ) ]]; then
       if [[ $OSTYPE =~ freebsd ]]; then
           osrel="freebsd"
       else
@@ -549,7 +549,11 @@ if [[ -n "$PS1" ]]; then
       rtop='-'
       rbot='-'
   else
-      osrel="linux"
+      if [[ $OSTYPE =~ freebsd ]]; then
+          osrel="freebsd"
+      else
+          osrel="linux"
+      fi
       dash='─'
       ltop='┌'
       lbot='└'
