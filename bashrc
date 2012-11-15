@@ -729,3 +729,16 @@ function wow()
     fi
 }
 
+function fixkeys()
+{
+    # For some reason the Linux kernel has been wigging out and thinking my
+    # USB keyboards have been disconnected and thereafter instantly reconnected.
+    xrdb -load $HOME/.Xdefaults
+    if [[ $OSTYPE =~ freebsd ]]; then
+        xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
+    else
+        xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
+    fi
+    xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
+}
+

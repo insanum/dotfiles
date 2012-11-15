@@ -59,11 +59,11 @@ xrdb -load $HOME/.Xdefaults
 
 xmodmap $HOME/.Xmodmap
 if [[ $OSTYPE =~ freebsd ]]; then
-    xmodmap -e "keycode 113 = Super_L"  # reassign Alt_R to Super_L
+    xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
 else
-    xmodmap -e "keycode 108 = Super_L"  # reassign Alt_R to Super_L
+    xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
 fi
-xmodmap -e "remove mod1 = Super_L"  # make sure X keeps it out of the mod1 group
+xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
 if [[ $HOSTNAME = eadmaka ]]; then
     feh --bg-tile $HOME/Dropbox/kole_evo_1920x1080.png
@@ -81,6 +81,7 @@ fi
 
 [[ -x /usr${LOCAL}/bin/urxvtd ]] && urxvtd -f -o
 
+xset r rate 400
 xset m 2/1 50
 xsetroot -cursor_name left_ptr
 

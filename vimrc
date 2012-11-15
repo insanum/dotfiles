@@ -495,6 +495,8 @@ function! SetColorScheme(scheme)
     highlight IncSearch ctermbg=fg ctermfg=bg
     highlight clear Search
     highlight Search ctermbg=DarkYellow ctermfg=Black
+    highlight clear Todo
+    highlight Todo ctermbg=DarkYellow ctermfg=Black
   elseif (a:scheme == 'solarized') "&& exists("g:solarized")
     set background=dark
     let g:solarized_termtrans=1
