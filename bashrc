@@ -688,26 +688,27 @@ function wow()
     #sleep 2
 
     WOW=$HOME/.wine/drive_c/Program\ Files/World\ of\ Warcraft
-    WOWB=$HOME/.wine/drive_c/Program\ Files/World\ of\ Warcraft\ Beta
     D3=$HOME/.wine/drive_c/Program\ Files/Diablo\ III
 
     # start capture: 'dmenu fraps'
     # stop capture: 'dmenu kfraps'
 
-    if [[ -z $1 ]]; then
-        echo "Wine Wow.exe..."
+    if [[ $1 = d3d ]]; then
+        echo "Wine (d3d) Wow.exe..."
         cd "$WOW"
-        WINEARCH=win32 wine Wow.exe -opengl
+        #WINEARCH=win32 wine Wow.exe
+        wine Wow-64.exe -d3d
         cd -
-    elif [[ $1 == mop ]]; then
-        echo "Wine MoP Wow.exe..."
-        cd "$WOWB"
-        WINEARCH=win32 wine WoW.exe -opengl
+    elif [[ $1 = opengl ]]; then
+        echo "Wine (opengl) Wow.exe..."
+        cd "$WOW"
+        #wine64 Wow-64.exe -opengl
+        wine Wow-64.exe -opengl
         cd -
     elif [[ $1 == launcher ]]; then
         echo "Wine Launcher..."
         cd "$WOW"
-        WINEARCH=win32 wine Launcher.exe -opengl
+        wine "World of Warcraft Launcher.exe" -opengl
         cd -
     elif [[ $1 == d3 ]]; then
         echo "Wine 'Diablo III.exe'"
