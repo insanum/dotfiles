@@ -1,8 +1,13 @@
 
 !urxvt*font: neep-alt-14
 !urxvt*font: -*-terminus-medium-r-*-*-14-*-*-*-*-*-iso10646-*
+#ifdef SMALLER_FONT
+urxvt*font: -*-terminus-medium-r-*-*-16-*-*-*-*-*-iso10646-*
+urxvt*boldFont: -*-terminus-medium-r-*-*-16-*-*-*-*-*-iso10646-*
+#else
 urxvt*font: -*-terminus-medium-r-*-*-20-*-*-*-*-*-iso10646-*
 urxvt*boldFont: -*-terminus-medium-r-*-*-20-*-*-*-*-*-iso10646-*
+#endif
 !urxvt*font: xft:inconsolata:pixelsize=17
 !urxvt*boldFont: xft:inconsolata:pixelsize=17
 !urxvt*font: 8x13
