@@ -148,10 +148,10 @@ static Key keys[] = {
     { MODKEY|ShiftMask,     XK_c,       killclient,     {0} },
 
     /* change layout */
-    { MODKEY|ControlMask,   XK_1,       setlayout,      {.v = &layouts[0]} },
-    { MODKEY|ControlMask,   XK_2,       setlayout,      {.v = &layouts[1]} },
-    { MODKEY|ControlMask,   XK_3,       setlayout,      {.v = &layouts[2]} },
-    { MODKEY|ControlMask,   XK_4,       setlayout,      {.v = &layouts[3]} },
+    { MODKEY|ControlMask,   XK_F1,      setlayout,      {.v = &layouts[0]} },
+    { MODKEY|ControlMask,   XK_F2,      setlayout,      {.v = &layouts[1]} },
+    { MODKEY|ControlMask,   XK_F3,      setlayout,      {.v = &layouts[2]} },
+    { MODKEY|ControlMask,   XK_F4,      setlayout,      {.v = &layouts[3]} },
     { MODKEY|ControlMask,   XK_space,   setlayout,      {0} },
 
     /* toggle floating (Mod-Shift-space) */
