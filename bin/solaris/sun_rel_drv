@@ -31,21 +31,28 @@ source $EMAILADDRS
 
 SRCDESTDIR=${HOME}/sun_src_drops
 
+NSEG_MNT_DIR=/mnt/nseg
+
+if [ "`df | egrep \"${NSEG_MNT_DIR}$\"`" = "" ]; then
+    echo "ERROR: $NSEG_MNT_DIR is not mounted!"
+    exit
+fi
+
 if [ -f src/bge.h ]; then
   PKG=BRCMbge
   TITLE="Solaris 1g driver (BRCMbge $VER) for 57xx NX1"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\b57bge_Solaris\\$VER"
-  PKGDESTDIR=/scratch/edavis/nseg/rels/b57bge_Solaris/$VER
+  PKGDESTDIR=${NSEG_MNT_DIR}/rels/b57bge_Solaris/$VER
 elif [ -f src/bnx.h ]; then
   PKG=BRCMbnx
   TITLE="Solaris 1g driver (BRCMbnx $VER) for B570x NX2"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm5706\\drivers\\solaris\\$VER"
-  PKGDESTDIR=/scratch/edavis/nseg/rels/bcm5706/drivers/solaris/$VER
+  PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm5706/drivers/solaris/$VER
 elif [ -f src_bnxe/bnxe.h ]; then
   PKG=BRCMbnxe
   TITLE="Solaris 10g driver (BRCMbnxe $VER) for 57710/57711/57712/578xx NX2"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm57710\\drivers\\solaris\\$VER"
-  PKGDESTDIR=/scratch/edavis/nseg/rels/bcm57710/drivers/solaris/$VER
+  PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm57710/drivers/solaris/$VER
   TOADDRS="$TOADDRS, $FCOEADDR"
 else
   echo "ERROR: Unknown driver (bad current working directory)!"
