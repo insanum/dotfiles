@@ -46,7 +46,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "https://github.com/tomtom/vikitasks_vim.git"
   "Bundle "-b development https://github.com/vimoutliner/vimoutliner.git"
   Bundle "https://github.com/insanum/votl.git"
-  Bundle "YankRing.vim"
+  "Bundle "YankRing.vim"
   Bundle "ZoomWin"
 
   " make sure the vim_bridge python plugin is installed
@@ -238,7 +238,8 @@ nmap <Leader>da 1G/Last Modified:\s*/e+1<CR>Cabdate<ESC>
 if ostype == "solaris2.10" || ostype == "solaris2.11"
   nmap <Leader>g :!ggrep -n --color=always <cword> *<CR>
 else
-  nmap <Leader>g :!grep -n --color=always <cword> *<CR>
+  nmap <Leader>g :!grep -r -n --color=always <cword> *<CR>
+  nmap <Leader>a :Ack <cword> *<CR>
 endif
 "nmap <Leader>g :grep --color=always <cword> *.[^o]<CR>
 "nmap <Leader>g :grep <cword> *.[^o]<CR>
