@@ -282,10 +282,14 @@ nmap <Leader>pe :exec('!e4 edit ' . expand("%"))<CR>:w!<CR>
 " diff ignore whitespace
 nmap <Leader>dw :set diffopt=filler,iwhite<CR>
 
-" perforce diff current file
+" perforce diff current file (vs previous)
 nmap <Leader>pd :exec('!e4 diff ' . expand("%"))<CR>
-nmap <Leader>pp :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
+nmap <Leader>pdp :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
 nmap <Leader>do :diffoff<CR>
+
+" git diff current file (unstaged and staged vs previous)
+nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
+nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
 
 " write visual data to $HOME/t
 vmap <Leader>w :w! $HOME/t<CR>
