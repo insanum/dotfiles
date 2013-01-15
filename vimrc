@@ -60,6 +60,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   Bundle "Solarized"
   Bundle "molokai"
+  Bundle "https://github.com/Lokaltog/vim-powerline.git"
 
   "Bundle "git://github.com/hsitz/VimOrganizer.git"
   Bundle "git://github.com/jceb/vim-orgmode.git"
@@ -123,7 +124,10 @@ set wildignore=*.o,*.obj,*.bak,*.exe,*.rom,*.bin
 set matchpairs=(:),{:},[:],<:>
 "set statusline=%t%(\ [%M%H%R]%)\ %{CVSGetStatusLine()}\ %=%{GetColorSyntaxName()}\ [%03B-%03b]\ %5l,%-3c\ %P
 "set statusline=%t%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P
-if exists("g:taglist")
+if filereadable(expand("$HOME/.vim/bundle/vim-powerline/plugin/Powerline.vim"))
+  set encoding=utf-8
+  let g:Powerline_symbols = 'fancy'
+elseif exists("g:taglist")
   "set statusline=%1*\ %t\ %*%2*%(\ %{Tlist_Get_Tagname_By_Line()}\ %)%*\ %y%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
   set statusline=%1*\ %t\ %*%2*%(\ %{Tlist_Get_Tagname_By_Line()}\ %)%*\ %y%(\ [%M%H%R]%)\ %=[x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
 else
