@@ -734,7 +734,7 @@ function fixkeys()
 {
     # For some reason the Linux kernel has been wigging out and thinking my
     # USB keyboards have been disconnected and thereafter instantly reconnected.
-    xrdb -load $HOME/.Xdefaults
+    xmodmap $HOME/.Xmodmap
     if [[ $OSTYPE =~ freebsd ]]; then
         xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
     else

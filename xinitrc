@@ -34,7 +34,7 @@ if [[ $HOSTNAME = eadmaka ]]; then
     #xmodmap -e "keycode 94 = Alt_L"     # for my kensington keyboard
     #synergys
 elif [[ $HOSTNAME = jackshrimp ]]; then
-    xrandr --output DVI-I-3 --rotate left
+    xrandr --output DVI-D-0 --rotate left
 fi
 
 ## Source scripts in /etc/X11/xinit/xinitrc.d/
