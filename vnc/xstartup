@@ -9,6 +9,7 @@ xset +fp /usr/share/fonts/misc
 xset +fp /usr/share/fonts/TTF
 xset +fp /usr/share/fonts/Type1
 xset +fp /usr/share/fonts/util
+xset +fp ~/.fonts
 
 xsetroot -solid black
 
@@ -17,13 +18,15 @@ xrdb -load $HOME/.XDefaults
 if [[ -n "$VNCDESKTOP" ]]; then
     export XKL_XMODMAP_DISABLE=1
 else # FreeNX
-  #setxkbmap -v 10 -geometry "pc(pc105)" -keycodes "evdev+aliases(qwerty)"
-  setxkbmap -model us
+    #setxkbmap -v 10 -geometry "pc(pc105)" -keycodes "evdev+aliases(qwerty)"
+    setxkbmap -model us
+    xrandr -s 1920x1080
 fi
 
 xmodmap $HOME/.Xmodmap
 
-urxvt &
+#urxvt &
+evilvte &
 
 exec /usr/bin/pekwm
 

@@ -7,6 +7,7 @@ RootMenu = "Pekwm" {
     Entry = "run" { Actions = "ShowCmdDialog" }
     #Entry = "Terminal" { Actions = "Exec $TERM &" }
     Entry = "urxvt" { Actions = "Exec urxvt &" }
+    Entry = "evilvte" { Actions = "Exec evilvte &" }
 
     Separator {}
 
