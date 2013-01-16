@@ -508,7 +508,6 @@ function! MyColorScheme(scheme)
     "let g:solarized_underline=0
     let g:solarized_italic=0
     colorscheme solarized
-    hi Normal ctermbg=232
   endif
   hi Normal ctermfg=252 ctermbg=233
   hi clear Visual
@@ -520,8 +519,8 @@ function! MyColorScheme(scheme)
 endfunction
 
 if !&diff
-  "call MyColorScheme('molokai')
-  call MyColorScheme('solarized')
+  call MyColorScheme('molokai')
+  "call MyColorScheme('solarized')
 else
   " solarized is really good in diff mode (molokai is horrible)
   call MyColorScheme('solarized')
