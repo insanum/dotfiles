@@ -18,3 +18,5 @@
 	tree = log --graph --decorate --pretty=oneline
 	diffe = difftool -x vimdiff
 	s = status
+[push]
+	default = simple

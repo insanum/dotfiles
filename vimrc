@@ -58,8 +58,8 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "changeColorScheme.vim"
   "Bundle "Color-Sampler-Pack"
 
-  Bundle "Solarized"
-  Bundle "molokai"
+  Bundle "https://github.com/altercation/vim-colors-solarized"
+  Bundle "https://github.com/tomasr/molokai.git"
   Bundle "https://github.com/Lokaltog/vim-powerline.git"
 
   "Bundle "git://github.com/hsitz/VimOrganizer.git"
@@ -72,7 +72,6 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "ledger.vim"
   "Bundle "VimDebug"
   "Bundle "minibufexpl.vim"
-
 endif
 
 "------------------------------------------------
@@ -127,6 +126,7 @@ set matchpairs=(:),{:},[:],<:>
 if filereadable(expand("$HOME/.vim/bundle/vim-powerline/plugin/Powerline.vim"))
   set encoding=utf-8
   let g:Powerline_symbols = 'fancy'
+  let g:Powerline_stl_path_style = 'short'
 elseif exists("g:taglist")
   "set statusline=%1*\ %t\ %*%2*%(\ %{Tlist_Get_Tagname_By_Line()}\ %)%*\ %y%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
   set statusline=%1*\ %t\ %*%2*%(\ %{Tlist_Get_Tagname_By_Line()}\ %)%*\ %y%(\ [%M%H%R]%)\ %=[x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
@@ -287,13 +287,14 @@ nmap <Leader>pe :exec('!e4 edit ' . expand("%"))<CR>:w!<CR>
 nmap <Leader>dw :set diffopt=filler,iwhite<CR>
 
 " perforce diff current file (vs previous)
-nmap <Leader>pd :exec('!e4 diff ' . expand("%"))<CR>
-nmap <Leader>pdp :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-nmap <Leader>do :diffoff<CR>
+nmap <Leader>pdp :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=:call MyColorScheme('solarized')<CR>
 
 " git diff current file (unstaged and staged vs previous)
-nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
+nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=:call MyColorScheme('solarized')<CR>
+nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=:call MyColorScheme('solarized')<CR>
+
+" turn diff off for all windows in current tab
+nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
 
 " write visual data to $HOME/t
 vmap <Leader>w :w! $HOME/t<CR>
@@ -440,93 +441,101 @@ autocmd BufNewFile,BufRead *.txt,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php if &te
 "nmap <F7> <C-E>:sleep 3<CR><C-E>:redraw<CR><F7>
 
 function! MyFixedHighlights()
-  highlight clear SpellBad
-  highlight SpellBad ctermbg=Red ctermfg=Black
+  hi clear SpellBad
+  hi SpellBad ctermbg=Red ctermfg=Black
 
-  highlight clear IncSearch
-  highlight IncSearch ctermbg=fg ctermfg=bg
+  hi clear IncSearch
+  hi IncSearch ctermbg=fg ctermfg=bg
 
-  highlight clear Search
-  highlight Search ctermbg=DarkYellow ctermfg=Black
+  hi clear Search
+  hi Search ctermbg=DarkYellow ctermfg=Black
 
   " keep these the same color
-  highlight clear VertSplit
-  highlight clear StatusLineNC
-  highlight VertSplit    ctermfg=White ctermbg=Blue
-  highlight StatusLineNC ctermfg=White ctermbg=Blue
+  hi clear VertSplit
+  hi clear StatusLineNC
+  hi VertSplit    ctermfg=White ctermbg=Blue
+  hi StatusLineNC ctermfg=White ctermbg=Blue
 
-  highlight clear StatusLine
-  highlight StatusLine ctermfg=White ctermbg=Red
+  hi clear StatusLine
+  hi StatusLine ctermfg=White ctermbg=Red
 
-  highlight clear TabLineSel
-  highlight TabLineSel ctermfg=White ctermbg=Red cterm=bold,underline
+  hi clear TabLineSel
+  hi TabLineSel ctermfg=White ctermbg=Red cterm=bold,underline
 
-  highlight clear TabLine
-  highlight TabLine ctermfg=Red cterm=bold,underline
+  hi clear TabLine
+  hi TabLine ctermfg=Red cterm=bold,underline
 
-  highlight clear TabLineFill
-  highlight TabLineFill cterm=underline
+  hi clear TabLineFill
+  hi TabLineFill cterm=underline
 
-  highlight clear Folded
-  highlight Folded ctermbg=DarkGrey
+  hi clear Folded
+  hi Folded ctermbg=DarkGrey
 
-  highlight clear FoldColumn
-  highlight FoldColumn ctermfg=Yellow
+  hi clear FoldColumn
+  hi FoldColumn ctermfg=Yellow
 
-  highlight clear User1
-  highlight User1 ctermfg=Black ctermbg=White
+  hi clear User1
+  hi User1 ctermfg=Black ctermbg=White
 
-  highlight clear User2
-  highlight User2 ctermfg=Black ctermbg=Yellow
+  hi clear User2
+  hi User2 ctermfg=Black ctermbg=Yellow
 
-  highlight mailQuoted1 ctermfg=Cyan
-  highlight mailQuoted2 ctermfg=Green
-  highlight mailQuoted3 ctermfg=Yellow
-  highlight mailQuoted4 ctermfg=Magenta
-  highlight mailQuoted5 ctermfg=Red
-  highlight mailQuoted6 ctermfg=Blue
-  highlight mailQuoted7 ctermfg=Cyan
-  highlight mailQuoted7 ctermfg=Green
+  hi mailQuoted1 ctermfg=Cyan
+  hi mailQuoted2 ctermfg=Green
+  hi mailQuoted3 ctermfg=Yellow
+  hi mailQuoted4 ctermfg=Magenta
+  hi mailQuoted5 ctermfg=Red
+  hi mailQuoted6 ctermfg=Blue
+  hi mailQuoted7 ctermfg=Cyan
+  hi mailQuoted7 ctermfg=Green
 
-  highlight Visual cterm=reverse
+  hi Visual cterm=reverse
 endfunction
 
-function! SetColorScheme(scheme)
-  if (a:scheme == 'molokai') "&& exists("g:molokai")
-    "call MyFixedHighlights()
-    colorscheme molokai
-    "highlight Visual cterm=reverse
-    "highlight User1 ctermfg=White ctermbg=DarkGrey cterm=bold
-    "highlight User2 ctermfg=Yellow cterm=bold
-    "highlight DiffChange ctermbg=0
+" commands for 'changeColorScheme.vim' and 'Color-Sampler-Pack' (via vundle)
+"map <F11> :call NextColorScheme()<CR>:call MyFixedHighlights()<CR>
+"map <F11> :call NextColorScheme()<CR>
+"map <S-F11> :call PreviousColorScheme()<CR>
 
-    highlight clear IncSearch
-    highlight IncSearch ctermbg=fg ctermfg=bg
-    highlight clear Search
-    highlight Search ctermbg=DarkYellow ctermfg=Black
-    highlight clear Todo
-    highlight Todo ctermbg=DarkYellow ctermfg=Black
-  elseif (a:scheme == 'solarized') "&& exists("g:solarized")
+function! MyColorScheme(scheme)
+  if a:scheme == 'molokai'
+    colorscheme molokai
+  elseif a:scheme == 'solarized'
     set background=dark
-    let g:solarized_termtrans=1
     let g:solarized_termcolors=256
+    "let g:solarized_termtrans=1
     "let g:solarized_bold=0
     "let g:solarized_underline=0
     let g:solarized_italic=0
     colorscheme solarized
-    highlight Search cterm=reverse
-    highlight IncSearch cterm=reverse
+    hi Normal ctermbg=232
   endif
+  hi Normal ctermfg=252 ctermbg=233
+  hi clear Visual
+  hi Visual ctermbg=235
+  hi clear Search
+  hi Search ctermbg=136 ctermfg=232
+  hi clear Todo
+  hi Todo ctermbg=207 ctermfg=232
 endfunction
 
-" These are available with 'changeColorScheme.vim' and 'Color-Sampler-Pack' (via vundle)
-"map <F11> :call NextColorScheme()<CR>:call MyFixedHighlights()<CR>
-map <F11> :call NextColorScheme()<CR>
-"map <S-F11> :call PreviousColorScheme()<CR>
-"map <C-F11> :call RandomColorScheme()<CR>
+if !&diff
+  "call MyColorScheme('molokai')
+  call MyColorScheme('solarized')
+else
+  " solarized is really good in diff mode (molokai is horrible)
+  call MyColorScheme('solarized')
+endif
 
-call SetColorScheme('molokai')
-"call SetColorScheme('solarized')
+function MySwapColorScheme()
+  if g:colors_name == 'molokai'
+    call MyColorScheme('solarized')
+  else " solarized or something else
+    call MyColorScheme('molokai')
+  endif
+endfunction
+map <Leader>> :call MySwapColorScheme()<CR>
+
 autocmd syntax * runtime syntax/RainbowParenthsis.vim
 
 " netrw stuff
@@ -711,28 +720,28 @@ nmap <Leader>td o:CLOSED:<<C-R>=strftime("%Y-%m-%d %a")<CR>><ESC>
 vmap <LocalLeader>W <ESC>'<O#+BEGIN_EXAMPLE<ESC>'>o#+END_EXAMPLE<ESC>
 
 function! OrgModeColors()
-  "highlight Normal ctermfg=green ctermbg=black
+  "hi Normal ctermfg=green ctermbg=black
 
-  highlight Folded ctermbg=black ctermfg=green cterm=bold
-  highlight LineNr ctermbg=black ctermfg=grey cterm=bold
+  hi Folded ctermbg=black ctermfg=green cterm=bold
+  hi LineNr ctermbg=black ctermfg=grey cterm=bold
 
-  highlight org_comment ctermfg=red
-  highlight org_timestamp ctermfg=magenta
-  highlight org_shade_stars ctermfg=darkgray
+  hi org_comment ctermfg=red
+  hi org_timestamp ctermfg=magenta
+  hi org_shade_stars ctermfg=darkgray
 
-  highlight OL1 ctermfg=lightblue
-  highlight OL2 ctermfg=red
-  highlight OL3 ctermfg=brown
-  highlight OL4 ctermfg=yellow
-  highlight OL5 ctermfg=lightblue
-  highlight OL6 ctermfg=red
-  highlight OL7 ctermfg=brown
-  highlight OL8 ctermfg=yellow
+  hi OL1 ctermfg=lightblue
+  hi OL2 ctermfg=red
+  hi OL3 ctermfg=brown
+  hi OL4 ctermfg=yellow
+  hi OL5 ctermfg=lightblue
+  hi OL6 ctermfg=red
+  hi OL7 ctermfg=brown
+  hi OL8 ctermfg=yellow
 
   syntax match org_tags /\s*:\S*:\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
-  highlight org_tags ctermfg=red
+  hi org_tags ctermfg=red
   syntax match org_example /\s*#+.*_EXAMPLE\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
-  highlight org_example ctermfg=darkgrey
+  hi org_example ctermfg=darkgrey
 
   " Properties (taken from vim-orgmode/syntax/org.vim since org_tags conflicts)
   syn region Error matchgroup=org_properties_delimiter start=/^\s*:PROPERTIES:\s*$/ end=/^\s*:END:\s*$/ contains=org_property keepend
@@ -767,9 +776,9 @@ vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
 "
 "function! OrgModeColors()
 "  colorscheme org_dark
-"  highlight TabLine     ctermfg=252 ctermbg=233
-"  highlight TabLineSel  ctermfg=252 ctermbg=233 cterm=bold gui=bold
-"  highlight TabLineFill ctermfg=252 ctermbg=233 cterm=reverse gui=reverse
+"  hi TabLine     ctermfg=252 ctermbg=233
+"  hi TabLineSel  ctermfg=252 ctermbg=233 cterm=bold gui=bold
+"  hi TabLineFill ctermfg=252 ctermbg=233 cterm=reverse gui=reverse
 "endfunction
 "autocmd BufEnter *.org call OrgModeColors()
 "
@@ -916,48 +925,48 @@ endif
 "------------------- VOTL STUFF ------------------- {{{1
 
 function! VotlColors()
-  highlight OL1 ctermfg=lightblue
-  highlight OL2 ctermfg=red
-  highlight OL3 ctermfg=brown
-  highlight OL4 ctermfg=yellow
-  highlight OL5 ctermfg=lightblue
-  highlight OL6 ctermfg=red
-  highlight OL7 ctermfg=brown
-  highlight OL8 ctermfg=yellow
-  highlight OL8 ctermfg=white
+  hi OL1 ctermfg=lightblue
+  hi OL2 ctermfg=red
+  hi OL3 ctermfg=brown
+  hi OL4 ctermfg=yellow
+  hi OL5 ctermfg=lightblue
+  hi OL6 ctermfg=red
+  hi OL7 ctermfg=brown
+  hi OL8 ctermfg=yellow
+  hi OL8 ctermfg=white
 
   " color for body text
   for i in range(1, 9)
-     execute "highlight BT" . i . " ctermfg=lightgreen"
+     execute "hi BT" . i . " ctermfg=lightgreen"
   endfor
 
   " color for pre-formatted body text
   for i in range(1, 9)
-     execute "highlight BP" . i . " ctermfg=lightcyan"
+     execute "hi BP" . i . " ctermfg=lightcyan"
   endfor
 
   " color for tables
   for i in range(1, 9)
-     execute "highlight TA" . i . " ctermfg=yellow"
+     execute "hi TA" . i . " ctermfg=yellow"
   endfor
 
   " color for user text
   for i in range(1, 9)
-     execute "highlight UT" . i . " ctermfg=lightgreen"
+     execute "hi UT" . i . " ctermfg=lightgreen"
   endfor
 
   " color for pre-formatted user text
   for i in range(1, 9)
-     execute "highlight UP" . i . " ctermfg=lightcyan"
+     execute "hi UP" . i . " ctermfg=lightcyan"
   endfor
 
-  highlight VotlTags       ctermfg=cyan
-  highlight VotlDate       ctermfg=magenta
-  highlight VotlTime       ctermfg=magenta
-  highlight VotlChecked    ctermfg=magenta
-  highlight VotlCheckbox   ctermfg=lightmagenta
-  highlight VotlPercentage ctermfg=darkgreen
-  highlight VotlTableLines ctermfg=darkgrey
+  hi VotlTags       ctermfg=cyan
+  hi VotlDate       ctermfg=magenta
+  hi VotlTime       ctermfg=magenta
+  hi VotlChecked    ctermfg=magenta
+  hi VotlCheckbox   ctermfg=lightmagenta
+  hi VotlPercentage ctermfg=darkgreen
+  hi VotlTableLines ctermfg=darkgrey
 endfunction
 autocmd FileType votl call VotlColors()
 
