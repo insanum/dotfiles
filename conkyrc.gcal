@@ -1,12 +1,13 @@
-alignment top_left
+alignment top_right
 maximum_width 630
 minimum_size 330 10
 gap_x 25
 gap_y 50
 
-own_window no
-own_window_type normal
-own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+own_window yes
+#own_window_type normal
+own_window_type panel
+#own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
 own_window_colour black
 own_window_transparent yes
 
@@ -30,13 +31,14 @@ no_buffers yes
 out_to_console no
 uppercase no
 use_spacer yes
-font 8x13
-#use_xft yes
+#font 8x13
+use_xft yes
 #xftalpha 0.8
-#xftfont  Bitstream Vera Sans Mono:size=10
+#xftfont Bitstream Vera Sans Mono:size=10
+xftfont Terminus:size=9
 
 TEXT
 *** Google Calendar Agenda ***
-${execi 300 /home/edavis/gcalcli/gcalcli --nc agenda}
-${execi 300 /home/edavis/gcalcli/gcalcli --nc --cal="davis" --cal="birthdays" --cal="holidays" calw 3}
+${execpi 300 /home/insanum/src/gcalcli/gcalcli --conky --config /home/insanum/.priv/gcalclirc --cal="davis" agenda}
+${execpi 300 /home/insanum/src/gcalcli/gcalcli --conky --config /home/insanum/.priv/gcalclirc --cal="davis" calw 1}
 
