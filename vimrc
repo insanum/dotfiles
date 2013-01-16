@@ -125,7 +125,7 @@ set matchpairs=(:),{:},[:],<:>
 "set statusline=%t%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P
 if filereadable(expand("$HOME/.vim/bundle/vim-powerline/plugin/Powerline.vim"))
   set encoding=utf-8
-  let g:Powerline_symbols = 'fancy'
+  let g:Powerline_symbols = 'compatible'
   let g:Powerline_stl_path_style = 'short'
 elseif exists("g:taglist")
   "set statusline=%1*\ %t\ %*%2*%(\ %{Tlist_Get_Tagname_By_Line()}\ %)%*\ %y%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
@@ -535,6 +535,15 @@ function MySwapColorScheme()
   endif
 endfunction
 map <Leader>> :call MySwapColorScheme()<CR>
+
+function MySwitchTransparency()
+  if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
+    hi Normal ctermbg=None
+  else
+    hi Normal ctermbg=232
+  endif
+endfunction
+map <Leader>< :call MySwitchTransparency()<CR>
 
 autocmd syntax * runtime syntax/RainbowParenthsis.vim
 
