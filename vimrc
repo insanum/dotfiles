@@ -25,6 +25,9 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   set rtp+=$HOME/.vim/vundle/
   call vundle#rc()
 
+  Bundle "LustyExplorer"
+  Bundle "LustyJuggler"
+
   Bundle "ack.vim"
   Bundle "Align"
   Bundle "bufexplorer.zip"
@@ -60,7 +63,6 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   Bundle "https://github.com/altercation/vim-colors-solarized"
   Bundle "https://github.com/tomasr/molokai.git"
-  Bundle "https://github.com/Lokaltog/vim-powerline.git"
 
   "Bundle "git://github.com/hsitz/VimOrganizer.git"
   Bundle "git://github.com/jceb/vim-orgmode.git"
@@ -121,24 +123,12 @@ set listchars=tab:>-,eol:$,trail:-
 set keywordprg=""
 set wildignore=*.o,*.obj,*.bak,*.exe,*.rom,*.bin
 set matchpairs=(:),{:},[:],<:>
-"set statusline=%t%(\ [%M%H%R]%)\ %{CVSGetStatusLine()}\ %=%{GetColorSyntaxName()}\ [%03B-%03b]\ %5l,%-3c\ %P
-"set statusline=%t%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P
-if filereadable(expand("$HOME/.vim/bundle/vim-powerline/plugin/Powerline.vim"))
-  set encoding=utf-8
-  let g:Powerline_symbols = 'compatible'
-  let g:Powerline_stl_path_style = 'short'
-elseif exists("g:taglist")
-  "set statusline=%1*\ %t\ %*%2*%(\ %{Tlist_Get_Tagname_By_Line()}\ %)%*\ %y%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
-  set statusline=%1*\ %t\ %*%2*%(\ %{Tlist_Get_Tagname_By_Line()}\ %)%*\ %y%(\ [%M%H%R]%)\ %=[x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
-else
-  "set statusline=%1*\ %t\ %*\ %y%(\ [%M%H%R]%)\ %=%{GetColorSyntaxName()}\ [x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
-  set statusline=%1*\ %t\ %*\ %y%(\ [%M%H%R]%)\ %=[x%B/d%b]\ [%l,%c]\ [%{winwidth(0)}]\ %P\ 
-endif
 set winheight=11
 set winminheight=8
 set winminwidth=5
 set noequalalways
 set pumheight=20
+set hidden
 
 " requires 'print_vim' or 'print' shell script (i.e. Cygwin/Windows Ghostscript wrapper)
 "set printexpr=system('print_vim\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
@@ -526,16 +516,18 @@ else
   call MyColorScheme('solarized')
 endif
 
-function MySwapColorScheme()
+function! MySwapColorScheme()
   if g:colors_name == 'molokai'
+    hi clear
     call MyColorScheme('solarized')
   else " solarized or something else
+    hi clear
     call MyColorScheme('molokai')
   endif
 endfunction
 map <Leader>> :call MySwapColorScheme()<CR>
 
-function MySwitchTransparency()
+function! MySwitchTransparency()
   if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
     hi Normal ctermbg=None
   else
@@ -980,5 +972,120 @@ autocmd FileType votl call VotlColors()
 
 autocmd FileType votl setlocal nospell
 
-" End of VimOutliner STUFF }}}1
+" End of VOTL STUFF }}}1
+
+"------------------- STATUSLINE ------------------- {{{1
+
+hi ST_M_NORMAL  ctermfg=22  ctermbg=148 cterm=bold
+hi ST_M_INSERT  ctermfg=23  ctermbg=231 cterm=bold
+hi ST_M_VISUAL  ctermfg=88  ctermbg=208 cterm=bold
+hi ST_M_REPLACE ctermfg=231 ctermbg=160 cterm=bold
+hi ST_M_SELECT  ctermfg=231 ctermbg=241 cterm=bold
+
+hi ST_FILET     ctermfg=247 ctermbg=236 cterm=bold
+hi ST_FILET_I   ctermfg=117 ctermbg=24  cterm=bold
+
+hi ST_FLAGS     ctermfg=227 ctermbg=52  cterm=bold
+hi ST_DOS       ctermfg=189 ctermbg=55  cterm=bold
+
+hi ST_FILE      ctermfg=231 ctermbg=240 cterm=bold
+hi ST_FILE_I    ctermfg=231 ctermbg=31  cterm=bold
+
+hi ST_CHAR      ctermfg=247 ctermbg=236 cterm=bold
+hi ST_CHAR_I    ctermfg=117 ctermbg=24  cterm=bold
+
+hi ST_SCROLL    ctermfg=250 ctermbg=240 cterm=bold
+hi ST_SCROLL_I  ctermfg=117 ctermbg=31  cterm=bold
+
+hi ST_CURSOR    ctermfg=236 ctermbg=252 cterm=bold
+hi ST_CURSOR_I  ctermfg=23  ctermbg=117 cterm=bold
+
+hi ST_TAG       ctermfg=244 ctermbg=236 cterm=bold
+hi ST_TAG_I     ctermfg=244 ctermbg=24  cterm=bold
+
+function! MyStatusGetMode()
+  let mode = mode()
+  if     mode ==# 'v'        | return "%#ST_M_VISUAL# VISUAL %*"
+  elseif mode ==# 'V'        | return "%#ST_M_VISUAL# V.LINE %*"
+  elseif mode ==# ''       | return "%#ST_M_VISUAL# V.BLOCK %*"
+  elseif mode ==# 's'        | return "%#ST_M_SELECT# SELECT %*"
+  elseif mode ==# 'S'        | return "%#ST_M_SELECT# S.LINE %*"
+  elseif mode ==# ''       | return "%#ST_M_SELECT# S.BLOCK %*"
+  elseif mode =~# '\vi'      | return "%#ST_M_INSERT# INSERT %*"
+  elseif mode =~# '\v(R|Rv)' | return "%#ST_M_REPLACE# REPLACE %*"
+  else                       | return "%#ST_M_NORMAL# NORMAL %*"
+  endif
+endfunction " }}}
+
+function! MyStatusGetFileType()
+  let higrp = 'ST_FILET'
+  if mode() ==# 'i' | let higrp = 'ST_FILET_I' | endif
+  return '%#' . higrp . '# %y %*'
+endfunction
+
+function! MyStatusGetFlags()
+  return '%#ST_FLAGS#%( [%M%H%R%W] %)%*'
+endfunction
+
+function! MyStatusGetFFDos()
+  if &ff != 'dos' | return '' | endif
+  return '%#ST_DOS# [dos] %*'
+endfunction
+
+function! MyStatusGetFile()
+  let higrp = 'ST_FILE'
+  if mode() ==# 'i' | let higrp = 'ST_FILE_I' | endif
+  return '%#' . higrp . '# %t ' " no %* here to extend right
+endfunction
+
+function! MyStatusGetChar()
+  let higrp = 'ST_CHAR'
+  if mode() ==# 'i' | let higrp = 'ST_CHAR_I' | endif
+  return '%#' . higrp . '# x%02B:d%03b %*' " 2 hex, 3 dec
+endfunction
+
+function! MyStatusGetScroll()
+  let higrp = 'ST_SCROLL'
+  if mode() ==# 'i' | let higrp = 'ST_SCROLL_I' | endif
+  return '%#' . higrp . '# %P %*'
+endfunction
+
+function! MyStatusGetCursor()
+  let higrp = 'ST_CURSOR'
+  if mode() ==# 'i' | let higrp = 'ST_CURSOR_I' | endif
+  return '%#' . higrp . '# %5.5l:%-3.3c %*' " 5 line, 3 column
+endfunction
+
+function! MyStatusGetTag()
+  if !filereadable(expand("$HOME/.vim/bundle/taglist.vim/plugin/taglist.vim"))
+    return ''
+  endif
+  " this is lame as it only works after the taglist window has openned
+  " and I don't have the taglist window auto open setting turned on
+  let curtag = Tlist_Get_Tagname_By_Line()
+  if curtag == ''
+    return ''
+  endif
+  let higrp = 'ST_TAG'
+  if mode() ==# 'i' | let higrp = 'ST_TAG_I' | endif
+  return '%#' . higrp . '#' . curtag . ' %*'
+endfunction
+
+function! MyStatus()
+  return
+    \ MyStatusGetMode() .
+    \ MyStatusGetFlags() .
+    \ MyStatusGetFFDos() .
+    \ MyStatusGetFileType() .
+    \ MyStatusGetTag() .
+    \ MyStatusGetFile() .
+    \ '%=' .
+    \ MyStatusGetChar() .
+    \ MyStatusGetScroll() .
+    \ MyStatusGetCursor()
+endfunction
+
+set statusline=%!MyStatus()
+
+" End of STATUSLINE STUFF }}}1
 
