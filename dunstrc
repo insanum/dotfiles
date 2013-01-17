@@ -28,21 +28,26 @@
 
     # show age of message if message is older than show_age_threshold seconds.
     # set to -1 to disable
-    show_age_threshold = 60;
+    show_age_threshold = 60
 
-    # split long notifications into multiple lines
+    # split notifications into multiple lines if they don't fit into geometry
     word_wrap = yes
+
+    # ignore newlines '\n' in notifications
+    ignore_newline = no
 
 
     # the geometry of the window
     # geometry [{width}]x{height}][+/-{x}+/-{y}]
     # The geometry of the message window.
-    # The height is measured in lines everything else in pixels. If the width
+    # The height is measured in number of notifications everything else in pixels. If the width
     # is omitted but the height is given ("-geometry x2"), the message window
     # expands over the whole screen (dmenu-like). If width is 0,
     # the window expands to the longest message displayed.
     # A positive x is measured from the left, a negative from the
     # right side of the screen.  Y is measured from the top and down respectevly.
+    # The width can be negative. In this case the actual width is the
+    # screen width minus the width defined in within the geometry option.
     geometry = "0x16-30+100"
 
     # The transparency of the window. range: [0; 100]
@@ -82,11 +87,34 @@
     # Set to 0 to disable
     separator_height = 2;
 
-    # Define a color for the separator.
-    # This can either be "auto" or "foreground". "Auto" tries to find a color
-    # that fits nicely to the background color.
-    separator_color = auto
+    # padding between text and separator
+    padding = 4
 
+    # horizontal padding
+    horizontal_padding = 4
+
+    # Define a color for the separator.
+    # possible values are:
+    #  * auto: dunst tries to find a color fitting to the background
+    #  * foreground: use the same color as the foreground
+    #  * frame: use the same color as the frame.
+    #  * anything else will be interpreted as a X color
+    separator_color = frame
+
+    # print a notification on startup
+    # This is mainly for error detection, since dbus (re-)starts dunst
+    # automatically after a crash.
+    startup_notification = false
+
+    # dmenu path
+    dmenu = /usr/bin/dmenu -p dunst:
+
+    # browser for opening urls in context menu
+    browser = /usr/bin/chromium
+
+[frame]
+    width = 3
+    color = "#aaaaaa"
 
 [shortcuts]
     # shortcuts are specified as [modifier+][modifier+]...key
@@ -95,14 +123,17 @@
     # xev might be helpful to find names for keys
 
     # close notification
-    close = ctrl+space
+    #close = ctrl+space
 
     # close all notifications
-    close_all = ctrl+shift+space
+    #close_all = ctrl+shift+space
 
     # redisplay last message(s)
     # On the US keyboard layout 'grave' is normally above TAB and left of '1'.
-    history = ctrl+grave
+    history = ctrl+shift+grave
+
+    # context menu
+    #context = ctrl+shift+period
 
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
@@ -129,9 +160,24 @@
 # and 'format'.
 # Shell-like globbing will get expanded.
 #
+# SCRIPTING
+# you can specify a script that gets run when the rule matches by setting
+# the 'script' option.
+# The script will be called as follows:
+# script appname summary body icon urgency
+# where urgency can be "LOW", "NORMAL" or "CRITICAL".
+#
 # NOTE: if you don't want a notification to be displayed, set the format to ""
 # NOTE: It might be helpful to run dunst -print in a terminal in order to find
 # fitting options for rules.
+
+#[espeak]
+#    summary = "*"
+#    script = dunst_espeak.sh
+
+#[script-test]
+#    summary = "*script*"
+#    script = dunst_test.sh
 
 #[ignore]
 ## This notification will not be displayed
