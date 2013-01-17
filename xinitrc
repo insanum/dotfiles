@@ -79,7 +79,7 @@ fi
 [[ -x /usr${LOCAL}/bin/xautolock && -x /usr${LOCAL}/bin/slock ]] && \
     xautolock -resetsaver -time 10 -locker slock &
 
-[[ -x /usr${LOCAL}/bin/urxvtd ]] && urxvtd -f -o
+#[[ -x /usr${LOCAL}/bin/urxvtd ]] && urxvtd -f -o
 
 xset r rate 400
 xset m 2/1 50
