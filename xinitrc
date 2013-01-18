@@ -98,7 +98,6 @@ if [[ $HOSTNAME = eadmaka ]]; then
   if [ -x $HOME/src/gcalcli/gcalcli ] ; then 
     while true
     do
-        killall -q gxmessage
         $HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind
         sleep 300
     done &

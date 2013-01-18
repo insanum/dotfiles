@@ -25,32 +25,18 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   set rtp+=$HOME/.vim/vundle/
   call vundle#rc()
 
+  "Bundle "The-NERD-tree"
   Bundle "LustyExplorer"
   Bundle "LustyJuggler"
 
   Bundle "ack.vim"
   Bundle "Align"
-  Bundle "bufexplorer.zip"
   Bundle "calendar.vim--Matsumoto"
-  Bundle "CCTree"
-  Bundle "Command-T"
+  "Bundle "Command-T"
+  Bundle "https://github.com/kien/ctrlp.vim.git"
   Bundle "EnhCommentify.vim"
-  Bundle "muttaliasescomplete.vim"
   Bundle "Rainbow-Parenthesis"
-  Bundle "speeddating.vim"
-  Bundle "SuperTab"
-  Bundle "surround.vim"
-  Bundle "taglist.vim"
-  Bundle "The-NERD-tree"
-  "Bundle "vimwiki"
-  "Bundle "https://github.com/tomtom/tlib_vim.git"
-  "Bundle "https://github.com/tomtom/trag_vim.git"
-  "Bundle "https://github.com/tomtom/viki_vim.git"
-  "Bundle "https://github.com/tomtom/vikitasks_vim.git"
-  "Bundle "-b development https://github.com/vimoutliner/vimoutliner.git"
-  Bundle "https://github.com/insanum/votl.git"
-  "Bundle "YankRing.vim"
-  Bundle "ZoomWin"
+  Bundle "https://github.com/majutsushi/tagbar.git"
 
   " make sure the vim_bridge python plugin is installed
   " cd ~/.vim/bundle/vim-rst-tables/ftplugin
@@ -58,22 +44,18 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "https://github.com/nvie/vim-rst-tables.git"
   Bundle "https://github.com/insanum/vim-rst-tables.git"
 
+  Bundle "https://github.com/insanum/votl.git"
+  "Bundle "git://github.com/hsitz/VimOrganizer.git"
+  "Bundle "git://github.com/jceb/vim-orgmode.git"
+
   "Bundle "changeColorScheme.vim"
   "Bundle "Color-Sampler-Pack"
-
   Bundle "https://github.com/altercation/vim-colors-solarized"
   Bundle "https://github.com/tomasr/molokai.git"
 
-  "Bundle "git://github.com/hsitz/VimOrganizer.git"
-  Bundle "git://github.com/jceb/vim-orgmode.git"
-
   "Bundle "sparkup"
-  "Bundle "TwitVim"
   "Bundle "octave.vim"
   "Bundle "asciidoc.vim"
-  "Bundle "ledger.vim"
-  "Bundle "VimDebug"
-  "Bundle "minibufexpl.vim"
 endif
 
 "------------------------------------------------
@@ -531,7 +513,7 @@ function! MySwitchTransparency()
   if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
     hi Normal ctermbg=None
   else
-    hi Normal ctermbg=232
+    hi Normal ctermbg=233
   endif
 endfunction
 map <Leader>< :call MySwitchTransparency()<CR>
@@ -541,32 +523,16 @@ autocmd syntax * runtime syntax/RainbowParenthsis.vim
 " netrw stuff
 nmap <F12> :NERDTree<CR>
 
-let g:bufExplorerDetailedHelp=1
-let g:bufExplorerSortBy='mru'
-let g:bufExplorerSplitBelow=0
-let g:bufExplorerSplitType=''
-let g:bufExplorerOpenMode=0
-let g:bufExplorerSortDirection=1
-let g:bufExplorerSplitOutPathName=1
-
 if ostype == "solaris2.10"
-  let g:Tlist_Ctags_Cmd='/opt/csw/bin/ectags'
+  let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
 elseif ostype == "solaris2.11"
-  let g:Tlist_Ctags_Cmd='/usr/bin/exctags'
+  let g:tagbar_ctags_bin = '/usr/bin/exctags'
 else
-  let g:Tlist_Ctags_Cmd='/usr/bin/ctags'
+  let g:tagbar_ctags_bin = '/usr/bin/ctags'
 endif
-let g:Tlist_Inc_Winwidth=0
-"let g:Tlist_WinWidth=50
-let g:Tlist_Use_Horiz_Window=0
-let g:Tlist_Use_Right_Window=1
-let g:Tlist_Exit_OnlyWindow=1
-let g:Tlist_Show_One_File=1
-let g:Tlist_Compact_Format=0
-let g:Tlist_Enable_Fold_Column=0
-let g:Tlist_Display_Prototype=0
-nnoremap <silent> <F8> :Tlist<CR>
-nnoremap <silent> <F9> :TlistSync<CR>
+let g:tagbar_autoclose = 1
+let g:tagbar_width = 30
+nmap <F8> :TagbarToggle<CR>
 
 let g:EnhCommentifyPretty='yes'
 let g:EnhCommentifyAlignRight='yes'
@@ -586,11 +552,6 @@ function! s:check_pager_mode()
   elseif &diff
     set nospell
   elseif !&diff
-    if (&columns > 100 && expand("%") !~ '^.*\.asm$')
-     " for this to work properly, local scope "s:" must be removed from
-     " Tlist_Window_Check_Auto_Open definitions in taglist.vim
-     "call Tlist_Window_Check_Auto_Open()
-    endif
     "wincmd l
     "Hexplore
     "execute "normal! zt"
@@ -604,11 +565,7 @@ autocmd VimEnter * :call s:check_pager_mode()
 "                \:set nowrap<CR>
 
 "let g:aliases_file='$HOME/.mutt/aliases'
-autocmd FileType mail set omnifunc=muttaliasescomplete#Complete
-
-"if match(getcwd(), "edavis/work", 0) != -1
-"    autocmd Syntax c,cc,cpp set tabstop=8
-"endif
+"autocmd FileType mail set omnifunc=muttaliasescomplete#Complete
 
 function! EMake(target)
   let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
@@ -624,7 +581,6 @@ function! EMake(target)
   endif
   cd -
 endfunction
-
 command! -nargs=0 -complete=command M call EMake('')
 command! -nargs=0 -complete=command MC call EMake('clean')
 
@@ -642,7 +598,6 @@ command! -nargs=0 -complete=command MC call EMake('clean')
 "    cd -
 "  endif
 "endfunction
-"
 "command! -nargs=0 -complete=command M call EMake('all')
 "command! -nargs=0 -complete=command MC call EMake('clean')
 
@@ -676,89 +631,81 @@ command! -nargs=0 -complete=command MC call EMake('clean')
 "    endif
 "  endif
 "endfunction
-"
 "let g:loadVssPlugin=0
 ""call VssLoad()
 
-"let g:vimwiki_list=[{'path': '~/Dropbox/vimwiki/', 'path_html': '~/Dropbox/vimwiki_html/'}]
-"let g:vimwiki_folding=1
-"let g:vimwiki_fold_lists=1
-"let g:vimwiki_fold_trailing_empty_lines=0
-
-let g:miniBufExplMaxSize=3
-
 "------------------- ORG MODE STUFF (vim-orgmode) ------------------- {{{1
 
-let g:org_todo_keywords=
-\ [
-\  ['TODO(t)', 'STARTED(s)', '|', 'DONE(d)'],
-\  ['CANCELED(c)']
-\ ]
-let g:org_todo_keyword_faces=
-\ [
-\  ['TODO',     [':foreground brown',
-\                ':background none',
-\                ':decoration underline']],
-\  ['STARTED',  [':foreground yellow',
-\                ':background none',
-\                ':decoration underline']],
-\  ['CANCELED', [':foreground red',
-\                ':background none',
-\                ':decoration underline']],
-\  ['DONE',     [':foreground lightgreen',
-\                ':background none',
-\                ':decoration underline']]
-\ ]
-let g:org_heading_highlight_colors=
-\ ['OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'OL6', 'OL7', 'OL8']
-let g:org_tag_column=80
-let g:org_agenda_files=['~/Dropbox/insanum.org']
-
-nmap <Leader>ta :OrgTagsRealign<CR>
-nmap <Leader><up> :py ORGMODE.plugins["EditStructure"].new_heading(below=True, end_of_last_child=True)<CR>
-nmap <Leader>td o:CLOSED:<<C-R>=strftime("%Y-%m-%d %a")<CR>><ESC>
-vmap <LocalLeader>W <ESC>'<O#+BEGIN_EXAMPLE<ESC>'>o#+END_EXAMPLE<ESC>
-
-function! OrgModeColors()
-  "hi Normal ctermfg=green ctermbg=black
-
-  hi Folded ctermbg=black ctermfg=green cterm=bold
-  hi LineNr ctermbg=black ctermfg=grey cterm=bold
-
-  hi org_comment ctermfg=red
-  hi org_timestamp ctermfg=magenta
-  hi org_shade_stars ctermfg=darkgray
-
-  hi OL1 ctermfg=lightblue
-  hi OL2 ctermfg=red
-  hi OL3 ctermfg=brown
-  hi OL4 ctermfg=yellow
-  hi OL5 ctermfg=lightblue
-  hi OL6 ctermfg=red
-  hi OL7 ctermfg=brown
-  hi OL8 ctermfg=yellow
-
-  syntax match org_tags /\s*:\S*:\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
-  hi org_tags ctermfg=red
-  syntax match org_example /\s*#+.*_EXAMPLE\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
-  hi org_example ctermfg=darkgrey
-
-  " Properties (taken from vim-orgmode/syntax/org.vim since org_tags conflicts)
-  syn region Error matchgroup=org_properties_delimiter start=/^\s*:PROPERTIES:\s*$/ end=/^\s*:END:\s*$/ contains=org_property keepend
-endfunction
-autocmd BufEnter *.org call OrgModeColors()
-
-function! OrgWrapExample()
-  exe "normal '>o#+END_EXAMPLE"
-  exe "normal '<O#+BEGIN_EXAMPLE"
-endfunction
-vmap <localleader>we <Esc>:call OrgWrapExample()<CR>
-
-function! OrgWrapSource()
-  exe "normal '>o#+END_SRC"
-  exe "normal '<O#+BEGIN_SRC"
-endfunction
-vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
+"let g:org_todo_keywords=
+"\ [
+"\  ['TODO(t)', 'STARTED(s)', '|', 'DONE(d)'],
+"\  ['CANCELED(c)']
+"\ ]
+"let g:org_todo_keyword_faces=
+"\ [
+"\  ['TODO',     [':foreground brown',
+"\                ':background none',
+"\                ':decoration underline']],
+"\  ['STARTED',  [':foreground yellow',
+"\                ':background none',
+"\                ':decoration underline']],
+"\  ['CANCELED', [':foreground red',
+"\                ':background none',
+"\                ':decoration underline']],
+"\  ['DONE',     [':foreground lightgreen',
+"\                ':background none',
+"\                ':decoration underline']]
+"\ ]
+"let g:org_heading_highlight_colors=
+"\ ['OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'OL6', 'OL7', 'OL8']
+"let g:org_tag_column=80
+"let g:org_agenda_files=['~/Dropbox/insanum.org']
+"
+"nmap <Leader>ta :OrgTagsRealign<CR>
+"nmap <Leader><up> :py ORGMODE.plugins["EditStructure"].new_heading(below=True, end_of_last_child=True)<CR>
+"nmap <Leader>td o:CLOSED:<<C-R>=strftime("%Y-%m-%d %a")<CR>><ESC>
+"vmap <LocalLeader>W <ESC>'<O#+BEGIN_EXAMPLE<ESC>'>o#+END_EXAMPLE<ESC>
+"
+"function! OrgModeColors()
+"  "hi Normal ctermfg=green ctermbg=black
+"
+"  hi Folded ctermbg=black ctermfg=green cterm=bold
+"  hi LineNr ctermbg=black ctermfg=grey cterm=bold
+"
+"  hi org_comment ctermfg=red
+"  hi org_timestamp ctermfg=magenta
+"  hi org_shade_stars ctermfg=darkgray
+"
+"  hi OL1 ctermfg=lightblue
+"  hi OL2 ctermfg=red
+"  hi OL3 ctermfg=brown
+"  hi OL4 ctermfg=yellow
+"  hi OL5 ctermfg=lightblue
+"  hi OL6 ctermfg=red
+"  hi OL7 ctermfg=brown
+"  hi OL8 ctermfg=yellow
+"
+"  syntax match org_tags /\s*:\S*:\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
+"  hi org_tags ctermfg=red
+"  syntax match org_example /\s*#+.*_EXAMPLE\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
+"  hi org_example ctermfg=darkgrey
+"
+"  " Properties (taken from vim-orgmode/syntax/org.vim since org_tags conflicts)
+"  syn region Error matchgroup=org_properties_delimiter start=/^\s*:PROPERTIES:\s*$/ end=/^\s*:END:\s*$/ contains=org_property keepend
+"endfunction
+"autocmd BufEnter *.org call OrgModeColors()
+"
+"function! OrgWrapExample()
+"  exe "normal '>o#+END_EXAMPLE"
+"  exe "normal '<O#+BEGIN_EXAMPLE"
+"endfunction
+"vmap <localleader>we <Esc>:call OrgWrapExample()<CR>
+"
+"function! OrgWrapSource()
+"  exe "normal '>o#+END_SRC"
+"  exe "normal '<O#+BEGIN_SRC"
+"endfunction
+"vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
 
 " End of ORG MODE STUFF (vim-orgmode) }}}1
 
@@ -795,15 +742,6 @@ vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
 "  let str = ": - State: " . org#Pad(a:state2,10) . '    [' . org#Timestamp() . ']'
 "  call append(line("."), repeat(' ',len(matchstr(getline(line(".")),'^\s*'))) . str)
 "endfunction
-
-"let g:CCTreeKeyTraceForwardTree='<localleader>>'
-"let g:CCTreeKeyTraceReverseTree='<localleader><'
-"let g:CCTreeKeyHilightTree='<localleader>l'
-"let g:CCTreeKeySaveWindow='<localleader>y'
-"let g:CCTreeKeyToggleWindow='<localleader>w'
-"let g:CCTreeKeyCompressTree='zs'
-"let g:CCTreeKeyDepthPlus='<localleader>='
-"let g:CCTreeKeyDepthMinus='<localleader>-'
 
 " End of ORG MODE STUFF (VimOrganizer) }}}1
 
@@ -1057,12 +995,10 @@ function! MyStatusGetCursor()
 endfunction
 
 function! MyStatusGetTag()
-  if !filereadable(expand("$HOME/.vim/bundle/taglist.vim/plugin/taglist.vim"))
+  if !filereadable(expand("$HOME/.vim/bundle/tagbar/plugin/tagbar.vim"))
     return ''
   endif
-  " this is lame as it only works after the taglist window has openned
-  " and I don't have the taglist window auto open setting turned on
-  let curtag = Tlist_Get_Tagname_By_Line()
+  let curtag = tagbar#currenttag('%s', '')
   if curtag == ''
     return ''
   endif
