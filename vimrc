@@ -25,14 +25,9 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   set rtp+=$HOME/.vim/vundle/
   call vundle#rc()
 
-  "Bundle "The-NERD-tree"
-  Bundle "LustyExplorer"
-  Bundle "LustyJuggler"
-
   Bundle "ack.vim"
   Bundle "Align"
   Bundle "calendar.vim--Matsumoto"
-  "Bundle "Command-T"
   Bundle "https://github.com/kien/ctrlp.vim.git"
   Bundle "EnhCommentify.vim"
   Bundle "Rainbow-Parenthesis"
@@ -45,7 +40,6 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "https://github.com/insanum/vim-rst-tables.git"
 
   Bundle "https://github.com/insanum/votl.git"
-  "Bundle "git://github.com/hsitz/VimOrganizer.git"
   "Bundle "git://github.com/jceb/vim-orgmode.git"
 
   "Bundle "changeColorScheme.vim"
@@ -56,6 +50,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "sparkup"
   "Bundle "octave.vim"
   "Bundle "asciidoc.vim"
+
 endif
 
 "------------------------------------------------
@@ -488,6 +483,8 @@ function! MyColorScheme(scheme)
   hi Search ctermbg=136 ctermfg=232
   hi clear Todo
   hi Todo ctermbg=207 ctermfg=232
+  hi CtrlPMatch ctermfg=40
+  hi CtrlPPrtText ctermfg=40
 endfunction
 
 if !&diff
@@ -499,13 +496,12 @@ else
 endif
 
 function! MySwapColorScheme()
-  if g:colors_name == 'molokai'
-    hi clear
-    call MyColorScheme('solarized')
-  else " solarized or something else
-    hi clear
+  if !exists('g:colors_name') || g:colors_name != 'molokai'
     call MyColorScheme('molokai')
+  else
+    call MyColorScheme('solarized')
   endif
+  call MyStatusColorScheme()
 endfunction
 map <Leader>> :call MySwapColorScheme()<CR>
 
@@ -520,11 +516,8 @@ map <Leader>< :call MySwitchTransparency()<CR>
 
 autocmd syntax * runtime syntax/RainbowParenthsis.vim
 
-" netrw stuff
-nmap <F12> :NERDTree<CR>
-
 if ostype == "solaris2.10"
-  let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
+  let g:tagbar_ctags_bin       = '/opt/csw/bin/ectags'
 elseif ostype == "solaris2.11"
   let g:tagbar_ctags_bin = '/usr/bin/exctags'
 else
@@ -533,6 +526,12 @@ endif
 let g:tagbar_autoclose = 1
 let g:tagbar_width = 30
 nmap <F8> :TagbarToggle<CR>
+
+"let g:ctrlp_regexp = 1
+let g:ctrlp_show_hidden = 1
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_extensions= ['buffertag']
+let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
 
 let g:EnhCommentifyPretty='yes'
 let g:EnhCommentifyAlignRight='yes'
@@ -914,32 +913,34 @@ autocmd FileType votl setlocal nospell
 
 "------------------- STATUSLINE ------------------- {{{1
 
-hi ST_M_NORMAL  ctermfg=22  ctermbg=148 cterm=bold
-hi ST_M_INSERT  ctermfg=23  ctermbg=231 cterm=bold
-hi ST_M_VISUAL  ctermfg=88  ctermbg=208 cterm=bold
-hi ST_M_REPLACE ctermfg=231 ctermbg=160 cterm=bold
-hi ST_M_SELECT  ctermfg=231 ctermbg=241 cterm=bold
+function! MyStatusColorScheme()
+  hi ST_M_NORMAL  ctermfg=22  ctermbg=148 cterm=bold
+  hi ST_M_INSERT  ctermfg=23  ctermbg=231 cterm=bold
+  hi ST_M_VISUAL  ctermfg=88  ctermbg=208 cterm=bold
+  hi ST_M_REPLACE ctermfg=231 ctermbg=160 cterm=bold
+  hi ST_M_SELECT  ctermfg=231 ctermbg=241 cterm=bold
 
-hi ST_FILET     ctermfg=247 ctermbg=236 cterm=bold
-hi ST_FILET_I   ctermfg=117 ctermbg=24  cterm=bold
+  hi ST_FILET     ctermfg=247 ctermbg=236 cterm=bold
+  hi ST_FILET_I   ctermfg=117 ctermbg=24  cterm=bold
 
-hi ST_FLAGS     ctermfg=227 ctermbg=52  cterm=bold
-hi ST_DOS       ctermfg=189 ctermbg=55  cterm=bold
+  hi ST_FLAGS     ctermfg=227 ctermbg=52  cterm=bold
+  hi ST_DOS       ctermfg=189 ctermbg=55  cterm=bold
 
-hi ST_FILE      ctermfg=231 ctermbg=240 cterm=bold
-hi ST_FILE_I    ctermfg=231 ctermbg=31  cterm=bold
+  hi ST_FILE      ctermfg=231 ctermbg=240 cterm=bold
+  hi ST_FILE_I    ctermfg=231 ctermbg=31  cterm=bold
 
-hi ST_CHAR      ctermfg=247 ctermbg=236 cterm=bold
-hi ST_CHAR_I    ctermfg=117 ctermbg=24  cterm=bold
+  hi ST_CHAR      ctermfg=247 ctermbg=236 cterm=bold
+  hi ST_CHAR_I    ctermfg=117 ctermbg=24  cterm=bold
 
-hi ST_SCROLL    ctermfg=250 ctermbg=240 cterm=bold
-hi ST_SCROLL_I  ctermfg=117 ctermbg=31  cterm=bold
+  hi ST_SCROLL    ctermfg=250 ctermbg=240 cterm=bold
+  hi ST_SCROLL_I  ctermfg=117 ctermbg=31  cterm=bold
 
-hi ST_CURSOR    ctermfg=236 ctermbg=252 cterm=bold
-hi ST_CURSOR_I  ctermfg=23  ctermbg=117 cterm=bold
+  hi ST_CURSOR    ctermfg=236 ctermbg=252 cterm=bold
+  hi ST_CURSOR_I  ctermfg=23  ctermbg=117 cterm=bold
 
-hi ST_TAG       ctermfg=244 ctermbg=236 cterm=bold
-hi ST_TAG_I     ctermfg=244 ctermbg=24  cterm=bold
+  hi ST_TAG       ctermfg=244 ctermbg=236 cterm=bold
+  hi ST_TAG_I     ctermfg=244 ctermbg=24  cterm=bold
+endfunction
 
 function! MyStatusGetMode()
   let mode = mode()
@@ -1022,6 +1023,7 @@ function! MyStatus()
 endfunction
 
 set statusline=%!MyStatus()
+call MyStatusColorScheme()
 
 " End of STATUSLINE STUFF }}}1
 
