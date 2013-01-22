@@ -207,14 +207,14 @@ nmap <Leader>da 1G/Last Modified:\s*/e+1<CR>Cabdate<ESC>
 
 " grep all files in the currect directory for the word under the cursor
 if ostype == "solaris2.10" || ostype == "solaris2.11"
-  nmap <Leader>g :!ggrep -n --color=always <cword> *<CR>
+  nmap <Leader>gr :!ggrep -n --color=always <cword> *<CR>
 else
-  nmap <Leader>g :!grep -r -n --color=always <cword> *<CR>
-  nmap <Leader>a :Ack <cword> *<CR>
+  nmap <Leader>gr :!grep -r -n --color=always <cword> *<CR>
 endif
-"nmap <Leader>g :grep --color=always <cword> *.[^o]<CR>
-"nmap <Leader>g :grep <cword> *.[^o]<CR>
-"nmap <Leader>g :exec('vimgrep /' . expand('<cword>') . '/j *[^.o$]')<CR>,m
+"nmap <Leader>gr :grep --color=always <cword> *.[^o]<CR>
+"nmap <Leader>gr :grep <cword> *.[^o]<CR>
+"nmap <Leader>gr :exec('vimgrep /' . expand('<cword>') . '/j *[^.o$]')<CR>,m
+nmap <Leader>ak :Ack <cword> *<CR>
 
 " clearcase check in/out
 "nmap <Leader>co :!cleartool co -nc -unr %:p<CR>
@@ -530,8 +530,9 @@ nmap <F8> :TagbarToggle<CR>
 "let g:ctrlp_regexp = 1
 let g:ctrlp_show_hidden = 1
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_extensions= ['buffertag']
+let g:ctrlp_extensions= ['buffertag', 'mixed']
 let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
+let g:ctrlp_cmd = 'CtrlPMixed'
 
 let g:EnhCommentifyPretty='yes'
 let g:EnhCommentifyAlignRight='yes'
