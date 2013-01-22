@@ -5,6 +5,8 @@ if [[ $OSTYPE =~ freebsd ]]; then
     export MM_CHARSET=ISO-8859-1
 fi
 
+stty -ixon
+
 if [[ -e ~/.bashrc ]] ; then
   source ~/.bashrc
 fi
