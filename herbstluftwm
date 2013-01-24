@@ -15,7 +15,7 @@ hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
 hc keybind $Mod-Shift-o spawn bash -c hclo
 hc keybind $Mod-Shift-s spawn bash -c hc_smplayer
-hc keybind $Mod-Return  spawn urxvtc
+hc keybind $Mod-Return  spawn evilvte
 hc keybind $Mod-p       spawn dwm_launch prog
 hc keybind $Mod-Shift-p spawn dwm_launch smplayer
 hc keybind $Mod-q       spawn smplayer -send-action stop
@@ -41,6 +41,7 @@ for i in ${!TAG_NAMES[@]} ; do
     fi
 done
 
+hc keybind $Mod-grave        use_previous
 hc keybind $Mod-period       use_index  +1 --skip-visible
 hc keybind $Mod-comma        use_index  -1 --skip-visible
 hc keybind $Mod-Shift-period move_index +1 --skip-visible
@@ -80,26 +81,36 @@ hc mousebind $Mod-Button1 move
 hc mousebind $Mod-Button2 zoom
 hc mousebind $Mod-Button3 resize
 
-hc set always_show_frame        1
-hc set raise_on_click           0 # prevents manage=off clients from being hidden
+hc chain                                   . \
+  set always_show_frame          1         . \
+  set smart_frame_surroundings   1         . \
+  set smart_window_surroundings  0         . \
+  set frame_gap                  4         . \
+  set frame_padding              0         . \
+  set window_gap                 4         . \
+  set frame_border_width         2         . \
+  set frame_border_inner_width   0         . \
+  set window_border_width        2         . \
+  set window_border_inner_width  0         . \
+  set frame_bg_transparent       1         . \
+  set frame_bg_active_color      '#000'    . \
+  set frame_bg_normal_color      '#000'    . \
+  set frame_border_active_color  '#9400d3' . \
+  set frame_border_normal_color  '#d3d3d3' . \
+  set frame_border_inner_color   black     . \
+  set window_border_active_color '#9400d3' . \
+  set window_border_normal_color '#d3d3d3' . \
+  set window_border_inner_color  black     . \
+  set window_border_urgent_color '#ffaa00'
+
+hc set raise_on_click           0  # prevents manage=off clients from being hidden
 hc set focus_follows_mouse      1
 hc set gapless_grid             0
 hc set swap_monitors_to_get_tag 0
-hc set smart_frame_surroundings 1
-hc set smart_window_borders     0
-#hc set tree_style               "*| +`--."
-#hc set tree_style               "X|:#+*-."
-hc set tree_style               "╾│ ├└╼─┐"
 
-hc set frame_bg_transparent       1
-hc set frame_bg_active_color      '#000'
-hc set frame_bg_normal_color      '#000'
-hc set frame_border_width         2
-hc set frame_border_active_color  '#FA0'
-hc set frame_border_normal_color  '#000'
-hc set window_border_width        1
-hc set window_border_active_color '#0F0'
-hc set window_border_normal_color '#000'
+#hc set tree_style  "*| +`--."
+#hc set tree_style  "X|:#+*-."
+hc set tree_style  "╾│ ├└╼─┐"
 
 hc rule                           focus=off # default do not focus new clients
 hc rule class=Chromium            tag=1
@@ -115,8 +126,10 @@ hc rule class=NXAgent             tag=5
 hc rule class=Opennx              tag=5
 hc rule class=rdesktop            tag=6
 hc rule class=Wine                tag=4 fullscreen=on
-hc rule class=URxvt title=work1   tag=8 # tmux session work1
-hc rule class=URxvt title=work2   tag=9 # tmux session work2
+hc rule class=URxvt   title=work1 tag=8 # tmux session work1
+hc rule class=Evilvte title=work1 tag=8 # tmux session work1
+hc rule class=URxvt   title=work2 tag=9 # tmux session work2
+hc rule class=Evilvte title=work2 tag=9 # tmux session work2
 hc rule class=Gxmessage           manage=off
 
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on

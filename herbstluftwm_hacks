@@ -1,5 +1,7 @@
 #!/bin/bash
 
+TERMEXEC='evilvte'
+
 if [[ -f /etc/bash_completion.d/herbstclient-completion ]]; then
     source /etc/bash_completion.d/herbstclient-completion
 fi
@@ -100,7 +102,7 @@ function hc_smplayer()
     herbstclient split horizontal 0.3
     herbstclient focus right
 
-    herbstclient spawn urxvtc
+    herbstclient spawn $TERMEXEC
     sleep 2
 
     herbstclient focus up
