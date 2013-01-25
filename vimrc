@@ -87,7 +87,6 @@ set magic
 set scrolloff=1
 set shell=bash
 set mouse-=a
-set swapfile
 set updatecount=200
 set updatetime=1000
 set ttyfast
@@ -106,6 +105,12 @@ set winminwidth=5
 set noequalalways
 set pumheight=20
 set hidden
+
+set swapfile
+if !isdirectory(expand('$HOME/.vim_swap'))
+  call mkdir(expand('$HOME/.vim_swap'))
+endif
+set directory^=$HOME/.vim_swap//
 
 " requires 'print_vim' or 'print' shell script (i.e. Cygwin/Windows Ghostscript wrapper)
 "set printexpr=system('print_vim\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
