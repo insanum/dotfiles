@@ -3,7 +3,7 @@
 function hc() { herbstclient "$@"; }
 
 hc emit_hook reload
-hc set default_frame_layout 1 # horizontal
+hc set default_frame_layout 3 # grid
 
 Mod=Mod4
 hc keyunbind   --all
