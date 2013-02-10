@@ -31,8 +31,6 @@ fi
 if [[ $HOSTNAME = eadmaka ]]; then
     #xrandr --output DVI-I-1 --right-of DP-0 --output DP-0 --rotate left --output DVI-I-1 --rotate left
     xrandr --output DVI-0 --right-of DP-I-1 --output DP-0 --rotate left
-    #xmodmap -e "keycode 94 = Alt_L"     # for my kensington keyboard
-    #synergys
 elif [[ $HOSTNAME = jackshrimp ]]; then
     xrandr --output DVI-D-0 --rotate left
 fi
@@ -50,7 +48,6 @@ if [[ $HOSTNAME = eadvb ]]; then
     #/usr/bin/vmware-user &
     /usr/bin/VBoxClient --clipboard
     /usr/bin/VBoxClient --autoresize
-    #xmodmap -e "keycode 94 = Alt_L"     # for my kensington keyboard
 fi
 
 xhost +localhost
@@ -98,7 +95,7 @@ if [[ $HOSTNAME = eadmaka ]]; then
   if [ -x $HOME/src/gcalcli/gcalcli ] ; then 
     while true
     do
-        $HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind
+        $HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind &> /tmp/gcalcli.txt
         sleep 300
     done &
   fi
