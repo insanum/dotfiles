@@ -875,7 +875,7 @@ function! VotlColors()
   hi OL5 ctermfg=196
   hi OL6 ctermfg=39
   hi OL7 ctermfg=252
-  hi OL8 ctermfg=296
+  hi OL8 ctermfg=196
   hi OL9 ctermfg=39
 
   " color for body text
