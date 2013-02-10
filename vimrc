@@ -868,48 +868,48 @@ endif
 "------------------- VOTL STUFF ------------------- {{{1
 
 function! VotlColors()
-  hi OL1 ctermfg=lightblue
-  hi OL2 ctermfg=red
-  hi OL3 ctermfg=brown
-  hi OL4 ctermfg=yellow
-  hi OL5 ctermfg=lightblue
-  hi OL6 ctermfg=red
-  hi OL7 ctermfg=brown
-  hi OL8 ctermfg=yellow
-  hi OL8 ctermfg=white
+  hi OL1 ctermfg=255 ctermbg=57
+  hi OL2 ctermfg=196
+  hi OL3 ctermfg=39
+  hi OL4 ctermfg=252
+  hi OL5 ctermfg=196
+  hi OL6 ctermfg=39
+  hi OL7 ctermfg=252
+  hi OL8 ctermfg=296
+  hi OL9 ctermfg=39
 
   " color for body text
   for i in range(1, 9)
-     execute "hi BT" . i . " ctermfg=lightgreen"
+     execute "hi BT" . i . " ctermfg=141"
   endfor
 
   " color for pre-formatted body text
   for i in range(1, 9)
-     execute "hi BP" . i . " ctermfg=lightcyan"
+     execute "hi BP" . i . " ctermfg=213"
   endfor
 
   " color for tables
   for i in range(1, 9)
-     execute "hi TA" . i . " ctermfg=yellow"
+     execute "hi TA" . i . " ctermfg=136"
   endfor
 
   " color for user text
   for i in range(1, 9)
-     execute "hi UT" . i . " ctermfg=lightgreen"
+     execute "hi UT" . i . " ctermfg=41"
   endfor
 
   " color for pre-formatted user text
   for i in range(1, 9)
-     execute "hi UP" . i . " ctermfg=lightcyan"
+     execute "hi UP" . i . " ctermfg=51"
   endfor
 
-  hi VotlTags       ctermfg=cyan
-  hi VotlDate       ctermfg=magenta
-  hi VotlTime       ctermfg=magenta
-  hi VotlChecked    ctermfg=magenta
-  hi VotlCheckbox   ctermfg=lightmagenta
-  hi VotlPercentage ctermfg=darkgreen
-  hi VotlTableLines ctermfg=darkgrey
+  hi VotlTags       ctermfg=253 ctermbg=21
+  hi VotlDate       ctermfg=129
+  hi VotlTime       ctermfg=129
+  hi VotlChecked    ctermfg=149
+  hi VotlCheckbox   ctermfg=171
+  hi VotlPercentage ctermfg=149
+  hi VotlTableLines ctermfg=242
 endfunction
 autocmd FileType votl call VotlColors()
 
@@ -1002,6 +1002,7 @@ function! MyStatusGetCursor()
 endfunction
 
 function! MyStatusGetTag()
+  return ''
   if !filereadable(expand("$HOME/.vim/bundle/tagbar/plugin/tagbar.vim"))
     return ''
   endif
