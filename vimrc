@@ -165,7 +165,8 @@ function! MyTabLine()
     "let s .= '%' . (i + 1) . 'T'
 
     " the label is made by MyTabLabel()
-    let s .= '|  %{MyTabLabel(' . (i + 1) . ')}  |'
+    "let s .= '|  %{MyTabLabel(' . (i + 1) . ')}  |'
+    let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
   endfor
 
   " after the last tab fill with TabLineFill and reset tab page nr
@@ -183,7 +184,8 @@ endfunction
 function! MyTabLabel(n)
   let buflist = tabpagebuflist(a:n)
   let winnr = tabpagewinnr(a:n)
-  let tmp = bufname(buflist[winnr - 1])
+  "let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':~')
+  let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':t')
   if tmp == ''
       return '<empty>'
   endif
@@ -485,11 +487,17 @@ function! MyColorScheme(scheme)
   hi clear Visual
   hi Visual ctermbg=235
   hi clear Search
-  hi Search ctermbg=136 ctermfg=232
+  hi Search ctermfg=232 ctermbg=136
   hi clear Todo
-  hi Todo ctermbg=207 ctermfg=232
+  hi Todo ctermfg=232 ctermbg=207
   hi CtrlPMatch ctermfg=40
   hi CtrlPPrtText ctermfg=40
+  hi clear TabLineSel
+  hi TabLineSel ctermfg=232 ctermbg=207 cterm=bold
+  hi clear TabLine
+  hi TabLine ctermfg=207 ctermbg=236 cterm=bold
+  hi clear TabLineFill
+  hi TabLineFill ctermfg=231 ctermbg=240 cterm=bold
 endfunction
 
 if !&diff
