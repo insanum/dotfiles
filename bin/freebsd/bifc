@@ -1,0 +1,31 @@
+#!/usr/local/bin/bash
+
+if [ -z $1 ]; then
+    echo ""
+    sudo ifconfig
+    echo ""
+    kldstat
+    echo ""
+    exit
+fi
+
+function Usage()
+{
+    echo -e "Usage: bifc <#> < up | dhcp >"
+    exit
+}
+
+if [ -z $2 ]; then
+    Usage
+fi
+
+if [ $2 == up ]; then
+    sudo ifconfig bxe$1 inet 172.16.66.1 netmask 255.255.255.0
+elif [ $2 == down ]; then
+    sudo ifconfig bxe$1 down
+elif [ $2 == dhcp ]; then
+    sudo dhclient bxe$1
+else
+    Usage
+fi
+
