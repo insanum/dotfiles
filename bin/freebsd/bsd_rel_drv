@@ -1,0 +1,140 @@
+#!/bin/bash
+
+if [ ! -f bxe.h ]; then
+  echo "ERROR: Unknown driver (bad current working directory)!"
+  exit
+fi
+
+VER=`grep "define BXE_DRIVER_VERSION" bxe.c | awk '{ print $3 }' | cut -d'"' -f2`
+
+EMAILADDRS=$HOME/.priv/sun_rel_drv_addrs
+if [ ! -e $EMAILADDRS ]; then
+    echo "ERROR: no email addresses ($EMAILADDRS does not exist)"
+    exit
+fi
+source $EMAILADDRS
+
+NSEG_MNT_DIR=/mnt/nseg
+
+if [ "`df | egrep \"${NSEG_MNT_DIR}$\"`" = "" ]; then
+    echo "ERROR: $NSEG_MNT_DIR is not mounted!"
+    exit
+fi
+
+if [ -f bxe.h ]; then
+  TITLE="FreeBSD 10Gb driver (bxe $VER) for 57810 NX2"
+  EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm57710\\drivers\\freebsd\\$VER"
+  PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm57710/drivers/freebsd/$VER
+  TOADDRS="$TOADDRS"
+else
+  echo "ERROR: Unknown driver (bad current working directory)!"
+  exit
+fi
+
+P4TAG=freebsd-bxe-${VER}
+
+function DidYou()
+{
+  echo "
+Did you...
+ 1. bxe.c        - increment version and commit
+ 2. release.txt  - add notes for new version and commit
+ 3. make clean
+"
+  echo -n "Continue releasing bxe v$VER [y/(n)]: "
+  read text
+  if [ "$text" != "y" ]; then
+    exit
+  fi
+}
+
+function PerforceLabel()
+{
+  E4=${HOME}/.bin/e4
+  TAGGED=0
+  echo "----------------------------------------"
+  if [ -x $E4 ]; then
+      echo -n "Create Perforce label $P4TAG [y/(n)]: "
+      read text
+      if [ "$text" = "y" ]; then
+          $E4 -d tag -l $P4TAG ...
+          TAGGED=1
+      fi
+  else
+      echo "WARNING: 'e4' perforce script not found!"
+  fi
+  if [ $TAGGED -eq 0 ]; then
+      echo "Make sure to create Perforce label: $P4TAG"
+  fi
+  echo "----------------------------------------"
+}
+
+function LatestRelNotes()
+{
+  eval $(grep -m 2 -n "^====" $1 | cut -d':' -f1 | tr '\n' ' ' | awk '{ print "L1=" $1 " L2=" $2; }')
+  if [ -z "$L2" ]; then
+      L2=`wc -l $1 | awk '{ print $1 }'`
+      L2=$(($L2 + 2))
+  fi
+  head -n $(($L2 - 2)) $1 | tail -n +$(($L1 - 2))
+}
+
+DidYou
+
+set -o xtrace
+
+mkdir -p $PKGDESTDIR
+
+/bin/cp -f RELEASE.TXT $PKGDESTDIR
+/bin/cp -f README.TXT $PKGDESTDIR
+
+TMPDEST=`mktemp -d`
+SRCDIR="bxe-${VER}"
+TMPSRCDIR="${TMPDEST}/${SRCDIR}"
+
+mkdir $TMPSRCDIR
+/bin/cp -r . $TMPSRCDIR
+pushd $TMPSRCDIR
+cd ..
+tar -Jcvf ${PKGDESTDIR}/${SRCDIR}.txz $SRCDIR
+popd
+/bin/rm -rf ${TMPDEST}
+
+pushd $PKGDESTDIR
+md5sum * > md5sum.txt
+popd
+
+MAILMSG=`mktemp`
+
+set +o xtrace
+
+echo "From: $FROMADDR"              > $MAILMSG
+echo "To: $TOADDRS"                >> $MAILMSG
+echo "Cc: $CCADDRS"                >> $MAILMSG
+echo "Bcc: $BCCADDRS"              >> $MAILMSG
+echo "Subject: $TITLE released..." >> $MAILMSG
+echo "Reply-To: $FROMADDR"         >> $MAILMSG
+echo ""                            >> $MAILMSG
+echo ""                            >> $MAILMSG
+echo "  $EMAIL_BODY_LOCATION"      >> $MAILMSG
+LatestRelNotes RELEASE.TXT         >> $MAILMSG
+
+echo "----------------------------------------"
+cat $MAILMSG
+echo "----------------------------------------"
+
+echo -n "Send release notification Email [y/(n)]: "
+read text
+if [ "$text" = "y" ]; then
+    cat $MAILMSG | msmtp -t --logfile=~/.msmtp.log --host=mail.broadcom.com --port=25 --protocol=smtp --from=$FROMADDR
+    echo "Email sent!"
+fi
+
+/bin/rm -f $MAILMSG
+
+PerforceLabel
+
+echo "----------------------------------------"
+echo "Proceed with Black Duck scan if required!"
+echo "----------------------------------------"
+

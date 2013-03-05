@@ -487,7 +487,7 @@ if [[ -n "$PS1" ]]; then
   shopt -s cmdhist
   shopt -s dotglob
   shopt -s checkwinsize
-  #shopt -s histappend
+  shopt -s histappend
   shopt -s interactive_comments
   shopt -s no_empty_cmd_completion
 
