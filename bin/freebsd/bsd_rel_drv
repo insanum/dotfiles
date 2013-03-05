@@ -85,8 +85,9 @@ set -o xtrace
 
 mkdir -p $PKGDESTDIR
 
-/bin/cp -f RELEASE.TXT $PKGDESTDIR
+/bin/cp -f LICENSE.TXT $PKGDESTDIR
 /bin/cp -f README.TXT $PKGDESTDIR
+/bin/cp -f RELEASE.TXT $PKGDESTDIR
 
 TMPDEST=`mktemp -d`
 SRCDIR="bxe-${VER}"
