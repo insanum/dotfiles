@@ -918,6 +918,8 @@ function! VotlColors()
   hi VotlCheckbox   ctermfg=171
   hi VotlPercentage ctermfg=149
   hi VotlTableLines ctermfg=242
+
+  set cursorline
 endfunction
 autocmd FileType votl call VotlColors()
 

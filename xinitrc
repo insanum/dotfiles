@@ -92,10 +92,10 @@ if [[ $HOSTNAME = eadmaka ]]; then
 
   ssh -f -N -D 9999 edavis@insanum.com # stupid corporate firewalls...
 
-  if [ -x $HOME/src/gcalcli/gcalcli ] ; then 
+  if [ -x $HOME/Dropbox/src/gcalcli/gcalcli ] ; then 
     while true
     do
-        $HOME/src/gcalcli/gcalcli --config=~/.priv/gcalclirc --cal="davis" remind &> /tmp/gcalcli.txt
+        $HOME/Dropbox/src/gcalcli/gcalcli --cal="davis" remind &> /tmp/gcalcli.txt
         sleep 300
     done &
   fi
