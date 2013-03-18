@@ -125,6 +125,8 @@ hc rule class=Vncviewer           tag=5
 hc rule class=NXAgent             tag=5
 hc rule class=Opennx              tag=5
 hc rule class=rdesktop            tag=6
+hc rule class=xfreerdp            tag=6
+hc rule class=Remmina             tag=6
 hc rule class=Wine                tag=4 fullscreen=on
 hc rule class=URxvt   title=work1 tag=8 # tmux session work1
 hc rule class=Evilvte title=work1 tag=8 # tmux session work1

@@ -20,9 +20,9 @@ if [[ -n "$VNCDESKTOP" ]]; then
 else # FreeNX
     #setxkbmap -v 10 -geometry "pc(pc105)" -keycodes "evdev+aliases(qwerty)"
     setxkbmap -model us
-    xrandr -s 1920x1080
 fi
 
+xrandr -s 1920x1080
 xmodmap $HOME/.Xmodmap
 
 #urxvt &
