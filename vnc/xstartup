@@ -17,6 +17,7 @@ xrdb -load $HOME/.XDefaults
 
 if [[ -n "$VNCDESKTOP" ]]; then
     export XKL_XMODMAP_DISABLE=1
+    #vncconfig -nowin &
 else # FreeNX
     #setxkbmap -v 10 -geometry "pc(pc105)" -keycodes "evdev+aliases(qwerty)"
     setxkbmap -model us

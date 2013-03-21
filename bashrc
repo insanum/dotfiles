@@ -123,7 +123,7 @@ alias print2="enscript -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true"
 alias print1="enscript -G -1 --mark-wrapped-lines=box -E -DDuplex:true"
 function manprint() { groff -t -man -Tps $1 | lpr -Pprt-irv-028; }
 alias vncstart="$HOME/.vnc/vncstart"
-alias vnckill="vncserver -kill :13"
+alias vnckill="$HOME/.vnc/vnckill"
 alias ldap="$HOME/.mutt/ldap"
 alias socks='ssh -ND 9999 edavis@insanum.com'
 alias hgs='hg status | grep -v "? "'

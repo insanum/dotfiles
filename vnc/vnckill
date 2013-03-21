@@ -1,0 +1,5 @@
+#!/bin/bash
+
+vncserver -kill :13
+#killall vncconfig
+
