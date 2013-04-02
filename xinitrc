@@ -29,8 +29,10 @@ else
 fi
 
 if [[ $HOSTNAME = eadmaka ]]; then
-    #xrandr --output DVI-I-1 --right-of DP-0 --output DP-0 --rotate left --output DVI-I-1 --rotate left
-    xrandr --output DVI-0 --right-of DP-I-1 --output DP-0 --rotate left
+    # nvidia
+    #xrandr --output DVI-0 --right-of DP-I-1 --output DP-0 --rotate left
+    # nouveau
+    xrandr --output DP-1 --right-of DVI-I-1 --output DP-1 --rotate left
 elif [[ $HOSTNAME = jackshrimp ]]; then
     xrandr --output DVI-D-0 --rotate left
 fi

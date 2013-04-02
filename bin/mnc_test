@@ -42,12 +42,24 @@ function client_side()
             ((net++))
             continue
         fi
-        ping -i $IFACE 225.0.${net}.${host} 2
+        if [[ $OSTYPE =~ solaris ]]; then
+            ping -i $IFACE 225.0.${net}.${host} 2
+        elif [[ $OSTYPE =~ freebsd ]]; then
+            ping -L -I $LIP -c 2 225.0.${net}.${host}
+        else # Linux
+            ping -I $IFACE -c 2 225.0.${net}.${host}
+        fi
     done
 }
 
 function server_side()
 {
+    if [[ $OSTYPE =~ freebsd ]]; then
+        $SUDO sysctl net.inet.icmp.bmcastecho=1
+    elif [[ $OSTYPE =~ linux ]]; then
+        $SUDO bash -c 'echo "0" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts'
+    fi
+
     # note that "01:00:5e:00:00:01" is already registered when plumbed
     pids=""
     net=0
@@ -70,21 +82,17 @@ function server_side()
     for p in $pids; do
         kill $p
     done
-}
 
-# create the multicast routes
-for ((i = 0; i <= ($CNT / 256); i++)); do
-    $SUDO route add -interface 225.0.${i}.0 $LIP
-done
+    if [[ $OSTYPE =~ freebsd ]]; then
+        $SUDO sysctl net.inet.icmp.bmcastecho=0
+    elif [[ $OSTYPE =~ linux ]]; then
+        $SUDO bash -c 'echo "1" > /proc/sys/net/ipv4/icmp_echo_ignore_broadcasts'
+    fi
+}
 
 if [ $PING -ne 0 ]; then
     client_side
 else
     server_side
 fi
-
-# delete the multicast routes
-for ((i = 0; i <= ($CNT / 256); i++)); do
-    $SUDO route delete -interface 225.0.${i}.0 $LIP
-done
 
