@@ -127,6 +127,9 @@ hc rule class=Opennx              tag=5
 hc rule class=rdesktop            tag=6
 hc rule class=xfreerdp            tag=6
 hc rule class=Remmina             tag=6
+hc rule class=Openshot            tag=3
+hc rule class=Kdenlive            tag=3
+hc rule class=Cinelerra           tag=3
 hc rule class=Wine                tag=4 fullscreen=on
 hc rule class=URxvt   title=work1 tag=8 # tmux session work1
 hc rule class=Evilvte title=work1 tag=8 # tmux session work1
@@ -139,14 +142,10 @@ hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
 #hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG'                  focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK)'     manage=off
 
-if [[ $HOSTNAME = eadmaka ]]; then
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = jackshrimp ]]; then
     hc remove_monitor 1
     hc move_monitor 0 1920x1080+0+0
     hc add_monitor 1080x1920+1920+0 9
-elif [[ $HOSTNAME = jackshrimp ]]; then
-    hc remove_monitor 1
-    hc move_monitor 0 1680x1050+0+0
-    hc add_monitor 1080x1920+1680+0 9
 fi
 
 [[ -x $HOME/.herbstluftwm_panel ]] && $HOME/.herbstluftwm_panel &

@@ -34,7 +34,7 @@ if [[ $HOSTNAME = eadmaka ]]; then
     # nouveau
     xrandr --output DP-1 --right-of DVI-I-1 --output DP-1 --rotate left
 elif [[ $HOSTNAME = jackshrimp ]]; then
-    xrandr --output DVI-D-0 --rotate left
+    xrandr --output DVI-D-0 --right-of DVI-I-1 --output DVI-D-0 --rotate left
 fi
 
 ## Source scripts in /etc/X11/xinit/xinitrc.d/
@@ -64,7 +64,7 @@ else
 fi
 xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
-if [[ $HOSTNAME = eadmaka ]]; then
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = jackshrimp ]]; then
     feh --bg-tile $HOME/Dropbox/kole_evo_1920x1080.png
 else
     feh --bg-tile $HOME/Dropbox/kole_evo_1680x1050.png

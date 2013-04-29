@@ -666,21 +666,6 @@ function reportimgs()
 }
 
 
-function steam()
-{
-    #killall xcompmgr
-    #killall cairo-compmgr
-    #sleep 2
-
-    WOW=$HOME/.wine/drive_c/Program\ Files/Steam
-
-    echo "Wine Steam.exe..."
-    cd "$WOW"
-    WINEARCH=win32 wine Steam.exe
-    cd -
-}
-
-
 function wow()
 {
     #killall xcompmgr
