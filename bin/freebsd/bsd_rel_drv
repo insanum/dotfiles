@@ -24,7 +24,7 @@ if [ "`df | egrep \"${NSEG_MNT_DIR}$\"`" = "" ]; then
 fi
 
 if [ -f bxe.h ]; then
-  TITLE="FreeBSD 10Gb driver (bxe $VER) for 57712/57810/57840 NX2"
+  TITLE="FreeBSD 10Gb driver (bxe $VER) for 57712/57800/57810/57840 NX2"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm57710\\drivers\\freebsd\\$VER"
   PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm57710/drivers/freebsd/$VER
   TOADDRS="$TOADDRS"
@@ -88,7 +88,6 @@ set -o xtrace
 mkdir -p $PKGDESTDIR
 mkdir -p $SRCDESTDIR
 
-/bin/cp -f LICENSE.TXT $PKGDESTDIR
 /bin/cp -f README.TXT $PKGDESTDIR
 /bin/cp -f RELEASE.TXT $PKGDESTDIR
 
@@ -99,6 +98,8 @@ TMPSRCDIR="${TMPDEST}/${SRCDIR}"
 mkdir $TMPSRCDIR
 /bin/cp -r . $TMPSRCDIR
 pushd $TMPSRCDIR
+./577xx/tools/build_ddk bsd
+/bin/rm -rf 577xx
 cd ..
 tar -Jcvf ${PKGDESTDIR}/${SRCDIR}.txz $SRCDIR
 cp ${PKGDESTDIR}/${SRCDIR}.txz $SRCDESTDIR
