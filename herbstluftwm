@@ -124,9 +124,9 @@ hc rule class=Okular              tag=3
 hc rule class=Vncviewer           tag=5
 hc rule class=NXAgent             tag=5
 hc rule class=Opennx              tag=5
-hc rule class=rdesktop            tag=6
-hc rule class=xfreerdp            tag=6
-hc rule class=Remmina             tag=6
+hc rule class=rdesktop            tag=5
+hc rule class=xfreerdp            tag=5
+hc rule class=Remmina             tag=5
 hc rule class=Openshot            tag=3
 hc rule class=Kdenlive            tag=3
 hc rule class=Cinelerra           tag=3
