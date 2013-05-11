@@ -33,8 +33,8 @@ if [[ $1 = all || $1 = t5220t ]]; then
     tmuxopen 5 t5220t "ssh root@10.13.106.69"
 fi
 
-if [[ $1 = all || $1 = sparky ]]; then
-    tmuxopen 6 sparky "ssh root@10.13.106.66"
+if [[ $1 = all || $1 = t5220m ]]; then
+    tmuxopen 6 t5220m "ssh root@10.13.106.68"
 fi
 
 if [[ $1 = all || $1 = sunny ]]; then
@@ -49,15 +49,31 @@ if [[ $1 = all || $1 = amd ]]; then
     tmuxopen 9 amd "telnet $LTRX 10002"
 fi
 
-if [[ $1 = t5220m ]]; then
-    tmuxopen 0 t5220m "ssh root@10.13.106.68"
-fi
-
 if [[ $1 = t5220b ]]; then
     tmuxopen 0 t5220b "ssh root@10.13.106.67"
 fi
 
+if [[ $1 = sparky ]]; then
+    tmuxopen 0 sparky "ssh root@10.13.106.66"
+fi
+
 if [[ $1 = foo ]]; then
     tmuxopen 0 foo "cu --speed 115200 -l /dev/ttyUSB0"
+fi
+
+if [[ $1 = fat1 ]]; then
+    tmuxopen 6 fat1 "env TERM=vt100 ipmiconsole -u ADMIN -p ADMIN -h 10.13.106.55"
+fi
+
+if [[ $1 = fat2 ]]; then
+    tmuxopen 7 fat2 "env TERM=vt100 ipmiconsole -u ADMIN -p ADMIN -h 10.13.106.56"
+fi
+
+if [[ $1 = fat3 ]]; then
+    tmuxopen 8 fat3 "env TERM=vt100 ipmiconsole -u ADMIN -p ADMIN -h 10.13.106.57"
+fi
+
+if [[ $1 = fat4 ]]; then
+    tmuxopen 9 fat4 "env TERM=vt100 ipmiconsole -u ADMIN -p ADMIN -h 10.13.106.58"
 fi
 
