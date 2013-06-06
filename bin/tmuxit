@@ -22,7 +22,7 @@ function tmuxopen()
 }
 
 if [[ $1 = all || $1 = t4 ]]; then
-    tmuxopen 3 t4 "ssh root@10.13.106.61"
+    tmux new-window -t 3 -n t4 "ssh root@10.13.106.61" \; split-window -v "ssh root@10.13.106.59"
 fi
 
 if [[ $1 = all || $1 = m3k ]]; then
@@ -59,6 +59,10 @@ fi
 
 if [[ $1 = foo ]]; then
     tmuxopen 0 foo "cu --speed 115200 -l /dev/ttyUSB0"
+fi
+
+if [[ $1 = cisco ]]; then
+    tmux new-window -t 5 -n cisco "ssh admin@10.13.106.62" \; split-window -h "ssh admin@10.13.106.54"
 fi
 
 if [[ $1 = fat1 ]]; then

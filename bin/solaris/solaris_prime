@@ -1,0 +1,330 @@
+#!/bin/bash
+
+#
+# Prepare on Solaris:
+#   /etc/ssh/sshd_config -> PermitRootLogin yes
+#   svcadm restart ssh
+#   Solaris 11/12: rolemod -K type=normal root
+#   scp solaris_prime <root>@<ip>:
+#   scp sol-xxx-repo.iso <root>@<ip>:
+#
+
+if [ `id | sed -e "s/.*uid=\([0-9]*\).*/\1/"` -ne 0 ]; then
+    echo "ERROR: Must run directly as root (no sudo)!"
+    exit
+fi
+
+osrel=`uname -r`
+
+function get_user_input()
+{
+    while true; do
+        echo -n "${1}: " 1>&2
+        read text
+        if [[ "$text" = "" ]]; then
+            echo "Invalid entry!" 1>&2
+            continue
+        fi
+        echo $text
+        return
+    done
+}
+
+ifc=''
+function get_management_interface()
+{
+    if [[ "$ifc" = "" ]]; then
+        echo "----"
+        if [[ $osrel = 5.10 ]]; then
+            dladm show-dev
+        else # S10/S11
+            dladm show-phys
+        fi
+        echo "----"
+        ifc=`get_user_input "Management interface"`
+    fi
+}
+
+cat <<pkgEND
+##############################
+##        Packages          ##
+##############################
+pkgEND
+
+function solaris_pkgutil()
+{
+    # if pkgutil exists then assume already installed and configured properly
+    if [[ ! -x /opt/csw/bin/pkgutil ]]; then
+        pkgadd -d http://get.opencsw.org/now
+        /opt/csw/bin/pkgutil --catalog
+
+        pkgs="coreutils sudo vim git expect rsync gawk gsed"
+
+        for p in $pkgs; do
+            echo "Installing package '$p'..."
+            /opt/csw/bin/pkgutil --yes --install $p
+        done
+
+        # update to unstable after package installation because of SSL certificate issue
+
+        mv /opt/csw/etc/pkgutil.conf /opt/csw/etc/pkgutil.conf.orig
+        sed -e 's|^#mirror=http://mirror.opencsw.org/opencsw/testing|mirror=http://mirror.opencsw.org/opencsw/unstable|' /opt/csw/etc/pkgutil.conf.orig > /opt/csw/etc/pkgutil.conf
+        rm /opt/csw/etc/pkgutil.conf.orig
+        /opt/csw/bin/pkgutil --catalog
+        /opt/csw/bin/pkgutil --yes --upgrade
+
+        /opt/csw/bin/pkgutil --yes --install libtcl8_5
+    fi
+}
+
+function solaris_pkg()
+{
+    # if repo directory exists then assume pkg publisher already prepared
+    if [[ ! -d /export/repo ]]; then
+        ls *.iso &> /dev/null
+        if [[ $? -ne 0 ]]; then
+            echo "ERROR: No repo ISOs found!"
+            exit
+        fi
+
+        mkdir /export/repo
+
+        for i in *.iso; do
+            echo "Copying repo ISO: $i"
+            lofiadm -a $i /dev/lofi/1
+            mkdir /export/$i
+            mount -F hsfs /dev/lofi/1 /export/$i
+            #rsync -aP /export/$i/repo/ /export/repo
+            pushd /export/$i/repo; tar cf - . | (cd /export/repo; tar xfp -); popd
+            umount /export/$i
+            rmdir /export/$i
+            lofiadm -d /dev/lofi/1
+        done
+
+        svccfg -s application/pkg/server setprop pkg/inst_root=/export/repo
+        svccfg -s application/pkg/server setprop pkg/readonly=true
+
+        svcadm refresh application/pkg/server
+        svcadm enable application/pkg/server
+
+        pkg set-publisher -g /export/repo solaris 
+        pkg publisher
+
+        pkg rebuild-index
+
+        pkgs="onbld system/header git samba"
+
+        for p in $pkgs; do
+            echo "Installing package '$p'..."
+            pkg install $p
+        done
+    fi
+}
+
+if [[ $osrel = 5.10 ]]; then
+    solaris_pkgutil
+else # S11/S12
+    solaris_pkg
+fi
+
+cat <<hostEND
+##############################
+##        Hostname          ##
+##############################
+hostEND
+
+# Solaris 11/12 should already have a hostname configured after installation
+
+if [[ $osrel = 5.10 ]]; then
+    # if nodename file exists then assume hostname already configured
+    if [[ ! -f /etc/nodename ]]; then
+        hn=`get_user_input "Hostname to set"`
+        echo "Setting hostname to: $hn"
+        echo "$hn" > /etc/nodename
+        echo "REBOOTING!!!"
+        halt
+    fi
+fi
+
+cat <<netEND
+##############################
+##        Network           ##
+##############################
+netEND
+
+# Solaris 10 should already have the network configured after installation
+
+if [[ $osrel = 5.10 ]]; then
+    mv /etc/nsswitch.conf /etc/nsswitch.conf.orig
+    sed -e 's/^#hosts:      files # Commented out by DHCP//' \
+        -e 's/^hosts: files dns # Added by DHCP/hosts: files winbind dns/' \
+        -e 's/^#ipnodes:    files # Commented out by DHCP//' \
+        -e 's/^ipnodes: files dns # Added by DHCP/ipnodes: files winbind dns/' /etc/nsswitch.conf.orig > /etc/nsswitch.conf
+    rm /etc/nsswitch.conf.orig
+fi
+
+function dladm_rename_links()
+{
+    OIFS=$IFS
+    IFS=$'\n'
+
+    for l in `dladm show-phys`; do
+        NET=`echo $l | awk '{ print $1; }'`
+        PHYS=`echo $l | awk '{ print $6; }'`
+        if [ $NET = LINK ]; then
+            continue
+        fi
+        echo "Renaming $NET to $PHYS"
+        sudo dladm rename-link $NET $PHYS
+    done
+
+    IFS=$OIFS
+}
+
+if [[ $osrel != 5.10 ]]; then
+    netadm list | grep -i ncp | grep -i DefaultFixed | grep -i online > /dev/null
+    # if defaultfixed already enabled then assume network already configured
+    if [[ $? -ne 0 ]]; then
+        # do away with NWAM
+        netadm enable -p ncp defaultfixed
+        sleep_time=15
+        echo "Sleeping for $sleep_time seconds waiting for NWAM-DefaultFixed..."
+        sleep $sleep_time
+        dladm_rename_links
+
+        get_management_interface
+        echo "Creating IP for $ifc"
+        ipadm create-ip $ifc
+        echo "Turning on DHCP for $ifc"
+        ipadm create-addr -T dhcp $ifc
+
+        # configure DNS
+        svccfg -s dns/client setprop config/nameserver = net_address: 10.10.10.10
+        svccfg -s dns/client setprop config/domain = astring: \"broadcom.com\"
+        svcadm refresh dns/client 
+
+        # configure nsswitch
+        svccfg -s name-service/switch setprop config/host = astring: \"files winbind dns\"
+        svcadm refresh name-service/switch
+
+        # ipfilter is so annoying
+        svcadm disable ipfilter
+    fi
+fi
+
+cat <<userEND
+##############################
+##          User            ##
+##############################
+userEND
+
+mv /etc/default/passwd /etc/default/passwd.orig
+sed -e 's/^PASSLENGTH=8/PASSLENGTH=2/' \
+    -e 's/^PASSLENGTH=6/PASSLENGTH=2/' \
+    -e 's/^#MINNONALPHA=1/MINNONALPHA=0/' /etc/default/passwd.orig > /etc/default/passwd
+rm /etc/default/passwd.orig
+
+mv /etc/default/login /etc/default/login.orig
+sed -e 's/^CONSOLE=/#CONSOLE=/' /etc/default/login.orig > /etc/default/login
+rm /etc/default/login.orig
+
+if [[ $osrel = 5.10 ]]; then
+    # if home directory exists then assume user already configured
+    if [[ ! -d /export/home/edavis ]]; then
+        groupadd -g 100 users
+        useradd -s /bin/bash -d /export/home/edavis -m -g users -u 1000 edavis
+
+        echo "Changing password for edavis..."
+        passwd edavis
+
+        grep edavis /etc/opt/csw/sudoers &> /dev/null
+        if [[ $? -ne 0 ]]; then
+            echo -e "\nedavis ALL=(ALL) ALL" >> /etc/opt/csw/sudoers
+        fi
+    fi
+else
+    # user should already be created during installation
+    groupadd -g 100 users
+    usermod -u 1000 edavis
+    usermod -g users edavis
+    chown -R edavis:users /export/home/edavis
+fi
+
+cat <<manEND
+##############################
+##          Man             ##
+##############################
+manEND
+
+catman -w
+
+cat <<sambaEND
+##############################
+##         Samba            ##
+##############################
+sambaEND
+
+# if smb.conf exists then assume Samba already configured
+if [[ ! -f /etc/samba/smb.conf ]]; then
+    get_management_interface
+    cat > /etc/samba/smb.conf <<smbEND
+[global]
+    interfaces = $ifc
+    wins server = 10.5.2.1 10.5.2.2
+smbEND
+
+    svcadm enable wins winbind
+fi
+
+cat <<nfsEND
+##############################
+##          NFS             ##
+##############################
+nfsEND
+
+# if the work directory exists then assume NFS already configured
+if [[ ! -d /export/home/edavis/work ]]; then
+    mkdir /export/home/edavis/work
+    chown edavis:users /export/home/edavis/work
+
+    grep eadmaka /etc/vfstab &> /dev/null
+    if [[ $? -ne 0 ]]; then
+        echo -e "\neadmaka:/scratch/edavis/work - /export/home/edavis/work nfs - yes -" >> /etc/vfstab
+    fi
+
+    if [[ $osrel = 5.10 ]]; then
+        mv /etc/default/nfs /etc/default/nfs.orig
+        sed -e 's/^#NFS_CLIENT_VERSMAX=4/NFS_CLIENT_VERSMAX=3/' /etc/default/nfs.orig > /etc/default/nfs
+        rm /etc/default/nfs.orig
+    else # S11/S12
+        sharectl set -p client_versmax=3 nfs
+    fi
+fi
+
+cat <<nfsEND
+##############################
+##       Environment        ##
+##############################
+nfsEND
+
+function github_nostalgic()
+{
+    if [[ `uname -r` = 5.10 ]]; then
+        PATH=/opt/csw/bin:$PATH
+    fi
+    export HOME=/export/home/edavis
+    cd /export/home/edavis
+    mkdir src
+    pushd src
+    git clone https://github.com/insanum/nostalgic.git
+    popd
+    src/nostalgic/nostalgic clone https://github.com/insanum/dotfiles.git
+    src/nostalgic/nostalgic symlink dotfiles
+}
+
+# if the nostalgic directory exists then assume github dotfiles already cloned
+if [[ ! -d /export/home/edavis/src/nostalgic ]]; then
+    export -f github_nostalgic
+    su edavis -c "bash -c github_nostalgic"
+fi
+
