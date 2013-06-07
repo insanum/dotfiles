@@ -47,6 +47,22 @@ function get_management_interface()
 
 cat <<pkgEND
 ##############################
+##           ZFS            ##
+##############################
+pkgEND
+
+zfs list -t snapshot | grep fresh_install > /dev/null
+if [[ $? -ne 0 ]]; then
+    echo -n "Do you want to make a ZFS snapshot? [y/(n)]: "
+    read text
+    if [[ "$text" = "y" ]]; then
+        echo "Creating ZFS snapshot 'fresh_install'..."
+        zfs snapshot -r rpool@fresh_install
+    fi
+fi
+
+cat <<pkgEND
+##############################
 ##        Packages          ##
 ##############################
 pkgEND
@@ -90,7 +106,7 @@ function solaris_pkg()
         mkdir /export/repo
 
         for i in *.iso; do
-            echo "Copying repo ISO: $i"
+            echo "Copying repo ISO '$i'..."
             lofiadm -a $i /dev/lofi/1
             mkdir /export/$i
             mount -F hsfs /dev/lofi/1 /export/$i
@@ -139,7 +155,7 @@ if [[ $osrel = 5.10 ]]; then
     # if nodename file exists then assume hostname already configured
     if [[ ! -f /etc/nodename ]]; then
         hn=`get_user_input "Hostname to set"`
-        echo "Setting hostname to: $hn"
+        echo "Setting hostname to '$hn'..."
         echo "$hn" > /etc/nodename
         echo "REBOOTING!!!"
         halt
@@ -155,6 +171,7 @@ netEND
 # Solaris 10 should already have the network configured after installation
 
 if [[ $osrel = 5.10 ]]; then
+    echo "Configuring NSSWITCH..."
     mv /etc/nsswitch.conf /etc/nsswitch.conf.orig
     sed -e 's/^#hosts:      files # Commented out by DHCP//' \
         -e 's/^hosts: files dns # Added by DHCP/hosts: files winbind dns/' \
@@ -174,7 +191,7 @@ function dladm_rename_links()
         if [ $NET = LINK ]; then
             continue
         fi
-        echo "Renaming $NET to $PHYS"
+        echo "Renaming '$NET' to '$PHYS'..."
         sudo dladm rename-link $NET $PHYS
     done
 
@@ -188,26 +205,33 @@ if [[ $osrel != 5.10 ]]; then
         # do away with NWAM
         netadm enable -p ncp defaultfixed
         sleep_time=15
-        echo "Sleeping for $sleep_time seconds waiting for NWAM-DefaultFixed..."
+        echo "Setting NWAM-DefaultFixed (waiting $sleep_time seconds)..."
         sleep $sleep_time
         dladm_rename_links
 
         get_management_interface
-        echo "Creating IP for $ifc"
+        echo "Creating IP for ${ifc}..."
         ipadm create-ip $ifc
-        echo "Turning on DHCP for $ifc"
+        echo "Turning on DHCP for ${ifc}..."
         ipadm create-addr -T dhcp $ifc
 
         # configure DNS
+        echo "Configuring DNS..."
         svccfg -s dns/client setprop config/nameserver = net_address: 10.10.10.10
         svccfg -s dns/client setprop config/domain = astring: \"broadcom.com\"
         svcadm refresh dns/client 
 
         # configure nsswitch
-        svccfg -s name-service/switch setprop config/host = astring: \"files winbind dns\"
+        echo "Configuring NSSWITCH..."
+        if [[ $osrel = 5.11 ]]; then
+            svccfg -s name-service/switch setprop config/host = astring: \"files winbind dns\"
+        else # S12
+            svccfg -s name-service/switch setprop config/host = astring: "files winbind dns"
+        fi
         svcadm refresh name-service/switch
 
         # ipfilter is so annoying
+        echo "Disabling ipfilter..."
         svcadm disable ipfilter
     fi
 fi
@@ -218,12 +242,15 @@ cat <<userEND
 ##############################
 userEND
 
+echo "Configuring password defaults..."
 mv /etc/default/passwd /etc/default/passwd.orig
 sed -e 's/^PASSLENGTH=8/PASSLENGTH=2/' \
     -e 's/^PASSLENGTH=6/PASSLENGTH=2/' \
+    -e 's/^#PASSLENGTH=8/PASSLENGTH=2/' \
     -e 's/^#MINNONALPHA=1/MINNONALPHA=0/' /etc/default/passwd.orig > /etc/default/passwd
 rm /etc/default/passwd.orig
 
+echo "Configuring login defaults..."
 mv /etc/default/login /etc/default/login.orig
 sed -e 's/^CONSOLE=/#CONSOLE=/' /etc/default/login.orig > /etc/default/login
 rm /etc/default/login.orig
@@ -231,12 +258,14 @@ rm /etc/default/login.orig
 if [[ $osrel = 5.10 ]]; then
     # if home directory exists then assume user already configured
     if [[ ! -d /export/home/edavis ]]; then
+        echo "Adding user 'edavis'..."
         groupadd -g 100 users
         useradd -s /bin/bash -d /export/home/edavis -m -g users -u 1000 edavis
 
-        echo "Changing password for edavis..."
+        echo "Changing password for 'edavis'..."
         passwd edavis
 
+        echo "Updating sudoers for 'edavis'..."
         grep edavis /etc/opt/csw/sudoers &> /dev/null
         if [[ $? -ne 0 ]]; then
             echo -e "\nedavis ALL=(ALL) ALL" >> /etc/opt/csw/sudoers
@@ -244,6 +273,7 @@ if [[ $osrel = 5.10 ]]; then
     fi
 else
     # user should already be created during installation
+    echo "Updating user 'edavis'..."
     groupadd -g 100 users
     usermod -u 1000 edavis
     usermod -g users edavis
@@ -256,6 +286,7 @@ cat <<manEND
 ##############################
 manEND
 
+echo "Generating man page search index..."
 catman -w
 
 cat <<sambaEND
@@ -267,12 +298,14 @@ sambaEND
 # if smb.conf exists then assume Samba already configured
 if [[ ! -f /etc/samba/smb.conf ]]; then
     get_management_interface
+    echo "Generating Samba config..."
     cat > /etc/samba/smb.conf <<smbEND
 [global]
     interfaces = $ifc
     wins server = 10.5.2.1 10.5.2.2
 smbEND
 
+    echo "Enabling Samba wins/winbind..."
     svcadm enable wins winbind
 fi
 
@@ -284,6 +317,8 @@ nfsEND
 
 # if the work directory exists then assume NFS already configured
 if [[ ! -d /export/home/edavis/work ]]; then
+    echo "Configuring NFS mount points..."
+
     mkdir /export/home/edavis/work
     chown edavis:users /export/home/edavis/work
 
@@ -292,6 +327,7 @@ if [[ ! -d /export/home/edavis/work ]]; then
         echo -e "\neadmaka:/scratch/edavis/work - /export/home/edavis/work nfs - yes -" >> /etc/vfstab
     fi
 
+    echo "Forcing NFS client version max to '3'..."
     if [[ $osrel = 5.10 ]]; then
         mv /etc/default/nfs /etc/default/nfs.orig
         sed -e 's/^#NFS_CLIENT_VERSMAX=4/NFS_CLIENT_VERSMAX=3/' /etc/default/nfs.orig > /etc/default/nfs
@@ -324,7 +360,57 @@ function github_nostalgic()
 
 # if the nostalgic directory exists then assume github dotfiles already cloned
 if [[ ! -d /export/home/edavis/src/nostalgic ]]; then
+    echo "Installing nostalgic and dotfiles..."
     export -f github_nostalgic
     su edavis -c "bash -c github_nostalgic"
 fi
+
+cat <<nfsEND
+##############################
+##         Compiler         ##
+##############################
+nfsEND
+
+# if the compiler directory exists then assume it's installed
+if [[ ! -d /export/home/edavis/compiler ]]; then
+    pushd /export/home/edavis
+
+    mkdir compiler
+    cd compiler
+
+    wget_prg=/usr/sfw/bin/wget
+    tar_prg=/usr/sfw/bin/gtar
+
+    if [[ `uname -p` = sparc ]]; then
+        arch=SPARC
+    else # x86
+        arch=x86
+    fi
+
+    echo "Downloading SunStudio..."
+    $wget_prg http://eadmaka/solaris_compiler/SunStudio12u1-SunOS-${arch}-pkgs-ML.tar.bz2
+    $tar_prg -jxvf SunStudio12u1-SunOS-${arch}-pkgs-ML.tar.bz2
+    echo "Installing SunStudio..."
+    cd SunStudio12u1-SunOS-${arch}-pkgs-ML
+    sh ./SunStudio12u1-SunOS-${arch}-pkgs.sh --non-interactive-accept-license
+    cd ..
+
+    if [[ $osrel = 5.10 ]]; then
+        echo "Downloading ONBLD tools..."
+        $wget_prg http://eadmaka/solaris_compiler/sol10_SUNWonbld.i386.tar.bz2
+        $tar_prg -jxvf sol10_SUNWonbld.i386.tar.bz2
+        echo "Installing ONBLD tools"
+        pkgadd -d onbld
+    fi
+
+    echo "Downloading PKG tools..."
+    $wget_prg http://eadmaka/solaris_compiler/SUNWpkgd.tar
+    $tar_prg -xvf SUNWpkgd.tar
+    echo "Installing PKG tools"
+    pkgadd -d .
+
+    popd
+fi
+
+echo "Done!"
 
