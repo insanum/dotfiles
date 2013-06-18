@@ -14,7 +14,7 @@ if [[ $OSTYPE == cygwin ]]; then
   export PATH="/cygdrive/c/edavis/usr/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/X11R6/bin:/cygdrive/c/WINDOWS/system32:."
   export MANPATH="/cygdrive/c/edavis/usr/man:/usr/man:/usr/share/man:/usr/local/man:/usr/local/share/man:/usr/X11R6/man:"
 elif [[ $OSTYPE =~ solaris ]]; then
-  export PATH="$HOME/bin:/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/local/bin:/opt/onbld/bin:/opt/onbld/bin/i386:/opt/SUNWspro/bin:/opt/sunstudio12.1/bin:/opt/csw/bin:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin:."
+  export PATH="$HOME/bin:/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/local/bin:/opt/onbld/bin:/opt/onbld/bin/i386:/opt/onbld/bin/sparc:/opt/SUNWspro/bin:/opt/sunstudio12.1/bin:/opt/csw/bin:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin:."
   export MANPATH="/usr/sfw/man:/usr/share/man:/opt/onbld/man:/opt/SUNWpkgd/man:/opt/SUNWscat/man:/opt/sunstudio12.1/man:/opt/SUNWspro/man:/opt/csw/man"
 elif [[ $OSTYPE =~ freebsd ]]; then
   source /etc/profile

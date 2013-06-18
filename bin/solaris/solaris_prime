@@ -383,8 +383,10 @@ if [[ ! -d /export/home/edavis/compiler ]]; then
 
     if [[ `uname -p` = sparc ]]; then
         arch=SPARC
+        onbld_arch=sparc
     else # x86
         arch=x86
+        onbld_arch=i386
     fi
 
     echo "Downloading SunStudio..."
@@ -397,8 +399,8 @@ if [[ ! -d /export/home/edavis/compiler ]]; then
 
     if [[ $osrel = 5.10 ]]; then
         echo "Downloading ONBLD tools..."
-        $wget_prg http://eadmaka/solaris_compiler/sol10_SUNWonbld.i386.tar.bz2
-        $tar_prg -jxvf sol10_SUNWonbld.i386.tar.bz2
+        $wget_prg http://eadmaka/solaris_compiler/sol10_SUNWonbld.${onbld_arch}.tar.bz2
+        $tar_prg -jxvf sol10_SUNWonbld.${onbld_arch}.tar.bz2
         echo "Installing ONBLD tools"
         pkgadd -d onbld
     fi
