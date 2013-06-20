@@ -18,11 +18,15 @@ function tmuxopen()
     if [[ $1 -ne 0 ]]; then
         TGT="-t $1"
     fi
-    tmux new-window $TGT -n $2 "$3" \; split-window $HORIZ
+    tmux new-window $TGT -n $2 \; send-keys "$3" "Enter" \; split-window $HORIZ
 }
 
 if [[ $1 = t4 ]]; then
     tmux new-window -t 3 -n t4 "ssh root@10.13.106.61" \; split-window -v "ssh root@10.13.106.59" \; split-window -v "ssh root@10.13.106.53" \; select-layout -t 3 even-vertical
+fi
+
+if [[ $1 = ldom ]]; then
+    tmuxopen 4 ldom "ssh root@10.13.114.33"
 fi
 
 if [[ $1 = cisco ]]; then
@@ -30,35 +34,35 @@ if [[ $1 = cisco ]]; then
 fi
 
 if [[ $1 = fat1 ]]; then
-    tmuxopen 6 fat1 "env TERM=vt100 ipmiconsole -u ADMIN -P -h 10.13.114.26"
+    tmuxopen 6 fat1 "ipmiconsole -u ADMIN -P -h 10.13.114.26"
 fi
 
 if [[ $1 = fat2 ]]; then
-    tmuxopen 7 fat2 "env TERM=vt100 ipmiconsole -u ADMIN -P -h 10.13.114.27"
+    tmuxopen 7 fat2 "ipmiconsole -u ADMIN -P -h 10.13.114.27"
 fi
 
 if [[ $1 = fat3 ]]; then
-    tmuxopen 8 fat3 "env TERM=vt100 ipmiconsole -u ADMIN -P -h 10.13.114.28"
+    tmuxopen 8 fat3 "ipmiconsole -u ADMIN -P -h 10.13.114.28"
 fi
 
 if [[ $1 = fat4 ]]; then
-    tmuxopen 9 fat4 "env TERM=vt100 ipmiconsole -u ADMIN -P -h 10.13.114.29"
+    tmuxopen 9 fat4 "ipmiconsole -u ADMIN -P -h 10.13.114.29"
 fi
 
 if [[ $1 = sunny ]]; then
     #tmuxopen 7 sunny "telnet $LTRX 10001"
-    tmuxopen 7 sunny "env TERM=vt100 ipmiconsole -u root -P -h 10.13.114.30"
+    tmuxopen 7 sunny "ipmiconsole -u root -P -h 10.13.114.30"
 fi
 
 if [[ $1 = intel ]]; then
     #tmuxopen 8 intel "telnet $LTRX 10003"
-    #tmuxopen 8 intel "env TERM=vt100 ipmiconsole -u root -P -h 10.13.114.32"
+    #tmuxopen 8 intel "ipmiconsole -u root -P -h 10.13.114.32"
     tmuxopen 8 intel "ssh -o ServerAliveInterval=0 root@10.13.114.32"
 fi
 
 if [[ $1 = amd ]]; then
     #tmuxopen 9 amd "telnet $LTRX 10002"
-    #tmuxopen 9 amd "env TERM=vt100 ipmiconsole -u root -P -h 10.13.114.31"
+    #tmuxopen 9 amd "ipmiconsole -u root -P -h 10.13.114.31"
     tmuxopen 9 amd "ssh -o ServerAliveInterval=0 root@10.13.114.31"
 fi
 
