@@ -543,7 +543,7 @@ if [[ -n "$PS1" ]]; then
 
   if [[ $OSTYPE =~ solaris || ( $OSTYPE =~ freebsd && ( `tty` == /dev/ttyu0 || `tty` == /dev/ttyv0 ) ) ]]; then
       if [[ $OSTYPE =~ freebsd ]]; then
-          osrel="freebsd"
+          osrel="freebsd `uname -r`"
       else
           osrel=`head -1 /etc/release | awk '{ print $(NF-1), $(NF); }'`
       fi
@@ -554,7 +554,7 @@ if [[ -n "$PS1" ]]; then
       rbot='-'
   else
       if [[ $OSTYPE =~ freebsd ]]; then
-          osrel="freebsd"
+          osrel="freebsd `uname -r`"
       else
           osrel="linux"
       fi
