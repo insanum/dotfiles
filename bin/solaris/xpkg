@@ -11,8 +11,12 @@ function Usage()
 
 function solver()
 {
-    OSREL=`uname -r`
-    echo "$OSREL" | sed 's/5\./S/'
+    if [ "`grep -i illumos /etc/release`" != "" ]; then
+        echo "Illumos"
+    else
+        OSREL=`uname -r`
+        echo "$OSREL" | sed 's/5\./S/'
+    fi
 }
 
 if [ -z $1 ]; then
