@@ -1,10 +1,17 @@
 #!/bin/bash
 
+# Dell iDRAC6 -> 'console com2' / '#.'
+# HP ILO -> 'vsp' / '<Esc>('
+# SPARC ILOM -> 'start /SP/console' / '#.'
+# Supermicro -> 'start /system1/sol1' / '<ESC>T'
+# Cisco -> 'connect host' / <kill_network_connection>
+# ipmiconsole -> '&.'
+
 LTRX=10.13.114.20
 
 if [ -z $1 ]; then
     CMD=`basename $0`
-    echo "Usage: $CMD [-h] < sunny | amd | intel | m3k | t5220t | t5220m | t5220b | sparky >"
+    echo "Usage: $CMD [-h] <t4|ldom|cisco|fat1|fat2|fat3|fat4|sunny|intel|amd|m3k|t5220t|t5220m|t5220b|sparky|foo>"
     exit
 fi
 
@@ -22,11 +29,11 @@ function tmuxopen()
 }
 
 if [[ $1 = t4 ]]; then
-    tmux new-window -t 3 -n t4 "ssh root@10.13.106.61" \; split-window -v "ssh root@10.13.106.59" \; split-window -v "ssh root@10.13.106.53" \; select-layout -t 3 even-vertical
+    tmux new-window -t 3 -n t4 "ssh root@10.13.114.21" \; split-window -v "ssh root@10.13.114.22" \; split-window -v "ssh root@10.13.114.23" \; select-layout -t 3 even-vertical
 fi
 
 if [[ $1 = ldom ]]; then
-    tmuxopen 4 ldom "ssh root@10.13.114.33"
+    tmux new-window -t 4 -n ldom "ssh root@10.13.114.33" \; split-window -v "ssh edavis@eadt4-ldom0" \; split-window -v "ssh edavis@eadt4-ldom0" \; select-layout -t 4 even-vertical
 fi
 
 if [[ $1 = cisco ]]; then
@@ -34,24 +41,29 @@ if [[ $1 = cisco ]]; then
 fi
 
 if [[ $1 = fat1 ]]; then
-    tmuxopen 6 fat1 "ipmiconsole -u ADMIN -P -h 10.13.114.26"
+    #tmuxopen 6 fat1 "ipmiconsole -u ADMIN -P -h 10.13.114.26"
+    tmuxopen 6 fat1 "ssh ADMIN@10.13.114.26"
 fi
 
 if [[ $1 = fat2 ]]; then
-    tmuxopen 7 fat2 "ipmiconsole -u ADMIN -P -h 10.13.114.27"
+    #tmuxopen 7 fat2 "ipmiconsole -u ADMIN -P -h 10.13.114.27"
+    tmuxopen 7 fat2 "ssh ADMIN@10.13.114.27"
 fi
 
 if [[ $1 = fat3 ]]; then
-    tmuxopen 8 fat3 "ipmiconsole -u ADMIN -P -h 10.13.114.28"
+    #tmuxopen 8 fat3 "ipmiconsole -u ADMIN -P -h 10.13.114.28"
+    tmuxopen 8 fat3 "ssh ADMIN@10.13.114.28"
 fi
 
 if [[ $1 = fat4 ]]; then
-    tmuxopen 9 fat4 "ipmiconsole -u ADMIN -P -h 10.13.114.29"
+    #tmuxopen 9 fat4 "ipmiconsole -u ADMIN -P -h 10.13.114.29"
+    tmuxopen 9 fat4 "ssh ADMIN@10.13.114.29"
 fi
 
 if [[ $1 = sunny ]]; then
     #tmuxopen 7 sunny "telnet $LTRX 10001"
-    tmuxopen 7 sunny "ipmiconsole -u root -P -h 10.13.114.30"
+    #tmuxopen 7 sunny "ipmiconsole -u root -P -h 10.13.114.30"
+    tmuxopen 7 sunny "ssh root@10.13.114.30"
 fi
 
 if [[ $1 = intel ]]; then

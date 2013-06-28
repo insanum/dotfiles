@@ -45,6 +45,10 @@ pkgEND
 
 # if bash exists then assume ports already updated and installed
 if [ ! -x /usr/local/bin/bash ]; then
+    if [ `uname -r` = 10.0-CURRENT ]; then
+        echo "WITHOUT_PKGNG=yes" >> /etc/make.conf
+    fi
+
     portsnap fetch
     portsnap extract
     #portsnap update

@@ -15,6 +15,9 @@ if [ `id | sed -e "s/.*uid=\([0-9]*\).*/\1/"` -ne 0 ]; then
 fi
 
 osrel=`uname -r`
+if [[ "`grep -i illumos /etc/release`" != "" ]]; then
+    osrel=illumos
+fi
 
 function get_user_input()
 {
@@ -37,7 +40,7 @@ function get_management_interface()
         echo "----"
         if [[ $osrel = 5.10 ]]; then
             dladm show-dev
-        else # S10/S11
+        else # S10/S11/Illumos
             dladm show-phys
         fi
         echo "----"
@@ -57,7 +60,11 @@ if [[ $? -ne 0 ]]; then
     read text
     if [[ "$text" = "y" ]]; then
         echo "Creating ZFS snapshot 'fresh_install'..."
-        zfs snapshot -r rpool@fresh_install
+        if [[ $osrel = illumos ]]; then
+            zfs snapshot -r rpool1@fresh_install
+        else
+            zfs snapshot -r rpool@fresh_install
+        fi
     fi
 fi
 
@@ -137,8 +144,23 @@ function solaris_pkg()
     fi
 }
 
+function solaris_pkg_illumos()
+{
+    # if git exists then assume packages already installed
+    if [[ ! -x /usr/bin/git ]]; then
+        pkgs="onbld system/header git samba"
+
+        for p in $pkgs; do
+            echo "Installing package '$p'..."
+            pkg install $p
+        done
+    fi
+}
+
 if [[ $osrel = 5.10 ]]; then
     solaris_pkgutil
+elif [[ $osrel = illumos ]]; then
+    solaris_pkg_illumos
 else # S11/S12
     solaris_pkg
 fi
@@ -149,7 +171,7 @@ cat <<hostEND
 ##############################
 hostEND
 
-# Solaris 11/12 should already have a hostname configured after installation
+# Solaris 11/12/Illumos should already have a hostname configured after installation
 
 if [[ $osrel = 5.10 ]]; then
     # if nodename file exists then assume hostname already configured
@@ -198,13 +220,43 @@ function dladm_rename_links()
     IFS=$OIFS
 }
 
-if [[ $osrel != 5.10 ]]; then
+sleep_time=15
+
+if [[ $osrel = illumos ]]; then
+
+    svcs network/physical:nwam | grep -i online > /dev/null
+    # if nwam disabled then assume network already configured
+    if [[ $? -eq 0 ]]; then
+        svcadm disable network/physical:nwam
+        echo "Turning off NWAM (waiting $sleep_time seconds)..."
+        sleep $sleep_time
+        svcadm enable network/physical:default
+
+        get_management_interface
+        touch /etc/hostname.${ifc}
+        touch /etc/dhcp.${ifc}
+        ifconfig ${ifc} plumb up
+        ifconfig ${ifc} dhcp
+
+        sleep 5
+        ifconfig -a
+    fi
+
+    echo "Configuring NSSWITCH..."
+    sed -e 's/^hosts:\s\+files dns mdns/hosts: files winbind dns mdns/' \
+        -e 's/^ipnodes:\s\+files dns mdns/ipnodes: files winbind dns mdns/' /etc/nsswitch.dns > /etc/nsswitch.conf
+
+    # ipfilter is so annoying
+    echo "Disabling ipfilter..."
+    svcadm disable ipfilter
+
+elif [[ $osrel != 5.10 ]]; then
+
     netadm list | grep -i ncp | grep -i DefaultFixed | grep -i online > /dev/null
     # if defaultfixed already enabled then assume network already configured
     if [[ $? -ne 0 ]]; then
         # do away with NWAM
         netadm enable -p ncp defaultfixed
-        sleep_time=15
         echo "Setting NWAM-DefaultFixed (waiting $sleep_time seconds)..."
         sleep $sleep_time
         dladm_rename_links
@@ -214,26 +266,27 @@ if [[ $osrel != 5.10 ]]; then
         ipadm create-ip $ifc
         echo "Turning on DHCP for ${ifc}..."
         ipadm create-addr -T dhcp $ifc
-
-        # configure DNS
-        echo "Configuring DNS..."
-        svccfg -s dns/client setprop config/nameserver = net_address: 10.10.10.10
-        svccfg -s dns/client setprop config/domain = astring: \"broadcom.com\"
-        svcadm refresh dns/client 
-
-        # configure nsswitch
-        echo "Configuring NSSWITCH..."
-        if [[ $osrel = 5.11 ]]; then
-            svccfg -s name-service/switch setprop config/host = astring: \"files winbind dns\"
-        else # S12
-            svccfg -s name-service/switch setprop config/host = astring: "files winbind dns"
-        fi
-        svcadm refresh name-service/switch
-
-        # ipfilter is so annoying
-        echo "Disabling ipfilter..."
-        svcadm disable ipfilter
     fi
+
+    # configure DNS
+    echo "Configuring DNS..."
+    svccfg -s dns/client setprop config/nameserver = net_address: 10.10.10.10
+    svccfg -s dns/client setprop config/domain = astring: \"broadcom.com\"
+    svcadm refresh dns/client 
+
+    # configure nsswitch
+    echo "Configuring NSSWITCH..."
+    if [[ $osrel = 5.11 ]]; then
+        svccfg -s name-service/switch setprop config/host = astring: \"files winbind dns\"
+    else # S12
+        svccfg -s name-service/switch setprop config/host = astring: "files winbind dns"
+    fi
+    svcadm refresh name-service/switch
+
+    # ipfilter is so annoying
+    echo "Disabling ipfilter..."
+    svcadm disable ipfilter
+
 fi
 
 cat <<userEND
@@ -247,6 +300,7 @@ mv /etc/default/passwd /etc/default/passwd.orig
 sed -e 's/^PASSLENGTH=8/PASSLENGTH=2/' \
     -e 's/^PASSLENGTH=6/PASSLENGTH=2/' \
     -e 's/^#PASSLENGTH=8/PASSLENGTH=2/' \
+    -e 's/^#MINDIFF=3/MINDIFF=0/' \
     -e 's/^#MINNONALPHA=1/MINNONALPHA=0/' /etc/default/passwd.orig > /etc/default/passwd
 rm /etc/default/passwd.orig
 
@@ -342,6 +396,11 @@ cat <<nfsEND
 ##       Environment        ##
 ##############################
 nfsEND
+
+if [[ $osrel = illumos ]]; then
+    # https://www.illumos.org/issues/1536
+    mkdir -p /etc/curl && cat /etc/certs/CA/*.pem > /etc/curl/curlCA
+fi
 
 function github_nostalgic()
 {
