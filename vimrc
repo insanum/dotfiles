@@ -274,6 +274,9 @@ nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
 vmap <Leader>w :w! $HOME/t<CR>
 map <Leader>r :r $HOME/t<CR>
 
+" write file as root
+cmap w!! w !sudo tee % > /dev/null
+
 " What function is the cursor in?
 nmap <Leader>fi mk[[?(<CR>bve"fy`k:echo "-> <C-R>f()"<CR>
 
@@ -768,9 +771,9 @@ if has("cscope")
   let usequickfix=1
 
   let ostype=system('echo -n $OSTYPE')
-  if ostype == "solaris2.10" || ostype == "solaris2.11"
+  if ostype =~ "solaris"
     set csprg=/opt/csw/bin/cscope
-  elseif ostype == "freebsd9.0"
+  elseif ostype =~ "freebsd"
     set csprg=/usr/local/bin/cscope
   else
     set csprg=/usr/bin/cscope
@@ -794,6 +797,9 @@ if has("cscope")
   elseif ($PWD =~ '^.*temp/edavis/kame[0-9]*\($\|/.*$\)')
     " specific case for kame* on nseg
     let module = substitute($PWD, '^.*temp/edavis/\(kame[0-9]*\)\($\|/.*$\)', '\1', '')
+  elseif ($PWD =~ '^/usr/src/sys')
+    " specific case for FreeBSD kernel
+    let module = 'sys'
   endif
 
   if (module != "")
