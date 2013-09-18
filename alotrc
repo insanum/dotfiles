@@ -1,0 +1,98 @@
+
+#ask_subject = False
+attachment_prefix = ~/Downloads
+auto_remove_unread = False
+displayed_headers = Date, From, To, Cc, Bcc, Reply-To, Subject, User-Agent, Tags
+editor_cmd = vim
+hooksfile = ~/.alot_hooks.py
+#initial_command = 'search tag:inbox and not tag:killed'
+#initial_command = 'search tag:inbox and tag:unread and not tag:killed'
+initial_command = 'search (tag:inbox or tag:unread) and not tag:killed'
+#prefer_plaintext = True
+prefer_calendar = True
+quit_on_last_bclose = False
+tabwidth = 4
+terminal_cmd = 'evilvte -e'
+theme = .alot_theme
+#theme = .alot_theme_solarized
+themes_dir = ~
+user_agent = 'notmuch/afew/alot o.O'
+notify_timeout = 5
+
+header_separator = '----'
+forward_subject_prefix = 'Fwd: '
+reply_subject_prefix = 'Re: '
+quote_prefix = '> '
+
+[bindings]
+    B = 'search tag:unread; search tag:perforce; search tag:clearquest; search tag:deleted'
+    #I = 'search tag:inbox and not tag:killed'
+    #I = 'search tag:inbox and tag:unread and not tag:killed'
+    I = 'search (tag:inbox or tag:unread) and not tag:killed'
+    i = 'search tag:inbox and not tag:killed'
+    F = 'search tag:flagged'
+    \ = refineprompt
+    / = prompt 'search '
+    m =
+    c = compose
+    [[search]]
+        a = 'tag --no-flush archive; untag --no-flush unread; untag inbox'
+        m = toggletags unread
+        D = retag deleted
+        t = retagprompt
+    [[thread]]
+        @ = 'refresh; fold *; unfold tag:unread'
+        a = 'tag --no-flush archive; untag --no-flush unread; untag inbox'
+        m = toggletags unread
+        D = retag deleted
+        t = prompt 'tag '
+        u = prompt 'untag '
+        c v = pipeto --format decoded --shell '~/vcshandler_alot dump | less'
+        c V = pipeto --format decoded --shell '~/vcshandler_alot import | less'
+        h v = pipeto --format raw --shell '~/htmlhandler_alot'
+
+[accounts]
+    [[broadcom]]
+        realname = Eric Davis
+        address = edavis@broadcom.com
+        sendmail_command = /usr/bin/msmtp -C /scratch/edavis/.mutt/rc_brcm_msmtp -t
+        draft_box = maildir:///scratch/edavis/Maildir/Drafts
+
+[tags]
+    normal = 'bold','','dark cyan,bold','',#aaa,''
+
+    [[inbox]]
+        translated = '∙'
+        normal = '','','brown','','brown',''
+        focus = '','','brown','','brown',''
+
+    [[unread]]
+        translated = '⚀ '
+        normal = '','','brown','','brown',''
+        focus = '','','brown','','brown',''
+
+    [[flagged]]
+        translated = '★ '
+        normal = '','','light red','','light red',''
+        focus = '','','light red','','light red',''
+
+    [[replied]]
+        translated = '↻ '
+        normal = '','','yellow','','yellow',''
+        focus = '','','yellow','','yellow',''
+
+    [[sent]]
+        translated = '➥ '
+        normal = '','','yellow','','yellow',''
+        focus = '','','yellow','','yellow',''
+
+    [[signed]]
+        translated = '✔ '
+        normal = '','','dark green','','dark green',''
+        focus = '','','dark green','','dark green',''
+
+    [[attachment]]
+        translated = '✛ '
+        normal = '','','light green','','light green',''
+        focus = '','','light green','','light green',''
+
