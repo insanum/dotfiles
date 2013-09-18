@@ -9,6 +9,7 @@ bind index \cd half-down
 bind index 1G first-entry
 bind index G last-entry
 bind index v collapse-thread
+bind index V collapse-all
 bind pager B bounce-message
 bind pager b previous-page
 bind pager j next-line
@@ -22,14 +23,14 @@ bind pager G bottom
 bind index <PageDown> next-entry
 bind index <PageUp> previous-entry
 
-set quit=ask-yes
-set implicit_autoview
+#set quit=ask-yes
 set autoedit
 set beep=no
 set beep_new=no
 set allow_8bit
+set narrow_tree
 set arrow_cursor
-set ascii_chars
+#set ascii_chars
 set edit_headers
 set fast_reply
 set menu_scroll
@@ -45,7 +46,7 @@ set reverse_name
 unset use_from
 set envelope_from
 set use_8bitmime
-set mailcap_path=$HOME/.mutt/mailcap
+set mailcap_path=$HOME/.mailcap
 set ispell="aspell --mode=email check"
 #set ispell="ispell"
 #set hide_missing
@@ -65,7 +66,8 @@ set attribution="On %d, %n wrote:"
 set editor="vim"
 set postpone=ask-yes
 set read_inc=10
-set uncollapse_jump=yes
+set uncollapse_jump=no
+set collapse_unread=yes
 set sort=threads
 set sort_aux=reverse-last-date-sent
 set forward_quote=yes
@@ -80,9 +82,9 @@ set mail_check=10
 set timeout=20
 #set ssl_verify_host=no
 
-#auto_view text/plain text/html application/x-tar-gz application/x-gtar application/zip application/msword
-auto_view text/html
-alternative_order text/plain text/enriched text/html
+#auto_view [...]
+set implicit_autoview
+alternative_order text/calendar text/plain text/html text/enriched
  
 # %?<sequence_char>?<optional_string>?
 # 
@@ -321,21 +323,20 @@ set status_format="Mutt:%?V? [%V]? %f [Flagged:%F Msgs:%m%?n? New:%n?%?d? Del:%d
 
 set pgp_entry_format="%4n %t%f %4l/0x%k %-4a %2c %u"
 
-
 #set quote_regexp="^([ \t]*[>|#:}])+"
 #set quote_regexp="^ *[a-zA-Z]*[]%:\*>|}][]>|}-]*"
 
 ignore *
-unignore date subject from reply-to to cc date x-label
+unignore date subject from reply-to to cc date x-label user-agent
 unhdr_order *
-hdr_order date subject from reply-to to cc date x-label
+hdr_order date subject from reply-to to cc date x-label user-agent
 
 bind index,pager x noop
 bind index,pager <esc>k noop
 
-macro index,pager I c!\n
+#macro index,pager I c!\n
 
-macro index \eb '/~b ' 'search in message bodies'
+#macro index \eb '/~b ' 'search in message bodies'
 
 macro index,pager \cn |urlview\n 'call urlview to extract URLs out of a message'
 
@@ -343,7 +344,7 @@ macro index,pager \cn |urlview\n 'call urlview to extract URLs out of a message'
 #macro index,pager a "<create-alias><enter><enter><enter><enter><enter><reply>"
 #macro index,pager a "<create-alias><enter><enter><enter><enter><enter>"
 
-macro index S "<esc>t<tag-prefix><save-message>" "Save Thread"
+#macro index S "<esc>t<tag-prefix><save-message>" "Save Thread"
 
 # -----------------------------------
 # --- Label stuff (GTD With Mutt) ---
@@ -363,10 +364,10 @@ set my_delete=$delete
 #" "Add/Remove Label"
 
 # view labeled messages:
-macro index \Cx "<limit>~y " "View Labeled Messages"
+#macro index \Cx "<limit>~y " "View Labeled Messages"
 
 # view all labeled messages:
-macro index \Cy "<limit>~y .*\n" "View All Labeled Messages"
+#macro index \Cy "<limit>~y .*\n" "View All Labeled Messages"
 
 # label message, save to ACTION folder:
 #macro index,pager <esc>a "<enter-command>set editor=\"$HOME/.mutt/editlabel\"<enter>\
@@ -377,10 +378,10 @@ macro index \Cy "<limit>~y .*\n" "View All Labeled Messages"
 # --- mu searching (non-IMAP, offlinemap to ~/Maildir) ---
 # --------------------------------------------------------
 
-macro index <F9>  "<sync-mailbox><shell-escape>offlineimap -c ~/.priv/offlineimaprc -u TTY.TTYUI<enter>" "offlineimap"
-macro index <F10> "<shell-escape>mu index<enter>" "mu index"
-macro index <F11> "<shell-escape>mu find -c -l ~/Maildir/search " "mu find"
-macro index <F12> "<change-folder-readonly>=search<enter>" "mu results"
+#macro index <F9>  "<sync-mailbox><shell-escape>offlineimap -c ~/.priv/offlineimaprc -u TTY.TTYUI<enter>" "offlineimap"
+#macro index <F10> "<shell-escape>mu index<enter>" "mu index"
+#macro index <F11> "<shell-escape>mu find -c -l ~/Maildir/search " "mu find"
+#macro index <F12> "<change-folder-readonly>=search<enter>" "mu results"
 
 # ---------------------------
 # --- Attachment Handling ---
@@ -435,7 +436,7 @@ source $HOME/.priv/mutt_aliases
 # --- Sending to Lists ---
 # ------------------------
 
-send-hook ~l 'unset record'
+#send-hook ~l 'unset record'
 
 # ----------------
 # --- Accounts ---
@@ -447,10 +448,10 @@ source $HOME/.priv/bin/mutt_accounts|
 # --- My Aliases and Colors ---
 # -----------------------------
 
-alternates "edavis@insanum.com|insanum@gmail.com|edavis@broadcom.com|eric.davis2@waldenu"
+alternates "edavis@insanum.com|insanum@gmail.com|edavis@broadcom.com|eric.davis2@waldenu.edu"
 
 source $HOME/.mutt/colors
 #source $HOME/.mutt/colors_solarized
 
-folder-hook . 'push <collapse-all><half-up>'
+folder-hook . 'push <collapse-all><top-page>'
 

@@ -1,52 +1,69 @@
 
-color tree red default
-color search white blue
-color status white brightblack
+color tree color178 default
+color search white color20
+color status white color18
 color tilde blue default
 color signature green default
-color hdrdefault cyan default
-color header green default From:
-color header green default Reply-To:
-color header red default Subject:
-color header yellow default Date:
-color header magenta default "^X-Label:"
-color header black brightred "^X-MMS-Spam-Confidence:"
-color attachment green default
+color hdrdefault color39 default
+color header color192 default Date:
+color header color160 default Subject:
+color header color40 default From:
+color header color40 default Reply-To:
+color header color178 default User-Agent:
+#color header magenta default "^X-Label:"
+#color header black brightred "^X-MMS-Spam-Confidence:"
+color attachment color69 default
 
-color quoted  cyan default
+color quoted  blue default
 color quoted1 green default
 color quoted2 yellow default
 color quoted3 magenta default
 color quoted4 red default
 color quoted5 blue default
-color quoted6 cyan default
-color quoted7 green default
+color quoted6 green default
+color quoted7 yellow default
 
 color normal white default
 color error white red
-color indicator black red
+color indicator brightcolor232 color208
+#color indicator color178 color237
 
 # order here matters (last takes priority)
-#color index yellow default '~p | ~P'               # to or from me
-#color index green default '~v'                     # collapsed thread
-color index yellow magenta '~y .* | ~(~y .*)'      # contains an X-Label message/thread
-color index yellow default '~N | ~(~N) | ~O | ~(~O)' # new/old message/thread (unread)
-color index magenta default '~F | ~(~F)'           # flagged message/thread
-#color index white red '~(~F) ~(~N)'                # new message under flagged thread
-#color index white red '~(~F) ~(~O)'                # old message under flagged thread
-color index red default '~D'                       # deleted
+#color index yellow default '~p | ~P'                 # to or from me
+#color index green default '~v'                       # collapsed thread
+#color index yellow magenta '~y .* | ~(~y .*)'        # contains an X-Label message/thread
+#color index yellow default '~N | ~(~N) | ~O | ~(~O)' # new/old message/thread (unread)
+#color index magenta default '~F | ~(~F)'             # flagged message/thread
+#color index white red '~(~F) ~(~N)'                  # new message under flagged thread
+#color index white red '~(~F) ~(~O)'                  # old message under flagged thread
+#color index red default '~D'                         # deleted
+
+# notmuch tags (ignoring message flags)
+color index color171 default '~(~Y invites)'    # thread with message tagged as invite
+color index brightcolor171 default '~Y invites' # message tagged as invite
+color index color40 default '~(~Y todo)'        # thread with message tagged as todo
+color index brightcolor40 default '~Y todo'     # messaage tagged as todo
+color index color33 default '~(~Y unread)'      # thread with message tagged as unread
+color index brightcolor33 default '~Y unread'   # message tagged as unread
+color index color178 default '~(~Y flagged)'    # thread with message tagged as flagged
+color index brightcolor178 default '~Y flagged' # message tagged as flagged
+color index color160 default '~Y deleted'       # message tagged as deleted
 
 # email & urls
-color body cyan default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
-color body cyan default "(http|https|ftp|news|telnet|finger)://[^ \">\t\r\n]*"
-color body cyan default "mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
+color body color45 default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
+color body color45 default "(http|https|ftp|news|telnet|finger)://[^ \">\t\r\n]*"
+color body color45 default "mailto:[-a-z_0-9.]+@[-a-z_0-9.]+"
 
 # Misc things I want to stand out in the message body for Clearquest emails
+color body brightyellow default "^Owner:\s*.*$"
+color body brightgreen default "^Owner:.*edavis.*$"
+color body red default "^Project:\s*.*$"
+color body red default "^Operating System:\s*.*$"
 color body red default "^Software:\s*.*$"
-color body white blue "^Owner:.*edavis.*$"
 color body green default "^[0-9]*/[0-9]*/[0-9]*\s*.*Action:\s*.*By:.*$"
 #color body magenta default "^Old Broadcom_Only_Note:"
 color body magenta default "^New Broadcom_Only_Note:"
+color body magenta default "^Old Broadcom_Only_Note:"
 color body magenta default "^New Reported_By:"
 color body magenta default "^New Visibility:"
 color body magenta default "^New OS:"
@@ -56,9 +73,15 @@ color body magenta default "^New Description:"
 color body magenta default "^New Owner:"
 color body magenta default "^Old State:.*New State:.*$"
 
+# Misc things I want to stand out in calendar invites (from 'gcalcli import -d' output)
+color body color171 default "^Event\..*$"
+color body color171 default "^Local Start\..*$"
+color body color171 default "^Local End\..*$"
+color body color46 default "^(\\+-*\\+|\\| Calendar Event \\|)$"
+
 # Various smilies and standouts
-color body white blue "[;:]-*[)>(<|]"                                       # :-) etc...
-color body cyan default "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" # *Bold* text.
-color body cyan default "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"     # _Underlined_ text.
-color body cyan default "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"     # /Italic/ text.
+color body color160 default "[;:]-*[)>(<|]"                                     # :-) etc...
+color body color160 default "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" # *Bold* text.
+color body color160 default "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"     # _Underlined_ text.
+color body color160 default "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"     # /Italic/ text.
 
