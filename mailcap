@@ -24,7 +24,7 @@ text/plain; cat; copiousoutput
 #text/html; links -dump -codepage %{charset} %s; copiousoutput; nametemplate=%s.html
 #text/html; elinks -dump -dump-charset %{charset} %s; nametemplate=%s.html; copiousoutput
 
-text/html; w3m -o display_link=true -o display_link_number=true =true -dump -I %{charset} -cols 72 -S -T text/html %s; nametemplate=%s.html; copiousoutput
+text/html; w3m -o display_link=true -o display_link_number=true -dump -I %{charset} -cols 72 -S -T text/html %s; nametemplate=%s.html; copiousoutput
 
 #text/calendar; cat; copiousoutput
 text/calendar; /scratch/edavis/Dropbox/src/gcalcli/gcalcli import -d; copiousoutput
