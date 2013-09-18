@@ -1,0 +1,35 @@
+
+#application/x-tar-gz; gunzip -c %s | tar -tf -; copiousoutput
+#application/x-gtar; tar -ztf %s; copiousoutput
+#application/zip; unzip -l %s; copiousoutput
+
+#application/msword; antiword %s; copiousoutput
+#application/msword; catdoc %s; copiousoutput
+#application/vnd.ms-excel; xls2csv %s; copiousoutput
+application/msword; libreoffice %s
+application/vnd.openxmlformats-officedocument.presentationml.presentation; libreoffice %s
+
+application/pdf; evince %s
+
+#text/*; less -X; copiousoutput
+#text/*; less -X; print="a2ps --medium=Letter -Pb2-2145c"
+#text/plain; less -X; copiousoutput
+text/plain; cat; copiousoutput
+
+#text/html; vimprobable2 %s; test=test -n "$DISPLAY"; copiousoutput; needsterminal
+#text/html; bash -c "herbstclient split vertical 0.5 \; herbstclient focus down \; vimprobable2 %s \; herbstclient remove"; test=test -n "$DISPLAY"; needsterminal
+
+#text/html; lynx -display-charset=UTF-8 -dump %s -assume_charset=%{charset}; nametemplate=%s.html; copiousoutput
+
+#text/html; links -dump -codepage %{charset} %s; copiousoutput; nametemplate=%s.html
+#text/html; elinks -dump -dump-charset %{charset} %s; nametemplate=%s.html; copiousoutput
+
+text/html; w3m -o display_link=true -o display_link_number=true =true -dump -I %{charset} -cols 72 -S -T text/html %s; nametemplate=%s.html; copiousoutput
+
+#text/calendar; cat; copiousoutput
+text/calendar; /scratch/edavis/Dropbox/src/gcalcli/gcalcli import -d; copiousoutput
+
+image/*; feh -. -B white %s
+
+audio/*; smplayer %s
+
