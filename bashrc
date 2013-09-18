@@ -191,10 +191,12 @@ fi
 
 export RSYNC_RSH="ssh -c blowfish"
 
-if [[ "`grep -i illumos /etc/release`" != "" ]]; then
-  LS=/usr/gnu/bin/ls
-elif [[ $OSTYPE =~ solaris ]]; then
-  LS=gls
+if [[ $OSTYPE =~ solaris ]]; then
+  if [[ "`grep -i illumos /etc/release`" != "" ]]; then
+    LS=/usr/gnu/bin/ls
+  else
+    LS=gls
+  fi
 else
   LS=ls
 fi
