@@ -24,7 +24,7 @@ use vars qw { $ldapserver $domain $username $password $basedn };
 #$password = "mypassword";
 #$basedn = "ou=companyxy,dc=companyxy,dc=tld";
 $ldapserver = "ldap.broadcom.com";
-$domain = "BROADCOM";
+#$domain = "BROADCOM";
 #$username = "edavis";
 #$password = "mypassword";
 $basedn = "dc=broadcom,dc=com";
@@ -43,7 +43,7 @@ use Net::LDAP;
 my $ldap = Net::LDAP->new($ldapserver) or die "$@";
 
 #$ldap->bind("$domain\\$username", password=>$password);
-$ldap->bind("$domain");
+$ldap->bind();
 
 my $mesg = $ldap->search (base => $basedn,
                           filter => "(|(cn=*$search*) (rdn=*$search*) (uid=*$search*) (mail=*$search*))",
