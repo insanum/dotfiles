@@ -374,14 +374,17 @@ set my_delete=$delete
 #<edit><sync-mailbox><next-undeleted>\
 #<enter-command>set editor=\"$my_default_editor\"<enter><save-message>=ACTION" "Add Label and save to ACTION"
 
-# --------------------------------------------------------
-# --- mu searching (non-IMAP, offlinemap to ~/Maildir) ---
-# --------------------------------------------------------
+# ----------------------------------------------------------------
+# --- mu/notmuch searching (non-IMAP, offlinemap to ~/Maildir) ---
+# ----------------------------------------------------------------
 
 #macro index <F9>  "<sync-mailbox><shell-escape>offlineimap -c ~/.priv/offlineimaprc -u TTY.TTYUI<enter>" "offlineimap"
 #macro index <F10> "<shell-escape>mu index<enter>" "mu index"
 #macro index <F11> "<shell-escape>mu find -c -l ~/Maildir/search " "mu find"
 #macro index <F12> "<change-folder-readonly>=search<enter>" "mu results"
+
+macro index <F9>  "<sync-mailbox><shell-escape>~/sync_email<enter>" "mbsync"
+macro index <F10> "<vfolder-from-query>" "notmuch search"
 
 # ---------------------------
 # --- Attachment Handling ---
