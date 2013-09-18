@@ -43,16 +43,19 @@ if [ -f src/bge.h ]; then
   TITLE="Solaris 1g driver (BRCMbge $VER) for 57xx NX1"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\b57bge_Solaris\\$VER"
   PKGDESTDIR=${NSEG_MNT_DIR}/rels/b57bge_Solaris/$VER
+  PKGDESTDIR_BETA=${NSEG_MNT_DIR}/rels/b57bge_Solaris/${VER}_beta
 elif [ -f src/bnx.h ]; then
   PKG=BRCMbnx
   TITLE="Solaris 1g driver (BRCMbnx $VER) for B570x NX2"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm5706\\drivers\\solaris\\$VER"
   PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm5706/drivers/solaris/$VER
+  PKGDESTDIR_BETA=${NSEG_MNT_DIR}/rels/bcm5706/drivers/solaris/${VER}_beta
 elif [ -f src_bnxe/bnxe.h ]; then
   PKG=BRCMbnxe
   TITLE="Solaris 10g driver (BRCMbnxe $VER) for 57710/57711/57712/578xx NX2"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm57710\\drivers\\solaris\\$VER"
   PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm57710/drivers/solaris/$VER
+  PKGDESTDIR_BETA=${NSEG_MNT_DIR}/rels/bcm57710/drivers/solaris/${VER}_beta
   TOADDRS="$TOADDRS, $FCOEADDR"
 else
   echo "ERROR: Unknown driver (bad current working directory)!"
@@ -108,11 +111,16 @@ DidYou
 set -o xtrace
 
 mkdir -p $PKGDESTDIR
+mkdir -p $PKGDESTDIR_BETA
 mkdir -p $SRCDESTDIR
 
 /bin/cp -f pkg/${PKG}* $PKGDESTDIR
 /bin/cp -f release.txt $PKGDESTDIR
 /bin/cp -f readme.txt $PKGDESTDIR
+/bin/mv -f $PKGDESTDIR/*Illumos* $PKGDESTDIR_BETA
+/bin/mv -f $PKGDESTDIR/*S12* $PKGDESTDIR_BETA
+/bin/cp -f release.txt $PKGDESTDIR_BETA
+/bin/cp -f readme.txt $PKGDESTDIR_BETA
 
 TMPDEST=`mktemp -d`
 SRCDIR="${PKG}-${VER}-src"
@@ -126,9 +134,14 @@ cd ..
 zip -r ${SRCDESTDIR}/${SRCDIR}.zip $SRCDIR
 popd
 /bin/rm -rf ${TMPDEST}
-#/bin/cp -f ${SRCDESTDIR}/${SRCDIR}.zip $PKGDESTDIR
+/bin/cp -f ${SRCDESTDIR}/${SRCDIR}.zip $PKGDESTDIR
+/bin/cp -f ${SRCDESTDIR}/${SRCDIR}.zip $PKGDESTDIR_BETA
 
 pushd $PKGDESTDIR
+md5sum * > md5sum.txt
+popd
+
+pushd $PKGDESTDIR_BETA
 md5sum * > md5sum.txt
 popd
 
