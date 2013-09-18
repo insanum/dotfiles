@@ -320,11 +320,28 @@ function! CCLfunc()
 endfunction
 command! -nargs=0 -complete=command CCL call CCLfunc()
 
-function! LDAP(str)
-  let cmd=":!$HOME/.mutt/ldap " . a:str
-  execute cmd
+function! EMAIL_OMNI(findstart, base)
+    if a:findstart
+        let line = getline('.')
+        let start = col('.') - 1
+        while start > 0 && line[start - 1] =~ '\S'
+            let start -= 1
+        endwhile
+        return start
+    else
+        let res = []
+        if a:base == ""
+            return res
+        endif
+        let data=split(system("$HOME/email_addrs search " . a:base), "\n")
+        for line in data
+            call add(res, line)
+        endfor
+        sleep 2
+        return res
+    endif
 endfunction
-command! -nargs=1 -complete=command TO call LDAP(<f-args>)
+autocmd FileType mail set omnifunc=EMAIL_OMNI
 
 "nmap <Leader>pm :!perldoc <CR>
 "nmap <Leader>pf :!perldoc -f <CR>
@@ -362,6 +379,7 @@ autocmd Syntax c,cc,cpp syn keyword cConstant TRUE FALSE B_TRUE B_FALSE
 
 autocmd BufNewFile,BufReadPost *.c@@/*,*.h@@/*,%@@/* setf c
 autocmd BufNewFile,BufRead .tmux.conf*,tmux.conf* setf tmux
+autocmd BufNewFile,BufRead /tmp/alot.\w\+ setf mail
 
 "autocmd BufWritePre,FileWritePre *.html ks|1,$g/Last Modified: /normal f:lD:read !date<CR>kJ's
 
@@ -392,23 +410,29 @@ autocmd FileType c,cc,cpp set comments+=f://
 autocmd FileType vim set comments-=:\"
 autocmd FileType vim set comments+=f:\"
 
-autocmd BufReadPre,FileReadPre *.txt,*.org,*.otl,*.votl set textwidth=79
+autocmd BufReadPre,FileReadPre *.txt,*.TXT,.*.org,*.otl,*.votl set textwidth=79
 "autocmd BufReadPre,FileReadPre *.html set textwidth=75
 
 autocmd Syntax qf set textwidth=0
 
 autocmd Syntax python,perl,php setlocal textwidth=80
 
-autocmd BufNewFile,BufReadPost *.txt setlocal spell spelllang=en_us
+autocmd BufNewFile,BufReadPost *.txt,*.TXT setlocal spell spelllang=en_us
 autocmd Syntax mail setlocal spell spelllang=en_us
 autocmd Syntax help setlocal nospell
 nmap <Leader>s :set spell!<CR>:set spell?<CR>
 " spell check the current buffer
 "nmap <Leader>s :w!<CR>:!aspell -c %:p<CR>:e!<CR><CR>
 
+"map ,kqs :/^[ ]*> -- *$/;?^[ >][ >]*$?;.,/^[ ]*$/-1d<CR>
+autocmd Syntax mail setlocal textwidth=72
+"autocmd Syntax mail setlocal digraph
+autocmd Syntax mail setlocal formatoptions=tcqnl
+autocmd Syntax mail setlocal comments=n:>,n::,n:#,n:%,n:\|
+
 "autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%>' . &textwidth . 'v.\+/' | endif
 "autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
-autocmd BufNewFile,BufRead *.txt,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
+autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
 
 " search for all lines longer than textwidth
 "if &textwidth > 0
@@ -501,6 +525,14 @@ function! MyColorScheme(scheme)
   hi TabLine ctermfg=207 ctermbg=236 cterm=bold
   hi clear TabLineFill
   hi TabLineFill ctermfg=231 ctermbg=240 cterm=bold
+  hi clear Pmenu
+  hi Pmenu ctermfg=255 ctermbg=20 cterm=bold
+  hi clear PmenuSel
+  hi PmenuSel ctermfg=255 ctermbg=26 cterm=bold
+  hi clear PmenuSbar
+  hi PmenuSbar ctermfg=236 ctermbg=236 cterm=bold
+  hi clear PmenuThumb
+  hi PmenuThumb ctermfg=26 ctermbg=26 cterm=bold
 endfunction
 
 if !&diff
