@@ -39,6 +39,6 @@ xftfont Terminus:size=9
 
 TEXT
 *** Google Calendar Agenda ***
-${execpi 300 /home/insanum/src/gcalcli/gcalcli --conky --config /home/insanum/.priv/gcalclirc --cal="davis" agenda}
-${execpi 300 /home/insanum/src/gcalcli/gcalcli --conky --config /home/insanum/.priv/gcalclirc --cal="davis" calw 1}
+${execpi 300 ~/src/gcalcli/gcalcli --conky --cal="davis" agenda}
+${execpi 300 ~/src/gcalcli/gcalcli --nolineart --conky --cal="davis" calw 1}
 
