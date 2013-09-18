@@ -320,6 +320,17 @@ function! CCLfunc()
 endfunction
 command! -nargs=0 -complete=command CCL call CCLfunc()
 
+function! AIKSAURUS(word)
+    copen
+    set modifiable
+    exec "r! aiksaurus " . a:word
+    normal gg
+    normal dd
+    set nomodifiable
+    set nomodified
+endfunction
+command! -nargs=0 -complete=command SYN call AIKSAURUS(expand("<cword>"))
+
 function! EMAIL_OMNI(findstart, base)
     if a:findstart
         let line = getline('.')
