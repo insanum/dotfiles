@@ -345,7 +345,7 @@ function makecscope()
         if [ $TMP = "drv-bxe-freebsd-edavis" ]; then
             find $CODE_ROOT_DIR/$TMP -name 577xx -prune -o -type f \( -name '*.[ch]' -o -name '*.cpp' \) -print | tee -a $CSCOPE_FILES;
         else
-            find $CODE_ROOT_DIR/$TMP -type f \( -name '*.[ch]' -o -name '*.cpp' \) -print | tee -a $CSCOPE_FILES;
+            find $CODE_ROOT_DIR/$TMP -type f \( -name '*.[ch]' -o -name '*.cpp' -o -name '*.java' \) -print | tee -a $CSCOPE_FILES;
         fi
 
         sort $CSCOPE_FILES > $CSCOPE_TEMP;
