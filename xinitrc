@@ -84,6 +84,11 @@ xset r rate 400
 xset m 2/1 50
 xsetroot -cursor_name left_ptr
 
+if [[ $HOSTNAME = tiburon ]]; then
+    xinput set-prop "ETPS/2 Elantech Touchpad" "Synaptics ClickPad" 1
+    synclient ClickPad=1
+fi
+
 [[ -x /usr${LOCAL}/bin/dunst ]] && dunst -config $HOME/.dunstrc &
 
 [[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start &

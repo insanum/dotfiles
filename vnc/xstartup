@@ -23,11 +23,15 @@ else # FreeNX
     setxkbmap -model us
 fi
 
-xrandr -s 1920x1080
+if [[ $HOSTNAME = tiburon ]]; then
+    xrandr -s 1600x900
+fi
+
 xmodmap $HOME/.Xmodmap
 
 #urxvt &
 evilvte &
 
-exec /usr/bin/pekwm
+exec /usr/bin/openbox
+#exec /usr/bin/pekwm
 
