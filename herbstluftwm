@@ -112,6 +112,8 @@ hc set swap_monitors_to_get_tag 0
 #hc set tree_style  "X|:#+*-."
 hc set tree_style  "╾│ ├└╼─┐"
 
+hc set wmname LG3D
+
 hc rule                           focus=off # default do not focus new clients
 hc rule class=Chromium            tag=1
 hc rule class=Chrome              tag=1
