@@ -91,13 +91,18 @@ fi
 
 [[ -x /usr${LOCAL}/bin/dunst ]] && dunst -config $HOME/.dunstrc &
 
-[[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start &
-
 [[ -x /usr${LOCAL}/bin/wmname ]] && wmname LG3D
 
-if [[ $HOSTNAME = eadmaka ]]; then
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = tiburon ]]; then
+  ssh -f -N -D 9999 edavis@insanum.com # protection with an HTTP proxy...
+  if [[ -x /usr${LOCAL}/bin/dropbox ]]; then
+      env http-proxy=http://127.0.0.1:9999 dropbox start
+  fi
+else
+  [[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start
+fi
 
-  ssh -f -N -D 9999 edavis@insanum.com # stupid corporate firewalls...
+if [[ $HOSTNAME = eadmaka ]]; then
 
   if [ -x $HOME/Dropbox/src/gcalcli/gcalcli ] ; then 
     while true
