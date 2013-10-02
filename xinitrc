@@ -95,12 +95,9 @@ fi
 
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = tiburon ]]; then
   ssh -f -N -D 9999 edavis@insanum.com # protection with an HTTP proxy...
-  if [[ -x /usr${LOCAL}/bin/dropbox ]]; then
-      env http-proxy=http://127.0.0.1:9999 dropbox start
-  fi
-else
-  [[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start
 fi
+
+[[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start
 
 if [[ $HOSTNAME = eadmaka ]]; then
 
