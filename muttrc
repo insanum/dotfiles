@@ -58,8 +58,7 @@ set confirmappend=no
 set include=yes
 set print=ask-no
 set print_decode=yes
-#set print_command="enscript -G -2 -r -E"
-set print_command="muttprint -r $HOME/.mutt/muttprintrc"
+set print_command="enscript -M Letter -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true"
 set print_split=yes
 set reply_to=ask-yes
 set attribution="On %d, %n wrote:"
