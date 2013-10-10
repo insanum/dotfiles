@@ -423,7 +423,7 @@ autocmd FileType vim set comments+=f:\"
 
 autocmd BufReadPre,FileReadPre *.txt,*.TXT,.*.org,*.otl,*.votl set textwidth=79
 "autocmd BufReadPre,FileReadPre *.html set textwidth=75
-
+autocmd Syntax svn set textwidth=76
 autocmd Syntax qf set textwidth=0
 
 autocmd Syntax python,perl,php setlocal textwidth=80
