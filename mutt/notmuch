@@ -17,15 +17,6 @@ set nm_hidden_tags=
 #set index_format="%S %[%y.%m.%d %R] - %-20.20n %?M?(%2M)&( 1)? %s%> %?g?[%g]?"
 set index_format="%S %[%y.%m.%d %R] %?M?(%2M)&    ? %-18.18n [%15g] %s"
 set vfolder_format=" %?N?%-4N&    ? %f"
-virtual-mailboxes                                                                \
-    "inbox"      "notmuch://?query=(tag:inbox or tag:unread) and not tag:killed" \
-    "unread"     "notmuch://?query=tag:unread"                                   \
-    "deleted"    "notmuch://?query=tag:deleted"                                  \
-    "perforce"   "notmuch://?query=tag:perforce"                                 \
-    "clearquest" "notmuch://?query=tag:clearquest"                               \
-    "flagged"    "notmuch://?query=tag:flagged"                                  \
-    "todo"       "notmuch://?query=tag:todo"
-set virtual_spoolfile=yes
 
 tag-transforms             \
     "inbox"          "∙"   \
@@ -35,6 +26,8 @@ tag-transforms             \
     "sent"           "➥ "  \
     "signed"         "✔ "  \
     "attachment"     "✛ "  \
+    "archive"        "A"   \
+    "deleted"        "D"   \
     "invites"        "CAL" \
     "clearquest"     "CQ"  \
     "perforce"       "P4"  \
@@ -45,9 +38,7 @@ tag-transforms             \
     "net"            "NET" \
     "hackers"        "HXR" \
     "src-committers" "SVN" \
-    "illumos"        "ILL" \
-    "archive"        "A"   \
-    "deleted"        "D"
+    "illumos"        "ILL"
 
 macro index,pager x "<change-vfolder>?" "Change vfolder"
 bind  index,pager X vfolder-from-query

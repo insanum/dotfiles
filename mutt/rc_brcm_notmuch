@@ -9,5 +9,15 @@ my_hdr Bcc: Eric Davis <edavis@broadcom.com>
 
 set crypt_autosign=no
 
+virtual-mailboxes                                                                \
+    "inbox"      "notmuch://?query=(tag:inbox or tag:unread) and not tag:killed" \
+    "unread"     "notmuch://?query=tag:unread"                                   \
+    "deleted"    "notmuch://?query=tag:deleted"                                  \
+    "flagged"    "notmuch://?query=tag:flagged"                                  \
+    "todo"       "notmuch://?query=tag:todo"                                     \
+    "perforce"   "notmuch://?query=tag:perforce"                                 \
+    "clearquest" "notmuch://?query=tag:clearquest"
+set virtual_spoolfile=yes
+
 source $HOME/.mutt/notmuch
 

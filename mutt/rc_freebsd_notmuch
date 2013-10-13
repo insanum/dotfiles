@@ -11,5 +11,20 @@ my_hdr Bcc: Eric Davis <edavis@FreeBSD.org>
 
 set crypt_autosign=yes
 
+virtual-mailboxes                                                                    \
+    "inbox"          "notmuch://?query=(tag:inbox or tag:unread) and not tag:killed" \
+    "unread"         "notmuch://?query=tag:unread"                                   \
+    "deleted"        "notmuch://?query=tag:deleted"                                  \
+    "flagged"        "notmuch://?query=tag:flagged"                                  \
+    "todo"           "notmuch://?query=tag:todo"                                     \
+    "developers"     "notmuch://?query=tag:developers"                               \
+    "current"        "notmuch://?query=tag:current"                                  \
+    "stable"         "notmuch://?query=tag:stable"                                   \
+    "net"            "notmuch://?query=tag:net"                                      \
+    "hackers"        "notmuch://?query=tag:hackers"                                  \
+    "src-committers" "notmuch://?query=tag:src-committers"                           \
+    "illumos"        "notmuch://?query=tag:illumos"
+set virtual_spoolfile=yes
+
 source $HOME/.mutt/notmuch
 
