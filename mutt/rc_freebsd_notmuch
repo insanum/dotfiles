@@ -1,0 +1,15 @@
+
+set nm_default_uri="notmuch:///scratch/edavis/Maildir_FreeBSD"
+
+set hostname="broadcom.com"
+#set realname="Eric A. Davis"
+my_hdr From: Eric Davis <edavis@FreeBSD.org>
+my_hdr Reply-To: Eric Davis <edavis@FreeBSD.org>
+
+# XXX change this to a send-hook, set Bcc if not to mailing list
+my_hdr Bcc: Eric Davis <edavis@FreeBSD.org>
+
+set crypt_autosign=yes
+
+source $HOME/.mutt/notmuch
+

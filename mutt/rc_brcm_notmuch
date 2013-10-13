@@ -1,81 +1,13 @@
 
-set delete=yes
-set move=no
-
-set sendmail="/usr/bin/msmtp -C $HOME/.mutt/rc_brcm_msmtp"
-set query_command = "$HOME/email_addrs '%s'"
-
-set folder=
-set spoolfile=
 set nm_default_uri="notmuch:///scratch/edavis/Maildir"
-set nm_query_type=threads
-set nm_unread_tag=unread
-set nm_hidden_tags=
-#set index_format="%[%y.%m.%d %R] - %-20.20n %?M?(%2M)&( 1)? %s%> %?g?[%g]?"
-#set index_format="%Z %[%y.%m.%d %R] - %-20.20n %?M?(%2M)&( 1)? %s%> %?g?[%g]?"
-#set index_format="%S %[%y.%m.%d %R] - %-20.20n %?M?(%2M)&( 1)? %s%> %?g?[%g]?"
-set index_format="%S %[%y.%m.%d %R] %?M?(%2M)&    ? %-18.18n [%10g] %s"
-set vfolder_format=" %?N?%-4N&    ? %f"
-virtual-mailboxes                                                                \
-    "inbox"      "notmuch://?query=(tag:inbox or tag:unread) and not tag:killed" \
-    "unread"     "notmuch://?query=tag:unread"                                   \
-    "deleted"    "notmuch://?query=tag:deleted"                                  \
-    "perforce"   "notmuch://?query=tag:perforce"                                 \
-    "clearquest" "notmuch://?query=tag:clearquest"                               \
-    "flagged"    "notmuch://?query=tag:flagged"                                  \
-    "todo"       "notmuch://?query=tag:todo"
-set virtual_spoolfile=yes
-
-tag-transforms         \
-    "inbox"      "∙"   \
-    "unread"     "⚀ "  \
-    "flagged"    "★ "  \
-    "replied"    "↻ "  \
-    "sent"       "➥ "  \
-    "signed"     "✔ "  \
-    "attachment" "✛ "  \
-    "invites"    "CAL" \
-    "clearquest" "CQ"  \
-    "perforce"   "P4"  \
-    "archive"    "A"   \
-    "deleted"    "D"
-
-#set sidebar_width=20
-#set sidebar_visible=yes
 
 set hostname="broadcom.com"
 #set realname="Eric A. Davis"
 my_hdr From: Eric Davis <edavis@broadcom.com>
 my_hdr Reply-To: Eric Davis <edavis@broadcom.com>
 my_hdr Bcc: Eric Davis <edavis@broadcom.com>
-#my_hdr User-Agent: notmuch/afew/mutt o.O
 
-bind index x change-vfolder
-bind index X vfolder-from-query
+set crypt_autosign=no
 
-bind  index,pager c mail
-macro index,pager I "<change-vfolder>inbox\n" "Jump to INBOX"
-
-macro pager m "<clear-flag>N<modify-labels>-unread\n" "Mark message as read"
-
-macro index m "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as read"
-macro index M "<tag-message><tag-prefix><set-flag>N<tag-prefix><modify-labels>+unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as unread"
-macro index <esc>m "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark thread as read"
-macro index <esc>M "<tag-thread><tag-prefix><set-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark thread as read"
-
-macro index U "<tag-message><tag-prefix><set-flag>!<tag-prefix><modify-labels>+flagged\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as urgent"
-macro index <esc>U "<tag-message><tag-prefix><clear-flag>!<tag-prefix><modify-labels>-flagged\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as not urgent"
-
-macro index a "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n<sync-mailbox>" "Archive message"
-macro index A "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n<sync-mailbox>" "Archive thread"
-
-macro index d "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n<sync-mailbox>" "Delete message"
-macro index D "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n<sync-mailbox>" "Delete thread"
-
-macro index <tab> "<search>~Y unread\n"
-macro attach ,c "<pipe-entry>/scratch/edavis/Dropbox/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Eric Davis' import\n"
-macro attach ,h "<pipe-entry>/scratch/edavis/htmlhandler_mutt\n"
-
-#message-hook ~N 'push <set-flag>N'
-macro index ,N "<untag-pattern>.*\n<tag-pattern>~Y unread\n<tag-prefix><set-flag>N<untag-pattern>.*\n" "Markk all unread messages as new"
+source $HOME/.mutt/notmuch
 

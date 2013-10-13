@@ -345,6 +345,13 @@ macro index,pager \cn |urlview\n 'call urlview to extract URLs out of a message'
 
 #macro index S "<esc>t<tag-prefix><save-message>" "Save Thread"
 
+# ---------------
+# --- Sidebar ---
+# ---------------
+
+#set sidebar_width=20
+#set sidebar_visible=yes
+
 # -----------------------------------
 # --- Label stuff (GTD With Mutt) ---
 # -----------------------------------
@@ -407,38 +414,17 @@ source $HOME/.priv/mutt_aliases
 #macro index,pager \eA "!$EDITOR $HOME/.priv/mutt_aliases\n:source $HOME/.priv/mutt_aliases\n" 'edit alias file'
 #macro index,pager \ea "!$PAGER $HOME/.priv/mutt_aliases\n" 'view alias file'
 
-# -----------
-# --- PGP ---
-# -----------
-
-#my_hdr X-PGP-Key: http://www.insanum.com/keys/edavis.asc
-
-#set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
-#set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
-#set pgp_decrypt_command="gpg --passphrase-fd 0 --no-verbose --batch --output - %f"
-#set pgp_sign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
-#set pgp_clearsign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a? %f"
-#set pgp_encrypt_only_command="pgpewrap gpg --batch --quiet --no-verbose --output - --encrypt --textmode --armor --always-trust --encrypt-to 0x1F7C0D1E -- -r %r -- %f"
-#set pgp_encrypt_sign_command="pgpewrap gpg --passphrase-fd 0 --batch --quiet --no-verbose --textmode --output - --encrypt --sign %?a?-u %a? --armor --always-trust --encrypt-to 0x1F7C0D1E -- -r %r -- %f"
-#set pgp_import_command="gpg --no-verbose --import -v %f"
-#set pgp_export_command="gpg --no-verbose --export --armor %r"
-#set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
-#set pgp_list_pubring_command="gpg --no-verbose --batch --with-colons --list-keys %r" 
-#set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secret-keys %r" 
-#set pgp_sign_as=0x1F7C0D1E
-#set pgp_timeout=1800
-#set pgp_good_sign="^gpg: Good signature from"
-#set crypt_verify_sig=yes
-#set crypt_autosign=yes
-#set crypt_replyencrypt=yes
-#set crypt_replysign=yes
-#set crypt_replysignencrypted=yes
-
 # ------------------------
 # --- Sending to Lists ---
 # ------------------------
 
 #send-hook ~l 'unset record'
+
+# ----------------------
+# --- PGP/GPG Crypto ---
+# ----------------------
+
+source $HOME/.mutt/crypto
 
 # ----------------
 # --- Accounts ---
@@ -450,7 +436,7 @@ source $HOME/.priv/bin/mutt_accounts|
 # --- My Aliases and Colors ---
 # -----------------------------
 
-alternates "edavis@insanum.com|insanum@gmail.com|edavis@broadcom.com|eric.davis2@waldenu.edu"
+alternates "edavis@insanum.com|insanum@gmail.com|edavis@broadcom.com|edavis@FreeBSD.org|eric.davis2@waldenu.edu"
 
 source $HOME/.mutt/colors
 #source $HOME/.mutt/colors_solarized

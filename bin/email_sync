@@ -1,0 +1,42 @@
+#!/bin/bash
+
+MBSYNC=/usr/local/bin/mbsync
+MBSYNCRC=$HOME/.priv/mbsyncrc
+NOTMUCH=notmuch
+AFEW=afew
+
+ADDRS=~/.notmuch_addrs
+EMAIL_ADDRS=~/.bin/email_addrs
+
+# Prime ~/.notmuch_addrs with:
+if [[ ! -f $ADDRS ]]; then
+    tmp=`mktemp`
+    notmuch --config=$HOME/.notmuch-broadcom-config show --format=json --body=false from:\* | $EMAIL_ADDRS getfrom >> $tmp
+    notmuch --config=$HOME/.notmuch-freebsd-config show --format=json --body=false from:\* | $EMAIL_ADDRS getfrom >> $tmp
+    cat $tmp | sort | uniq --ignore-case > $ADDRS
+fi
+
+# get_email <title> <mbsync_target> <notmuch_config>
+function get_email()
+{
+    echo "----- $1"; date
+    echo "MBSYNC";   $MBSYNC -c $MBSYNCRC $2
+    echo "NOTMUCH";  $NOTMUCH --config=$3 new
+    echo "AFEW";     $AFEW -C $3 --tag --new -vv
+
+    echo "GETADDRS"
+
+    tmp=`mktemp`
+    cp $ADDRS $tmp
+    $NOTMUCH --config=$3 show --format=json --body=false from:\* tag:new | $EMAIL_ADDRS getfrom >> $tmp
+    cat $tmp | sort | uniq --ignore-case > $ADDRS
+    rm -f $tmp
+
+    echo "DONE!"
+}
+
+get_email BROADCOM broadcom-sync $HOME/.notmuch-broadcom-config >> ~/email_sync_broadcom.log 2>&1
+
+# XXX Verify the SSH tunnel is up or mbsync will hang!
+get_email FREEBSD gmail-freebsd-sync $HOME/.notmuch-freebsd-config >> ~/email_sync_freebsd.log 2>&1
+
