@@ -1,9 +1,8 @@
 #!/usr/bin/python2
 
 p4bin      = '$HOME/p4/p4'
-p4port_isr = 'pf-irva-ecs:1900' # israel depot
+p4port_sj  = 'pf-sj1-slb.sj.broadcom.com:1666'
 p4port_irv = 'pf-irva-ecs:1666' # irvine depot
-p4port_def = 'pf-irva-ecs.broadcom.com:1666'
 
 
 import os, sys, re, marshal, getopt
@@ -17,7 +16,8 @@ Usage: p4 [args] command [command args]
 args:
     -h      this help text
     -d      print out all perforce command line strings
-    -I      use the Irvine depot (default Israel)
+    -I      use the Irvine depot (this is the default)
+    -S      use the San Jose depot
     -w      ignore whitespace for diff output
     -p      ignore 'P' flag files that don't exist in workspace
     -q      don't print out connection and client spec info
@@ -112,14 +112,14 @@ def CmdSys(cmd):
     os.system(cmd)
 
 
-# set default depot (changed via the -I command line arg)
-p4port = p4port_def
+# set default depot (changed via command line arg)
+p4port = p4port_irv
 
 
 # Process the command options
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'hdpqIw', ['nc'])
+    opts, args = getopt.getopt(sys.argv[1:], 'hdpqISw', ['nc'])
 except getopt.error:
     Usage()
 
@@ -138,6 +138,8 @@ for opt, arg in opts:
         CLR.useColor = False
     elif (opt == '-I'):
         p4port = p4port_irv
+    elif (opt == '-S'):
+        p4port = p4port_sj
 
 if (len(args) == 0):
    Usage()
