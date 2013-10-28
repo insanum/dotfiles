@@ -1,29 +1,27 @@
 #!/bin/bash
 
-if [ -f src/bge.h ]; then
-    VP=src
-elif [ -f src/bnx.h ]; then
-    VP=src
-elif [ -f src_bnxe/bnxe.h ]; then
-    VP=src_bnxe
+if [[ -f src/bge.h || -f src/bnx.h ]]; then
+    VFILE=src/version.h
+elif [[ -f src_bnxe/bnxe.h ]]; then
+    VFILE=src_bnxe/version.h
 else
   echo "ERROR: Unknown driver (bad current working directory)!"
   exit
 fi
 
-if [ ! -f ${VP}/version.h ]; then
+if [[ ! -f $VFILE ]]; then
     echo "ERROR: version.h not found (bad current working directory)!"
     exit
 fi
 
-MAJ=`grep MAJVERSION ${VP}/version.h | awk '{ print $3 }'`
-MIN=`grep MINVERSION ${VP}/version.h | awk '{ print $3 }'`
-REV=`grep REVVERSION ${VP}/version.h | awk '{ print $3 }'`
+MAJ=`grep MAJVERSION $VFILE | awk '{ print $3 }'`
+MIN=`grep MINVERSION $VFILE | awk '{ print $3 }'`
+REV=`grep REVVERSION $VFILE | awk '{ print $3 }'`
 
 VER=${MAJ}.${MIN}.${REV}
 
 EMAILADDRS=$HOME/.priv/sun_rel_drv_addrs
-if [ ! -e $EMAILADDRS ]; then
+if [[ ! -e $EMAILADDRS ]]; then
     echo "ERROR: no email addresses ($EMAILADDRS does not exist)"
     exit
 fi
@@ -33,34 +31,35 @@ SRCDESTDIR=${HOME}/sun_src_drops
 
 NSEG_MNT_DIR=/mnt/nseg
 
-if [ "`df | egrep \"${NSEG_MNT_DIR}$\"`" = "" ]; then
+if [[ "`df | egrep \"${NSEG_MNT_DIR}$\"`" = "" ]]; then
     echo "ERROR: $NSEG_MNT_DIR is not mounted!"
     exit
 fi
 
-if [ -f src/bge.h ]; then
+if [[ -f src/bge.h ]]; then
   PKG=BRCMbge
   TITLE="Solaris 1g driver (BRCMbge $VER) for 57xx NX1"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\b57bge_Solaris\\$VER"
-  PKGDESTDIR=${NSEG_MNT_DIR}/rels/b57bge_Solaris/$VER
-  PKGDESTDIR_BETA=${NSEG_MNT_DIR}/rels/b57bge_Solaris/${VER}_beta
-elif [ -f src/bnx.h ]; then
+  DESTDIR=${NSEG_MNT_DIR}/rels/b57bge_Solaris
+elif [[ -f src/bnx.h ]]; then
   PKG=BRCMbnx
   TITLE="Solaris 1g driver (BRCMbnx $VER) for B570x NX2"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm5706\\drivers\\solaris\\$VER"
-  PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm5706/drivers/solaris/$VER
-  PKGDESTDIR_BETA=${NSEG_MNT_DIR}/rels/bcm5706/drivers/solaris/${VER}_beta
-elif [ -f src_bnxe/bnxe.h ]; then
+  DESTDIR=${NSEG_MNT_DIR}/rels/bcm5706/drivers/solaris
+elif [[ -f src_bnxe/bnxe.h ]]; then
   PKG=BRCMbnxe
   TITLE="Solaris 10g driver (BRCMbnxe $VER) for 57710/57711/57712/578xx NX2"
   EMAIL_BODY_LOCATION="\\\\fs-irva-82\\nseg\\rels\\bcm57710\\drivers\\solaris\\$VER"
-  PKGDESTDIR=${NSEG_MNT_DIR}/rels/bcm57710/drivers/solaris/$VER
-  PKGDESTDIR_BETA=${NSEG_MNT_DIR}/rels/bcm57710/drivers/solaris/${VER}_beta
+  DESTDIR=${NSEG_MNT_DIR}/rels/bcm57710/drivers/solaris
   TOADDRS="$TOADDRS, $FCOEADDR"
 else
   echo "ERROR: Unknown driver (bad current working directory)!"
   exit
 fi
+
+PKGDESTDIR=${DESTDIR}/$VER
+PKGDESTDIR_BETA=${DESTDIR}/${VER}_beta
+PKGDESTDIR_SRC=${DESTDIR}/${VER}_src
 
 P4TAG=solaris-${PKG}-${VER}
 
@@ -74,7 +73,7 @@ Did you...
 "
   echo -n "Continue releasing $PKG v$VER [y/(n)]: "
   read text
-  if [ "$text" != "y" ]; then
+  if [[ "$text" != "y" ]]; then
     exit
   fi
 }
@@ -84,17 +83,17 @@ function PerforceLabel()
   E4=${HOME}/.bin/e4
   TAGGED=0
   echo "----------------------------------------"
-  if [ -x $E4 ]; then
+  if [[ -x $E4 ]]; then
       echo -n "Create Perforce label $P4TAG [y/(n)]: "
       read text
-      if [ "$text" = "y" ]; then
+      if [[ "$text" = "y" ]]; then
           $E4 -d tag -l $P4TAG ...
           TAGGED=1
       fi
   else
       echo "WARNING: 'e4' perforce script not found!"
   fi
-  if [ $TAGGED -eq 0 ]; then
+  if [[ $TAGGED -eq 0 ]]; then
       echo "Make sure to create Perforce label: $P4TAG"
   fi
   echo "----------------------------------------"
@@ -112,6 +111,7 @@ set -o xtrace
 
 mkdir -p $PKGDESTDIR
 mkdir -p $PKGDESTDIR_BETA
+mkdir -p $PKGDESTDIR_SRC
 mkdir -p $SRCDESTDIR
 
 /bin/cp -f pkg/${PKG}* $PKGDESTDIR
@@ -134,14 +134,17 @@ cd ..
 zip -r ${SRCDESTDIR}/${SRCDIR}.zip $SRCDIR
 popd
 /bin/rm -rf ${TMPDEST}
-/bin/cp -f ${SRCDESTDIR}/${SRCDIR}.zip $PKGDESTDIR
-/bin/cp -f ${SRCDESTDIR}/${SRCDIR}.zip $PKGDESTDIR_BETA
+/bin/cp -f ${SRCDESTDIR}/${SRCDIR}.zip $PKGDESTDIR_SRC
 
 pushd $PKGDESTDIR
 md5sum * > md5sum.txt
 popd
 
 pushd $PKGDESTDIR_BETA
+md5sum * > md5sum.txt
+popd
+
+pushd $PKGDESTDIR_SRC
 md5sum * > md5sum.txt
 popd
 
@@ -166,14 +169,14 @@ echo "----------------------------------------"
 
 echo -n "Send release notification Email [y/(n)]: "
 read text
-if [ "$text" = "y" ]; then
-    cat $MAILMSG | msmtp -t --logfile=~/.msmtp.log --host=mail.broadcom.com --port=25 --protocol=smtp --from=$FROMADDR
-    echo "Email sent!"
-fi
+#if [[ "$text" = "y" ]]; then
+#    cat $MAILMSG | msmtp -t --logfile=~/.msmtp.log --host=mail.broadcom.com --port=25 --protocol=smtp --from=$FROMADDR
+#    echo "Email sent!"
+#fi
 
 /bin/rm -f $MAILMSG
 
-PerforceLabel
+#PerforceLabel
 
 echo "----------------------------------------"
 echo "Proceed with Black Duck scan if required!"
