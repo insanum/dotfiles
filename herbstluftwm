@@ -123,6 +123,8 @@ hc rule class=Thunderbird-nightly tag=2
 hc rule class=Acroread            tag=3
 hc rule class=Evince              tag=3
 hc rule class=Okular              tag=3
+hc rule class=VirtualBox          tag=4
+hc rule class=VirtualBox title=WinXP tag=4
 hc rule class=Vncviewer           tag=5
 hc rule class=NXAgent             tag=5
 hc rule class=Opennx              tag=5
