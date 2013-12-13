@@ -1,17 +1,21 @@
 #!/bin/bash
 
-# Dell iDRAC6 -> 'console com2' / '#.'
-# HP ILO -> 'vsp' / '<Esc>('
-# SPARC ILOM -> 'start /SP/console' / '#.'
-# Supermicro -> 'start /system1/sol1' / '<ESC>T'
-# Cisco -> 'connect host' / <kill_network_connection>
-# ipmiconsole -> '&.'
-
 LTRX=10.13.114.20
 
 if [ -z $1 ]; then
     CMD=`basename $0`
-    echo "Usage: $CMD [-h] <t4|ldom|cisco|fat1|fat2|fat3|fat4|sunny|intel|amd|m3k|t5220t|t5220m|t5220b|sparky|foo>"
+    echo -e "\nUsage: $CMD [-h] <t4|ldom|cisco|fat1|fat2|fat3|fat4|sunny|kvm|dude|m3k|t5220t|t5220m|t5220b|sparky|foo>"
+    cat << ESCAPES
+
+  Dell iDRAC6 -> console com2 .......... #.
+  HP ILO      -> vsp ................... <ESC>(
+  SPARC ILOM  -> start /SP/console ..... #.
+  Supermicro  -> start /system1/sol1 ... <ESC>T
+  Cisco       -> connect host .......... <kill_network_connection>
+  ipmiconsole -> ....................... &.
+
+ESCAPES
+
     exit
 fi
 
@@ -66,16 +70,16 @@ if [[ $1 = sunny ]]; then
     tmuxopen 7 sunny "ssh root@10.13.114.30"
 fi
 
-if [[ $1 = intel ]]; then
-    #tmuxopen 8 intel "telnet $LTRX 10003"
-    #tmuxopen 8 intel "ipmiconsole -u root -P -h 10.13.114.32"
-    tmuxopen 8 intel "ssh -o ServerAliveInterval=0 root@10.13.114.32"
+if [[ $1 = dude ]]; then
+    #tmuxopen 8 dude "telnet $LTRX 10003"
+    #tmuxopen 8 dude "ipmiconsole -u root -P -h 10.13.114.32"
+    tmuxopen 8 dude "ssh -o ServerAliveInterval=0 root@10.13.114.32"
 fi
 
-if [[ $1 = amd ]]; then
-    #tmuxopen 9 amd "telnet $LTRX 10002"
-    #tmuxopen 9 amd "ipmiconsole -u root -P -h 10.13.114.31"
-    tmuxopen 9 amd "ssh -o ServerAliveInterval=0 root@10.13.114.31"
+if [[ $1 = kvm ]]; then
+    #tmuxopen 9 kvm "telnet $LTRX 10002"
+    #tmuxopen 9 kvm "ipmiconsole -u root -P -h 10.13.114.31"
+    tmuxopen 9 kvm "ssh -o ServerAliveInterval=0 root@10.13.114.31"
 fi
 
 if [[ $1 = m3k ]]; then
