@@ -344,7 +344,7 @@ function! EMAIL_OMNI(findstart, base)
         if a:base == ""
             return res
         endif
-        let data=split(system("$HOME/email_addrs search " . a:base), "\n")
+        let data=split(system("$HOME/.bin/email_addrs search " . a:base), "\n")
         for line in data
             call add(res, line)
         endfor
@@ -718,7 +718,7 @@ command! -nargs=0 -complete=command MC call EMake('clean')
 "let g:org_heading_highlight_colors=
 "\ ['OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'OL6', 'OL7', 'OL8']
 "let g:org_tag_column=80
-"let g:org_agenda_files=['~/Dropbox/insanum.org']
+"let g:org_agenda_files=['~/unison/insanum.org']
 "
 "nmap <Leader>ta :OrgTagsRealign<CR>
 "nmap <Leader><up> :py ORGMODE.plugins["EditStructure"].new_heading(below=True, end_of_last_child=True)<CR>
