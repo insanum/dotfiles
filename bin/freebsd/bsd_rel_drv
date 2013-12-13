@@ -5,6 +5,12 @@ if [ ! -f bxe.h ]; then
   exit
 fi
 
+SUDO=sudo
+if [ `id | sed "s/.*uid=\([0-9]*\).*/\1/"` -eq 0 ]; then SUDO=""; fi
+
+# ensure sudo auth is primed
+$SUDO bash -c 'echo "" > /dev/null'
+
 VER=`grep "define BXE_DRIVER_VERSION" bxe.c | awk '{ print $3 }' | cut -d'"' -f2`
 
 EMAILADDRS=$HOME/.priv/sun_rel_drv_addrs
@@ -88,8 +94,8 @@ set -o xtrace
 mkdir -p $PKGDESTDIR
 mkdir -p $SRCDESTDIR
 
-/bin/cp -f README.TXT $PKGDESTDIR
-/bin/cp -f RELEASE.TXT $PKGDESTDIR
+$SUDO /bin/cp -f README.TXT $PKGDESTDIR
+$SUDO /bin/cp -f RELEASE.TXT $PKGDESTDIR
 
 TMPDEST=`mktemp -d`
 SRCDIR="bxe-${VER}"

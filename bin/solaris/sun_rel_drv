@@ -14,6 +14,12 @@ if [[ ! -f $VFILE ]]; then
     exit
 fi
 
+SUDO=sudo
+if [ `id | sed "s/.*uid=\([0-9]*\).*/\1/"` -eq 0 ]; then SUDO=""; fi
+
+# ensure sudo auth is primed
+$SUDO bash -c 'echo "" > /dev/null'
+
 MAJ=`grep MAJVERSION $VFILE | awk '{ print $3 }'`
 MIN=`grep MINVERSION $VFILE | awk '{ print $3 }'`
 REV=`grep REVVERSION $VFILE | awk '{ print $3 }'`
@@ -115,12 +121,12 @@ mkdir -p $PKGDESTDIR_SRC
 mkdir -p $SRCDESTDIR
 
 /bin/cp -f pkg/${PKG}* $PKGDESTDIR
-/bin/cp -f release.txt $PKGDESTDIR
-/bin/cp -f readme.txt $PKGDESTDIR
+$SUDO /bin/cp -f release.txt $PKGDESTDIR
+$SUDO /bin/cp -f readme.txt $PKGDESTDIR
 /bin/mv -f $PKGDESTDIR/*Illumos* $PKGDESTDIR_BETA
 /bin/mv -f $PKGDESTDIR/*S12* $PKGDESTDIR_BETA
-/bin/cp -f release.txt $PKGDESTDIR_BETA
-/bin/cp -f readme.txt $PKGDESTDIR_BETA
+$SUDO /bin/cp -f release.txt $PKGDESTDIR_BETA
+$SUDO /bin/cp -f readme.txt $PKGDESTDIR_BETA
 
 TMPDEST=`mktemp -d`
 SRCDIR="${PKG}-${VER}-src"
@@ -169,14 +175,14 @@ echo "----------------------------------------"
 
 echo -n "Send release notification Email [y/(n)]: "
 read text
-#if [[ "$text" = "y" ]]; then
-#    cat $MAILMSG | msmtp -t --logfile=~/.msmtp.log --host=mail.broadcom.com --port=25 --protocol=smtp --from=$FROMADDR
-#    echo "Email sent!"
-#fi
+if [[ "$text" = "y" ]]; then
+    cat $MAILMSG | msmtp -t --logfile=~/.msmtp.log --host=mail.broadcom.com --port=25 --protocol=smtp --from=$FROMADDR
+    echo "Email sent!"
+fi
 
 /bin/rm -f $MAILMSG
 
-#PerforceLabel
+PerforceLabel
 
 echo "----------------------------------------"
 echo "Proceed with Black Duck scan if required!"
