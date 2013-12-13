@@ -22,6 +22,7 @@ bind pager 1G top
 bind pager G bottom
 bind index <PageDown> next-entry
 bind index <PageUp> previous-entry
+macro index \cl "<refresh><current-middle>"
 
 #set quit=ask-yes
 set autoedit
@@ -29,7 +30,8 @@ set beep=no
 set beep_new=no
 set allow_8bit
 set narrow_tree
-set arrow_cursor
+set hide_thread_subject=yes
+#set arrow_cursor
 #set ascii_chars
 set edit_headers
 set fast_reply
@@ -65,10 +67,10 @@ set attribution="On %d, %n wrote:"
 set editor="vim"
 set postpone=ask-yes
 set read_inc=10
-set uncollapse_jump=no
+set uncollapse_jump=yes
 set collapse_unread=yes
 set sort=threads
-set sort_aux=reverse-last-date-sent
+set sort_aux=reverse-last-date-received
 set forward_quote=yes
 set forward_decode=no
 set mime_forward=ask-no
@@ -78,7 +80,7 @@ set indent_str="> "
 set status_on_top
 set tilde
 set mail_check=10
-set timeout=20
+set timeout=5
 #set ssl_verify_host=no
 
 #auto_view [...]
@@ -389,7 +391,7 @@ set my_delete=$delete
 #macro index <F11> "<shell-escape>mu find -c -l ~/Maildir/search " "mu find"
 #macro index <F12> "<change-folder-readonly>=search<enter>" "mu results"
 
-macro index <F9>  "<sync-mailbox><shell-escape>~/sync_email<enter>" "mbsync"
+macro index <F9>  "<sync-mailbox><shell-escape>echo 'Starting sync...'; ~/.bin/email_sync; echo 'Done!'<enter>" "Email sync mbsync/notmuch/afew"
 macro index <F10> "<vfolder-from-query>" "notmuch search"
 
 # ---------------------------
@@ -441,5 +443,5 @@ alternates "edavis@insanum.com|insanum@gmail.com|edavis@broadcom.com|edavis@Free
 source $HOME/.mutt/colors
 #source $HOME/.mutt/colors_solarized
 
-folder-hook . 'push <collapse-all><top-page>'
+folder-hook . 'push <collapse-all><jump>1\n'
 

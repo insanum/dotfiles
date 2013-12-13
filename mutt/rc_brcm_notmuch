@@ -18,6 +18,7 @@ virtual-mailboxes                                                               
     "perforce"   "notmuch://?query=tag:perforce"                                 \
     "clearquest" "notmuch://?query=tag:clearquest"
 set virtual_spoolfile=yes
+set sort_browser=unsorted
 
 source $HOME/.mutt/notmuch
 

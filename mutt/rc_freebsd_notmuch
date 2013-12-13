@@ -17,13 +17,13 @@ virtual-mailboxes                                                               
     "deleted"        "notmuch://?query=tag:deleted"                                  \
     "flagged"        "notmuch://?query=tag:flagged"                                  \
     "todo"           "notmuch://?query=tag:todo"                                     \
-    "developers"     "notmuch://?query=tag:developers"                               \
-    "current"        "notmuch://?query=tag:current"                                  \
-    "stable"         "notmuch://?query=tag:stable"                                   \
-    "net"            "notmuch://?query=tag:net"                                      \
-    "hackers"        "notmuch://?query=tag:hackers"                                  \
-    "src-committers" "notmuch://?query=tag:src-committers"                           \
-    "illumos"        "notmuch://?query=tag:illumos"
+    "developers"     "notmuch://?query=(tag:developers and not tag:deleted)"         \
+    "current"        "notmuch://?query=(tag:current and not tag:deleted)"            \
+    "stable"         "notmuch://?query=(tag:stable and not tag:deleted)"             \
+    "net"            "notmuch://?query=(tag:net and not tag:deleted)"                \
+    "hackers"        "notmuch://?query=(tag:hackers and not tag:deleted)"            \
+    "src-committers" "notmuch://?query=(tag:src-committers and not tag:deleted)"     \
+    "illumos"        "notmuch://?query=(tag:illumos and not tag:deleted)"
 set virtual_spoolfile=yes
 
 source $HOME/.mutt/notmuch

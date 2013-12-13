@@ -12,11 +12,22 @@ set spoolfile=
 set nm_query_type=threads
 set nm_unread_tag=unread
 set nm_hidden_tags=
+
 #set index_format="%[%y.%m.%d %R] - %-20.20n %?M?(%2M)&( 1)? %s%> %?g?[%g]?"
 #set index_format="%Z %[%y.%m.%d %R] - %-20.20n %?M?(%2M)&( 1)? %s%> %?g?[%g]?"
 #set index_format="%S %[%y.%m.%d %R] - %-20.20n %?M?(%2M)&( 1)? %s%> %?g?[%g]?"
-set index_format="%S %[%y.%m.%d %R] %?M?(%2M)&    ? %-18.18n [%15g] %s"
-set vfolder_format=" %?N?%-4N&    ? %f"
+
+# the individual tags along with all tags before subject
+#set index_format="%4C %S %[%y.%m.%d %R] %?M?(%2M)&    ? %-18.18n %?GF?%GF&  ?%?GU?%GU&  ?%?GX?%GX&  ?%?Gq?%Gq&  ? %?Gp?%Gp&  ? %?GA?%GA& ?%?GI?%GI& ? [%15g] %s"
+# just the individual tags before the subject
+#set index_format="%4C %S %[%y.%m.%d %R] %?M?(%2M)&    ? %-18.18n %?GF?%GF&  ?%?GU?%GU&  ?%?GX?%GX&  ?%?Gq?%Gq&  ? %?Gp?%Gp&  ? %?GA?%GA& ?%?GI?%GI& ? %s"
+# the individual tags along with right justified all tags
+#set index_format="%4C %S %[%y.%m.%d %R] %?M?(%2M)&    ? %-18.18n %?GF?%GF&  ?%?GU?%GU&  ?%?GX?%GX&  ?%?Gq?%Gq&  ? %?Gp?%Gp&  ? %?GA?%GA& ?%?GI?%GI& ? %s%> [%15g]"
+
+# the individual tags with flagged/unread and P4/CQ shared column along with fuzzy dates and right justified all tags
+set index_format='%4C %S %<[1y?%<[2d?%<[1d?    Today&Yesterday>&%[   %b %d]>&%[ %y.%m.%d]> %<M?(%2M)&    > %-18.18n %<GF?%GF&%<GC?%GC&%<GU?%GU&  >>> %<GX?%GX&  >%<Gq?%Gq&%<Gp?%Gp&  >> %<GA?%GA& >%<GI?%GI& > %s%> %g'
+
+set vfolder_format=" %<N?%-4N&    > %f"
 
 tag-transforms             \
     "inbox"          "∙"   \
@@ -28,7 +39,7 @@ tag-transforms             \
     "attachment"     "✛ "  \
     "archive"        "A"   \
     "deleted"        "D"   \
-    "invites"        "CAL" \
+    "invites"        "⊙ "  \
     "clearquest"     "CQ"  \
     "perforce"       "P4"  \
     "freebsd"        "BSD" \
@@ -40,6 +51,28 @@ tag-transforms             \
     "src-committers" "SVN" \
     "illumos"        "ILL"
 
+tag-formats               \
+    "inbox"          "GI" \
+    "unread"         "GU" \
+    "flagged"        "GF" \
+    "replied"        "GR" \
+    "sent"           "GS" \
+    "signed"         "GP" \
+    "attachment"     "GX" \
+    "archive"        "GA" \
+    "deleted"        "GD" \
+    "invites"        "GC" \
+    "clearquest"     "Gq" \
+    "perforce"       "Gp" \
+    "freebsd"        "Gb" \
+    "developers"     "Gd" \
+    "current"        "Gc" \
+    "stable"         "Gs" \
+    "net"            "Gn" \
+    "hackers"        "Gh" \
+    "src-committers" "Gv" \
+    "illumos"        "Gi"
+
 macro index,pager x "<change-vfolder>?" "Change vfolder"
 bind  index,pager X vfolder-from-query
 
@@ -48,23 +81,38 @@ macro index,pager I "<vfolder-from-query>(tag:inbox or tag:unread) and not tag:k
 
 macro pager m "<clear-flag>N<modify-labels>-unread\n" "Mark message as read"
 
-macro index m "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as read"
-macro index M "<tag-message><tag-prefix><set-flag>N<tag-prefix><modify-labels>+unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as unread"
-macro index <esc>m "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark thread as read"
-macro index <esc>M "<tag-thread><tag-prefix><set-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n<sync-mailbox>" "Mark thread as read"
+macro index m "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n" "Mark message as read"
+macro index M "<tag-message><tag-prefix><set-flag>N<tag-prefix><modify-labels>+unread\n<untag-pattern>.*\n" "Mark message as unread"
+macro index <esc>m "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n" "Mark thread as read"
+macro index <esc>M "<tag-thread><tag-prefix><set-flag>N<tag-prefix><modify-labels>-unread\n<untag-pattern>.*\n" "Mark thread as read"
 
-macro index U "<tag-message><tag-prefix><set-flag>!<tag-prefix><modify-labels>+flagged\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as urgent"
-macro index <esc>U "<tag-message><tag-prefix><clear-flag>!<tag-prefix><modify-labels>-flagged\n<untag-pattern>.*\n<sync-mailbox>" "Mark message as not urgent"
+macro index U "<tag-message><tag-prefix><set-flag>!<tag-prefix><modify-labels>+flagged\n<untag-pattern>.*\n" "Mark message as urgent"
+macro index <esc>U "<tag-message><tag-prefix><clear-flag>!<tag-prefix><modify-labels>-flagged\n<untag-pattern>.*\n" "Mark message as not urgent"
 
-macro index a "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n<sync-mailbox>" "Archive message"
-macro index A "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n<sync-mailbox>" "Archive thread"
+macro index ,a "<tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n" "Archive tagged messages"
 
-macro index d "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n<sync-mailbox>" "Delete message"
-macro index D "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n<sync-mailbox>" "Delete thread"
+macro index a "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n" "Archive message"
+macro index A "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n" "Archive thread"
+
+macro pager a "<exit>a" "Archive message"
+macro pager A "<exit>A" "Archive thread"
+
+macro index ,d "<tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete tagged messages"
+
+macro index d "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete message"
+macro index D "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete thread"
+
+macro pager d "<exit>d" "Delete message"
+macro pager D "<exit>D" "Delete thread"
+
+macro index T "<tag-thread>"
+macro index <esc>T "<tag-pattern>"
 
 macro index <tab> "<search>~Y unread\n"
-macro attach ,c "<pipe-entry>/scratch/edavis/Dropbox/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Eric Davis' import\n"
+macro attach ,c "<pipe-entry>/scratch/edavis/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Eric Davis' import\n"
 macro attach ,h "<pipe-entry>/scratch/edavis/htmlhandler_mutt\n"
+macro index  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/viewhtmlmail\n" "View HTML in browser"
+macro pager  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/viewhtmlmail\n" "View HTML in browser"
 
 #message-hook ~N 'push <set-flag>N'
 macro index ,N "<untag-pattern>.*\n<tag-pattern>~Y unread\n<tag-prefix><set-flag>N<untag-pattern>.*\n" "Markk all unread messages as new"

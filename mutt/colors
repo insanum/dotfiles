@@ -5,6 +5,7 @@ color status white color18
 color tilde blue default
 color signature green default
 color hdrdefault color39 default
+color header color201 default Tags:
 color header color192 default Date:
 color header color160 default Subject:
 color header color40 default From:
@@ -25,8 +26,8 @@ color quoted7 yellow default
 
 color normal white default
 color error white red
-color indicator brightcolor232 color208
-#color indicator color178 color237
+#color indicator brightcolor232 color208
+color indicator color45 color235
 
 # order here matters (last takes priority)
 #color index yellow default '~p | ~P'                 # to or from me
@@ -38,16 +39,45 @@ color indicator brightcolor232 color208
 #color index white red '~(~F) ~(~O)'                  # old message under flagged thread
 #color index red default '~D'                         # deleted
 
-# notmuch tags (ignoring message flags)
-color index color171 default '~(~Y invites)'    # thread with message tagged as invite
-color index brightcolor171 default '~Y invites' # message tagged as invite
-color index color40 default '~(~Y todo)'        # thread with message tagged as todo
-color index brightcolor40 default '~Y todo'     # messaage tagged as todo
-color index color33 default '~(~Y unread)'      # thread with message tagged as unread
-color index brightcolor33 default '~Y unread'   # message tagged as unread
-color index color178 default '~(~Y flagged)'    # thread with message tagged as flagged
-color index brightcolor178 default '~Y flagged' # message tagged as flagged
-color index color160 default '~Y deleted'       # message tagged as deleted
+color index color254 default '~A'
+
+color index color171 default '~Y invites'
+color index color40 default '~Y todo'
+color index color33 default '~Y unread'
+color index brightcolor208 default '~Y flagged'
+color index color245 default '~Y archive'
+color index color124 default '~Y deleted'
+
+color index_subject color190 default '~T' # tagged messages 
+
+# new/unread email
+color index_author color178 default '~Y unread'
+# new/unread email received today
+color index_author brightcolor178 default '~Y unread ~d <1d'
+#color index_author brightcolor178 default '~(~d <1d ~Y unread)'
+
+color index_collapsed color193 default
+color index_date color88 default
+#color index_label
+color index_number color240 default
+#color index_size
+color index_tags color43 default
+
+color index_flags color238 default '~A'
+color index_flags brightcolor127 default '~Q'
+color index_flags brightcolor39 default '~N'
+color index_flags brightcolor196 default '~D'
+color index_flags brightcolor208 default '~F'
+color index_flags brightcolor190 default '~T'
+
+color index_tag color99 default inbox
+color index_tag color99 default archive
+color index_tag color124 default unread
+color index_tag brightcolor208 default flagged
+color index_tag brightcolor171 default invites
+color index_tag color69 default attachment
+color index_tag color40 default clearquest
+color index_tag color40 default perforce
 
 # email & urls
 color body color45 default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
@@ -84,4 +114,6 @@ color body color160 default "[;:]-*[)>(<|]"                                     
 color body color160 default "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" # *Bold* text.
 color body color160 default "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)"     # _Underlined_ text.
 color body color160 default "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"     # /Italic/ text.
+
+# vim: filetype=muttrc
 
