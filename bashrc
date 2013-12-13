@@ -11,16 +11,16 @@ if [[ $OSTYPE == cygwin ]]; then
 fi
 
 if [[ $OSTYPE == cygwin ]]; then
-  export PATH="/cygdrive/c/edavis/usr/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/X11R6/bin:/cygdrive/c/WINDOWS/system32:."
+  export PATH="/cygdrive/c/edavis/usr/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/X11R6/bin:/cygdrive/c/WINDOWS/system32"
   export MANPATH="/cygdrive/c/edavis/usr/man:/usr/man:/usr/share/man:/usr/local/man:/usr/local/share/man:/usr/X11R6/man:"
 elif [[ $OSTYPE =~ solaris ]]; then
-  export PATH="$HOME/bin:/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/local/bin:/opt/onbld/bin:/opt/onbld/bin/i386:/opt/onbld/bin/sparc:/opt/SUNWspro/bin:/opt/sunstudio12.1/bin:/opt/csw/bin:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin:."
+  export PATH="$HOME/bin:/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/local/bin:/opt/onbld/bin:/opt/onbld/bin/i386:/opt/onbld/bin/sparc:/opt/SUNWspro/bin:/opt/sunstudio12.1/bin:/opt/csw/bin:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin"
   export MANPATH="/usr/sfw/man:/usr/share/man:/opt/onbld/man:/opt/SUNWpkgd/man:/opt/SUNWscat/man:/opt/sunstudio12.1/man:/opt/SUNWspro/man:/opt/csw/man"
 elif [[ $OSTYPE =~ freebsd ]]; then
   source /etc/profile
 elif [[ $OSTYPE == linux-gnu ]]; then
   source /etc/profile
-  export PATH="$HOME/bin:$PATH:/usr/local/bin:/usr/local/sbin:."
+  export PATH="$HOME/bin:$PATH:/usr/local/bin:/usr/local/sbin"
   export MANPATH="$MANPATH:/usr/share/man:/usr/local/man:/usr/local/share/man:/var/qmail/man"
   export PATH=$PATH:$HOME/p4:$HOME/p4/p4v-2012.1.459601/bin:$HOME/p4/p4sandbox-2012.1.452151/bin
   function gitp4()
@@ -77,8 +77,8 @@ export TEMP=/tmp
 export TMPDIR=/tmp
 #export MIBS=all
 #export MIBDIRS=/usr/local/share/snmp/mibs
-export TASKRC=$HOME/Dropbox/task/taskrc
-export TASKDATA=$HOME/Dropbox/task/tasks
+export TASKRC=$HOME/unison/task/taskrc
+export TASKDATA=$HOME/unison/task/tasks
 
 TIMEFORMAT="%R real %U user %S system (%%%P cpu)"
 
@@ -257,8 +257,8 @@ alias h="history"
 alias where="type -a"
 #alias which="type -a"
 alias www="w3m http://www.insanum.com"
-alias gcalcli="$HOME/Dropbox/src/gcalcli/gcalcli"
-alias bitter="$HOME/Dropbox/src/bitter/bitter"
+alias gcalcli="$HOME/src/gcalcli/gcalcli"
+alias bitter="$HOME/src/bitter/bitter"
 alias nostalgic="$HOME/src/nostalgic/nostalgic"
 #alias sokoban="/usr/local/bin/vim -c ':SokobanH'"
 #function cedega() { export CEDEGA_UPDATER_PATH=`pwd`; usr/bin/cedega; }

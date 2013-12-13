@@ -61,7 +61,7 @@ static const Rule rules[] = {
     { "URxvt",              NULL,       "work1",        1<<7,       False,         -1 },
     { "URxvt",              NULL,       "work2",        1<<8,       False,         -1 },
 
-    { "URxvt",              NULL,       "org",          ~0,         True,         -1 },
+    { "URxvt",              NULL,       "votl",         ~0,         True,         -1 },
     { "Gxmessage",          NULL,       NULL,           ~0,         True,          -1 },
     { "Zenity",             NULL,       NULL,           ~0,         True,          -1 },
     { "Yad",                NULL,       NULL,           ~0,         True,          -1 },
@@ -106,7 +106,7 @@ static const Layout layouts[] = { /* first entry is default */
 /* commands */
 static const char *dmenucmd[] = { "dmenu_run", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "urxvtc", NULL };
-static const char *orgcmd[]   = { "urxvtc", "-title", "org", "+sb", "-tr", "-sh", "10", "-g", "120x45+40-40", "-e", "vim", "Dropbox/insanum.org", NULL };
+static const char *votlcmd[]  = { "urxvtc", "-title", "votl", "+sb", "-tr", "-sh", "10", "-g", "120x45+40-40", "-e", "vim", "unison/insanum.votl", NULL };
 static const char *launcher[] = { "dwm_launch", "prog", NULL };
 static const char *mpc[]      = { "dwm_launch", "mpc", NULL };
 static const char *gmrun[]    = { "gmrun", NULL };
@@ -161,7 +161,7 @@ static Key keys[] = {
     /* view more that one tag (Mod-Ctrl-#) */
     /* give/move client on a specific tag (Mod-Shift-#) (0 = PUT ON ALL TAGS) */
     /* make client sticky (toggle) on more than one tag (Mod-Ctrl-Shift-#) */
-    //{ MODKEY,               XK_F11,     spawn,          {.v = orgcmd} },
+    //{ MODKEY,               XK_F11,     spawn,          {.v = votlcmd} },
     { MODKEY,               XK_0,       view,           {.ui = ~0} },
     { MODKEY|ShiftMask,     XK_0,       tag,            {.ui = ~0} },
     { MODKEY,               XK_w,       focusmon,       {.ui = 0 } },
