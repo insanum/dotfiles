@@ -1,3 +1,5 @@
+#[format]
+#	pretty = blah
 [user]
 	email = edavis@insanum.com
 	name = Eric Davis
