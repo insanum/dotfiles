@@ -49,7 +49,7 @@ quote_prefix = '> '
         u = prompt 'untag '
         c v = pipeto --format decoded --shell '~/vcshandler_alot dump | less'
         c V = pipeto --format decoded --shell '~/vcshandler_alot import | less'
-        h v = pipeto --format raw --shell '~/htmlhandler_alot'
+        h v = pipeto --format raw --shell '~/.bin/viewhtmlmail'
 
 [accounts]
     [[broadcom]]

@@ -110,9 +110,8 @@ macro index <esc>T "<tag-pattern>"
 
 macro index <tab> "<search>~Y unread\n"
 macro attach ,c "<pipe-entry>/scratch/edavis/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Eric Davis' import\n"
-macro attach ,h "<pipe-entry>/scratch/edavis/htmlhandler_mutt\n"
-macro index  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/viewhtmlmail\n" "View HTML in browser"
-macro pager  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/viewhtmlmail\n" "View HTML in browser"
+macro index  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/.bin/viewhtmlmail\n" "View HTML in browser"
+macro pager  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/.bin/viewhtmlmail\n" "View HTML in browser"
 
 #message-hook ~N 'push <set-flag>N'
 macro index ,N "<untag-pattern>.*\n<tag-pattern>~Y unread\n<tag-prefix><set-flag>N<untag-pattern>.*\n" "Markk all unread messages as new"
