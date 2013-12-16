@@ -81,8 +81,15 @@ fi
 #[[ -x /usr${LOCAL}/bin/urxvtd ]] && urxvtd -f -o
 
 xset r rate 400
-xset m 2/1 50
 xsetroot -cursor_name left_ptr
+if [[ $HOSTNAME = jackshrimp ]]; then
+    # tweaks for my Anker gaming mouse
+    xinput --set-prop 11 "Device Accel Constant Deceleration" 2
+    xinput --set-prop 11 "Device Accel Adaptive Deceleration" 3
+    xset m 1 50
+else
+    xset m 2/1 50
+fi
 
 if [[ $HOSTNAME = tiburon ]]; then
     xinput set-prop "ETPS/2 Elantech Touchpad" "Synaptics ClickPad" 1

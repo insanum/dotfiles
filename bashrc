@@ -734,5 +734,12 @@ function fixkeys()
         xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
     fi
     xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
+
+    if [[ $HOSTNAME = jackshrimp ]]; then
+        # tweaks for my Anker gaming mouse
+        xinput --set-prop 11 "Device Accel Constant Deceleration" 2
+        xinput --set-prop 11 "Device Accel Adaptive Deceleration" 3
+        xset m 1 50
+    fi
 }
 
