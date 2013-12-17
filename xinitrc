@@ -87,6 +87,12 @@ if [[ $HOSTNAME = jackshrimp ]]; then
     xinput --set-prop 11 "Device Accel Constant Deceleration" 2
     xinput --set-prop 11 "Device Accel Adaptive Deceleration" 3
     xset m 1 50
+elif [[ $HOSTNAME = tiburon ]]; then
+    xinput --set-prop "ETPS/2 Elantech Touchpad" "Device Accel Constant Deceleration" 2
+    xinput --set-prop "ETPS/2 Elantech Touchpad" "Device Accel Adaptive Deceleration" 3
+    synclient HorizHysteresis=40 VertHysteresis=40
+    synclient MinSpeed=0 TapButton2=0 TapButton3=0 RTCornerButton=2 RBCornerButton=3
+    xset m 1 50
 else
     xset m 2/1 50
 fi
