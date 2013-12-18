@@ -22,7 +22,6 @@ elif [[ $OSTYPE == linux-gnu ]]; then
   source /etc/profile
   export PATH="$HOME/bin:$PATH:/usr/local/bin:/usr/local/sbin"
   export MANPATH="$MANPATH:/usr/share/man:/usr/local/man:/usr/local/share/man:/var/qmail/man"
-  export PATH=$PATH:$HOME/p4:$HOME/p4/p4v-2012.1.459601/bin:$HOME/p4/p4sandbox-2012.1.452151/bin
   function gitp4()
   {
       PRJ=`basename $PWD`

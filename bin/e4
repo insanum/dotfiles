@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 
-p4bin      = '$HOME/p4/p4'
+p4bin      = 'p4'
 p4port_sj  = 'pf-sj1-slb.sj.broadcom.com:1666'
 p4port_irv = 'pf-irva-ecs:1666' # irvine depot
 
