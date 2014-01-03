@@ -33,6 +33,10 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "Rainbow-Parenthesis"
   Bundle "https://github.com/majutsushi/tagbar.git"
 
+  Bundle "javacomplete"
+  Bundle "https://github.com/hsanson/vim-android.git"
+  let g:android_sdk_path="/opt/android-sdk"
+
   " make sure the vim_bridge python plugin is installed
   " cd ~/.vim/bundle/vim-rst-tables/ftplugin
   " ln -s rst_tables.vim votl_tables.vim
@@ -353,6 +357,11 @@ function! EMAIL_OMNI(findstart, base)
     endif
 endfunction
 autocmd FileType mail set omnifunc=EMAIL_OMNI
+
+autocmd Filetype java setlocal omnifunc=javacomplete#Complete
+autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
+autocmd Filetype java inoremap <buffer> <C-X><C-U> <C-X><C-U><C-P>
+autocmd Filetype java inoremap <buffer> <C-S-Space> <C-X><C-U><C-P>
 
 "nmap <Leader>pm :!perldoc <CR>
 "nmap <Leader>pf :!perldoc -f <CR>
