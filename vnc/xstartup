@@ -13,7 +13,7 @@ xset +fp ~/.fonts
 
 xsetroot -solid black
 
-xrdb -load $HOME/.XDefaults
+xrdb -load $HOME/.Xdefaults
 
 if [[ -n "$VNCDESKTOP" ]]; then
     export XKL_XMODMAP_DISABLE=1
