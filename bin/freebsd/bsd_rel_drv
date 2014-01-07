@@ -20,10 +20,15 @@ if [ ! -e $EMAILADDRS ]; then
 fi
 source $EMAILADDRS
 
-SRCDESTDIR=${HOME}/freebsd_src_drops
+WORK_MNT_DIR=${HOME}/work
+if [ "`df | egrep \"${WORK_MNT_DIR}$\"`" = "" ]; then
+    echo "ERROR: $WORK_MNT_DIR is not mounted!"
+    exit
+fi
+
+SRCDESTDIR=${WORK_MNT_DIR}/x_freebsd/src_drops
 
 NSEG_MNT_DIR=/mnt/nseg
-
 if [ "`df | egrep \"${NSEG_MNT_DIR}$\"`" = "" ]; then
     echo "ERROR: $NSEG_MNT_DIR is not mounted!"
     exit
@@ -107,6 +112,7 @@ pushd $TMPSRCDIR
 ./577xx/tools/build_ddk_bsd clean
 ./577xx/tools/build_ddk_bsd bsd
 /bin/rm -rf 577xx
+/bin/rm -rf test
 cd ..
 tar -Jcvf ${PKGDESTDIR}/${SRCDIR}.txz $SRCDIR
 cp ${PKGDESTDIR}/${SRCDIR}.txz $SRCDESTDIR

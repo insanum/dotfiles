@@ -11,18 +11,19 @@ my_hdr Bcc: Eric Davis <edavis@FreeBSD.org>
 
 set crypt_autosign=yes
 
-virtual-mailboxes                                                                    \
-    "inbox"          "notmuch://?query=(tag:inbox or tag:unread) and not tag:killed" \
-    "unread"         "notmuch://?query=tag:unread"                                   \
-    "deleted"        "notmuch://?query=tag:deleted"                                  \
-    "flagged"        "notmuch://?query=tag:flagged"                                  \
-    "todo"           "notmuch://?query=tag:todo"                                     \
-    "developers"     "notmuch://?query=(tag:developers and not tag:deleted)"         \
-    "current"        "notmuch://?query=(tag:current and not tag:deleted)"            \
-    "stable"         "notmuch://?query=(tag:stable and not tag:deleted)"             \
-    "net"            "notmuch://?query=(tag:net and not tag:deleted)"                \
-    "hackers"        "notmuch://?query=(tag:hackers and not tag:deleted)"            \
-    "src-committers" "notmuch://?query=(tag:src-committers and not tag:deleted)"     \
+virtual-mailboxes                                                                                               \
+    "inbox"          "notmuch://?query=(tag:inbox or tag:unread) and not (tag:src-committers or tag:current or tag:stable or tag:net or tag:hackers or tag:drivers or tag:illumos or tag:killed" \
+    "unread"         "notmuch://?query=tag:unread"                                                              \
+    "deleted"        "notmuch://?query=tag:deleted"                                                             \
+    "flagged"        "notmuch://?query=tag:flagged"                                                             \
+    "todo"           "notmuch://?query=tag:todo"                                                                \
+    "developers"     "notmuch://?query=(tag:developers and not tag:deleted)"                                    \
+    "current"        "notmuch://?query=(tag:current and not tag:deleted)"                                       \
+    "stable"         "notmuch://?query=(tag:stable and not tag:deleted)"                                        \
+    "net"            "notmuch://?query=(tag:net and not tag:deleted)"                                           \
+    "hackers"        "notmuch://?query=(tag:hackers and not tag:deleted)"                                       \
+    "drivers"        "notmuch://?query=(tag:drivers and not tag:deleted)"                                       \
+    "src-committers" "notmuch://?query=(tag:src-committers and not tag:deleted)"                                \
     "illumos"        "notmuch://?query=(tag:illumos and not tag:deleted)"
 set virtual_spoolfile=yes
 
