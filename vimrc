@@ -9,6 +9,11 @@ let ostype=system('echo -n $OSTYPE')
 " git clone https://github.com/gmarik/vundle.git
 " vim -c ":BundleInstall"
 
+" YCM setup:
+" cd ~/.vim/bundle/YouCompleteMe
+" git submodule update --init --recursive
+" ./install.sh --clang-completer
+
 if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   " Vundle/Vim Scripts
@@ -32,8 +37,11 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "EnhCommentify.vim"
   Bundle "Rainbow-Parenthesis"
   Bundle "https://github.com/majutsushi/tagbar.git"
+  Bundle "https://github.com/hsanson/vim-android"
 
+  Bundle "https://github.com/Valloric/YouCompleteMe"
   Bundle "javacomplete"
+
   Bundle "https://github.com/hsanson/vim-android.git"
   let g:android_sdk_path="/opt/android-sdk"
 
@@ -359,9 +367,6 @@ endfunction
 autocmd FileType mail set omnifunc=EMAIL_OMNI
 
 autocmd Filetype java setlocal omnifunc=javacomplete#Complete
-autocmd Filetype java setlocal completefunc=javacomplete#CompleteParamsInfo
-autocmd Filetype java inoremap <buffer> <C-X><C-U> <C-X><C-U><C-P>
-autocmd Filetype java inoremap <buffer> <C-S-Space> <C-X><C-U><C-P>
 
 "nmap <Leader>pm :!perldoc <CR>
 "nmap <Leader>pf :!perldoc -f <CR>
@@ -859,7 +864,7 @@ if has("cscope")
     execute "set tags=$HOME/cscope/" . hostname() . "/" . module . "/TAGS"
   endif
 
-  setlocal omnifunc=ccomplete#Complete
+  "setlocal omnifunc=ccomplete#Complete
 
   let cs_tab="tab"
   let cs_split="split"
