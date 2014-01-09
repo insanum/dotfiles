@@ -37,9 +37,14 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "EnhCommentify.vim"
   Bundle "Rainbow-Parenthesis"
   Bundle "https://github.com/majutsushi/tagbar.git"
-  Bundle "https://github.com/hsanson/vim-android"
 
-  Bundle "https://github.com/Valloric/YouCompleteMe"
+  Bundle "https://github.com/SirVer/ultisnips.git"
+  let g:UltiSnipsExpandTrigger="<c-h>"
+  let g:UltiSnipsJumpForwardTrigger="<c-j>"
+  let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+  "Bundle "https://github.com/scrooloose/syntastic.git"
+  Bundle "https://github.com/Valloric/YouCompleteMe.git"
   Bundle "javacomplete"
 
   Bundle "https://github.com/hsanson/vim-android.git"
@@ -56,7 +61,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   "Bundle "changeColorScheme.vim"
   "Bundle "Color-Sampler-Pack"
-  Bundle "https://github.com/altercation/vim-colors-solarized"
+  Bundle "https://github.com/altercation/vim-colors-solarized.git"
   Bundle "https://github.com/tomasr/molokai.git"
 
   "Bundle "sparkup"
