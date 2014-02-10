@@ -40,6 +40,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   Bundle "https://github.com/SirVer/ultisnips.git"
   let g:UltiSnipsExpandTrigger="<c-h>"
+  let g:UltiSnipsListSnippets="<c-s>"
   let g:UltiSnipsJumpForwardTrigger="<c-j>"
   let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
@@ -67,6 +68,8 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "sparkup"
   "Bundle "octave.vim"
   "Bundle "asciidoc.vim"
+
+  Bundle "https://github.com/plasticboy/vim-markdown.git"
 
 endif
 
@@ -221,6 +224,7 @@ nmap <Leader>i :set ignorecase!<CR>:set ignorecase?<CR>
 
 set nonumber
 nmap <Leader>n :set number!<CR>:set number?<CR>
+nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
 
 set nolist
 nmap <Leader>l :set list!<CR>:set list?<CR>
