@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 xset +fp /usr/share/fonts/100dpi
 xset +fp /usr/share/fonts/75dpi
@@ -30,7 +30,7 @@ fi
 xmodmap $HOME/.Xmodmap
 
 #urxvt &
-evilvte &
+evilvte -e bash -li &
 
 exec /usr/bin/openbox
 #exec /usr/bin/pekwm
