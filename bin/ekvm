@@ -1,0 +1,308 @@
+#!/bin/bash
+
+EKVM_BASE=.
+
+# for security only owner permission
+umask 077
+
+function ekvm_usage()
+{
+    if [[ "$1" != "" ]]; then
+        echo -e "ERROR: $1\n"
+    fi
+    echo -e "Usage: ekvm <command> <target>\n"
+    echo -e "Commands: status   [<target>]"
+    echo -e "          qemu     <target> <monitor_cmd>"
+    echo -e "          install  <target>"
+    echo -e "          start    <target>"
+    echo -e "          stop     <target>"
+    echo -e "          kill     <target>"
+    echo -e "          console  <target>"
+    echo -e "          monitor  <target>"
+    echo -e "          vnc      <target>"
+    echo -e "          reboot   <target>"
+    echo -e "          reset    <target>"
+    echo -e "          pause    <target>"
+    echo -e "          resume   <target>"
+    echo -e "          snaplist <target>"
+    echo -e "          snapnew  <target> <id|tag>"
+    echo -e "          snapdel  <target> <id|tag>"
+    echo -e "          snaprun  <target> <id|tag>"
+    exit 1
+}
+
+while getopts "b:" opt; do
+    case $opt in
+    b)
+        EKVM_BASE=$OPTARG
+        ;;
+    ?)
+        ekvm_usage "Invalid argument"
+    esac
+done
+
+shift $((OPTIND - 1))
+
+if [[ ( -z "$1" ) || ( "$1" != "status" && -z "$2" ) ]]; then
+    ekvm_usage "Invalid command"
+fi
+
+[[ -d $EKVM_BASE/$2 ]] || ekvm_usage "Unknown target $2"
+
+[[ ( "$1" = "status" && -z "$2" ) || \
+   ( -f $EKVM_BASE/$2/ekvm.conf ) ]] \
+   || ekvm_usage "Target missing ekvm.conf"
+
+if [[ -n "$2" ]]; then
+    cd $EKVM_BASE/$2
+    . ekvm.conf
+fi
+
+TGT_PID=./ekvm.pid
+TGT_LOG=./ekvm.log
+
+function ekvm_running()
+{
+    [[ -f "$TGT_PID" ]] || return 1
+
+    local PID
+    PID=`cat $TGT_PID`
+
+    [[ -d /proc/$PID ]] || return 1
+    [[ -L /proc/$PID/cwd ]] || return 1
+
+    TARGET="$(basename $(readlink -n -e /proc/$PID/cwd))"
+    if [[ "$1" != "$TARGET" ]]; then
+        return 1
+    fi
+
+    return 0
+}
+
+function ekvm_send_monitor_cmd()
+{
+    local out=''
+    if ekvm_running $1; then
+        out=`echo "${@:3}" | socat - TCP:127.0.0.1:$EKVM_MONITOR | tail -n +3 | head -n -1`
+    else
+        out="$1 is not running"
+    fi
+
+    OIFS=$IFS
+    IFS=$'\n'
+    if [[ "$2" = yes ]]; then
+        for line in $out; do
+            echo $line | sed 's/^/    /'
+        done
+    else
+        for line in $out; do
+            echo $line
+        done
+    fi
+    IFS=$OIFS
+}
+
+function ekvm_status()
+{
+    eval printf '%.0s-' '{1..'"${COLUMNS:-$(tput cols)}"\}; echo
+    echo "| KVM: $1 |"
+    eval printf '%.0s-' '{1..'"$((${#1}+9))"\}; echo
+
+    ekvm_send_monitor_cmd $1 no "info status"
+
+    echo "VM snapshots:"
+    ekvm_send_monitor_cmd $1 yes "info snapshots"
+
+    echo "VM chardev:"
+    ekvm_send_monitor_cmd $1 yes "info chardev"
+
+    echo "VM cpus:"
+    ekvm_send_monitor_cmd $1 yes "info cpus"
+
+    echo "VM network:"
+    ekvm_send_monitor_cmd $1 yes "info network"
+
+    eval printf '%.0s-' '{1..'"${COLUMNS:-$(tput cols)}"\}; echo
+}
+
+case $1 in
+status)
+    if [[ -n "$2" ]]; then
+        ekvm_status $2
+        exit 0
+    fi
+
+    for k in `ls $EKVM_BASE/*/ekvm.conf`; do
+        TGT_BASE=`dirname $k`
+        TGT_NAME=`basename $TGT_BASE`
+        pushd $TGT_BASE > /dev/null
+        . ekvm.conf
+        ekvm_status $TGT_NAME
+        # unset the target's EKVM_xxx environment variables
+        for e in `grep "^EKVM_" ekvm.conf | cut -d= -f 1`; do unset $e; done
+        popd > /dev/null
+    done
+    ;;
+qemu)
+    if [[ -z "$3" ]]; then
+        ekvm_usage "Missing qemu command"
+    fi
+    ekvm_send_monitor_cmd $2 no "${@:3}"
+    ;;
+install)
+    echo "install"
+    ;;
+start)
+    if ekvm_running $2; then
+        echo "$2 is already running"
+        exit 0
+    fi
+
+    ARGS="-enable-kvm"
+
+    if [[ -n "$EKVM_NAME" ]]; then
+        ARGS="$ARGS -name $EKVM_NAME"
+    else
+        echo "ERROR: EKVM_NAME not defined"
+        exit 1
+    fi
+
+    if [[ -n "$EKVM_MEMORY" ]]; then
+        ARGS="$ARGS -m $EKVM_MEMORY"
+    else
+        echo "ERROR: EKVM_MEMORY not defined"
+        exit 1
+    fi
+
+    if [[ -n "$EKVM_SMP" ]]; then
+        ARGS="$ARGS -smp $EKVM_SMP"
+    else
+        echo "ERROR: EKVM_SMP not defined"
+        exit 1
+    fi
+
+    if [[ -n "$EKVM_VNC" ]]; then
+        ARGS="$ARGS -vnc $EKVM_VNC"
+    else
+        echo "WARNING: EKVM_VNC not defined"
+    fi
+
+    if [[ -n "$EKVM_SERIAL" ]]; then
+        ARGS="$ARGS -serial telnet:127.0.0.1:$EKVM_SERIAL,server,nowait"
+    fi
+
+    if [[ -n "$EKVM_MONITOR" ]]; then
+        ARGS="$ARGS -monitor telnet:127.0.0.1:$EKVM_MONITOR,server,nowait"
+    else
+        echo "ERROR: EKVM_MONITOR not defined"
+        exit 1
+    fi
+
+    if [[ -n "$EKVM_NET" ]]; then
+        ARGS="$ARGS -net $EKVM_NET"
+    else
+        echo "WARNING: EKVM_NET not defined"
+    fi
+
+    if [[ -n "$EKVM_NET_BRIDGE" ]]; then
+        ARGS="$ARGS -net $EKVM_NET_BRIDGE"
+    fi
+
+    if [[ -n "$EKVM_SOUND" ]]; then
+        ARGS="$ARGS -soundhw $EKVM_SOUND"
+    fi
+
+    if [[ -n "$EKVM_VGA" ]]; then
+        ARGS="$ARGS -vga $EKVM_VGA"
+    else
+        echo "WARNING: EKVM_VGA not defined"
+    fi
+
+    if [[ -n "$EKVM_ISO" ]]; then
+        ARGS="$ARGS -cdrom $EKVM_ISO"
+    fi
+
+    for ((i = 0; i < 10; i++)); do
+        if [[ -n `eval "echo \\$EKVM_USB$i"` ]]; then
+            ARGS="$ARGS -usbdevice `eval \"echo \\$EKVM_USB$i\"`"
+        fi
+    done
+
+    if [[ -n "$EKVM_DISK" ]]; then
+        ARGS="$ARGS $EKVM_DISK"
+    else
+        echo "ERROR: EKVM_DISK not defined"
+        exit 1
+    fi
+
+    if [[ "$EKVM_RUN_AS_ROOT" = yes ]]; then
+        SUDO=sudo
+        # ensure sudo auth is primed 
+        $SUDO bash -c 'echo "" > /dev/null'
+    fi
+
+    echo "$SUDO $EKVM_ENVIRONMENT qemu-system-x86_64 $ARGS" > $TGT_LOG
+    qemu-system-x86_64 $ARGS 2>&1 1>>$TGT_LOG &
+    echo $! > $TGT_PID
+    ;;
+stop)
+    ekvm_send_monitor_cmd $2 no "system_powerdown"
+    ;;
+kill)
+    ekvm_send_monitor_cmd $2 no "quit"
+    ;;
+console)
+    telnet 127.0.0.1 $EKVM_SERIAL
+    ;;
+monitor)
+    socat - TCP:127.0.0.1:$EKVM_MONITOR
+    ;;
+vnc)
+    vncviewer $EKVM_VNC
+    ;;
+reboot)
+    echo "reboot not implemented"
+    ;;
+reset)
+    ekvm_send_monitor_cmd $2 no "system_reset"
+    ;;
+pause)
+    ekvm_send_monitor_cmd $2 no "stop"
+    ;;
+resume)
+    ekvm_send_monitor_cmd $2 no "cont"
+    ;;
+snaplist)
+    ekvm_send_monitor_cmd $2 no "info snapshots"
+    ;;
+snapnew)
+    if [[ -z "$3" ]]; then
+        echo "No snapshot tag given, using default..."
+        echo "Creating snapshot"
+    else
+        echo "Creating snapshot '$3'"
+    fi
+    ekvm_send_monitor_cmd $2 no "savevm $3"
+    echo "Done!"
+    ;;
+snapdel)
+    if [[ -z "$3" ]]; then
+        ekvm_usage "Missing snapshot tag/id"
+    fi
+    echo "Deleting snapshot '$3'"
+    ekvm_send_monitor_cmd $2 no "delvm $3"
+    echo "Done!"
+    ;;
+snaprun)
+    if [[ -z "$3" ]]; then
+        ekvm_usage "Missing snapshot tag/id"
+    fi
+    echo "Loading snapshot '$3'"
+    ekvm_send_monitor_cmd $2 no "loadvm $3"
+    echo "Done!"
+    ;;
+*)
+    ekvm_usage "Unknown command '$1'"
+    ;;
+esac
+
