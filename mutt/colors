@@ -77,7 +77,7 @@ color index_tag brightcolor208 default flagged
 color index_tag brightcolor171 default invites
 color index_tag color69 default attachment
 color index_tag color40 default clearquest
-color index_tag color40 default perforce
+color index_tag color45 default perforce
 
 # email & urls
 color body color45 default "[-a-z_0-9.%$]+@[-a-z_0-9.]+\\.[-a-z][-a-z]+"
