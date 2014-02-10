@@ -75,8 +75,10 @@ fi
 
 #[[ -x /usr${LOCAL}/bin/xbindkeys ]] && xbindkeys
 
-[[ -x /usr${LOCAL}/bin/xautolock && -x /usr${LOCAL}/bin/slock ]] && \
-    xautolock -resetsaver -time 10 -locker slock &
+#[[ -x /usr${LOCAL}/bin/xautolock && -x /usr${LOCAL}/bin/slock ]] && \
+#    xautolock -resetsaver -time 10 -locker slock &
+[[ -x /usr${LOCAL}/bin/xautolock && -x ${HOME}/.bin/screen_lock ]] && \
+    xautolock -resetsaver -time 10 -locker ${HOME}/.bin/screen_lock &
 
 #[[ -x /usr${LOCAL}/bin/urxvtd ]] && urxvtd -f -o
 

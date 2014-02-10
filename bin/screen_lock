@@ -1,0 +1,6 @@
+#!/bin/bash
+
+killall -s SIGUSR1 dunst
+slock
+killall -s SIGUSR2 dunst
+
