@@ -1,6 +1,24 @@
 #!/bin/bash
 
-EKVM_BASE=.
+# Each directory found under $EKVM_BASE must have an ekvm.conf
+# file containing the following defines.
+#   EKVM_NAME=win7
+#   EKVM_RUN_AS_ROOT=no
+#   EKVM_ENVIRONMENT="QEMU_AUDIO_DRV=alsa"
+#   EKVM_ISO=
+#   EKVM_DISK=$EKVM_BASE/win7/win7_kvm.img
+#   EKVM_MEMORY=8G
+#   EKVM_SMP=4
+#   EKVM_VNC=:1
+#   EKVM_SERIAL=4444
+#   EKVM_MONITOR=4445
+#   EKVM_NET=nic
+#   EKVM_NET_BRIDGE=bridge,br=kvmbr0
+#   EKVM_SOUND=ac97
+#   EKVM_VGA=std
+#   EKVM_USB0=tablet
+
+EKVM_BASE=$HOME/kvm
 
 # for security only owner permission
 umask 077
@@ -258,7 +276,7 @@ monitor)
     socat - TCP:127.0.0.1:$EKVM_MONITOR
     ;;
 vnc)
-    vncviewer $EKVM_VNC
+    vncviewer $EKVM_VNC &
     ;;
 reboot)
     echo "reboot not implemented"
