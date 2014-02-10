@@ -1,55 +1,8 @@
 
 export SHELL=/bin/bash
 
-# Cygwin specific stuff
-if [[ $OSTYPE == cygwin ]]; then
-  export HOME=/cygdrive/c/edavis
-  export HOMEPATH=/cygdrive/c/edavis
-  export USERPROFILE=/cygdrive/c/edavis
-  export APPDATA=/cygdrive/c/edavis
-  export ALLUSERSPROFILE=/cygdrive/c/edavis
-fi
-
-if [[ $OSTYPE == cygwin ]]; then
-  export PATH="/cygdrive/c/edavis/usr/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/X11R6/bin:/cygdrive/c/WINDOWS/system32"
-  export MANPATH="/cygdrive/c/edavis/usr/man:/usr/man:/usr/share/man:/usr/local/man:/usr/local/share/man:/usr/X11R6/man:"
-elif [[ $OSTYPE =~ solaris ]]; then
-  export PATH="$HOME/bin:/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/local/bin:/opt/onbld/bin:/opt/onbld/bin/i386:/opt/onbld/bin/sparc:/opt/SUNWspro/bin:/opt/sunstudio12.1/bin:/opt/csw/bin:/usr/dt/bin:/usr/openwin/bin:/usr/ccs/bin"
-  export MANPATH="/usr/sfw/man:/usr/share/man:/opt/onbld/man:/opt/SUNWpkgd/man:/opt/SUNWscat/man:/opt/sunstudio12.1/man:/opt/SUNWspro/man:/opt/csw/man"
-elif [[ $OSTYPE =~ freebsd ]]; then
-  source /etc/profile
-elif [[ $OSTYPE == linux-gnu ]]; then
-  source /etc/profile
-  export PATH="$HOME/bin:$PATH:/usr/local/bin:/usr/local/sbin"
-  export MANPATH="$MANPATH:/usr/share/man:/usr/local/man:/usr/local/share/man:/var/qmail/man"
-  function gitp4()
-  {
-      PRJ=`basename $PWD`
-      if [ -f ../${PRJ}_p4 ] && [ -d ./.git ]; then
-          source ../${PRJ}_p4
-          git p4 $@
-      else
-          echo "Moo!"
-      fi
-  }
-  function gitp4clone()
-  {
-      git p4 clone --verbose \
-                   --destination $P4GITPATH \
-                   --use-client-spec $P4GITDEPOTS
-  }
-fi
-
-if [[ -d "$HOME/.bin/" ]]; then
-    for d in `ls "$HOME/.bin/"`; do
-        [[ ! -d "$HOME/.bin/$d" ]] && continue
-        export PATH=$HOME/.bin/$d:$PATH
-    done
-fi
-export PATH=$HOME/.bin:$PATH
-export PATH=$HOME/.priv/bin:$PATH
-
-umask 022
+# if not running interactively then bail
+[[ $- != *i* ]] && return
 
 if [[ $OSTYPE == cygwin || $OSTYPE =~ solaris ]]; then
   export LS_COLORS="no=37:fi=37:*.zip=31:*.gz=31:*.tgz=31:*.tar=31:*.Z=31:*.bz2=31:di=36:ex=32:ln=33"
@@ -67,9 +20,6 @@ fi
 #  export TERMINFO=/usr/share/terminfo
 #fi
 
-#export EDITOR=/usr/local/bin/vim
-export EDITOR=vim
-export BROWSER=/usr/bin/chromium
 #export SCREENDIR=$HOME/.screen
 export BASH_ENV=$HOME/.bashrc
 export TEMP=/tmp
@@ -107,10 +57,10 @@ fi
 
 export DVT=swdvt.lab.irv.broadcom.com
 
-export P4EDITOR="vim"
+exists vim && export P4EDITOR=vim
 
 #export PACMAN=pacman-color
-alias pacman="yaourt"
+exists yaourt && alias pacman="yaourt"
 
 alias ipv6="sudo tcpdump -i eth1 -s 0 -XX -vvv ip6"
 #alias xrootevo="qiv -o black -x $HOME/pics/evo_chevy.jpg"
@@ -231,7 +181,6 @@ alias 5..="cd ../../../../.."
 alias ..6="cd ../../../../../.."
 alias 6..="cd ../../../../../.."
 
-
 export LESS='--no-init --RAW-CONTROL-CHARS --ignore-case'
 export PAGER="less"
 alias less="less"
@@ -296,8 +245,7 @@ alias nostalgic="$HOME/src/nostalgic/nostalgic"
 #    fi
 #}
 
-#function rdesk() { rdesktop -g 80% -K -0 -u $2 -p $3 $1; }
-function rdesk() { rdesktop -g 80% -K -0 $1; }
+function rdesk() { rdesktop -g 90% -r sound:local -K -0 $1; }
 function findsuid() { find $1 -xdev -type f \( -perm -u=s -o -perm -g=s \) -exec ls -l {} \;; }
 
 alias mypydoc="epydoc --html --no-frames --show-imports --graph=all -o mypydoc __builtin__ os sys commands string shlex getopt datetime urllib urllib2 httplib urlparse time re atom dateutil pytz gdata"
@@ -740,5 +688,23 @@ function fixkeys()
         xinput --set-prop 11 "Device Accel Adaptive Deceleration" 3
         xset m 1 50
     fi
+}
+
+function gitp4()
+{
+    PRJ=`basename $PWD`
+    if [ -f ../${PRJ}_p4 ] && [ -d ./.git ]; then
+        source ../${PRJ}_p4
+        git p4 $@
+    else
+        echo "Moo!"
+    fi
+}
+
+function gitp4clone()
+{
+    git p4 clone --verbose                      \
+                 --destination $P4GITPATH       \
+                 --use-client-spec $P4GITDEPOTS
 }
 
