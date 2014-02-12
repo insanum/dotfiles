@@ -545,12 +545,16 @@ function! MyColorScheme(scheme)
     colorscheme solarized
   endif
   hi Normal ctermfg=252 ctermbg=233
+  hi clear Comment
+  hi Comment ctermfg=33
   hi clear Visual
-  hi Visual ctermbg=235
+  hi Visual ctermbg=237
   hi clear Search
-  hi Search ctermfg=232 ctermbg=136
+  hi clear IncSearch
+  hi Search    ctermfg=255 ctermbg=18 cterm=bold
+  hi IncSearch ctermfg=255 ctermbg=18 cterm=bold
   hi clear Todo
-  hi Todo ctermfg=232 ctermbg=207
+  hi Todo ctermfg=232 ctermbg=207 cterm=bold
   hi CtrlPMatch ctermfg=40
   hi CtrlPPrtText ctermfg=40
   hi clear TabLineSel
