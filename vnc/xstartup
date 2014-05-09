@@ -30,8 +30,11 @@ fi
 xmodmap $HOME/.Xmodmap
 
 #urxvt &
-evilvte -e bash -li &
 
-exec /usr/bin/openbox
+xfce4-terminal -e 'bash -li' &
+exec /usr/bin/startxfce4
+
+#evilvte -e bash -li &
+#exec /usr/bin/openbox
 #exec /usr/bin/pekwm
 
