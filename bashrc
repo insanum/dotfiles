@@ -77,6 +77,7 @@ alias ldap="$HOME/.mutt/ldap"
 alias socks='ssh -ND 9999 edavis@insanum.com'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
+alias gn='tsocks geeknote'
 
 if [[ -f $HOME/.herbstluftwm_hacks ]]; then
     source $HOME/.herbstluftwm_hacks

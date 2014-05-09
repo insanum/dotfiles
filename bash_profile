@@ -54,6 +54,8 @@ fi
 [[ -d "/opt/SUNWspro/bin" ]]      && PATH="$PATH:/opt/SUNWspro/bin"
 [[ -d "/opt/sunstudio12.1/bin" ]] && PATH="$PATH:/opt/sunstudio12.1/bin"
 
+[[ -d "$HOME/linaro/gcc-linaro-aarch64" ]] && PATH="$PATH:/$HOME/linaro/gcc-linaro-aarch64"
+
 [[ -d "/cygdrive/c/edavis/usr/man" ]] && MANPATH="$MANPATH:/cygdrive/c/edavis/usr/man"
 
 [[ -d "/usr/man" ]]             && MANPATH="$MANPATH:/usr/man"
