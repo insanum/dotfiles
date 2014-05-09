@@ -120,7 +120,7 @@ if [[ $HOSTNAME = eadmaka ]]; then
   if [ -x $HOME/src/gcalcli/gcalcli ] ; then 
     while true
     do
-        $HOME/src/gcalcli/gcalcli --cal="davis" remind &> /tmp/gcalcli.txt
+        $HOME/src/gcalcli/gcalcli remind &> /tmp/gcalcli.txt
         sleep 300
     done &
   fi
