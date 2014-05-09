@@ -104,6 +104,8 @@ color body magenta default "^New Owner:"
 color body magenta default "^Old State:.*New State:.*$"
 
 # Misc things I want to stand out in calendar invites (from 'gcalcli import -d' output)
+color body color190 default "^Status\..*$"
+color body brightcolor160 default "^Status\..*CANCELLED$"
 color body color171 default "^Event\..*$"
 color body color171 default "^Local Start\..*$"
 color body color171 default "^Local End\..*$"
