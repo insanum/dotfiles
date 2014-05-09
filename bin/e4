@@ -1,6 +1,7 @@
 #!/usr/bin/python2
 
 p4bin      = 'p4'
+p4port_ql  = 'pf-irv-cubasw.irv.broadcom.com:9002'
 p4port_sj  = 'pf-sj1-slb.sj.broadcom.com:1666'
 p4port_irv = 'pf-irva-ecs:1666' # irvine depot
 
@@ -119,7 +120,7 @@ p4port = p4port_irv
 # Process the command options
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'hdpqISw', ['nc'])
+    opts, args = getopt.getopt(sys.argv[1:], 'hdpqISQw', ['nc'])
 except getopt.error:
     Usage()
 
@@ -140,6 +141,8 @@ for opt, arg in opts:
         p4port = p4port_irv
     elif (opt == '-S'):
         p4port = p4port_sj
+    elif (opt == '-Q'):
+        p4port = p4port_ql
 
 if (len(args) == 0):
    Usage()
@@ -148,8 +151,13 @@ if (len(args) == 0):
 # get the client workspace name
 
 try:
-    clientName = re.match('^.*/work/([-_.0-9a-zA-Z]*)($|/.*$)',
-                          os.getcwd()).group(1)
+    if p4port == p4port_ql:
+        clientName = re.match('^.*/work/qlogic/([-_.0-9a-zA-Z]*)($|/.*$)',
+                              os.getcwd()).group(1)
+        print clientName
+    else:
+        clientName = re.match('^.*/work/([-_.0-9a-zA-Z]*)($|/.*$)',
+                              os.getcwd()).group(1)
 except AttributeError:
     clientName = ''
     #PrintErrMsg('Bite me...\n')
@@ -223,8 +231,12 @@ if ((args[0] == 'mods') or (args[0] == 'update')):
         fmt = '%3s/%-3s %-3s %s\n'
 
         fullFileName = data['clientFile']
-        relFileName = re.match('^.*/work/' + clientName + '/(.*)$',
-                               fullFileName).group(1)
+        if p4port == p4port_ql:
+            relFileName = re.match('^.*/work/qlogic/' + clientName + '/(.*)$',
+                                   fullFileName).group(1)
+        else:
+            relFileName = re.match('^.*/work/' + clientName + '/(.*)$',
+                                   fullFileName).group(1)
 
         openFlagNone   = '  '
         deleteFlagNone = ' '
