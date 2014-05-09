@@ -10,6 +10,14 @@ EMAIL_ADDRS = '/scratch/edavis/.notmuch_addrs'
 LDAP_SERVER = 'ldap://ldap.broadcom.com'
 LDAP_BASEDN = 'dc=broadcom,dc=com'
 
+def recurse_thread(thread):
+    if type(thread) is dict:
+        if thread['headers']['From']:
+            print thread['headers']['From'].encode('utf-8')
+    elif type(thread) is list:
+        for i in thread:
+            recurse_thread(i)
+
 if len(sys.argv) < 2 or \
    (sys.argv[1] != 'getfrom' and sys.argv[1] != 'search'):
     sys.exit(1)
@@ -18,8 +26,7 @@ if sys.argv[1] == 'getfrom':
     jdata = sys.stdin.read()
     messages = json.loads(jdata)
     for m in messages:
-        if m[0][0]['headers']['From']:
-            print m[0][0]['headers']['From'].encode('utf-8')
+        recurse_thread(m)
 else: # 'search'
     addrs = []
 
