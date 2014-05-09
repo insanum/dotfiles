@@ -25,16 +25,23 @@ bgcolor="#000"
 selbg="#0F0"
 selfg="#000"
 ICONS=/usr/share/icons/stlarch_icons
+pomodoro_block=5    # minutes
+window_title_len=60 # chars
 
 NET_SLEEP=1
 NETI=eth0
-[[ $HOSTNAME = "eadmaka" ]] && NETI=eth1
+[[ $HOSTNAME = "eadmaka" ]] && NETI=kvmbr0
 [[ $HOSTNAME = "tiburon" ]] && NETI=wlan0
 IFDATA=(${NETI} 0 0 0 0) # array stores previous byte counts and rates
 
 function uniq_linebuffered()
 {
     awk '$0 != l { print ; l=$0 ; fflush(); }' "$@"
+}
+
+function linebuffered()
+{
+    awk '{ printf "%s\n",$0; fflush(); }' "$@"
 }
 
 function linebuffered_with_cpu_prefix()
@@ -85,6 +92,26 @@ herbstclient pad $monitor $ph
     # Gatherers that spew events...
     # -> each event line formatted as "<tag> <data>\n"
 
+    # pomodoro
+    POMODORO_CNT=0
+    while true ; do
+        if [[ -f $HOME/.pomodoro ]]; then
+            $((POMODORO_CNT += 1))
+            if [[ $POMODORO_CNT -eq $((pomodoro_block * 60 * 5)) ]]; then
+                DISPLAY=:0.0 notify-send -u critical -a pomodoro "Take a break!"
+            fi
+            if [[ $POMODORO_CNT -eq $((pomodoro_block * 60 * 6)) ]]; then
+                DISPLAY=:0.0 notify-send -u critical -a pomodoro "Back to work!"
+                POMODORO_CNT=1
+            fi
+        else
+            POMODORO_CNT=0
+        fi
+        echo "pomodoro $POMODORO_CNT"
+        sleep 1 || break
+    done > >(linebuffered) &
+    pomodoro_pid=$!
+
     # date
     while true ; do
         date +'date ^fg(#efefef)%H:%M ^fg(#909090)%m-^fg(#efefef)%d'
@@ -124,6 +151,7 @@ herbstclient pad $monitor $ph
 
     herbstclient --idle
 
+    kill $pomodoro_pid
     kill $date_pid
     kill $cpu_pid
     kill $network_pid
@@ -140,11 +168,51 @@ herbstclient pad $monitor $ph
     mem=""
     disk=""
     windowtitle=""
+    pomodoro=0
     separator="^bg()^fg(magenta) .:. "
 
     while true ; do
 
         echo -n "^fg(cyan)^i(${ICONS}/arch1.xbm) "
+
+        echo -n "^fg(orange)["
+        if [[ $pomodoro -ne 0 ]]; then
+            if [[ $pomodoro -ge $((pomodoro_block * 60 * 1)) ]]; then
+                echo -n "^fg(green)^i(${ICONS}/dice1.xbm) "
+            else
+                echo -n "^fg(red)^i(${ICONS}/dice1.xbm) "
+            fi
+
+            if [[ $pomodoro -ge $((pomodoro_block * 60 * 2)) ]]; then
+                echo -n "^fg(green)^i(${ICONS}/dice2.xbm) "
+            else
+                echo -n "^fg(red)^i(${ICONS}/dice2.xbm) "
+            fi
+
+            if [[ $pomodoro -ge $((pomodoro_block * 60 * 3)) ]]; then
+                echo -n "^fg(green)^i(${ICONS}/dice3.xbm) "
+            else
+                echo -n "^fg(red)^i(${ICONS}/dice3.xbm) "
+            fi
+
+            if [[ $pomodoro -ge $((pomodoro_block * 60 * 4)) ]]; then
+                echo -n "^fg(green)^i(${ICONS}/dice4.xbm) "
+            else
+                echo -n "^fg(red)^i(${ICONS}/dice4.xbm) "
+            fi
+
+            if [[ $pomodoro -ge $((pomodoro_block * 60 * 5)) ]]; then
+                echo -n "^fg(green)^i(${ICONS}/dice5.xbm) "
+                echo -n "^fg(yellow)^i(${ICONS}/monocle.xbm)"
+            else
+                echo -n "^fg(red)^i(${ICONS}/dice5.xbm) "
+                echo -n "^fg(red)^i(${ICONS}/monocle.xbm)"
+            fi
+        else
+            echo -n "^fg(yellow)^i(${ICONS}/monocle.xbm)"
+        fi
+        echo -n "^fg(orange)] "
+        #echo -n "^fg(magenta)$pomodoro "
 
         echo -n "^bg()^fg(green)^i(${ICONS}/cpu13.xbm) ${cpu} "
 
@@ -186,6 +254,7 @@ herbstclient pad $monitor $ph
         # compute width of right aligned text for absolute positioning
         # escape '^' in window title for dzen2
         # nasty sed regex extracts text (removes '^^' and '^xx(xx)')
+        windowtitle=$(echo ${windowtitle} | iconv -f utf8 -t ascii//TRANSLIT | cut -c-${window_title_len})
         right="^bg()^fg()${windowtitle//^/^^}${tagtext}^bg()${date}${separator}"
         right_text=$(echo -n "$right" | sed -r 's.\^(\^|[^(^]*\([^)^]*\))..g')
 
@@ -204,6 +273,9 @@ herbstclient pad $monitor $ph
         case "${cmd[0]}" in
             tag*)
                 TAGS=( $(herbstclient tag_status $monitor) )
+                ;;
+            pomodoro)
+                pomodoro="${cmd[@]:1}"
                 ;;
             date)
                 date="${cmd[@]:1}"

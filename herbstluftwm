@@ -10,12 +10,12 @@ hc keyunbind   --all
 hc mouseunbind --all
 hc unrule      --all
 
-hc keybind $Mod-Shift-q quit
+#hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
-hc keybind $Mod-Shift-o spawn bash -c hclo
-hc keybind $Mod-Shift-s spawn bash -c hc_smplayer
-hc keybind $Mod-Return  spawn evilvte
+hc keybind $Mod-Shift-o spawn bash -li -c hclo
+hc keybind $Mod-Shift-s spawn bash -li -c hc_smplayer
+hc keybind $Mod-Return  spawn evilvte -e bash -li
 hc keybind $Mod-p       spawn dwm_launch prog
 hc keybind $Mod-Shift-p spawn dwm_launch smplayer
 hc keybind $Mod-q       spawn smplayer -send-action stop
@@ -117,7 +117,7 @@ hc set wmname LG3D
 hc rule                           focus=off # default do not focus new clients
 hc rule class=Chromium            tag=1
 hc rule class=Chrome              tag=1
-hc rule class=Firefox             tag=1
+hc rule class=Firefox             tag=2
 hc rule class=Thunderbird         tag=2
 hc rule class=Thunderbird-nightly tag=2
 hc rule class=Acroread            tag=3

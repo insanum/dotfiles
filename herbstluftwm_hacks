@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TERMEXEC='evilvte'
+TERMEXEC='evilvte -e bash -li'
 
 if [[ -f /etc/bash_completion.d/herbstclient-completion ]]; then
     source /etc/bash_completion.d/herbstclient-completion
