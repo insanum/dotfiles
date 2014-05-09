@@ -38,6 +38,7 @@ function ekvm_usage()
     echo -e "          console  <target>"
     echo -e "          monitor  <target>"
     echo -e "          vnc      <target>"
+    echo -e "          spice    <target>"
     echo -e "          reboot   <target>"
     echo -e "          reset    <target>"
     echo -e "          pause    <target>"
@@ -236,6 +237,10 @@ start)
         echo "WARNING: EKVM_VGA not defined"
     fi
 
+    if [[ -n "$EKVM_SPICE" ]]; then
+        ARGS="$ARGS -spice port=${EKVM_SPICE},disable-ticketing"
+    fi
+
     if [[ -n "$EKVM_ISO" ]]; then
         ARGS="$ARGS -cdrom $EKVM_ISO"
     fi
@@ -277,6 +282,9 @@ monitor)
     ;;
 vnc)
     vncviewer $EKVM_VNC &
+    ;;
+spice)
+    spicec --host 127.0.0.1 --port $EKVM_SPICE &
     ;;
 reboot)
     echo "reboot not implemented"
