@@ -150,6 +150,13 @@ if [[ $HOSTNAME = eadmaka || $HOSTNAME = jackshrimp ]]; then
     hc remove_monitor 1
     hc move_monitor 0 1920x1080+0+0
     hc add_monitor 1080x1920+1920+0 9
+elif [[ $HOSTNAME = tiburon ]]; then
+    if [[ -z $(xrandr | /bin/grep VGA1 | /bin/grep disconnected) ]]; then
+        hc remove_monitor 1
+        hc move_monitor 0 1600x900+0+0
+        #hc add_monitor 1280x1024+1600+0 9
+        hc add_monitor 1024x768+1600+0 9
+    fi
 fi
 
 [[ -x $HOME/.herbstluftwm_panel ]] && $HOME/.herbstluftwm_panel &
