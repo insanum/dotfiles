@@ -69,7 +69,10 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "Bundle "octave.vim"
   "Bundle "asciidoc.vim"
 
-  Bundle "https://github.com/plasticboy/vim-markdown.git"
+  Bundle "https://github.com/waylan/vim-markdown-extra-preview.git"
+  Bundle "https://github.com/nelstrom/vim-markdown-folding.git"
+
+  Bundle "https://github.com/kergoth/vim-hilinks.git"
 
 endif
 
@@ -404,6 +407,10 @@ iab Cstruct typedef struct<CR>{<CR>} XXX;<CR><ESC>3k$a
 "source $VIMRUNTIME/syntax/syntax.vim
 syntax enable
 
+map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 " AUTOCOMMAND STUFF
 
 autocmd Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
@@ -444,7 +451,7 @@ autocmd FileType c,cc,cpp set comments+=f://
 autocmd FileType vim set comments-=:\"
 autocmd FileType vim set comments+=f:\"
 
-autocmd BufReadPre,FileReadPre *.txt,*.TXT,.*.org,*.otl,*.votl set textwidth=79
+autocmd BufReadPre,FileReadPre *.txt,*.TXT,.*.org,*.otl,*.votl,*.markdown,*.md set textwidth=79
 "autocmd BufReadPre,FileReadPre *.html set textwidth=75
 autocmd Syntax svn set textwidth=76
 autocmd Syntax qf set textwidth=0
@@ -625,6 +632,9 @@ let g:EnhCommentifyAlignRight='yes'
 let g:EnhCommentifyRespectIndent='yes'
 let g:EnhCommentifyUseBlockIndent='yes'
 let g:EnhCommentifyBindInInsert='no'
+
+let g:VMEPextensions=['extra', 'codehilite']
+let g:VMEPtemplate=expand('./template.html')
 
 function! s:check_pager_mode()
   if exists("g:loaded_less") && g:loaded_less
@@ -978,14 +988,14 @@ function! VotlColors()
   endfor
 
   " color for user text
-  for i in range(1, 9)
-     execute "hi UT" . i . " ctermfg=41"
-  endfor
+  "for i in range(1, 9)
+  "   execute "hi UT" . i . " ctermfg=41"
+  "endfor
 
   " color for pre-formatted user text
-  for i in range(1, 9)
-     execute "hi UP" . i . " ctermfg=51"
-  endfor
+  "for i in range(1, 9)
+  "   execute "hi UP" . i . " ctermfg=51"
+  "endfor
 
   hi VotlTags       ctermfg=253 ctermbg=21
   hi VotlDate       ctermfg=129
