@@ -5,7 +5,6 @@ set delete=yes
 set move=no
 
 set sendmail="/usr/bin/msmtp -C $HOME/.mutt/rc_brcm_msmtp"
-set query_command = "$HOME/email_addrs '%s'"
 
 set folder=
 set spoolfile=

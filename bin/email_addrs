@@ -1,37 +1,63 @@
 #!/usr/bin/env python
 
-import sys, re, ldap
+import os, sys, re, ldap, notmuch, email
 try:
     from simplejson import json
 except ImportError:
     import json
 
-EMAIL_ADDRS = '/scratch/edavis/.notmuch_addrs'
 LDAP_SERVER = 'ldap://ldap.broadcom.com'
 LDAP_BASEDN = 'dc=broadcom,dc=com'
 
-def recurse_thread(thread):
-    if type(thread) is dict:
-        if thread['headers']['From']:
-            print thread['headers']['From'].encode('utf-8')
-    elif type(thread) is list:
-        for i in thread:
-            recurse_thread(i)
-
-if len(sys.argv) < 2 or \
-   (sys.argv[1] != 'getfrom' and sys.argv[1] != 'search'):
+if len(sys.argv) < 3 or \
+   (sys.argv[2] != 'getaddrs_all' and \
+    sys.argv[2] != 'getaddrs_new' and \
+    sys.argv[2] != 'search'):
+    print "ERROR: Unknown command!"
     sys.exit(1)
 
-if sys.argv[1] == 'getfrom':
-    jdata = sys.stdin.read()
-    messages = json.loads(jdata)
-    for m in messages:
-        recurse_thread(m)
+if sys.argv[1] == 'broadcom':
+    db_path = os.environ['HOME'] + '/Maildir'
+    EMAIL_ADDRS = '/scratch/edavis/.notmuch_addrs_broadcom'
+elif sys.argv[1] == 'freebsd':
+    db_path = os.environ['HOME'] + '/Maildir_FreeBSD'
+    EMAIL_ADDRS = '/scratch/edavis/.notmuch_addrs_freebsd'
+else:
+    print "ERROR: Unknown notmuch database!"
+    sys.exit(1)
+
+def dump_addrs_from_notmuch_list(msgs):
+    for m in msgs:
+        try:
+            from_addrs = m.get_header('From').encode('utf-8')
+            to_addrs = m.get_header('To').encode('utf-8')
+        except notmuch.errors.NullPointerError:
+            continue
+        hdr = email.message_from_string('From: ' + from_addrs)
+        for a in email.utils.getaddresses(hdr.get_all('From', [])):
+            print a[0] + ' <' + a[1] + '>'
+        hdr = email.message_from_string('To: ' + to_addrs)
+        for a in email.utils.getaddresses(hdr.get_all('To', [])):
+            print a[0] + ' <' + a[1] + '>'
+
+if sys.argv[2] == 'getaddrs_all':
+
+    db = notmuch.Database(db_path, create=False)
+    msgs = notmuch.Query(db, '').search_messages()
+    dump_addrs_from_notmuch_list(msgs)
+
+elif sys.argv[2] == 'getaddrs_new':
+
+    db = notmuch.Database(db_path, create=False)
+    msgs = notmuch.Query(db, 'tag:new').search_messages()
+    dump_addrs_from_notmuch_list(msgs)
+
 else: # 'search'
+
     addrs = []
 
     ld = ldap.initialize(LDAP_SERVER)
-    query = '(|(cn=*' + sys.argv[2] + '*)(mail=*' + sys.argv[2] + '*))'
+    query = '(|(cn=*' + sys.argv[3] + '*)(mail=*' + sys.argv[3] + '*))'
     results = ld.search_st(LDAP_BASEDN, ldap.SCOPE_SUBTREE,
                            query, ['cn','mail'], timeout=10)
     for dn,entry in results:
@@ -41,7 +67,7 @@ else: # 'search'
     f = open(EMAIL_ADDRS, 'r')
     for a in f.readlines():
         a = a.strip()
-        if re.search(sys.argv[2], a, re.IGNORECASE):
+        if re.search(sys.argv[3], a, re.IGNORECASE):
             addrs.append(a)
 
     addrs = sorted(list(set(addrs)), key=str.lower) # lol

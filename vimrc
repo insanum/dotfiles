@@ -368,7 +368,7 @@ function! EMAIL_OMNI(findstart, base)
         if a:base == ""
             return res
         endif
-        let data=split(system("$HOME/.bin/email_addrs search " . a:base), "\n")
+        let data=split(system("$HOME/.bin/email_addrs broadcom search " . a:base), "\n")
         for line in data
             call add(res, line)
         endfor

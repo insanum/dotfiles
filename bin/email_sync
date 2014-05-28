@@ -5,15 +5,14 @@ MBSYNCRC=$HOME/.priv/mbsyncrc
 NOTMUCH=notmuch
 AFEW=afew
 
-ADDRS=~/.notmuch_addrs
 EMAIL_ADDRS=~/.bin/email_addrs
 
-# Prime ~/.notmuch_addrs with:
-if [[ ! -f $ADDRS ]]; then
-    tmp=`mktemp`
-    notmuch --config=$HOME/.notmuch-broadcom-config show --format=json --body=false from:\* | $EMAIL_ADDRS getfrom >> $tmp
-    notmuch --config=$HOME/.notmuch-freebsd-config show --format=json --body=false from:\* | $EMAIL_ADDRS getfrom >> $tmp
-    cat $tmp | sort | uniq --ignore-case > $ADDRS
+# Prime ~/.notmuch_addrs_xxx
+if [[ ! -f ~/.notmuch_addrs_broadcom ]]; then
+    $EMAIL_ADDRS broadcom getaddrs_all | sort -u > ~/.notmuch_addrs_broadcom
+fi
+if [[ ! -f ~/.notmuch_addrs_freebsd ]]; then
+    $EMAIL_ADDRS freebsd getaddrs_all | sort -u > ~/.notmuch_addrs_freebsd
 fi
 
 # get_email <title> <mbsync_target> <notmuch_config>
@@ -25,18 +24,17 @@ function get_email()
     echo "AFEW";     $AFEW -C $3 --tag --new -vv
 
     echo "GETADDRS"
-
     tmp=`mktemp`
-    cp $ADDRS $tmp
-    $NOTMUCH --config=$3 show --format=json --body=false from:\* tag:new | $EMAIL_ADDRS getfrom >> $tmp
-    cat $tmp | sort | uniq --ignore-case > $ADDRS
-    rm -f $tmp
+    cp ~/.notmuch_addrs_$1 $tmp
+    $EMAIL_ADDRS $1 getaddrs_new >> $tmp
+    cat $tmp | sort -u > ~/.notmuch_addrs_$1
+    /bin/rm -f $tmp
 
     echo "DONE!"
 }
 
-get_email BROADCOM broadcom-sync $HOME/.notmuch-broadcom-config >> ~/email_sync_broadcom.log 2>&1
+get_email broadcom broadcom-sync $HOME/.notmuch-broadcom-config >> ~/email_sync_broadcom.log 2>&1
 
 # XXX Verify the SSH tunnel is up or mbsync will hang!
-get_email FREEBSD gmail-freebsd-sync $HOME/.notmuch-freebsd-config >> ~/email_sync_freebsd.log 2>&1
+get_email freebsd gmail-freebsd-sync $HOME/.notmuch-freebsd-config >> ~/email_sync_freebsd.log 2>&1
 
