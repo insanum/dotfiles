@@ -120,7 +120,7 @@ def view_html_message(mbox, tmpdir):
     # Now we have the file. Call firefox on it.
     # XXX print "Calling firefox -new-window file://" + htmlfile
     # XXX os.system("firefox -new-window file://" + htmlfile)
-    print "Calling vimprobable2 -new-window file://" + htmlfile
+    print "Calling vimprobable2 file://" + htmlfile
     os.system("vimprobable2 file://" + htmlfile)
 
     # Wait a while to make sure firefox has loads the imgaes, then clean up.
