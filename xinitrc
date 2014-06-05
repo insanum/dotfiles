@@ -40,9 +40,9 @@ elif [[ $HOSTNAME = tiburon ]]; then
 fi
 
 ## Source scripts in /etc/X11/xinit/xinitrc.d/
-#if [ -d /etc/X11/xinit/xinitrc.d ]; then
+#if [[ -d /etc/X11/xinit/xinitrc.d ]]; then
 #    for f in /etc/X11/xinit/xinitrc.d/*; do
-#        [ -x "$f" ] && . "$f"
+#        [[ -x "$f" ]] && . "$f"
 #    done
 #    unset f
 #fi
@@ -66,7 +66,7 @@ else
 fi
 xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = jackshrimp ]]; then
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
     feh --bg-tile $HOME/unison/kole_evo_1920x1080.png
 else
     feh --bg-tile $HOME/unison/kole_evo_1680x1050.png
@@ -110,16 +110,16 @@ fi
 
 [[ -x /usr${LOCAL}/bin/wmname ]] && wmname LG3D
 
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = tiburon ]]; then
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = tiburon ]]; then
   #ssh -f -N -D 9999 -L 9993:imap.gmail.com:993 edavis@insanum.com
   autossh -M 20000 -f -N -D 9999 -L 9993:imap.gmail.com:993 edavis@insanum.com
 fi
 
 [[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start
 
-if [[ $HOSTNAME = eadmaka ]]; then
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
 
-  if [ -x $HOME/src/gcalcli/gcalcli ] ; then 
+  if [[ -x $HOME/src/gcalcli/gcalcli ]]; then 
     while true
     do
         $HOME/src/gcalcli/gcalcli remind &> /tmp/gcalcli.txt
