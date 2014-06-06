@@ -1,0 +1,41 @@
+#!/bin/bash
+
+DIRS=(/scratch/edavis/work /scratch/edavis/Maildir)
+
+BACKUP_LOCAL='/scratch2/backups/rdiff-backup'
+
+RDIFF_CMD='/usr/bin/rdiff-backup -v5'
+
+for d in ${DIRS[@]}; do
+  TMP=`basename ${d}`
+  ${RDIFF_CMD} --force --remove-older-than 4W ${BACKUP_LOCAL}/${TMP};
+  ${RDIFF_CMD} ${d} ${BACKUP_LOCAL}/${TMP};
+done
+
+exit
+
+DIRS=(/scratch/edavis/work /scratch/edavis/Maildir)
+
+BACKUP_LOCAL='/scratch/edavis/rdiff-backup'
+BACKUP_REMOTE='/scratch2/backups'
+
+RDIFF_CMD='/usr/bin/rdiff-backup -v5'
+
+echo -e '\n---------------------------------\n'
+
+for d in ${DIRS[@]}; do
+  TMP=`basename ${d}`
+  ${RDIFF_CMD} --force --remove-older-than 4W ${BACKUP_LOCAL}/${TMP};
+  ${RDIFF_CMD} ${d} ${BACKUP_LOCAL}/${TMP};
+done
+
+echo -e '\n---------------------------------\n'
+
+
+# backup to secondary local disk
+/usr/bin/rsync -ac -v --delete $BACKUP_LOCAL $BACKUP_REMOTE
+
+echo -e '\n---------------------------------\n'
+
+/bin/df -h
+
