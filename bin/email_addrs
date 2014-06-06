@@ -18,10 +18,10 @@ if len(sys.argv) < 3 or \
 
 if sys.argv[1] == 'broadcom':
     db_path = os.environ['HOME'] + '/Maildir'
-    EMAIL_ADDRS = '/scratch/edavis/.notmuch_addrs_broadcom'
+    EMAIL_ADDRS = os.environ['HOME'] + '/.notmuch_addrs_broadcom'
 elif sys.argv[1] == 'freebsd':
     db_path = os.environ['HOME'] + '/Maildir_FreeBSD'
-    EMAIL_ADDRS = '/scratch/edavis/.notmuch_addrs_freebsd'
+    EMAIL_ADDRS = os.environ['HOME'] + '/.notmuch_addrs_freebsd'
 else:
     print "ERROR: Unknown notmuch database!"
     sys.exit(1)

@@ -11,7 +11,7 @@
 # configured here named ".notmuch".
 #
 [database]
-path=/scratch/edavis/Maildir_FreeBSD
+path=/home/edavis/Maildir_FreeBSD
 
 # User configuration
 #

@@ -12,7 +12,7 @@
 #
 
 [database]
-path=/scratch/edavis/Maildir
+path=/home/edavis/Maildir
 
 # User configuration
 #
