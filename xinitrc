@@ -142,8 +142,8 @@ fi
 #exec openbox-session  # Why can't I move my config out from under XDG!?!?
 #exec pekwm            # lean and mean (perfect for vnc)
 
-#xcompmgr -c &
-#cairo-compmgr &
+# xcompmgr
+[[ -x /usr${LOCAL}/bin/compton ]] && compton -f -D 8
 
 #exec ratpoison # Lots of good times, but the love affair evaporated...
 #exec musca     # I love you, I hate you for not supporting multiple monitors!
