@@ -108,8 +108,8 @@ macro index T "<tag-thread>"
 macro index <esc>T "<tag-pattern>"
 
 macro index <tab> "<search>~Y unread\n"
-macro attach ,C "<pipe-entry>/scratch/edavis/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Eric Davis' import\n"
-macro attach ,c "<pipe-entry>/scratch/edavis/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Broadcom' import\n"
+macro attach ,C "<pipe-entry>$HOME/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Eric Davis' import\n"
+macro attach ,c "<pipe-entry>$HOME/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar='Broadcom' import\n"
 macro index  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/.bin/viewhtmlmail\n" "View HTML in browser"
 macro pager  ,h "<copy-message>/tmp/mutttmpbox\n<enter><shell-escape>~/.bin/viewhtmlmail\n" "View HTML in browser"
 

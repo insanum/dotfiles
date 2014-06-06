@@ -1,7 +1,7 @@
 
 set query_command = "$HOME/.bin/email_addrs freebsd search '%s'"
 
-set nm_default_uri="notmuch:///scratch/edavis/Maildir_FreeBSD"
+set nm_default_uri="notmuch://$HOME/Maildir_FreeBSD"
 
 set hostname="broadcom.com"
 #set realname="Eric A. Davis"
