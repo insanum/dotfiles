@@ -1,7 +1,7 @@
 
 set query_command = "$HOME/.bin/email_addrs broadcom search '%s'"
 
-set nm_default_uri="notmuch:///scratch/edavis/Maildir"
+set nm_default_uri="notmuch://$HOME/Maildir"
 
 set hostname="broadcom.com"
 #set realname="Eric A. Davis"
