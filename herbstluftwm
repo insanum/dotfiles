@@ -84,7 +84,7 @@ hc mousebind $Mod-Button3 resize
 hc chain                                   . \
   set always_show_frame          1         . \
   set smart_frame_surroundings   1         . \
-  set smart_window_surroundings  1         . \
+  set smart_window_surroundings  0         . \
   set frame_gap                  8         . \
   set frame_padding              0         . \
   set window_gap                 2         . \

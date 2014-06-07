@@ -143,7 +143,9 @@ fi
 #exec pekwm            # lean and mean (perfect for vnc)
 
 # xcompmgr
-[[ -x /usr${LOCAL}/bin/compton ]] && compton -f -D 8
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
+    [[ -x /usr${LOCAL}/bin/compton ]] && compton -f -D 8 &
+fi
 
 #exec ratpoison # Lots of good times, but the love affair evaporated...
 #exec musca     # I love you, I hate you for not supporting multiple monitors!
