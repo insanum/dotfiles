@@ -35,6 +35,8 @@ if [[ $HOSTNAME = eadmaka ]]; then
     xrandr --output DP-1 --right-of DVI-I-1 --output DP-1 --rotate left
 elif [[ $HOSTNAME = jackshrimp ]]; then
     xrandr --output DVI-D-0 --right-of DVI-I-1 --output DVI-D-0 --rotate left
+elif [[ $HOSTNAME = skylark ]]; then
+    xrandr --output DP-0 --right-of DVI-I-1
 elif [[ $HOSTNAME = tiburon ]]; then
     xrandr --output VGA1 --right-of LVDS1
 fi

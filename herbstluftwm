@@ -105,10 +105,11 @@ hc chain                                   . \
   set window_border_inner_color  black     . \
   set window_border_urgent_color '#ffaa00'
 
-hc set raise_on_click           0  # prevents manage=off clients from being hidden
-hc set focus_follows_mouse      1
-hc set gapless_grid             0
-hc set swap_monitors_to_get_tag 0
+hc set raise_on_click                   0  # prevents manage=off clients from being hidden
+hc set focus_follows_mouse              1
+hc set focus_crosses_monitor_boundaries 0
+hc set gapless_grid                     0
+hc set swap_monitors_to_get_tag         0
 
 #hc set tree_style  "*| +`--."
 #hc set tree_style  "X|:#+*-."
@@ -152,6 +153,10 @@ if [[ $HOSTNAME = eadmaka || $HOSTNAME = jackshrimp ]]; then
     hc remove_monitor 1
     hc move_monitor 0 1920x1080+0+0
     hc add_monitor 1080x1920+1920+0 9
+elif [[ $HOSTNAME = skylark ]]; then
+    hc remove_monitor 1
+    hc move_monitor 0 1920x1080+0+0
+    hc add_monitor 1920x1080+1920+0 9
 elif [[ $HOSTNAME = tiburon ]]; then
     if [[ -z $(xrandr | /bin/grep VGA1 | /bin/grep disconnected) ]]; then
         hc remove_monitor 1

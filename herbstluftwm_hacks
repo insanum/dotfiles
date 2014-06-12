@@ -109,3 +109,14 @@ function hc_smplayer()
     smplayer -send-action open_file
 }
 
+function hc_movie()
+{
+    hc split vertical 0.85
+    hc focus down
+    hc split horizontal 0.3
+    hc spawn smplayer
+    sleep 1
+    hc focus right
+    hc spawn $TERMEXEC
+}
+
