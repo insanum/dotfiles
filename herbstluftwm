@@ -19,7 +19,8 @@ hc keybind $Mod-Return  spawn evilvte -e bash -li
 hc keybind $Mod-p       spawn dwm_launch prog
 hc keybind $Mod-Shift-p spawn dwm_launch smplayer
 hc keybind $Mod-q       spawn smplayer -send-action stop
-hc keybind $Mod-a       spawn smplayer -send-action play
+hc keybind $Mod-Shift-q spawn smplayer -send-action play
+hc keybind $Mod-a       spawn smplayer -send-action pause
 hc keybind $Mod-m       spawn                               \
     /usr/share/doc/herbstluftwm/examples/herbstcommander.sh \
         -fn xft:terminus:bold:size=14                       \
