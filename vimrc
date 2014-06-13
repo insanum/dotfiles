@@ -22,11 +22,6 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   " updating bundles
   "   :BundleInstall
 
-  " updating command-t
-  "   % cd ~/.vim/bundle/Command-T/ruby/command-t
-  "   % ruby extconf.rb
-  "   % make
-
   set rtp+=$HOME/.vim/vundle/
   call vundle#rc()
 
@@ -45,7 +40,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
   "Bundle "https://github.com/scrooloose/syntastic.git"
-  Bundle "https://github.com/Valloric/YouCompleteMe.git"
+  "Bundle "https://github.com/Valloric/YouCompleteMe.git"
   Bundle "javacomplete"
 
   Bundle "https://github.com/hsanson/vim-android.git"
@@ -73,6 +68,11 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "https://github.com/nelstrom/vim-markdown-folding.git"
 
   Bundle "https://github.com/kergoth/vim-hilinks.git"
+
+  Bundle "https://github.com/mrtazz/simplenote.vim.git"
+  if filereadable(expand("$HOME/.priv/simplenote_vimrc"))
+    source $HOME/.priv/simplenote_vimrc
+  endif
 
 endif
 
