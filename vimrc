@@ -14,6 +14,10 @@ let ostype=system('echo -n $OSTYPE')
 " git submodule update --init --recursive
 " ./install.sh --clang-completer
 
+" Simplenote setup:
+" cd ~/.vim/bundle/simplenote.vim
+" git submodule update --init
+
 if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   " Vundle/Vim Scripts
