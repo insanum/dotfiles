@@ -78,6 +78,7 @@ alias socks='ssh -ND 9999 edavis@insanum.com'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
 alias gn='tsocks geeknote'
+function sn() { vim -c ":Simplenote -l $1"; }
 
 if [[ -f $HOME/.herbstluftwm_hacks ]]; then
     source $HOME/.herbstluftwm_hacks

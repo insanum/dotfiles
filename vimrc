@@ -294,6 +294,13 @@ nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp
 " turn diff off for all windows in current tab
 nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
 
+" Simplenote stuff
+nmap <Leader>xn :Simplenote -n<CR>
+nmap <Leader>xu :Simplenote -u<CR>
+nmap <Leader>xt :Simplenote -t<CR>
+nmap <Leader>xm :set ft=markdown<CR>
+nmap <Leader>xv :set ft=votl<CR>
+
 " write visual data to $HOME/t
 vmap <Leader>w :w! $HOME/t<CR>
 map <Leader>r :r $HOME/t<CR>
