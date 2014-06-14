@@ -34,7 +34,8 @@ if [[ $HOSTNAME = eadmaka ]]; then
     # nouveau
     xrandr --output DP-1 --right-of DVI-I-1 --output DP-1 --rotate left
 elif [[ $HOSTNAME = jackshrimp ]]; then
-    xrandr --output DVI-D-0 --right-of DVI-I-1 --output DVI-D-0 --rotate left
+    #xrandr --output DVI-D-0 --right-of DVI-I-1 --output DVI-D-0 --rotate left
+    xrandr --output DVI-D-0 --right-of DVI-I-1
 elif [[ $HOSTNAME = skylark ]]; then
     xrandr --output DP-0 --right-of DVI-I-1
 elif [[ $HOSTNAME = tiburon ]]; then
@@ -112,9 +113,10 @@ fi
 
 [[ -x /usr${LOCAL}/bin/wmname ]] && wmname LG3D
 
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = tiburon ]]; then
-  #ssh -f -N -D 9999 -L 9993:imap.gmail.com:993 edavis@insanum.com
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
   autossh -M 20000 -f -N -D 9999 -L 9993:imap.gmail.com:993 edavis@insanum.com
+elif [[ $HOSTNAME = tiburon || $HOSTNAME = jackshrimp ]]; then
+  autossh -M 20000 -f -N -D 9999 edavis@insanum.com
 fi
 
 [[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start

@@ -150,11 +150,11 @@ hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' pseudotile=on
 #hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG'                  focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK)'     manage=off
 
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = jackshrimp ]]; then
+if [[ $HOSTNAME = eadmaka ]]; then
     hc remove_monitor 1
     hc move_monitor 0 1920x1080+0+0
     hc add_monitor 1080x1920+1920+0 9
-elif [[ $HOSTNAME = skylark ]]; then
+elif [[ $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
     hc remove_monitor 1
     hc move_monitor 0 1920x1080+0+0
     hc add_monitor 1920x1080+1920+0 9
