@@ -21,6 +21,10 @@ hc keybind $Mod-Shift-p spawn dwm_launch smplayer
 hc keybind $Mod-q       spawn smplayer -send-action stop
 hc keybind $Mod-Shift-q spawn smplayer -send-action play
 hc keybind $Mod-a       spawn smplayer -send-action pause
+hc keybind $Mod-Shift-Left  spawn smplayer -send-action rewind1
+hc keybind $Mod-Shift-Right spawn smplayer -send-action forward1
+hc keybind $Mod-Shift-Up    spawn smplayer -send-action forward2
+hc keybind $Mod-Shift-Down  spawn smplayer -send-action rewind2
 hc keybind $Mod-m       spawn                               \
     /usr/share/doc/herbstluftwm/examples/herbstcommander.sh \
         -fn xft:terminus:bold:size=14                       \
@@ -108,7 +112,7 @@ hc chain                                   . \
 
 hc set raise_on_click                   0  # prevents manage=off clients from being hidden
 hc set focus_follows_mouse              1
-hc set focus_crosses_monitor_boundaries 0
+hc set focus_crosses_monitor_boundaries 1
 hc set gapless_grid                     0
 hc set swap_monitors_to_get_tag         0
 
