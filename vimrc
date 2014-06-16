@@ -299,11 +299,20 @@ nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp
 nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
 
 " Simplenote stuff
-nmap <Leader>xn :Simplenote -n<CR>
-nmap <Leader>xu :Simplenote -u<CR>
-nmap <Leader>xt :Simplenote -t<CR>
-nmap <Leader>xm :set ft=markdown<CR>
-nmap <Leader>xv :set ft=votl<CR>
+nmap <Leader><Leader>sn  :Simplenote -n<CR>
+nmap <Leader><Leader>su  :Simplenote -u<CR>
+nmap <Leader><Leader>st  :Simplenote -t<CR>
+nmap <Leader><Leader>sl  :Simplenote -l<CR>
+nmap <Leader><Leader>sd  :Simplenote -d<CR>
+nmap <Leader><Leader>sm  :set ft=markdown<CR>
+nmap <Leader><Leader>sv  :set ft=votl<CR>
+function! SimplenoteTags()
+    call inputsave()
+    let tags = input('Tags: ')
+    call inputrestore()
+    execute 'Simplenote -l ' . tags
+endfunction
+nmap <Leader><Leader>slt :call SimplenoteTags()<CR>
 
 " write visual data to $HOME/t
 vmap <Leader>w :w! $HOME/t<CR>
