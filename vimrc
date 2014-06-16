@@ -74,6 +74,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "https://github.com/kergoth/vim-hilinks.git"
 
   Bundle "https://github.com/mrtazz/simplenote.vim.git"
+  let g:SimplenotePinnedMark=1
   if filereadable(expand("$HOME/.priv/simplenote_vimrc"))
     source $HOME/.priv/simplenote_vimrc
   endif
@@ -299,13 +300,15 @@ nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp
 nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
 
 " Simplenote stuff
-nmap <Leader><Leader>sn  :Simplenote -n<CR>
-nmap <Leader><Leader>su  :Simplenote -u<CR>
-nmap <Leader><Leader>st  :Simplenote -t<CR>
-nmap <Leader><Leader>sl  :Simplenote -l<CR>
-nmap <Leader><Leader>sd  :Simplenote -d<CR>
-nmap <Leader><Leader>sm  :set ft=markdown<CR>
-nmap <Leader><Leader>sv  :set ft=votl<CR>
+nmap <Leader><Leader>sn :Simplenote -n<CR>
+nmap <Leader><Leader>su :Simplenote -u<CR>
+nmap <Leader><Leader>st :Simplenote -t<CR>
+nmap <Leader><Leader>sl :Simplenote -l<CR>
+nmap <Leader><Leader>sd :Simplenote -d<CR>
+nmap <Leader><Leader>sp :Simplenote -p<CR>
+nmap <Leader><Leader>sP :Simplenote -P<CR>
+nmap <Leader><Leader>sm :set ft=markdown<CR>
+nmap <Leader><Leader>sv :set ft=votl<CR>
 function! SimplenoteTags()
     call inputsave()
     let tags = input('Tags: ')
@@ -471,6 +474,8 @@ autocmd FileType c,cc,cpp set comments+=f://
 autocmd FileType vim set comments-=:\"
 autocmd FileType vim set comments+=f:\"
 
+autocmd FileType votl,txt set textwidth=79
+
 autocmd BufReadPre,FileReadPre *.txt,*.TXT,.*.org,*.otl,*.votl,*.markdown,*.md set textwidth=79
 "autocmd BufReadPre,FileReadPre *.html set textwidth=75
 autocmd Syntax svn set textwidth=76
@@ -630,7 +635,7 @@ map <Leader>< :call MySwitchTransparency()<CR>
 autocmd syntax * runtime syntax/RainbowParenthsis.vim
 
 if ostype == "solaris2.10"
-  let g:tagbar_ctags_bin       = '/opt/csw/bin/ectags'
+  let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
 elseif ostype == "solaris2.11"
   let g:tagbar_ctags_bin = '/usr/bin/exctags'
 else
