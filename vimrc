@@ -74,7 +74,8 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   Bundle "https://github.com/kergoth/vim-hilinks.git"
 
   Bundle "https://github.com/mrtazz/simplenote.vim.git"
-  let g:SimplenotePinnedMark=1
+  let g:SimplenoteStrftime="%Y%m%d"
+  let g:SimplenoteNoteFormat="[%D] %F %N%>%T"
   if filereadable(expand("$HOME/.priv/simplenote_vimrc"))
     source $HOME/.priv/simplenote_vimrc
   endif
@@ -133,6 +134,7 @@ set winminwidth=5
 set noequalalways
 set pumheight=20
 set hidden
+set verbosefile=$HOME/vim_verbose.txt
 
 set swapfile
 if !isdirectory(expand('$HOME/.vim_swap'))
@@ -163,6 +165,7 @@ set vb t_vb=
 
 " Mappings
 
+nmap <C-k> :res<CR>
 nmap <C-l> :w<CR>
 nmap <Leader><C-l> :redraw!<CR>
 

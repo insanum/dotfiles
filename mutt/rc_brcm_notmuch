@@ -24,3 +24,6 @@ set sort_browser=unsorted
 
 source $HOME/.mutt/notmuch
 
+alias spam spam@access.ironport.com
+alias ham  ham@access.ironport.com
+
