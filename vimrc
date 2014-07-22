@@ -73,13 +73,14 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   Bundle "https://github.com/kergoth/vim-hilinks.git"
 
-  Bundle "https://github.com/mrtazz/simplenote.vim.git"
-  let g:SimplenoteStrftime="%Y%m%d"
-  let g:SimplenoteNoteFormat="[%D] %F %N%>%T"
-  if filereadable(expand("$HOME/.priv/simplenote_vimrc"))
-    source $HOME/.priv/simplenote_vimrc
-  endif
+  "Bundle "https://github.com/mrtazz/simplenote.vim.git"
+  "let g:SimplenoteStrftime="%Y%m%d"
+  "let g:SimplenoteNoteFormat="[%D] %F %N%>%T"
+  "if filereadable(expand("$HOME/.priv/simplenote_vimrc"))
+  "  source $HOME/.priv/simplenote_vimrc
+  "endif
 
+  Bundle "https://github.com/yuratomo/w3m.vim.git"
 endif
 
 "------------------------------------------------
