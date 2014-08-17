@@ -157,7 +157,10 @@ fi
 #exec xmonad    # xmonad, you rule... but Haskell? Really!?!?
 #exec wmfs -C ~/.wmfsrc # Yikes, bar happy and a bit over-engineered no?
 #exec i3 --force-xinerama -V > ~/.i3/i3log 2>&1 # Meh.
-exec herbstluftwm --autostart ~/.herbstluftwm # :-) :-) :-)
+#exec herbstluftwm --autostart ~/.herbstluftwm # Love it!
+
+sxhkd -c $HOME/.sxhkdrc &
+exec bspwm -c $HOME/.bspwmrc
 
 # I seem to always fall back to DWM...
 

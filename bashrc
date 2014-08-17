@@ -84,6 +84,12 @@ if [[ -f $HOME/.herbstluftwm_hacks ]]; then
     source $HOME/.herbstluftwm_hacks
 fi
 
+function bspc_config_desktops() {
+    for d in $(bspc query -D); do
+        bspc config -d $d $1 $2
+    done
+}
+
 function cmdfu()
 {
     local t=~/cmdfu;
