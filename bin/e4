@@ -154,7 +154,6 @@ try:
     if p4port == p4port_ql:
         clientName = re.match('^.*/work/qlogic/([-_.0-9a-zA-Z]*)($|/.*$)',
                               os.getcwd()).group(1)
-        print clientName
     else:
         clientName = re.match('^.*/work/([-_.0-9a-zA-Z]*)($|/.*$)',
                               os.getcwd()).group(1)
