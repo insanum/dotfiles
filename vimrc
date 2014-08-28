@@ -145,7 +145,7 @@ set directory^=$HOME/.vim_swap//
 
 " requires 'print_vim' or 'print' shell script (i.e. Cygwin/Windows Ghostscript wrapper)
 "set printexpr=system('print_vim\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
-nmap <Leader>ha :!enscript -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true %:p<CR>
+nmap <Leader>ha :!enscript -M Letter -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true %:p<CR>
 
 " Here is were the *real* magic is (when programming)...
 set tabstop=4
