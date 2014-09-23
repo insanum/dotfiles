@@ -76,7 +76,10 @@ else
 fi
 
 #$HOME/bin/mpc_osd_py &
-#pidgin &
+
+if [[ $HOSTNAME = skylarkc ]]; then
+    [[ -x /usr/bin/pidgin ]] && pidgin &
+fi
 
 #[[ -x /usr${LOCAL}/bin/xbindkeys ]] && xbindkeys
 
