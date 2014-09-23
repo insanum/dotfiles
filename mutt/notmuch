@@ -96,13 +96,18 @@ macro index A "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-t
 macro pager a "<exit>a" "Archive message"
 macro pager A "<exit>A" "Archive thread"
 
-macro index ,d "<tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete tagged messages"
+#macro index ,d "<tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete tagged messages"
+bind index ,d noop
 
-macro index d "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete message"
-macro index D "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete thread"
+#macro index d "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete message"
+#macro index D "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread -archive +deleted\n<untag-pattern>.*\n" "Delete thread"
+bind index d noop
+bind index D noop
 
-macro pager d "<exit>d" "Delete message"
-macro pager D "<exit>D" "Delete thread"
+#macro pager d "<exit>d" "Delete message"
+#macro pager D "<exit>D" "Delete thread"
+bind pager d noop
+bind pager D noop
 
 macro index T "<tag-thread>"
 macro index <esc>T "<tag-pattern>"

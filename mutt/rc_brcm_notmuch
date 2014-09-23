@@ -18,7 +18,10 @@ virtual-mailboxes                                                               
     "flagged"    "notmuch://?query=tag:flagged"                                  \
     "todo"       "notmuch://?query=tag:todo"                                     \
     "perforce"   "notmuch://?query=tag:perforce"                                 \
-    "clearquest" "notmuch://?query=tag:clearquest"
+    "clearquest" "notmuch://?query=tag:clearquest"                               \
+    "invites"    "notmuch://?query=tag:invites"                                  \
+    "docsafe"    "notmuch://?query=tag:docsafe"                                  \
+    "spam"       "notmuch://?query=tag:spam"
 set virtual_spoolfile=yes
 set sort_browser=unsorted
 

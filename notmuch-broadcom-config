@@ -52,7 +52,7 @@ other_email=edavis@insanum.com;edavis@FreeBSD.org
 
 [new]
 #tags=unread;inbox;
-tags=new;
+tags=new
 ignore=
 
 # Search configuration
@@ -66,7 +66,7 @@ ignore=
 #
 
 [search]
-exclude_tags=deleted;spam;
+exclude_tags=deleted;spam
 
 # Maildir compatibility configuration
 #
@@ -92,3 +92,4 @@ exclude_tags=deleted;spam;
 
 [maildir]
 synchronize_flags=true
+
