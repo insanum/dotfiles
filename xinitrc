@@ -77,7 +77,7 @@ fi
 
 #$HOME/bin/mpc_osd_py &
 
-if [[ $HOSTNAME = skylarkc ]]; then
+if [[ $HOSTNAME = skylark ]]; then
     [[ -x /usr/bin/pidgin ]] && pidgin &
 fi
 
@@ -151,7 +151,7 @@ fi
 
 # xcompmgr
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
-    [[ -x /usr${LOCAL}/bin/compton ]] && compton -f -D 8 &
+    [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 -i 0.8 -e 0.8 &
 fi
 
 #exec ratpoison # Lots of good times, but the love affair evaporated...
