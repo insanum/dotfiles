@@ -29,6 +29,8 @@ fi
 
 xmodmap $HOME/.Xmodmap
 
+[[ -x /usr${LOCAL}/bin/dunst ]] && dunst -config $HOME/.dunstrc &
+
 #urxvt &
 
 xfce4-terminal -e 'bash -li' &
