@@ -39,7 +39,8 @@ cursor_shape = block
 foreground = #dcdccc
 foreground_bold = #ffffff
 #foreground_dim = #888888
-background = #000000
+#background = #000000
+background = #121212
 #cursor = #dcdccc
 
 # if unset, will reverse foreground and background
