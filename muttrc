@@ -391,7 +391,7 @@ set my_delete=$delete
 #macro index <F11> "<shell-escape>mu find -c -l ~/Maildir/search " "mu find"
 #macro index <F12> "<change-folder-readonly>=search<enter>" "mu results"
 
-macro index <F9>  "<sync-mailbox><shell-escape>echo 'Sync'ing...'; ~/.bin/email_sync; echo 'Biff'ing...'; ~/.priv/bin/notmuch_biff -a; echo 'Done!'<enter>" "Email sync mbsync/notmuch/afew/biff"
+macro index <F9>  "<sync-mailbox><shell-escape>echo 'Syncing...'; ~/.bin/email_sync; echo 'Biffing...'; ~/.priv/bin/notmuch_biff -a; echo 'Done!'<enter>" "Email sync mbsync/notmuch/afew/biff"
 macro index <F10> "<vfolder-from-query>" "notmuch search"
 
 # ---------------------------
