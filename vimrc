@@ -81,6 +81,8 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   "endif
 
   Bundle "https://github.com/yuratomo/w3m.vim.git"
+
+  Bundle "https://github.com/aliva/vim-fish"
 endif
 
 "------------------------------------------------
@@ -568,6 +570,25 @@ endfunction
 "map <F11> :call NextColorScheme()<CR>
 "map <S-F11> :call PreviousColorScheme()<CR>
 
+function! MySwapColorScheme()
+  if !exists('g:colors_name') || g:colors_name != 'molokai'
+    call MyColorScheme('molokai')
+  else
+    call MyColorScheme('solarized')
+  endif
+  call MyStatusColorScheme()
+endfunction
+map <Leader>> :call MySwapColorScheme()<CR>
+
+function! MySwitchTransparency()
+  if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
+    hi Normal ctermbg=None
+  else
+    hi Normal ctermbg=233
+  endif
+endfunction
+map <Leader>< :call MySwitchTransparency()<CR>
+
 function! MyColorScheme(scheme)
   if a:scheme == 'molokai'
     colorscheme molokai
@@ -607,6 +628,8 @@ function! MyColorScheme(scheme)
   hi PmenuSbar ctermfg=236 ctermbg=236 cterm=bold
   hi clear PmenuThumb
   hi PmenuThumb ctermfg=26 ctermbg=26 cterm=bold
+  hi clear MatchParen
+  hi MatchParen ctermfg=21 ctermbg=None cterm=bold
 endfunction
 
 if !&diff
@@ -616,25 +639,7 @@ else
   " solarized is really good in diff mode (molokai is horrible)
   call MyColorScheme('solarized')
 endif
-
-function! MySwapColorScheme()
-  if !exists('g:colors_name') || g:colors_name != 'molokai'
-    call MyColorScheme('molokai')
-  else
-    call MyColorScheme('solarized')
-  endif
-  call MyStatusColorScheme()
-endfunction
-map <Leader>> :call MySwapColorScheme()<CR>
-
-function! MySwitchTransparency()
-  if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
-    hi Normal ctermbg=None
-  else
-    hi Normal ctermbg=233
-  endif
-endfunction
-map <Leader>< :call MySwitchTransparency()<CR>
+call MySwitchTransparency()
 
 autocmd syntax * runtime syntax/RainbowParenthsis.vim
 
