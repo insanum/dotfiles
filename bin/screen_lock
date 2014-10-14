@@ -1,6 +1,10 @@
 #!/bin/bash
 
-killall -s SIGUSR1 dunst
+pkill -USR1 dunst
+[[ -x /usr/bin/purple-remote ]] && purple-remote "setstatus?status=away"
+
 slock
-killall -s SIGUSR2 dunst
+
+[[ -x /usr/bin/purple-remote ]] && purple-remote "setstatus?status=available"
+pkill -USR2 dunst
 
