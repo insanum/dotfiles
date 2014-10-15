@@ -150,7 +150,7 @@ fi
 #exec pekwm            # lean and mean (perfect for vnc)
 
 # xcompmgr
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = tiburon ]]; then
+if [[ $HOSTNAME = jackshrimp || $HOSTNAME = tiburon || $HOSTNAME = skylark ]]; then
     [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 -i 0.8 -e 0.8 &
 fi
 
