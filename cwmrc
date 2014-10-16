@@ -3,8 +3,8 @@ fontname "terminus:bold:size=14"
 snapdist 20
 sticky   yes
 
-command term         "termite -e 'bash -li'"
-command termite      "termite -e 'bash -li'"
+command term         "termite -c ~/.termiterc -e 'bash -li'"
+command termite      "termite -c ~/.termiterc -e 'bash -li'"
 command chromium     "chromium"
 command ltirv-edavis "rdesktop -g 90% -r sound:local -K -0 ltirv-edavis"
 
