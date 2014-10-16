@@ -45,9 +45,9 @@ function largs
     end
 end
 
-function gcalcli;   $HOME/src/gcalcli/gcalcli $argv;     end
-function bitter;    $HOME/src/bitter/bitter $argv;       end
-function nostalgic; $HOME/src/nostalgic/nostalgic $argv; end
+function gcalcli;   eval $HOME/src/gcalcli/gcalcli $argv;     end
+function bitter;    eval $HOME/src/bitter/bitter $argv;       end
+function nostalgic; eval $HOME/src/nostalgic/nostalgic $argv; end
 
 function rmrf
     read -p 'set_color red; echo -n "Are you sure [y|n]? "; set_color normal' input
@@ -61,8 +61,8 @@ function rmrf
     end
 end
 
-function vncstart; $HOME/.vnc/vncstart; end
-function vnckill;  $HOME/.vnc/vnckill; end
+function vncstart; eval $HOME/.vnc/vncstart; end
+function vnckill;  eval $HOME/.vnc/vnckill; end
 
 function fishrc; source $HOME/.config/fish/config.fish; end
 function fished; vim $HOME/.config/fish/config.fish;    end
