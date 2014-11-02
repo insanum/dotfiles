@@ -637,6 +637,7 @@ function wow()
 
     WOW=$HOME/.wine/drive_c/Program\ Files/World\ of\ Warcraft
     D3=$HOME/.wine/drive_c/Program\ Files/Diablo\ III
+    HS=$HOME/.wine/drive_c/Program\ Files\ \(x86\)/Hearthstone
 
     # start capture: 'dmenu fraps'
     # stop capture: 'dmenu kfraps'
@@ -658,6 +659,10 @@ function wow()
         cd "$WOW"
         wine "World of Warcraft Launcher.exe" -opengl
         cd -
+    elif [[ $1 == hs ]]; then
+        echo "Wine 'Hearthstone.exe'"
+        cd "$HS"
+        wine Hearthstone.exe
     elif [[ $1 == d3 ]]; then
         echo "Wine 'Diablo III.exe'"
         cd "$D3"
