@@ -1,6 +1,6 @@
 
 fontname "terminus:bold:size=14"
-snapdist 20
+#snapdist 20
 sticky   yes
 
 command term         "termite -c ~/.termiterc -e 'bash -li'"
