@@ -511,6 +511,9 @@ if [[ -n "$PS1" ]]; then
       lbot='-'
       rtop='-'
       rbot='-'
+      vert='|'
+      ltee='|'
+      rtee='|'
   else
       if [[ $OSTYPE =~ freebsd ]]; then
           osrel="freebsd `uname -r`"
@@ -521,7 +524,21 @@ if [[ -n "$PS1" ]]; then
       ltop='┌'
       lbot='└'
       rtop='┐'
-      rbot=''
+      rbot='┘'
+      vert='│'
+      ltee='┤'
+      rtee='├'
+      #__horz  '─'
+      #__vert  '│'
+      #__ltcor '┌'
+      #__lbcor '└'
+      #__rtcor '┐'
+      #__rbcor '┘'
+      #__cross '┼'
+      #__ltee  '┤'
+      #__rtee  '├'
+      #__btee  '┬'
+      #__ttee  '┴'
   fi
 
   function prompt_tags
@@ -552,8 +569,7 @@ if [[ -n "$PS1" ]]; then
 
       prompt_tags
 
-      #let promptsize=$(echo -n "$ltop$dash$dash( ${curPWD} )$dash( HH:MM:SS )$dash$rtop" | wc -m | tr -d " ")
-      let promptsize=$(echo -n "$ltop$dash$dash( ${osrel} )$dash( ${host} )$dash( HH:MM:SS )$dash$rtop" | wc -m | tr -d " ")
+      let promptsize=$(echo -n "$ltop$dash$dash$ltee ${osrel} $rtee$dash$ltee ${host} $rtee$dash$ltee HH:MM:SS $rtee$dash$dash" | wc -m | tr -d " ")
       let fillsize=${COLUMNS}-${promptsize}
 
       pFill=""
@@ -596,8 +612,7 @@ if [[ -n "$PS1" ]]; then
 
       case "$TERM" in
       screen-256color|xterm*)
-        #PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash( $BRIGHT_YELLOW\${curPWD}$BRIGHT_BLUE )$dash( $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE )$dash$rtop\n$BRIGHT_BLUE$lbot$dash( $BRIGHT_CYAN\h ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE)$dash>$CLEAR "
-        PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash( $MAGENTA\${osrel}$BRIGHT_BLUE )$dash( $BRIGHT_YELLOW\${host}$BRIGHT_BLUE )$dash( $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE )$dash$rtop\n$BRIGHT_BLUE$lbot$dash( $BRIGHT_CYAN\$(_pwd_chomp) ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE)$dash>$CLEAR "
+        PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BRIGHT_BLUE $rtee$dash$ltee $BRIGHT_YELLOW\${host}$BRIGHT_BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE $rtee$dash$dash\n$BRIGHT_BLUE$lbot$dash$ltee $BRIGHT_CYAN\$(_pwd_chomp) ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE$rtee$dash$dash$CLEAR "
         ;;
       *)
         PS1="$BRIGHT_CYAN\h $BRIGHT_BLUE[$BRIGHT_YELLOW- ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$RED\$(_pwd_chomp) $BRIGHT_YELLOW-$BRIGHT_BLUE]$CLEAR "
