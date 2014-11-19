@@ -10,6 +10,7 @@
 #   EKVM_MEMORY=8G
 #   EKVM_SMP=4
 #   EKVM_VNC=:1
+#   EKVM_SPICE=5930
 #   EKVM_SERIAL=4444
 #   EKVM_MONITOR=4445
 #   EKVM_NET=nic
@@ -284,7 +285,7 @@ vnc)
     vncviewer $EKVM_VNC &
     ;;
 spice)
-    spicec --host 127.0.0.1 --port $EKVM_SPICE &
+    spicy -h 127.0.0.1 -p $EKVM_SPICE &
     ;;
 reboot)
     echo "reboot not implemented"
