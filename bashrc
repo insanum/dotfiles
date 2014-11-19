@@ -26,8 +26,6 @@ export TEMP=/tmp
 export TMPDIR=/tmp
 #export MIBS=all
 #export MIBDIRS=/usr/local/share/snmp/mibs
-export TASKRC=$HOME/unison/task/taskrc
-export TASKDATA=$HOME/unison/task/tasks
 
 TIMEFORMAT="%R real %U user %S system (%%%P cpu)"
 

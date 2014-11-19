@@ -70,16 +70,16 @@ fi
 xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
-    feh --bg-tile $HOME/unison/kole_evo_1920x1080.png
+    feh --bg-tile $HOME/syncthing/kole_evo_1920x1080.png
 else
-    feh --bg-tile $HOME/unison/kole_evo_1680x1050.png
+    feh --bg-tile $HOME/syncthing/kole_evo_1680x1050.png
 fi
 
 #$HOME/bin/mpc_osd_py &
 
-if [[ $HOSTNAME = skylark ]]; then
-    [[ -x /usr/bin/pidgin ]] && pidgin &
-fi
+#if [[ $HOSTNAME = skylark ]]; then
+#    [[ -x /usr/bin/pidgin ]] && pidgin &
+#fi
 
 #[[ -x /usr${LOCAL}/bin/xbindkeys ]] && xbindkeys
 
@@ -96,6 +96,11 @@ if [[ $HOSTNAME = jackshrimp ]]; then
     # tweaks for my Anker gaming mouse
     xinput --set-prop 11 "Device Accel Constant Deceleration" 2
     xinput --set-prop 11 "Device Accel Adaptive Deceleration" 3
+    xset m 1 50
+elif [[ $HOSTNAME = skylark ]]; then
+    # tweaks for my Anker gaming mouse
+    xinput --set-prop 8 "Device Accel Constant Deceleration" 2
+    xinput --set-prop 8 "Device Accel Adaptive Deceleration" 3
     xset m 1 50
 elif [[ $HOSTNAME = tiburon ]]; then
     xinput --set-prop "ETPS/2 Elantech Touchpad" "Device Accel Constant Deceleration" 2
