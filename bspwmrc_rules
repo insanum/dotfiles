@@ -1,0 +1,27 @@
+#!/usr/bin/bash
+
+win_id=$1
+class=$2
+instance=$3
+
+title=$(xtitle "$win_id")
+
+if [[ "$class" = Evilvte || "$class" = Termite ]]; then
+    case "$title" in
+    work1)
+        echo "desktop=8"
+        ;;
+    work2)
+        echo "desktop=9"
+        ;;
+    esac
+elif [[ "$class" = Chromium ]]; then
+    case "$title" in
+    Untitled)
+        echo "floating=on"
+        ;;
+    esac
+elif [[ "$class" = Pidgin ]]; then
+    echo "floating=on desktop=2"
+fi
+
