@@ -7,6 +7,7 @@
 #application/msword; catdoc %s; copiousoutput
 #application/vnd.ms-excel; xls2csv %s; copiousoutput
 application/msword; libreoffice %s
+application/vnd.openxmlformats-officedocument.wordprocessingml.document; libreoffice %s
 application/vnd.openxmlformats-officedocument.presentationml.presentation; libreoffice %s
 application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; libreoffice %s
 
