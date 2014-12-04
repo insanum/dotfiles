@@ -1,0 +1,107 @@
+
+#########################
+# BSPWM HOTKEYS for VNC #
+#########################
+
+# close window
+alt + shift + c
+    bspc window -c
+
+# cycle desktop layouts (monocle/tiled)
+alt + t
+    bspc desktop -l next
+
+# cycle window focus (useful for monocle)
+#super + {_,shift + }c
+#    bspc window -f {next,prev}
+alt + c
+    bspc window -f next
+
+# balance split ratios of tree
+alt + b
+    bspc desktop -B
+
+# toggle window floating,fullscreen
+alt + {s,f}
+    bspc window -t {floating,fullscreen}
+# pseudo_tiled | locked | sticky | private=[on|off]
+
+# focus last focused window
+alt + {grave,Tab}
+    bspc {window,desktop} -f last
+
+# cycle through previous focused windows (history)
+#alt + {o,i}
+#    bspc control --record-history off; \
+#    bspc window {older,newer} -f; \
+#    bspc control --record-history on
+
+# move focus in direction or move current window in direction
+alt + {_,shift + }{h,j,k,l}
+    bspc window -{f,s} {left,down,up,right}
+
+# cycle/rotate windows around the desktop
+alt + {comma,period}
+    bspc desktop -C {backward,forward}
+
+# cycle desktop focus
+#super + bracket{left,right}
+#alt + {comma,period}
+#    bspc desktop -f {prev,next}
+
+# set manual preselect split direction on current window
+alt + ctrl + {h,j,k,l}
+    bspc window -p {left,down,up,right}
+
+# cancel the manual preselect direction on the current window or all windows on the desktop
+alt + ctrl + {_,shift + }space
+    bspc {window -p cancel,desktop -c}
+
+# resize window in direction ('shift' to go smaller)
+alt + {h,j,k,l}
+    bspc window -e {left -10,down +10,up -10,right +10}
+alt + shift + {h,j,k,l}
+    bspc window -e {right -10,up +10,down -10,left +10}
+
+# set the splitting ratio for the currently selected window
+alt + ctrl + {1-9}
+    bspc window -r 0.{1-9}
+
+# move/focus a desktop to the current focused monitor
+alt + {1-9,0}
+    bspc desktop {1-9,10} -m focused -f; \
+    bspc query -m focused -D | sort -n | xargs bspc monitor focused -o
+
+# send the current window to a desktop
+alt + shift + {1-9,0}
+    bspc window focused -d {1-9,10}
+
+# focus window on button press
+~button1
+    bspc pointer -g focus
+
+alt + button{1-3}
+    bspc pointer -g {move,resize_side,resize_corner}
+
+alt + !button{1-3}
+    bspc pointer -t %i %i
+
+alt + @button{1-3}
+    bspc pointer -u
+
+#################
+# OTHER HOTKEYS #
+#################
+
+# open a new terminal window
+alt + Return
+    termite -c ~/.termiterc -e "bash -li"
+
+# my dmenu launcher
+alt + p
+    dwm_launch prog
+
+# force sxhkd to reload the config
+alt + Escape
+    pkill -USR1 -x sxhkd
+

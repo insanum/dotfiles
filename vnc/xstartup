@@ -12,6 +12,7 @@ xset +fp /usr/share/fonts/util
 xset +fp ~/.fonts
 
 xsetroot -solid black
+xsetroot -cursor_name left_ptr
 
 xrdb -load $HOME/.Xdefaults
 
@@ -23,21 +24,17 @@ else # FreeNX
     setxkbmap -model us
 fi
 
-if [[ $HOSTNAME = tiburon ]]; then
-    xrandr -s 1600x900
-fi
-
 xmodmap $HOME/.Xmodmap
 
 [[ -x /usr${LOCAL}/bin/dunst ]] && dunst -config $HOME/.dunstrc &
 
-termite -e 'bash -li' &
-exec /usr/bin/cwm
+termite -c $HOME/.termiterc -e 'bash -li' &
+
+sxhkd -c $HOME/.vnc/vnc_sxhkdrc &
+exec /usr/bin/bspwm -c $HOME/.vnc/vnc_bspwmrc
+
+#exec /usr/bin/cwm
 
 #xfce4-terminal -e 'bash -li' &
 #exec /usr/bin/startxfce4
-
-#evilvte -e bash -li &
-#exec /usr/bin/openbox
-#exec /usr/bin/pekwm
 
