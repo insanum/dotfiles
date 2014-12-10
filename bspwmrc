@@ -31,19 +31,6 @@ elif [[ $HOSTNAME = tiburon ]]; then
     bspc monitor VGA1  -n R
 fi
 
-bspc rule -a Chromium            desktop=1
-bspc rule -a Firefox             desktop=2
-bspc rule -a Thunderbird         desktop=2
-bspc rule -a Thunderbird-nightly desktop=2
-bspc rule -a Acroread            desktop=3
-bspc rule -a Evince              desktop=3
-bspc rule -a Vncviewer           desktop=5
-bspc rule -a Spicy               desktop=5 floating=on
-bspc rule -a Wine                desktop=4 fullscreen=on
-bspc rule -a Gimp                desktop=4 follow=on floating=on
-bspc rule -a Dunst               sticky=on floating=on
-bspc rule -a Gxmessage           sticky=on floating=on
-
 bspc config focused_border_color orange
 
 pkill -x .bspwm_panel

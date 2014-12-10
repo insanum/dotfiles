@@ -7,6 +7,7 @@ instance=$3
 title=$(xtitle "$win_id")
 
 if [[ "$class" = Evilvte || "$class" = Termite ]]; then
+
     case "$title" in
     work1)
         echo "desktop=8"
@@ -15,13 +16,56 @@ if [[ "$class" = Evilvte || "$class" = Termite ]]; then
         echo "desktop=9"
         ;;
     esac
+
 elif [[ "$class" = Chromium ]]; then
+
+    echo "destop=1"
+
     case "$title" in
     Untitled)
         echo "floating=on"
         ;;
     esac
+
+elif [[ "$class" = Firefox ]]; then
+
+    echo "destop=2"
+
+elif [[ "$class" = Thunderbird || "$class" = "Thunderbird-nightly" ]]; then
+
+    echo "destop=2"
+
+elif [[ "$class" = Acroread || "$class" = Evince ]]; then
+
+    echo "destop=3"
+
 elif [[ "$class" = Pidgin ]]; then
+
     echo "floating=on desktop=2"
+
+elif [[ "$class" = Gimp ]]; then
+
+    echo "desktop=4"
+    echo "follow=on"
+    echo "floating=on"
+
+elif [[ "$class" = Spicy ]]; then
+
+    echo "desktop=4"
+
+elif [[ "$class" = Vncviewer ]]; then
+
+    echo "desktop=5"
+
+elif [[ "$class" = Wine ]]; then
+
+    echo "desktop=5"
+    echo "fullscreen=on"
+
+elif [[ "$class" = Dunst || "$class" = Gxmessage ]]; then
+
+    echo "sticky=on"
+    echo "floating=on"
+
 fi
 
