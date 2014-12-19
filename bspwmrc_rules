@@ -49,6 +49,11 @@ elif [[ "$class" = Gimp ]]; then
     echo "follow=on"
     echo "floating=on"
 
+elif [[ "$class" = Wine ]]; then
+
+    echo "desktop=4"
+    echo "fullscreen=on"
+
 elif [[ "$class" = Spicy ]]; then
 
     echo "desktop=4"
@@ -57,10 +62,9 @@ elif [[ "$class" = Vncviewer ]]; then
 
     echo "desktop=5"
 
-elif [[ "$class" = Wine ]]; then
+elif [[ "$class" = rdesktop ]]; then
 
     echo "desktop=5"
-    echo "fullscreen=on"
 
 elif [[ "$class" = Dunst || "$class" = Gxmessage ]]; then
 
