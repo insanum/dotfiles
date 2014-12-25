@@ -19,7 +19,7 @@ if [[ "$class" = Evilvte || "$class" = Termite ]]; then
 
 elif [[ "$class" = Chromium ]]; then
 
-    echo "destop=1"
+    echo "desktop=1"
 
     case "$title" in
     Untitled)
@@ -29,15 +29,15 @@ elif [[ "$class" = Chromium ]]; then
 
 elif [[ "$class" = Firefox ]]; then
 
-    echo "destop=2"
+    echo "desktop=2"
 
 elif [[ "$class" = Thunderbird || "$class" = "Thunderbird-nightly" ]]; then
 
-    echo "destop=2"
+    echo "desktop=2"
 
 elif [[ "$class" = Acroread || "$class" = Evince ]]; then
 
-    echo "destop=3"
+    echo "desktop=3"
 
 elif [[ "$class" = Pidgin ]]; then
 
