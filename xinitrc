@@ -119,13 +119,30 @@ fi
 
 [[ -x /usr${LOCAL}/bin/dunst ]] && dunst -config $HOME/.dunstrc &
 
+# fix Java wackiness
 [[ -x /usr${LOCAL}/bin/wmname ]] && wmname LG3D
 
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
-  autossh -M 20000 -f -N -D 9999 -L 9993:imap.gmail.com:993 edavis@insanum.com
-elif [[ $HOSTNAME = tiburon || $HOSTNAME = jackshrimp ]]; then
-  autossh -M 20000 -f -N -D 9999 edavis@insanum.com
-fi
+#if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
+#  autossh -M 20000 -f -N -D 9999 -L 127.0.0.1:9998:127.0.0.1:443 -L 9993:imap.gmail.com:993 edavis@insanum.com
+#elif [[ $HOSTNAME = tiburon || $HOSTNAME = jackshrimp ]]; then
+#  autossh -M 20000 -f -N -D 9999 -L 127.0.0.1:9998:127.0.0.1:443 edavis@insanum.com
+#fi
+#
+# "autossh" systemd service on Arch Linux
+# /etc/systemd/system/multi-user.target.wants/autossh.service
+# ----------
+# [Unit]
+# Description=AutoSSH
+# After=network.target
+#
+# [Service]
+# Environment="AUTOSSH_GATETIME=0"
+# ExecStart=/usr/bin/autossh -M 20000 -N -D 9999 -L 127.0.0.1:9998:127.0.0.1:443 -L 127.0.0.1:9993:imap.gmail.com:993 -o TCPKeepAlive=yes edavis@insanum.com
+# User=edavis
+#
+# [Install]
+# WantedBy=multi-user.target
+# ----------
 
 [[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start
 
@@ -152,7 +169,7 @@ fi
 #exec blackbox         # old and true
 #exec startfluxbox     # blackbox with gizmos
 #exec openbox-session  # Why can't I move my config out from under XDG!?!?
-#exec pekwm            # lean and mean (perfect for vnc)
+#exec pekwm            # lean and mean (pretty good)
 
 # xcompmgr
 if [[ $HOSTNAME = jackshrimp || $HOSTNAME = tiburon || $HOSTNAME = skylark ]]; then
@@ -168,9 +185,9 @@ fi
 #exec herbstluftwm --autostart ~/.herbstluftwm # Love it!
 
 sxhkd -c $HOME/.sxhkdrc &
-exec bspwm -c $HOME/.bspwmrc
+exec bspwm -c $HOME/.bspwmrc # Big <3 !
 
-# I seem to always fall back to DWM...
+# Falling back to DWM...
 
 while true
 do
