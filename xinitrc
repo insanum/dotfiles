@@ -70,9 +70,9 @@ fi
 xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
-    feh --bg-tile $HOME/syncthing/kole_evo_1920x1080.png
+    feh --bg-tile $HOME/unison/kole_evo_1920x1080.png
 else
-    feh --bg-tile $HOME/syncthing/kole_evo_1680x1050.png
+    feh --bg-tile $HOME/unison/kole_evo_1680x1050.png
 fi
 
 #$HOME/bin/mpc_osd_py &
