@@ -38,8 +38,8 @@ elif [[ $HOSTNAME = jackshrimp ]]; then
     xrandr --output DVI-D-0 --right-of DVI-I-1
 elif [[ $HOSTNAME = skylark ]]; then
     xrandr --output DP-0 --right-of DVI-I-1
-elif [[ $HOSTNAME = tiburon ]]; then
-    xrandr --output VGA1 --right-of LVDS1
+elif [[ -n "$CHROMEBOOK" ]]; then
+    xrandr --output HDMI1 --right-of eDPI1
 fi
 
 ## Source scripts in /etc/X11/xinit/xinitrc.d/
@@ -64,6 +64,11 @@ xrdb -load $HOME/.Xdefaults
 xmodmap $HOME/.Xmodmap
 if [[ $OSTYPE =~ freebsd ]]; then
     xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
+elif [[ -n "$CHROMEBOOK" ]]; then
+    xmodmap -e "keycode 133 = Control_L" # reassign Search to Control_L
+    xmodmap -e "remove mod4 = Control_L" # make sure X keeps it out of the mod4 group
+    xmodmap -e "add Control = Control_L" # add the new Control_L to the control group
+    xmodmap -e "keycode 108 = Super_L"   # reassign Alt_R to Super_L
 else
     xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
 fi
@@ -71,8 +76,8 @@ xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
     feh --bg-tile $HOME/unison/kole_evo_1920x1080.png
-else
-    feh --bg-tile $HOME/unison/kole_evo_1680x1050.png
+elif [[ -n "$CHROMEBOOK" ]]; then
+    feh --bg-scale $HOME/rogue_warcraft.jpg
 fi
 
 #$HOME/bin/mpc_osd_py &
@@ -102,19 +107,11 @@ elif [[ $HOSTNAME = skylark ]]; then
     xinput --set-prop 8 "Device Accel Constant Deceleration" 2
     xinput --set-prop 8 "Device Accel Adaptive Deceleration" 3
     xset m 1 50
-elif [[ $HOSTNAME = tiburon ]]; then
-    xinput --set-prop "ETPS/2 Elantech Touchpad" "Device Accel Constant Deceleration" 2
-    xinput --set-prop "ETPS/2 Elantech Touchpad" "Device Accel Adaptive Deceleration" 3
-    synclient HorizHysteresis=40 VertHysteresis=40
-    synclient MinSpeed=0 TapButton2=0 TapButton3=0 RTCornerButton=2 RBCornerButton=3
+elif [[ -n "$CHROMEBOOK" ]]; then
+    # trackpad configured in /etc/X11/xorg.conf.d/50-synaptics.conf
     xset m 1 50
 else
     xset m 2/1 50
-fi
-
-if [[ $HOSTNAME = tiburon ]]; then
-    xinput set-prop "ETPS/2 Elantech Touchpad" "Synaptics ClickPad" 1
-    synclient ClickPad=1
 fi
 
 [[ -x /usr${LOCAL}/bin/dunst ]] && dunst -config $HOME/.dunstrc &
@@ -124,7 +121,7 @@ fi
 
 #if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
 #  autossh -M 20000 -f -N -D 9999 -L 127.0.0.1:9998:127.0.0.1:443 -L 9993:imap.gmail.com:993 edavis@insanum.com
-#elif [[ $HOSTNAME = tiburon || $HOSTNAME = jackshrimp ]]; then
+#elif [[ -n "$CHROMEBOOK" || $HOSTNAME = jackshrimp ]]; then
 #  autossh -M 20000 -f -N -D 9999 -L 127.0.0.1:9998:127.0.0.1:443 edavis@insanum.com
 #fi
 #
@@ -172,8 +169,8 @@ fi
 #exec pekwm            # lean and mean (pretty good)
 
 # xcompmgr
-if [[ $HOSTNAME = jackshrimp || $HOSTNAME = tiburon || $HOSTNAME = skylark ]]; then
-    [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 -i 0.8 -e 0.8 &
+if [[ $HOSTNAME = jackshrimp || $HOSTNAME = skylark || -n "$CHROMEBOOK" ]]; then
+    [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 --active-opacity 0.8 -i 0.6 -e 0.8 &
 fi
 
 #exec ratpoison # Lots of good times, but the love affair evaporated...

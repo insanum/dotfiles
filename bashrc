@@ -703,6 +703,11 @@ function fixkeys()
     xmodmap $HOME/.Xmodmap
     if [[ $OSTYPE =~ freebsd ]]; then
         xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
+    elif [[ -n "$CHROMEBOOK" ]]; then
+        xmodmap -e "keycode 133 = Control_L" # reassign Search to Control_L
+        xmodmap -e "remove mod4 = Control_L" # make sure X keeps it out of the mod4 group
+        xmodmap -e "add Control = Control_L" # add the new Control_L to the control group
+        xmodmap -e "keycode 108 = Super_L"   # reassign Alt_R to Super_L
     else
         xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
     fi

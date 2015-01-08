@@ -3,6 +3,22 @@
 # BSPWM HOTKEYS #
 #################
 
+# chromebook
+# ----------
+# brightness
+ctrl + F6
+    brightness down
+ctrl + F7
+    brightness up
+# volume
+ctrl + F8
+    amixer -q sset Master toggle
+ctrl + F9
+    amixer -q sset Master 1-
+ctrl + F10
+    amixer -q sset Master 1+
+# ----------
+
 # quit bspwm
 super + alt + Escape
     pkill -x .bspwm_panel; pkill -x bspc; bspc quit

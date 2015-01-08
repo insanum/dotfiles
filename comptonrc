@@ -1,6 +1,7 @@
 
 opacity-rule = [
                  "99:class_g = 'smplayer'",
-                 "99:class_g = 'Mplayer'"
+                 "99:class_g = 'Mplayer'",
+                 "99:class_g = 'Wine'"
                ]
 
