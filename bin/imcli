@@ -62,12 +62,15 @@ def SIGINT_handler(signum, frame):
 signal.signal(signal.SIGINT, SIGINT_handler)
 
 msg_thread_go = True
+last_message_from = None
 
 def print_message(msg):
+    global last_message_from
     elems = msg.split(' ', 2)
     sys.stdout.write(str(CLR_RED()) + elems[0] + str(CLR_NRM()))
     sys.stdout.write(str(CLR_BRYLW()) + ' [' + str(CLR_NRM()))
-    sys.stdout.write(str(CLR_BRBLU()) + elems[1].split('[')[1].split(']')[0] + str(CLR_NRM()))
+    last_message_from = elems[1].split('[')[1].split(']')[0]
+    sys.stdout.write(str(CLR_BRBLU()) + last_message_from + str(CLR_NRM()))
     sys.stdout.write(str(CLR_BRYLW()) + '] ' + str(CLR_NRM()))
     message = elems[2].split(' - ', 1)
     sys.stdout.write(str(CLR_CYN()) + message[0] + str(CLR_NRM()))
@@ -106,6 +109,7 @@ def usage():
  /getstatus                     - get current status and message
  /setstatus <status> [message]  - set the status and optional message
  /msg <address> <message>       - send a message
+ /r                             - reply to last person who sent a message
 '''
 
 # pull in the readline config
@@ -144,6 +148,15 @@ while True:
             do_cmd('purple-remote "sipe:goim?screenname=' + cmd_args[1] + '&message=' + cmd_args[2] + '"')
         else:
             print "ERROR: Must specify an address and message!"
+    elif cmd.split(' ', 1)[0] == '/r':
+        cmd_args = cmd.split(' ', 1)
+        if len(cmd_args) == 2:
+            if last_message_from != None:
+                do_cmd('purple-remote "sipe:goim?screenname=' + last_message_from + '&message=' + cmd_args[1] + '"')
+            else:
+                print "ERROR: No one to reply to!"
+        else:
+            print "ERROR: Must specify message!"
     else:
         print "ERROR: Unknown command!"
 
