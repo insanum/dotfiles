@@ -14,6 +14,7 @@
 
 import os, sys, time, signal, lockfile, readline
 import thread, threading
+import xml.etree.ElementTree as ET
 
 log_file = os.environ['HOME'] + '/.imcli_log'
 flock = lockfile.LockFile(log_file)
@@ -95,6 +96,33 @@ def msg_thread_func():
         time.sleep(1)
         if not msg_thread_go: break
 
+def get_contacts():
+    contacts = []
+    tree = ET.ElementTree(file=os.environ['HOME'] + '/.purple/blist.xml')
+    for elem in tree.iter():
+        if elem.tag != 'buddy':
+            continue
+        name = None
+        alias = None
+        for buddy in elem:
+            if buddy.tag == 'name':    name = buddy.text
+            elif buddy.tag == 'alias': alias = buddy.text
+        if name:
+            contacts.append(name + ' ' + alias)
+    return contacts
+
+def print_contacts(contacts):
+    for c in contacts:
+        elems = c.split(' ', 1)
+        sys.stdout.write(str(CLR_BRYLW()) + '[' + str(CLR_NRM()))
+        sys.stdout.write(str(CLR_BRBLU()) + elems[0] + str(CLR_NRM()))
+        sys.stdout.write(str(CLR_BRYLW()) + '] ' + str(CLR_NRM()))
+        sys.stdout.write(str(CLR_CYN()) + elems[1] + str(CLR_NRM()))
+        sys.stdout.write('\n')
+    sys.stdout.flush()
+
+contacts = get_contacts()
+
 # start thread
 msg_thread = threading.Thread(target=msg_thread_func)
 msg_thread.start()
@@ -108,6 +136,7 @@ def usage():
  /quit                          - quit the program
  /getstatus                     - get current status and message
  /setstatus <status> [message]  - set the status and optional message
+ /buddies                       - get the list of buddies
  /msg <address> <message>       - send a message
  /r                             - reply to last person who sent a message
 '''
@@ -142,6 +171,8 @@ while True:
             do_cmd('purple-remote "setstatus?status=' + cmd_args[1] + '"')
         else:
             print "ERROR: Must specify a status!"
+    elif cmd == '/buddies':
+        print_contacts(contacts)
     elif cmd.split(' ', 1)[0] == '/msg':
         cmd_args = cmd.split(' ', 2)
         if len(cmd_args) > 2:
