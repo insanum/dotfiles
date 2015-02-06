@@ -181,7 +181,8 @@
     #timeout = 10
     background = "#aaaaff"
     foreground = "#000000"
-    timeout = 20
+    #timeout = 20
+    timeout = 0
 
 [urgency_normal]
     #background = "#285577"
@@ -189,7 +190,8 @@
     #timeout = 10
     background = "#1793D1"
     foreground = "#000000"
-    timeout = 20
+    #timeout = 20
+    timeout = 0
 
 [urgency_critical]
     #background = "#900000"
