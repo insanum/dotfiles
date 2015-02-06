@@ -70,7 +70,7 @@ def print_message(msg):
     elems = msg.split(' ', 2)
     sys.stdout.write(str(CLR_RED()) + elems[0] + str(CLR_NRM()))
     sys.stdout.write(str(CLR_BRYLW()) + ' [' + str(CLR_NRM()))
-    last_message_from = elems[1].split('[')[1].split(']')[0]
+    last_message_from = elems[1].split('[', 1)[1].split(']', 1)[0]
     sys.stdout.write(str(CLR_BRBLU()) + last_message_from + str(CLR_NRM()))
     sys.stdout.write(str(CLR_BRYLW()) + '] ' + str(CLR_NRM()))
     message = elems[2].split(' - ', 1)
