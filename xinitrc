@@ -170,7 +170,7 @@ fi
 
 # xcompmgr
 if [[ $HOSTNAME = jackshrimp || $HOSTNAME = skylark || -n "$CHROMEBOOK" ]]; then
-    [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 --active-opacity 0.8 -i 0.6 -e 0.8 &
+    [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 --active-opacity 0.9 -i 0.6 -e 0.9 &
 fi
 
 #exec ratpoison # Lots of good times, but the love affair evaporated...
@@ -178,7 +178,7 @@ fi
 #exec awesome   # Awesome => You suck SO bad!
 #exec xmonad    # xmonad, you rule... but Haskell? Really!?!?
 #exec wmfs -C ~/.wmfsrc # Yikes, bar happy and a bit over-engineered no?
-#exec i3 --force-xinerama -V > ~/.i3/i3log 2>&1 # Meh.
+#exec i3 -V > ~/.i3/i3log 2>&1 # Meh.
 #exec herbstluftwm --autostart ~/.herbstluftwm # Love it!
 
 sxhkd -c $HOME/.sxhkdrc &
