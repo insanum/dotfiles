@@ -33,7 +33,7 @@ feh --bg-tile $HOME/unison/rogue_warcraft.jpg
 # fix Java wackiness
 [[ -x /usr${LOCAL}/bin/wmname ]] && wmname LG3D
 
-[[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 -i 0.8 -e 0.8 &
+#[[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 --active-opacity 0.9 -i 0.6 -e 0.9 &
 
 termite -c $HOME/.termiterc -e 'bash -li' &
 
