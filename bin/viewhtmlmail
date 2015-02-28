@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2
 
 # Take an mbox HTML message (e.g. from mutt), split it using munpack
 # (a separate program), and rewrite it so it can be viewed in an
@@ -122,6 +122,8 @@ def view_html_message(mbox, tmpdir):
     # XXX os.system("firefox -new-window file://" + htmlfile)
     print "Calling vimprobable2 file://" + htmlfile
     os.system("vimprobable2 file://" + htmlfile)
+    #print "Calling dwb file://" + htmlfile
+    #os.system("dwb file://" + htmlfile)
 
     # Wait a while to make sure firefox has loads the imgaes, then clean up.
     # XXX time.sleep(6)

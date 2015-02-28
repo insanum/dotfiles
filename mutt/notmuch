@@ -91,7 +91,9 @@ macro index <esc>U "<tag-message><tag-prefix><clear-flag>!<tag-prefix><modify-la
 macro index ,a "<tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n" "Archive tagged messages"
 
 macro index a "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n" "Archive message"
+macro index <esc>a "<tag-message><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>+inbox +unread -archive\n<untag-pattern>.*\n" "Un-Archive message"
 macro index A "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>-inbox -unread +archive\n<untag-pattern>.*\n" "Archive thread"
+macro index <esc>A "<tag-thread><tag-prefix><clear-flag>N<tag-prefix><modify-labels-then-hide>+inbox +unread -archive\n<untag-pattern>.*\n" "Un-Archive thread"
 
 macro pager a "<exit>a" "Archive message"
 macro pager A "<exit>A" "Archive thread"
