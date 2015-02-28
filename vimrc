@@ -168,9 +168,22 @@ set vb t_vb=
 
 " Mappings
 
-nmap <C-k> :res<CR>
-nmap <C-l> :w<CR>
+nnoremap ; :
+nnoremap ! :!
+
+imap <C-n> <ESC>
+nmap <C-n> <ESC>
+"nmap <C-k> :res<CR>
 nmap <Leader><C-l> :redraw!<CR>
+
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-h> <C-w>h
+noremap <C-l> <C-w>l
+
+" auto save when leaving insert mode
+autocmd InsertLeave * if expand('%') != '' | update | endif
+nmap <C-s> :update<CR>
 
 " window tab stuff
 
