@@ -3,10 +3,8 @@
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=24
 if [[ -n "$CHROMEBOOK" ]]; then
-    echo "foobar"
     PANEL_WIDTH=1366
 else
-    echo "geek"
     PANEL_WIDTH=1920
 fi
 PANEL_FONT_FAMILY="-*-terminus-*-r-normal-*-18-*-*-*-c-*-*-1"
@@ -76,7 +74,8 @@ trap 'handle_signal' INT TERM QUIT EXIT
 [[ -e "$PANEL_FIFO" ]] && rm -f "$PANEL_FIFO"
 mkfifo "$PANEL_FIFO"
 
-bspc config -m ^1 top_padding $PANEL_HEIGHT
+#bspc config -m ^1 top_padding $PANEL_HEIGHT
+bspc config top_padding $PANEL_HEIGHT
 
 function memory_usage()
 {
@@ -235,13 +234,14 @@ function panel_bar()
             done
             ;;
         esac
-        printf "%s\n" "%{S0}%{l}${disk} ${mem_used} ${mem_swap} ${sep} ${title} %{r}${wm_infos}${sys_infos}"
+        printf "%s\n" "%{S0}%{l}${disk} ${mem_used} ${mem_swap} ${sep} ${title} %{r}${wm_infos}${sys_infos}%{S1}%{l}${disk} ${mem_used} ${mem_swap} ${sep} ${title} %{r}${wm_infos}${sys_infos}"
     done
 }
 
+    #bar-aint-recursive -g ${PANEL_WIDTH}x${PANEL_HEIGHT}   \
 cat "$PANEL_FIFO" | \
     panel_bar     | \
-    bar-aint-recursive -g ${PANEL_WIDTH}x${PANEL_HEIGHT}   \
+    bar-aint-recursive                                     \
                        -f "$PANEL_FONT_FAMILY"             \
                        -F "$COLOR_FOREGROUND"              \
                        -B "$COLOR_BACKGROUND"            | \
