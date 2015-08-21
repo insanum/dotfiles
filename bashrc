@@ -9,9 +9,11 @@ if [[ $OSTYPE == cygwin || $OSTYPE =~ solaris ]]; then
 elif [[ $OSTYPE =~ freebsd ]]; then
   export LSCOLORS="exfxcxdxbxegedabagacad"
 elif [[ $OSTYPE == linux-gnu ]]; then
+  #eval `dircolors $HOME/bin/dircolors_solarized`
   # -> from 'dircolors -b' / 'dircolors -p' <- changed ln to 33 (yellow), added m3u = mp3
   export LS_COLORS='no=00:fi=00:di=01;34:ln=01;33:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42:ow=45:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.m3u=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:';
-  #eval `dircolors $HOME/bin/dircolors_solarized`
+  # -> no bold
+  eval "export LS_COLORS=\"`echo $LS_COLORS | sed 's/=01;/=00;/g'`\""
 fi
 
 #if [[ $OSTYPE == cygwin ]]; then
@@ -58,7 +60,7 @@ export DVT=swdvt.lab.irv.broadcom.com
 exists vim && export P4EDITOR=vim
 
 #export PACMAN=pacman-color
-exists yaourt && alias pacman="yaourt"
+exists yaourt && alias pacman="HTTPS_PROXY=socks5://127.0.0.1:9999 yaourt"
 
 alias ipv6="sudo tcpdump -i eth1 -s 0 -XX -vvv ip6"
 #alias xrootevo="qiv -o black -x $HOME/pics/evo_chevy.jpg"
@@ -211,7 +213,8 @@ alias h="history"
 alias where="type -a"
 #alias which="type -a"
 alias www="w3m http://www.insanum.com"
-alias gcalcli="$HOME/src/gcalcli/gcalcli"
+alias gcalcli="tsocks $HOME/src/gcalcli/gcalcli"
+alias sncli="tsocks sncli"
 alias bitter="$HOME/src/bitter/bitter"
 alias nostalgic="$HOME/src/nostalgic/nostalgic"
 #alias sokoban="/usr/local/bin/vim -c ':SokobanH'"
@@ -610,10 +613,16 @@ if [[ -n "$PS1" ]]; then
 
       case "$TERM" in
       screen-256color|xterm*)
-        PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BRIGHT_BLUE $rtee$dash$ltee $BRIGHT_YELLOW\${host}$BRIGHT_BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE $rtee$dash$dash\n$BRIGHT_BLUE$lbot$dash$ltee $BRIGHT_CYAN\$(_pwd_chomp) ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE$rtee$dash$dash$CLEAR "
+        # bold...
+        #PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BRIGHT_BLUE $rtee$dash$ltee $BRIGHT_YELLOW\${host}$BRIGHT_BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE $rtee$dash$dash\n$BRIGHT_BLUE$lbot$dash$ltee $BRIGHT_CYAN\$(_pwd_chomp) ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE$rtee$dash$dash$CLEAR "
+        # not bold...
+        PS1="$BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BLUE $rtee$dash$ltee $YELLOW\${host}$BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BLUE $rtee$dash$dash\n$BLUE$lbot$dash$ltee $CYAN\$(_pwd_chomp) ${GREEN}\$CONS_TAG\$MNT_TAG$BLUE$rtee$dash$dash$CLEAR "
         ;;
       *)
-        PS1="$BRIGHT_CYAN\h $BRIGHT_BLUE[$BRIGHT_YELLOW- ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$RED\$(_pwd_chomp) $BRIGHT_YELLOW-$BRIGHT_BLUE]$CLEAR "
+        # bold...
+        #PS1="$BRIGHT_CYAN\h $BRIGHT_BLUE[$BRIGHT_YELLOW- ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$RED\$(_pwd_chomp) $BRIGHT_YELLOW-$BRIGHT_BLUE]$CLEAR "
+        # not bold...
+        PS1="$CYAN\h $BLUE[$YELLOW- ${GREEN}\$CONS_TAG\$MNT_TAG$RED\$(_pwd_chomp) $YELLOW-$BLUE]$CLEAR "
         ;;
       esac
   }
@@ -701,17 +710,24 @@ function fixkeys()
     # For some reason the Linux kernel has been wigging out and thinking my
     # USB keyboards have been disconnected and thereafter instantly reconnected.
     xmodmap $HOME/.Xmodmap
-    if [[ $OSTYPE =~ freebsd ]]; then
-        xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
-    elif [[ -n "$CHROMEBOOK" ]]; then
+
+    #if [[ $OSTYPE =~ freebsd ]]; then
+    #    xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
+    #elif [[ -n "$CHROMEBOOK" ]]; then
+    #    xmodmap -e "keycode 133 = Control_L" # reassign Search to Control_L
+    #    xmodmap -e "remove mod4 = Control_L" # make sure X keeps it out of the mod4 group
+    #    xmodmap -e "add Control = Control_L" # add the new Control_L to the control group
+    #    xmodmap -e "keycode 108 = Super_L"   # reassign Alt_R to Super_L
+    #else
+    #    xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
+    #fi
+    #xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
+
+    if [[ -n "$CHROMEBOOK" ]]; then
         xmodmap -e "keycode 133 = Control_L" # reassign Search to Control_L
         xmodmap -e "remove mod4 = Control_L" # make sure X keeps it out of the mod4 group
         xmodmap -e "add Control = Control_L" # add the new Control_L to the control group
-        xmodmap -e "keycode 108 = Super_L"   # reassign Alt_R to Super_L
-    else
-        xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
     fi
-    xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
     if [[ $HOSTNAME = jackshrimp ]]; then
         # tweaks for my Anker gaming mouse

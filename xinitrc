@@ -62,17 +62,25 @@ xhost +localhost
 xrdb -load $HOME/.Xdefaults
 
 xmodmap $HOME/.Xmodmap
-if [[ $OSTYPE =~ freebsd ]]; then
-    xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
-elif [[ -n "$CHROMEBOOK" ]]; then
+
+#if [[ $OSTYPE =~ freebsd ]]; then
+#    xmodmap -e "keycode 113 = Super_L" # reassign Alt_R to Super_L
+#elif [[ -n "$CHROMEBOOK" ]]; then
+#    xmodmap -e "keycode 133 = Control_L" # reassign Search to Control_L
+#    xmodmap -e "remove mod4 = Control_L" # make sure X keeps it out of the mod4 group
+#    xmodmap -e "add Control = Control_L" # add the new Control_L to the control group
+#    xmodmap -e "keycode 108 = Super_L"   # reassign Alt_R to Super_L
+#else
+#    xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
+#fi
+#xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
+
+if [[ -n "$CHROMEBOOK" ]]; then
     xmodmap -e "keycode 133 = Control_L" # reassign Search to Control_L
     xmodmap -e "remove mod4 = Control_L" # make sure X keeps it out of the mod4 group
     xmodmap -e "add Control = Control_L" # add the new Control_L to the control group
     xmodmap -e "keycode 108 = Super_L"   # reassign Alt_R to Super_L
-else
-    xmodmap -e "keycode 108 = Super_L" # reassign Alt_R to Super_L
 fi
-xmodmap -e "remove mod1 = Super_L" # make sure X keeps it out of the mod1 group
 
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
     feh --bg-tile $HOME/unison/kole_evo_1920x1080.png
@@ -148,7 +156,7 @@ if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
   if [[ -x $HOME/src/gcalcli/gcalcli ]]; then 
     while true
     do
-        $HOME/src/gcalcli/gcalcli remind &> /tmp/gcalcli.txt
+        tsocks $HOME/src/gcalcli/gcalcli remind &> /tmp/gcalcli.txt
         sleep 300
     done &
   fi
@@ -170,7 +178,7 @@ fi
 
 # xcompmgr
 if [[ $HOSTNAME = jackshrimp || $HOSTNAME = skylark || -n "$CHROMEBOOK" ]]; then
-    [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc -f -D 8 --active-opacity 0.9 -i 0.6 -e 0.9 &
+    [[ -x /usr${LOCAL}/bin/compton ]] && compton --config $HOME/.comptonrc &
 fi
 
 #exec ratpoison # Lots of good times, but the love affair evaporated...

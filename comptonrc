@@ -1,11 +1,25 @@
 
+#backend = "glx"
+
+fading = true;
+fade-delta = 10;
+
+active-opacity = 0.94
+inactive-opacity = 0.8;
+menu-opacity = 0.9;
+frame-opacity = 0.9;
+
 opacity-rule = [
                  "99:class_g = 'smplayer'",
                  "99:class_g = 'Mplayer'",
                  "99:class_g = 'Wine'",
                  "99:class_g = 'Vncviewer'",
                  "99:class_g = 'Spicy'",
+                 "99:class_g = 'rdesktop'",
                  "99:class_g = 'Chromium'",
+                 "99:class_g = 'Firefox'",
+                 "99:class_g = 'Wfica'",
+                 "95:class_g = 'Atom'",
                  "99:class_g = 'Dmenu'"
                ]
 

@@ -65,6 +65,7 @@ elif [[ "$class" = Vncviewer ]]; then
 elif [[ "$class" = rdesktop ]]; then
 
     echo "desktop=5"
+    echo "fullscreen=on"
 
 elif [[ "$class" = Dunst || "$class" = Gxmessage ]]; then
 

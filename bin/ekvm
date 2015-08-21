@@ -178,6 +178,8 @@ start)
         exit 0
     fi
 
+    # '-boot d' boots from the cdrom first
+    #ARGS="-boot d -enable-kvm"
     ARGS="-enable-kvm"
 
     if [[ -n "$EKVM_NAME" ]]; then
@@ -218,28 +220,27 @@ start)
         exit 1
     fi
 
-    if [[ -n "$EKVM_NET" ]]; then
-        ARGS="$ARGS -net $EKVM_NET"
-    else
-        echo "WARNING: EKVM_NET not defined"
-    fi
-
-    if [[ -n "$EKVM_NET_BRIDGE" ]]; then
-        ARGS="$ARGS -net $EKVM_NET_BRIDGE"
-    fi
+    for net in ${!EKVM_NET*}; do
+        eval "net_arg=\$$net"
+        ARGS="$ARGS -net $net_arg" 
+    done
 
     if [[ -n "$EKVM_SOUND" ]]; then
         ARGS="$ARGS -soundhw $EKVM_SOUND"
     fi
 
-    if [[ -n "$EKVM_VGA" ]]; then
-        ARGS="$ARGS -vga $EKVM_VGA"
+    if [[ -n "$EKVM_NOGRAPHIC" ]]; then
+        ARGS="$ARGS -nographic"
     else
-        echo "WARNING: EKVM_VGA not defined"
-    fi
+        if [[ -n "$EKVM_VGA" ]]; then
+            ARGS="$ARGS -vga $EKVM_VGA"
+        else
+            echo "WARNING: EKVM_VGA not defined"
+        fi
 
-    if [[ -n "$EKVM_SPICE" ]]; then
-        ARGS="$ARGS -spice port=${EKVM_SPICE},disable-ticketing"
+        if [[ -n "$EKVM_SPICE" ]]; then
+            ARGS="$ARGS -spice port=${EKVM_SPICE},disable-ticketing"
+        fi
     fi
 
     if [[ -n "$EKVM_ISO" ]]; then

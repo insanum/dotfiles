@@ -143,17 +143,17 @@ function panel_bar()
             ;;
         D*)
             # disk usage output
-            disk="${obrack}%{Fred}d${cbrack} ${line#?}%%"
+            disk="${obrack}%{Fred}d${cbrack} ${line#?}%"
             ;;
         M*)
             # memory usage output
             line=${line#?}
             case $line in
             U*)
-                mem_used="${obrack}%{Fred}m${cbrack} ${line#?}%%"
+                mem_used="${obrack}%{Fred}m${cbrack} ${line#?}%"
                 ;;
             S*)
-                mem_swap="${obrack}%{Fred}s${cbrack} ${line#?}%%"
+                mem_swap="${obrack}%{Fred}s${cbrack} ${line#?}%"
                 ;;
             esac
             ;;
@@ -238,13 +238,13 @@ function panel_bar()
     done
 }
 
-    #bar-aint-recursive -g ${PANEL_WIDTH}x${PANEL_HEIGHT}   \
+    #lemonbar -g ${PANEL_WIDTH}x${PANEL_HEIGHT}   \
 cat "$PANEL_FIFO" | \
     panel_bar     | \
-    bar-aint-recursive                                     \
-                       -f "$PANEL_FONT_FAMILY"             \
-                       -F "$COLOR_FOREGROUND"              \
-                       -B "$COLOR_BACKGROUND"            | \
+    lemonbar                                     \
+             -f "$PANEL_FONT_FAMILY"             \
+             -F "$COLOR_FOREGROUND"              \
+             -B "$COLOR_BACKGROUND"            | \
     while read line; do eval "$line"; done &
 
 wait

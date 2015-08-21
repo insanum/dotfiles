@@ -20,6 +20,9 @@ virtual-mailboxes                                                               
     "perforce"   "notmuch://?query=tag:perforce"                                 \
     "clearquest" "notmuch://?query=tag:clearquest"                               \
     "invites"    "notmuch://?query=tag:invites"                                  \
+    "lng"        "notmuch://?query=tag:lng"                                      \
+    "lng-sc"     "notmuch://?query=tag:lng-sc"                                   \
+    "lng-odp"    "notmuch://?query=tag:lng-odp"                                  \
     "docsafe"    "notmuch://?query=tag:docsafe"                                  \
     "spam"       "notmuch://?query=tag:spam"
 set virtual_spoolfile=yes

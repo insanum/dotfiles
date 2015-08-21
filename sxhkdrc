@@ -20,109 +20,112 @@ ctrl + F10
 # ----------
 
 # quit bspwm
-super + alt + Escape
+mod3 + alt + Escape
     pkill -x .bspwm_panel; pkill -x bspc; bspc quit
 
 # close window
-super + shift + c
+mod3 + shift + c
     bspc window -c
 
 # cycle desktop layouts (monocle/tiled)
-super + t
+mod3 + t
     bspc desktop -l next
 
 # cycle window focus (useful for monocle)
-#super + {_,shift + }c
+#mod3 + {_,shift + }c
 #    bspc window -f {next,prev}
-super + {_,shift + }Tab
+mod3 + {_,shift + }Tab
     bspc window -f {next,prev}
 
 # balance split ratios of tree
-super + b
+mod3 + b
     bspc desktop -B
 
 # toggle window floating,fullscreen
-super + {s,f}
+mod3 + {s,f}
     bspc window -t {floating,fullscreen}
 # pseudo_tiled | locked | sticky | private=[on|off]
 
 # focus last focused window
-#super + {grave,Tab}
+#mod3 + {grave,Tab}
 #    bspc {window,desktop} -f last
 
 # swap current window with last focused window
-super + apostrophe
+mod3 + apostrophe
     bspc window -s last
 
 # cycle through previous focused windows (history)
-#super + {o,i}
+#mod3 + {o,i}
 #    bspc control --record-history off; \
 #    bspc window {older,newer} -f; \
 #    bspc control --record-history on
 
 # don't yet know what this does...
-#super + y
+#mod3 + y
 #    bspc window -w last.manual
 
 # swap current window with the biggest window on the desktop
-super + m
+mod3 + m
     bspc window -s biggest
 
 # move focus in direction or move current window in direction
-super + {_,shift + }{h,j,k,l}
+mod3 + {_,shift + }{h,j,k,l}
     bspc window -{f,s} {left,down,up,right}
 
 # cycle/rotate windows around the desktop
-super + {comma,period}
+mod3 + {comma,period}
     bspc desktop -C {backward,forward}
 
 # cycle monitor focus
-super + {w,e}
+mod3 + {w,e}
     bspc monitor -f {prev,next}
 
 # cycle desktop focus
-#super + bracket{left,right}
-super + {comma,period}
+#mod3 + bracket{left,right}
+mod3 + {comma,period}
     bspc desktop -f {prev,next}
 
 # set manual preselect split direction on current window
-super + ctrl + {h,j,k,l}
+mod3 + ctrl + {h,j,k,l}
     bspc window -p {left,down,up,right}
 
 # cancel the manual preselect direction on the current window or all windows on the desktop
-super + ctrl + {_,shift + }space
+mod3 + ctrl + {_,shift + }space
     bspc {window -p cancel,desktop -c}
 
 # resize window in direction ('shift' to go smaller)
-super + alt + {h,j,k,l}
+mod3 + alt + {h,j,k,l}
     bspc window -e {left -10,down +10,up -10,right +10}
-super + alt + shift + {h,j,k,l}
+mod3 + alt + shift + {h,j,k,l}
     bspc window -e {right -10,up +10,down -10,left +10}
 
 # set the splitting ratio for the currently selected window
-super + ctrl + {1-9}
+mod3 + ctrl + {1-9}
     bspc window -r 0.{1-9}
 
 # move/focus a desktop to the current focused monitor
-super + {1-9,0}
+mod3 + {1-9,0}
+    bspc desktop {1-9,10} -m focused -f; \
+    bspc query -m focused -D | sort -n | xargs bspc monitor focused -o
+mod3 + {1-9,0}
     bspc desktop {1-9,10} -m focused -f; \
     bspc query -m focused -D | sort -n | xargs bspc monitor focused -o
 
 # send the current window to a desktop
-super + shift + {1-9,0}
+mod3 + shift + {1-9,0}
     bspc window focused -d {1-9,10}
 
 # focus window on button press
 ~button1
     bspc pointer -g focus
 
-super + button{1-3}
+mod3 + button{1-3}
     bspc pointer -g {move,resize_side,resize_corner}
 
-super + !button{1-3}
+mod3 + !button{1-3}
     bspc pointer -t %i %i
 
-super + @button{1-3}
+mod3 + @button{1-3}
     bspc pointer -u
 
 #################
@@ -130,40 +133,40 @@ super + @button{1-3}
 #################
 
 # volume up/down
-super + Up
+mod3 + Up
     amixer -q sset Master 1+
-super + Down
+mod3 + Down
     amixer -q sset Master 1-
 
 # smplayer controls
-super + q
+mod3 + q
     smplayer -send-action stop
-super + shift + q
+mod3 + shift + q
     smplayer -send-action play
-super + a
+mod3 + a
     smplayer -send-action pause
-super + shift + Left
+mod3 + shift + Left
     smplayer -send-action rewind1
-super + shift + Right
+mod3 + shift + Right
     smplayer -send-action forward1
-super + shift + Up
+mod3 + shift + Up
     smplayer -send-action forward2
-super + shift + Down
+mod3 + shift + Down
     smplayer -send-action rewind2
 
 # open a new terminal window
-super + Return
+mod3 + Return
     termite -c ~/.termiterc -e "bash -li"
 
 # my dmenu launcher
-super + p
+mod3 + p
     dwm_launch prog
 
 # my dmenu launcher for smplayer controls
-super + shift + p
+mod3 + shift + p
     dwm_launch smplayer
 
 # force sxhkd to reload the config
-super + Escape
+mod3 + Escape
     pkill -USR1 -x sxhkd
 

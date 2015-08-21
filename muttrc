@@ -85,7 +85,7 @@ set timeout=5
 
 #auto_view [...]
 set implicit_autoview
-alternative_order text/calendar text/plain text/html text/enriched
+alternative_order text/plain text/html text/enriched text/calendar
  
 # %?<sequence_char>?<optional_string>?
 # 

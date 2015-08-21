@@ -11,9 +11,9 @@ EMAIL_ADDRS=~/.bin/email_addrs
 if [[ ! -f ~/.notmuch_addrs_broadcom ]]; then
     $EMAIL_ADDRS broadcom getaddrs_all | sort -u > ~/.notmuch_addrs_broadcom
 fi
-if [[ ! -f ~/.notmuch_addrs_freebsd ]]; then
-    $EMAIL_ADDRS freebsd getaddrs_all | sort -u > ~/.notmuch_addrs_freebsd
-fi
+#if [[ ! -f ~/.notmuch_addrs_freebsd ]]; then
+#    $EMAIL_ADDRS freebsd getaddrs_all | sort -u > ~/.notmuch_addrs_freebsd
+#fi
 
 # get_email <title> <mbsync_target> <notmuch_config>
 function get_email()
@@ -36,5 +36,5 @@ function get_email()
 get_email broadcom broadcom-sync $HOME/.notmuch-broadcom-config >> ~/email_sync_broadcom.log 2>&1
 
 # XXX Verify the SSH tunnel is up or mbsync will hang!
-get_email freebsd gmail-freebsd-sync $HOME/.notmuch-freebsd-config >> ~/email_sync_freebsd.log 2>&1
+#get_email freebsd gmail-freebsd-sync $HOME/.notmuch-freebsd-config >> ~/email_sync_freebsd.log 2>&1
 

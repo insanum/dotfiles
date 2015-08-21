@@ -1,4 +1,4 @@
 #!/bin/bash
 
-evilvte -e bash -c "echo 'Importing invite...' ; ~/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar=\"Eric Davis\" import -v \"$1\" ; read -p 'press enter to exit: '"
+evilvte -e bash -c "echo 'Importing invite...' ; tsocks ~/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar=\"Eric Davis\" import -v \"$1\" ; read -p 'press enter to exit: '"
 

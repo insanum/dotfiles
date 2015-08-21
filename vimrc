@@ -8,81 +8,90 @@ let ostype=system('echo -n $OSTYPE')
 " cd ~/.vim
 " git clone https://github.com/gmarik/vundle.git
 " vim -c ":BundleInstall"
+" vim -c ":BundleUpdate"
 
-" YCM setup:
-" cd ~/.vim/bundle/YouCompleteMe
-" git submodule update --init --recursive
-" ./install.sh --clang-completer
-
-" Simplenote setup:
-" cd ~/.vim/bundle/simplenote.vim
-" git submodule update --init
+" YouCompleteMe completion engine setup:
+"     cd ~/.vim/bundle/YouCompleteMe
+"     ./install.sh --clang-completer --gocode-completer
+" Generate .ycm_extra_conf.py for C projects:
+"     cd ~/.vim/bundle/YCM-Generator
+"     ./config_gen.py <path_to_c_project>
 
 if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
-
-  " Vundle/Vim Scripts
-  " http://vim-scripts.org/vim/scripts.html
-
-  " updating bundles
-  "   :BundleInstall
-
   set rtp+=$HOME/.vim/vundle/
   call vundle#rc()
 
-  Bundle "ack.vim"
-  Bundle "Align"
-  Bundle "calendar.vim--Matsumoto"
-  Bundle "https://github.com/kien/ctrlp.vim.git"
-  Bundle "EnhCommentify.vim"
-  Bundle "Rainbow-Parenthesis"
-  Bundle "https://github.com/majutsushi/tagbar.git"
+  Bundle "https://github.com/bling/vim-airline"
+  Bundle "https://github.com/scrooloose/nerdtree"
 
+  "Bundle "https://github.com/kergoth/vim-hilinks.git"
+  Bundle "https://github.com/tomasr/molokai.git"
+  Bundle "https://github.com/nanotech/jellybeans.vim"
+  Bundle "https://github.com/altercation/vim-colors-solarized.git"
+  Bundle "https://github.com/chriskempson/vim-tomorrow-theme"
+
+  Bundle "https://github.com/vim-scripts/Align"
+  Bundle "https://github.com/rking/ag.vim"
+  Bundle "https://github.com/scrooloose/nerdcommenter"
+
+  Bundle "https://github.com/kien/rainbow_parentheses.vim"
+
+  Bundle "https://github.com/majutsushi/tagbar.git"
+  if ostype == "solaris2.10"
+    let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
+  elseif ostype == "solaris2.11"
+    let g:tagbar_ctags_bin = '/usr/bin/exctags'
+  else
+    let g:tagbar_ctags_bin = '/usr/bin/ctags'
+  endif
+  let g:tagbar_autoclose = 1
+  let g:tagbar_width = 30
+  nmap <F8> :TagbarToggle<CR>
+
+  Bundle "https://github.com/kien/ctrlp.vim"
+  "let g:ctrlp_regexp = 1
+  let g:ctrlp_show_hidden = 1
+  let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+  let g:ctrlp_extensions= ['buffertag', 'mixed']
+  let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
+  let g:ctrlp_cmd = 'CtrlPMixed'
+
+  Bundle "https://github.com/kshenoy/vim-signature"
+
+  Bundle "https://github.com/easymotion/vim-easymotion"
+  let g:EasyMotion_leader_key='\'
+
+"  Bundle "https://github.com/mhinz/vim-signify"
+  Bundle "https://github.com/tpope/vim-fugitive"
+
+  Bundle "https://github.com/honza/vim-snippets.git"
   Bundle "https://github.com/SirVer/ultisnips.git"
   let g:UltiSnipsExpandTrigger="<c-h>"
   let g:UltiSnipsListSnippets="<c-s>"
   let g:UltiSnipsJumpForwardTrigger="<c-j>"
   let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
-  "Bundle "https://github.com/scrooloose/syntastic.git"
-  "Bundle "https://github.com/Valloric/YouCompleteMe.git"
-  Bundle "javacomplete"
-
-  Bundle "https://github.com/hsanson/vim-android.git"
-  let g:android_sdk_path="/opt/android-sdk"
-
-  " make sure the vim_bridge python plugin is installed
-  " cd ~/.vim/bundle/vim-rst-tables/ftplugin
-  " ln -s rst_tables.vim votl_tables.vim
-  "Bundle "https://github.com/nvie/vim-rst-tables.git"
-  Bundle "https://github.com/insanum/vim-rst-tables.git"
-
-  Bundle "https://github.com/insanum/votl.git"
-  "Bundle "git://github.com/jceb/vim-orgmode.git"
-
-  "Bundle "changeColorScheme.vim"
-  "Bundle "Color-Sampler-Pack"
-  Bundle "https://github.com/altercation/vim-colors-solarized.git"
-  Bundle "https://github.com/tomasr/molokai.git"
-
-  "Bundle "sparkup"
-  "Bundle "octave.vim"
-  "Bundle "asciidoc.vim"
-
-  Bundle "https://github.com/waylan/vim-markdown-extra-preview.git"
-  Bundle "https://github.com/nelstrom/vim-markdown-folding.git"
-
-  Bundle "https://github.com/kergoth/vim-hilinks.git"
-
-  "Bundle "https://github.com/mrtazz/simplenote.vim.git"
-  "let g:SimplenoteStrftime="%Y%m%d"
-  "let g:SimplenoteNoteFormat="[%D] %F %N%>%T"
-  "if filereadable(expand("$HOME/.priv/simplenote_vimrc"))
-  "  source $HOME/.priv/simplenote_vimrc
-  "endif
+  Bundle "https://github.com/adragomir/javacomplete"
+  Bundle "https://github.com/rdnetto/YCM-Generator"
+  Bundle "https://github.com/Valloric/YouCompleteMe.git"
+  let g:ycm_confirm_extra_conf=0
+  let g:ycm_extra_conf_globlist=['*']
+  let g:ycm_show_diagnostics_ui=0
+  set completeopt=menuone
 
   Bundle "https://github.com/yuratomo/w3m.vim.git"
 
-  Bundle "https://github.com/aliva/vim-fish"
+  Bundle "https://github.com/vim-scripts/calendar.vim--Matsumoto"
+  Bundle "https://github.com/insanum/vim-rst-tables.git"
+  Bundle "https://github.com/insanum/votl.git"
+
+  Bundle "https://github.com/nelstrom/vim-markdown-folding.git"
+  Bundle "https://github.com/waylan/vim-markdown-extra-preview.git"
+  let g:VMEPextensions=['extra', 'codehilite']
+  let g:VMEPtemplate=expand('./template.html')
+
+  "Bundle "https://github.com/hsanson/vim-android.git"
+  "let g:android_sdk_path="/opt/android-sdk"
 endif
 
 "------------------------------------------------
@@ -152,11 +161,16 @@ nmap <Leader>ha :!enscript -M Letter -G -2 -r --mark-wrapped-lines=box -E -DDupl
 " Here is were the *real* magic is (when programming)...
 set tabstop=4
 set softtabstop=4
+set shiftwidth=4
 set smarttab
 set expandtab
-set shiftwidth=4
 set nosmartindent
 set autoindent
+
+" Stupid tabs / different tabstops / and the Linux kernel coding style...
+nmap <Leader>t4 :set tabstop=4 softtabstop=4 shiftwidth=4 smarttab expandtab<CR>
+nmap <Leader>t8 :set tabstop=8 softtabstop=8 shiftwidth=4 smarttab expandtab<CR>
+nmap <Leader>tl :set tabstop=8 softtabstop=8 shiftwidth=8 nosmarttab noexpandtab<CR>
 
 " the following are set in an autocmd below
 "set cindent
@@ -278,10 +292,6 @@ nmap <Leader>ak :Ack <cword> *<CR>
 " edit and source the rc file
 nmap <Leader>rce :new $HOME/.vimrc<CR>
 nmap <Leader>rcs :source $HOME/.vimrc<CR>
-
-" Some people really mess up code with tabstops...
-nmap <Leader>t4 :set tabstop=4 softtabstop=4<CR>
-nmap <Leader>t8 :set tabstop=8 softtabstop=8<CR>
 
 " delete tabs and replace with 4 or 8 spaces
 nmap <Leader>dt4 :%s/	/    /g<CR>
@@ -448,12 +458,21 @@ iab Cstruct typedef struct<CR>{<CR>} XXX;<CR><ESC>3k$a
 
 "source $VIMRUNTIME/syntax/syntax.vim
 syntax enable
+set cursorline
+
+map <F9> :NERDTreeToggle<CR>
 
 map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
             \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
             \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " AUTOCOMMAND STUFF
+
+autocmd VimEnter * RainbowParenthesesToggle
+autocmd Syntax * RainbowParenthesesLoadRound
+autocmd Syntax * RainbowParenthesesLoadSquare
+autocmd Syntax * RainbowParenthesesLoadBraces
+"autocmd Syntax * RainbowParenthesesLoadChevron
 
 autocmd Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
 autocmd Syntax c,cc,cpp syn keyword cType S8 U8 S16 U16 S32 U32 S64 U64
@@ -526,70 +545,24 @@ autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php 
 
 "nmap <F7> <C-E>:sleep 3<CR><C-E>:redraw<CR><F7>
 
-function! MyFixedHighlights()
-  hi clear SpellBad
-  hi SpellBad ctermbg=Red ctermfg=Black
-
-  hi clear IncSearch
-  hi IncSearch ctermbg=fg ctermfg=bg
-
-  hi clear Search
-  hi Search ctermbg=DarkYellow ctermfg=Black
-
-  " keep these the same color
-  hi clear VertSplit
-  hi clear StatusLineNC
-  hi VertSplit    ctermfg=White ctermbg=Blue
-  hi StatusLineNC ctermfg=White ctermbg=Blue
-
-  hi clear StatusLine
-  hi StatusLine ctermfg=White ctermbg=Red
-
-  hi clear TabLineSel
-  hi TabLineSel ctermfg=White ctermbg=Red cterm=bold,underline
-
-  hi clear TabLine
-  hi TabLine ctermfg=Red cterm=bold,underline
-
-  hi clear TabLineFill
-  hi TabLineFill cterm=underline
-
-  hi clear Folded
-  hi Folded ctermbg=DarkGrey
-
-  hi clear FoldColumn
-  hi FoldColumn ctermfg=Yellow
-
-  hi clear User1
-  hi User1 ctermfg=Black ctermbg=White
-
-  hi clear User2
-  hi User2 ctermfg=Black ctermbg=Yellow
-
-  hi mailQuoted1 ctermfg=Cyan
-  hi mailQuoted2 ctermfg=Green
-  hi mailQuoted3 ctermfg=Yellow
-  hi mailQuoted4 ctermfg=Magenta
-  hi mailQuoted5 ctermfg=Red
-  hi mailQuoted6 ctermfg=Blue
-  hi mailQuoted7 ctermfg=Cyan
-  hi mailQuoted7 ctermfg=Green
-
-  hi Visual cterm=reverse
-endfunction
-
-" commands for 'changeColorScheme.vim' and 'Color-Sampler-Pack' (via vundle)
-"map <F11> :call NextColorScheme()<CR>:call MyFixedHighlights()<CR>
-"map <F11> :call NextColorScheme()<CR>
-"map <S-F11> :call PreviousColorScheme()<CR>
-
+" This function is broken if called repeatedly... clobbers syntax highlights!
 function! MySwapColorScheme()
-  if !exists('g:colors_name') || g:colors_name != 'molokai'
+  if !exists('g:colors_name') || g:colors_name == 'custom'
     call MyColorScheme('molokai')
-  else
+  elseif g:colors_name == 'molokai'
     call MyColorScheme('solarized')
+  elseif g:colors_name == 'solarized'
+    call MyColorScheme('jellybeans')
+  elseif g:colors_name == 'jellybeans'
+    call MyColorScheme('Tomorrow-Night-Bright')
+  elseif g:colors_name == 'Tomorrow-Night-Bright'
+    call MyColorScheme('custom')
+    let g:colors_name = 'custom'
   endif
-  call MyStatusColorScheme()
+  call MySwitchTransparency()
+  if !filereadable(expand("$HOME/.vim/bundle/vim-airline/plugin/airline.vim"))
+    call MyStatusColorScheme()
+  endif
 endfunction
 map <Leader>> :call MySwapColorScheme()<CR>
 
@@ -603,22 +576,34 @@ endfunction
 map <Leader>< :call MySwitchTransparency()<CR>
 
 function! MyColorScheme(scheme)
-  if a:scheme == 'molokai'
-    colorscheme molokai
-  elseif a:scheme == 'solarized'
-    set background=dark
-    let g:solarized_termcolors=256
-    "let g:solarized_termtrans=1
-    "let g:solarized_bold=0
-    "let g:solarized_underline=0
-    let g:solarized_italic=0
-    colorscheme solarized
+  if a:scheme != 'custom'
+    if a:scheme == 'solarized'
+        set background=dark
+        let g:solarized_termcolors=256
+        "let g:solarized_termtrans=1
+        "let g:solarized_bold=0
+        "let g:solarized_underline=0
+        let g:solarized_italic=0
+    endif
+    execute "colorscheme" a:scheme
+    "hi link cError Normal
+    hi MatchParen ctermfg=148 ctermbg=None cterm=bold
+    return
   endif
+
+  colorscheme molokai
   hi Normal ctermfg=252 ctermbg=233
   hi clear Comment
   hi Comment ctermfg=33
   hi clear Visual
   hi Visual ctermbg=237
+  hi link cError Normal
+  hi clear cOperator
+  hi cOperator ctermfg=160
+  hi clear cNumber
+  hi cNumber ctermfg=87
+  hi clear Function
+  hi Function ctermfg=177
   hi clear Search
   hi clear IncSearch
   hi Search    ctermfg=255 ctermbg=18 cterm=bold
@@ -634,54 +619,28 @@ function! MyColorScheme(scheme)
   hi clear TabLineFill
   hi TabLineFill ctermfg=231 ctermbg=240 cterm=bold
   hi clear Pmenu
-  hi Pmenu ctermfg=255 ctermbg=20 cterm=bold
+  hi Pmenu ctermfg=192 ctermbg=236 cterm=bold
   hi clear PmenuSel
-  hi PmenuSel ctermfg=255 ctermbg=26 cterm=bold
+  hi PmenuSel ctermfg=192 ctermbg=234 cterm=bold
   hi clear PmenuSbar
-  hi PmenuSbar ctermfg=236 ctermbg=236 cterm=bold
+  hi PmenuSbar ctermfg=255 ctermbg=240 cterm=bold
   hi clear PmenuThumb
-  hi PmenuThumb ctermfg=26 ctermbg=26 cterm=bold
+  hi PmenuThumb ctermfg=192 ctermbg=192 cterm=bold
   hi clear MatchParen
-  hi MatchParen ctermfg=21 ctermbg=None cterm=bold
+  hi MatchParen ctermfg=148 ctermbg=None cterm=bold
 endfunction
 
 if !&diff
+  "call MyColorScheme('custom')
   call MyColorScheme('molokai')
   "call MyColorScheme('solarized')
+  "call MyColorScheme('jellybeans')
+  "call MyColorScheme('Tomorrow-Night-Bright')
 else
   " solarized is really good in diff mode (molokai is horrible)
   call MyColorScheme('solarized')
 endif
 call MySwitchTransparency()
-
-autocmd syntax * runtime syntax/RainbowParenthsis.vim
-
-if ostype == "solaris2.10"
-  let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
-elseif ostype == "solaris2.11"
-  let g:tagbar_ctags_bin = '/usr/bin/exctags'
-else
-  let g:tagbar_ctags_bin = '/usr/bin/ctags'
-endif
-let g:tagbar_autoclose = 1
-let g:tagbar_width = 30
-nmap <F8> :TagbarToggle<CR>
-
-"let g:ctrlp_regexp = 1
-let g:ctrlp_show_hidden = 1
-let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-let g:ctrlp_extensions= ['buffertag', 'mixed']
-let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
-let g:ctrlp_cmd = 'CtrlPMixed'
-
-let g:EnhCommentifyPretty='yes'
-let g:EnhCommentifyAlignRight='yes'
-let g:EnhCommentifyRespectIndent='yes'
-let g:EnhCommentifyUseBlockIndent='yes'
-let g:EnhCommentifyBindInInsert='no'
-
-let g:VMEPextensions=['extra', 'codehilite']
-let g:VMEPtemplate=expand('./template.html')
 
 function! s:check_pager_mode()
   if exists("g:loaded_less") && g:loaded_less
@@ -744,8 +703,8 @@ command! -nargs=0 -complete=command MC call EMake('clean')
 "command! -nargs=0 -complete=command M call EMake('all')
 "command! -nargs=0 -complete=command MC call EMake('clean')
 
-"" VSS crap...
-"
+"------------------- VSS crap ------------------- {{{1
+
 ""let g:ssExecutable='/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/VSS/win32/ss.exe'
 "let g:ssExecutable='/cygdrive/c/PROGRA~1/MICROS~3/VSS/win32/ss.exe'
 "
@@ -776,6 +735,8 @@ command! -nargs=0 -complete=command MC call EMake('clean')
 "endfunction
 "let g:loadVssPlugin=0
 ""call VssLoad()
+
+" End of VSS crap }}}1
 
 "------------------- ORG MODE STUFF (vim-orgmode) ------------------- {{{1
 
@@ -1172,8 +1133,10 @@ function! MyStatus()
     \ MyStatusGetCursor()
 endfunction
 
-set statusline=%!MyStatus()
-call MyStatusColorScheme()
+if !filereadable(expand("$HOME/.vim/bundle/vim-airline/plugin/airline.vim"))
+  set statusline=%!MyStatus()
+  call MyStatusColorScheme()
+endif
 
 " End of STATUSLINE STUFF }}}1
 

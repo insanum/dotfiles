@@ -1,6 +1,7 @@
 #!/bin/bash
 
-DIRS=(/home/edavis/work /home/edavis/Maildir)
+#DIRS=(/home/edavis/work /home/edavis/Maildir)
+DIRS=(/home/edavis/work)
 
 BACKUP_LOCAL='/scratch/backups/rdiff-backup'
 

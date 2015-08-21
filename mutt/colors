@@ -6,6 +6,7 @@ color tilde blue default
 color signature green default
 color hdrdefault color39 default
 color header color201 default Tags:
+color header brightwhite color201 'Tags:.*invites.*'
 color header color192 default Date:
 color header color160 default Subject:
 color header color40 default From:

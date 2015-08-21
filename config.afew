@@ -32,6 +32,16 @@ header = From
 pattern = spam-digest@broadcom.com
 tags = -new;-unread;+archive;+spam
 
+[HeaderMatchingFilter.5]
+header = To
+pattern = lng-odp@lists.linaro.org
+tags = +lng;+lng-odp
+
+[HeaderMatchingFilter.6]
+header = To
+pattern = lng-sc@linaro.org
+tags = +lng;+lng-sc
+
 [Filter.1]
 message = Tag calendar invites
 query = "BEGIN:VCALENDAR"
