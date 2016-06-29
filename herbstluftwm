@@ -5,7 +5,7 @@ function hc() { herbstclient "$@"; }
 hc emit_hook reload
 hc set default_frame_layout 3 # grid
 
-Mod=Mod4
+Mod=Mod3
 hc keyunbind   --all
 hc mouseunbind --all
 hc unrule      --all
@@ -123,7 +123,7 @@ hc set tree_style  "╾│ ├└╼─┐"
 hc set wmname LG3D
 
 hc rule                           focus=off # default do not focus new clients
-hc rule class=Chromium            tag=1
+hc rule class=chromium            tag=1
 hc rule class=Chrome              tag=1
 hc rule class=Firefox             tag=2
 hc rule class=Thunderbird         tag=2

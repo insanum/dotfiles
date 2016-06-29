@@ -189,36 +189,42 @@ function panel_bar()
                     fg=$COLOR_FOCUSED_OCCUPIED_FG
                     bg=$COLOR_FOCUSED_OCCUPIED_BG
                     cmd="bspc desktop -f ${name}"
+                    #cmd="bspc desktop ${name} -m focused -f \; bspc query -m focused -D | sort -n | xargs bspc monitor focused -o"
                     ;;
                 o*)
                     # occupied unfocused desktop
                     fg=$COLOR_OCCUPIED_FG
                     bg=$COLOR_OCCUPIED_BG
                     cmd="bspc desktop -f ${name}"
+                    #cmd="bspc desktop ${name} -m focused -f \; bspc query -m focused -D | sort -n | xargs bspc monitor focused -o"
                     ;;
                 F*)
                     # free focused desktop
                     fg=$COLOR_FOCUSED_FREE_FG
                     bg=$COLOR_FOCUSED_FREE_BG
                     cmd="bspc desktop -f ${name}"
+                    #cmd="bspc desktop ${name} -m focused -f \; bspc query -m focused -D | sort -n | xargs bspc monitor focused -o"
                     ;;
                 f*)
                     # free unfocused desktop
                     fg=$COLOR_FREE_FG
                     bg=$COLOR_FREE_BG
                     cmd="bspc desktop -f ${name}"
+                    #cmd="bspc desktop ${name} -m focused -f \; bspc query -m focused -D | sort -n | xargs bspc monitor focused -o"
                     ;;
                 U*)
                     # urgent focused desktop
                     fg=$COLOR_FOCUSED_URGENT_FG
                     bg=$COLOR_FOCUSED_URGENT_BG
                     cmd="bspc desktop -f ${name}"
+                    #cmd="bspc desktop ${name} -m focused -f \; bspc query -m focused -D | sort -n | xargs bspc monitor focused -o"
                     ;;
                 u*)
                     # urgent unfocused desktop
                     fg=$COLOR_URGENT_FG
                     bg=$COLOR_URGENT_BG
                     cmd="bspc desktop -f ${name}"
+                    #cmd="bspc desktop ${name} -m focused -f \; bspc query -m focused -D | sort -n | xargs bspc monitor focused -o"
                     ;;
                 L*)
                     # layout of focused desktop

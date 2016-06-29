@@ -20,6 +20,9 @@ opacity-rule = [
                  "99:class_g = 'Firefox'",
                  "99:class_g = 'Wfica'",
                  "95:class_g = 'Atom'",
-                 "99:class_g = 'Dmenu'"
+                 "99:class_g = 'Dmenu'",
+                 "99:class_g = 'sun-awt-X11-XFramePeer'",
+                 "99:class_g = 'java-lang-Thread'",
+                 "99:class_g = 'Atasjni'"
                ]
 

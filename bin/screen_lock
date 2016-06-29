@@ -1,10 +1,17 @@
 #!/bin/bash
 
+# prevent dunst notifications (keep all pending in a queue)
 pkill -USR1 dunst
+
+# set pidgin status away
 [[ -x /usr/bin/purple-remote ]] && purple-remote "setstatus?status=away"
 
+# lock the screen...
 slock
 
+# set pidgin status available
 [[ -x /usr/bin/purple-remote ]] && purple-remote "setstatus?status=available"
+
+# allow dunst send notifications (including all pending in the queue)
 pkill -USR2 dunst
 

@@ -5,48 +5,55 @@ PANEL_HEIGHT=24
 #PANEL_WIDTH=1920
 PANEL_FONT_FAMILY="-*-terminus-*-r-normal-*-18-*-*-*-c-*-*-1"
 
-COLOR_FOREGROUND=white
-COLOR_BACKGROUND=black
+ALPHA_BLACK='#50000000'
 
-COLOR_ACTIVE_MONITOR_FG=green
-COLOR_ACTIVE_MONITOR_BG=black
+RED='#FFFF0000'
+WHITE='#FFFFFFFF'
 
-COLOR_INACTIVE_MONITOR_FG=red
-COLOR_INACTIVE_MONITOR_BG=black
+COLOR_FOREGROUND=$WHITE
+COLOR_BACKGROUND=$ALPHA_BLACK
+
+COLOR_ACTIVE_MONITOR_FG='#FFFFFF00'
+COLOR_ACTIVE_MONITOR_BG=$ALPHA_BLACK
+
+COLOR_INACTIVE_MONITOR_FG='#FFFF0000'
+COLOR_INACTIVE_MONITOR_BG=$ALPHA_BLACK
 
 COLOR_FOCUSED_OCCUPIED_FG='#FF00FF00'
 #COLOR_FOCUSED_OCCUPIED_BG='#FF585858'
-COLOR_FOCUSED_OCCUPIED_BG=black
+COLOR_FOCUSED_OCCUPIED_BG=$ALPHA_BLACK
 
 COLOR_FOCUSED_FREE_FG='#FF00FF00'
 #COLOR_FOCUSED_FREE_BG='#FF585858'
-COLOR_FOCUSED_FREE_BG=black
+COLOR_FOCUSED_FREE_BG=$ALPHA_BLACK
 
-COLOR_OCCUPIED_FG=white
-COLOR_OCCUPIED_BG=black
+COLOR_OCCUPIED_FG=$WHITE
+COLOR_OCCUPIED_BG=$ALPHA_BLACK
 
-COLOR_FREE_FG='#FF585858'
-COLOR_FREE_BG=black
+COLOR_FREE_FG='#FF000000'
+#COLOR_FREE_FG='#FF585858'
+COLOR_FREE_BG=$ALPHA_BLACK
 
-COLOR_FOCUSED_URGENT_FG=black
+COLOR_FOCUSED_URGENT_FG='#FF000000'
 COLOR_FOCUSED_URGENT_BG='#FFFF0000'
 
-COLOR_URGENT_FG=black
+COLOR_URGENT_FG='#FF000000'
 COLOR_URGENT_BG='#FFFF0000'
 
-COLOR_LAYOUT_FG=cyan
-COLOR_LAYOUT_BG=black
+COLOR_LAYOUT_FG='#FF00FFFF'
+COLOR_LAYOUT_BG=$ALPHA_BLACK
 
-COLOR_TITLE_FG=white
-COLOR_TITLE_BG=black
+COLOR_TITLE_FG=$WHITE
+COLOR_TITLE_BG=$ALPHA_BLACK
 
-COLOR_STATUS_FG=white
-COLOR_STATUS_BG=black
+COLOR_STATUS_FG=$WHITE
+COLOR_STATUS_BG=$ALPHA_BLACK
 
 sep="%{F#FF005FAF}--%{F-}"
-obrack="%{F#FF585858}[%{F-}"
-cbrack="%{F#FF585858}]%{F-}"
-
+#obrack="%{F#FF585858}[%{F-}"
+#cbrack="%{F#FF585858}]%{F-}"
+obrack="%{F#FF000000}[%{F-}"
+cbrack="%{F#FF000000}]%{F-}"
 
 if [[ $(pgrep -cx vnc_bspwm_panel) -gt 1 ]]; then
 	printf "The panel is already running.\n" >&2
@@ -77,6 +84,7 @@ function clock()
 
 bspc control --subscribe  > "$PANEL_FIFO" &
 xtitle -sf 'T%s'          > "$PANEL_FIFO" &
+#clock -sf 'S%a %H:%M'     > "$PANEL_FIFO" &
 clock                     > "$PANEL_FIFO" &
 
 function panel_bar()
@@ -179,10 +187,11 @@ function panel_bar()
 
 cat "$PANEL_FIFO" | \
     panel_bar     | \
-    bar-aint-recursive -g x${PANEL_HEIGHT}       \
-                       -f "$PANEL_FONT_FAMILY"   \
-                       -F "$COLOR_FOREGROUND"    \
-                       -B "$COLOR_BACKGROUND"  | \
+    lemonbar                           \
+             -g x${PANEL_HEIGHT}       \
+             -f "$PANEL_FONT_FAMILY"   \
+             -F "$COLOR_FOREGROUND"    \
+             -B "$COLOR_BACKGROUND"  | \
     while read line; do eval "$line"; done &
 
 wait

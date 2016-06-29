@@ -215,6 +215,7 @@ alias where="type -a"
 alias www="w3m http://www.insanum.com"
 alias gcalcli="tsocks $HOME/src/gcalcli/gcalcli"
 alias sncli="tsocks sncli"
+alias trellocli="http_proxy=127.0.0.1:8118 go run $HOME/src/trellocli/trellocli.go"
 alias bitter="$HOME/src/bitter/bitter"
 alias nostalgic="$HOME/src/nostalgic/nostalgic"
 #alias sokoban="/usr/local/bin/vim -c ':SokobanH'"
@@ -301,7 +302,7 @@ function makecscope()
         if [ $TMP = "drv-bxe-freebsd-edavis" ]; then
             find $CODE_ROOT_DIR/$TMP -name 577xx -prune -o -type f \( -name '*.[ch]' -o -name '*.cpp' \) -print | tee -a $CSCOPE_FILES;
         else
-            find $CODE_ROOT_DIR/$TMP -type f \( -name '*.[ch]' -o -name '*.cpp' -o -name '*.java' \) -print | tee -a $CSCOPE_FILES;
+            find $CODE_ROOT_DIR/$TMP -name 'tcl8.6.0' -prune -o -type f \( -name '*.[ch]' -o -name '*.cpp' -o -name '*.java' \) -print | tee -a $CSCOPE_FILES;
         fi
 
         sort $CSCOPE_FILES > $CSCOPE_TEMP;
@@ -448,6 +449,7 @@ if [[ -n "$PS1" ]]; then
   set -o vi 
 
   #shopt -s cdspell
+  shopt -s autocd
   shopt -s cmdhist
   shopt -s dotglob
   shopt -s checkwinsize

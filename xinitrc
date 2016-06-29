@@ -126,6 +126,7 @@ fi
 
 # fix Java wackiness
 [[ -x /usr${LOCAL}/bin/wmname ]] && wmname LG3D
+export _JAVA_AWT_WM_NONREPARENTING=1
 
 #if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
 #  autossh -M 20000 -f -N -D 9999 -L 127.0.0.1:9998:127.0.0.1:443 -L 9993:imap.gmail.com:993 edavis@insanum.com
@@ -151,17 +152,17 @@ fi
 
 [[ -x /usr${LOCAL}/bin/dropbox ]] && dropbox start
 
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
-
-  if [[ -x $HOME/src/gcalcli/gcalcli ]]; then 
-    while true
-    do
-        tsocks $HOME/src/gcalcli/gcalcli remind &> /tmp/gcalcli.txt
-        sleep 300
-    done &
-  fi
-
-fi
+#if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark ]]; then
+#
+#  if [[ -x $HOME/src/gcalcli/gcalcli ]]; then 
+#    while true
+#    do
+#        tsocks $HOME/src/gcalcli/gcalcli remind &> /tmp/gcalcli.txt
+#        sleep 300
+#    done &
+#  fi
+#
+#fi
 
 #conky -c $HOME/.conkyrc &
 #conky -c $HOME/.conkyrc.gcal &
@@ -184,10 +185,10 @@ fi
 #exec ratpoison # Lots of good times, but the love affair evaporated...
 #exec musca     # I love you, I hate you for not supporting multiple monitors!
 #exec awesome   # Awesome => You suck SO bad!
-#exec xmonad    # xmonad, you rule... but Haskell? Really!?!?
+#exec xmonad    # xmonad, you rule... but Haskell? Really!?
 #exec wmfs -C ~/.wmfsrc # Yikes, bar happy and a bit over-engineered no?
 #exec i3 -V > ~/.i3/i3log 2>&1 # Meh.
-#exec herbstluftwm --autostart ~/.herbstluftwm # Love it!
+#exec herbstluftwm --autostart ~/.herbstluftwm # Love it... FU for no floating layer!
 
 sxhkd -c $HOME/.sxhkdrc &
 exec bspwm -c $HOME/.bspwmrc # Big <3 !

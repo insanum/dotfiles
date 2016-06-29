@@ -21,7 +21,7 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
   set rtp+=$HOME/.vim/vundle/
   call vundle#rc()
 
-  Bundle "https://github.com/bling/vim-airline"
+  "Bundle "https://github.com/bling/vim-airline"
   Bundle "https://github.com/scrooloose/nerdtree"
 
   "Bundle "https://github.com/kergoth/vim-hilinks.git"
@@ -50,18 +50,20 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   Bundle "https://github.com/kien/ctrlp.vim"
   "let g:ctrlp_regexp = 1
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
   let g:ctrlp_show_hidden = 1
   let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
   let g:ctrlp_extensions= ['buffertag', 'mixed']
   let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
   let g:ctrlp_cmd = 'CtrlPMixed'
+  let g:ctrlp_working_path_mode = 'c'
 
   Bundle "https://github.com/kshenoy/vim-signature"
 
   Bundle "https://github.com/easymotion/vim-easymotion"
   let g:EasyMotion_leader_key='\'
 
-"  Bundle "https://github.com/mhinz/vim-signify"
+  "Bundle "https://github.com/mhinz/vim-signify"
   Bundle "https://github.com/tpope/vim-fugitive"
 
   Bundle "https://github.com/honza/vim-snippets.git"
@@ -81,9 +83,9 @@ if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
 
   Bundle "https://github.com/yuratomo/w3m.vim.git"
 
-  Bundle "https://github.com/vim-scripts/calendar.vim--Matsumoto"
-  Bundle "https://github.com/insanum/vim-rst-tables.git"
-  Bundle "https://github.com/insanum/votl.git"
+  "Bundle "https://github.com/vim-scripts/calendar.vim--Matsumoto"
+  "Bundle "https://github.com/insanum/vim-rst-tables.git"
+  "Bundle "https://github.com/insanum/votl.git"
 
   Bundle "https://github.com/nelstrom/vim-markdown-folding.git"
   Bundle "https://github.com/waylan/vim-markdown-extra-preview.git"
@@ -158,12 +160,12 @@ set directory^=$HOME/.vim_swap//
 "set printexpr=system('print_vim\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
 nmap <Leader>ha :!enscript -M Letter -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true %:p<CR>
 
-" Here is were the *real* magic is (when programming)...
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set smarttab
-set expandtab
+" Here is were the *real* magic is (when programming, default Linux style)...
+set tabstop=8
+set softtabstop=8
+set shiftwidth=8
+set nosmarttab
+set noexpandtab
 set nosmartindent
 set autoindent
 
@@ -204,7 +206,11 @@ nmap <C-s> :update<CR>
 set showtabline=2
 set tabline=%!MyTabLine()
 
-nmap gn :tabnew<CR>
+nmap tn :tabnew<CR>
+nmap th :tabprevious<CR>
+nmap tl :tabnext<CR>
+nmap tH :tabmove -1<CR>
+nmap tL :tabmove +1<CR>
 
 function! TabOpenFileFunc(file)
   tabnew
@@ -226,8 +232,7 @@ function! MyTabLine()
     "let s .= '%' . (i + 1) . 'T'
 
     " the label is made by MyTabLabel()
-    "let s .= '|  %{MyTabLabel(' . (i + 1) . ')}  |'
-    let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
+    let s .= ' [' . (i + 1) . '] %{MyTabLabel(' . (i + 1) . ')} '
   endfor
 
   " after the last tab fill with TabLineFill and reset tab page nr
@@ -266,6 +271,8 @@ nmap <Leader>i :set ignorecase!<CR>:set ignorecase?<CR>
 set nonumber
 nmap <Leader>n :set number!<CR>:set number?<CR>
 nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
+set number
+set relativenumber
 
 set nolist
 nmap <Leader>l :set list!<CR>:set list?<CR>
@@ -283,7 +290,7 @@ endif
 "nmap <Leader>gr :grep --color=always <cword> *.[^o]<CR>
 "nmap <Leader>gr :grep <cword> *.[^o]<CR>
 "nmap <Leader>gr :exec('vimgrep /' . expand('<cword>') . '/j *[^.o$]')<CR>,m
-nmap <Leader>ak :Ack <cword> *<CR>
+nmap <Leader>ag :Ag <cword><CR>
 
 " clearcase check in/out
 "nmap <Leader>co :!cleartool co -nc -unr %:p<CR>
@@ -327,24 +334,6 @@ nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp
 
 " turn diff off for all windows in current tab
 nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
-
-" Simplenote stuff
-nmap <Leader><Leader>sn :Simplenote -n<CR>
-nmap <Leader><Leader>su :Simplenote -u<CR>
-nmap <Leader><Leader>st :Simplenote -t<CR>
-nmap <Leader><Leader>sl :Simplenote -l<CR>
-nmap <Leader><Leader>sd :Simplenote -d<CR>
-nmap <Leader><Leader>sp :Simplenote -p<CR>
-nmap <Leader><Leader>sP :Simplenote -P<CR>
-nmap <Leader><Leader>sm :set ft=markdown<CR>
-nmap <Leader><Leader>sv :set ft=votl<CR>
-function! SimplenoteTags()
-    call inputsave()
-    let tags = input('Tags: ')
-    call inputrestore()
-    execute 'Simplenote -l ' . tags
-endfunction
-nmap <Leader><Leader>slt :call SimplenoteTags()<CR>
 
 " write visual data to $HOME/t
 vmap <Leader>w :w! $HOME/t<CR>
@@ -407,28 +396,28 @@ function! AIKSAURUS(word)
 endfunction
 command! -nargs=0 -complete=command SYN call AIKSAURUS(expand("<cword>"))
 
-function! EMAIL_OMNI(findstart, base)
-    if a:findstart
-        let line = getline('.')
-        let start = col('.') - 1
-        while start > 0 && line[start - 1] =~ '\S'
-            let start -= 1
-        endwhile
-        return start
-    else
-        let res = []
-        if a:base == ""
-            return res
-        endif
-        let data=split(system("$HOME/.bin/email_addrs broadcom search " . a:base), "\n")
-        for line in data
-            call add(res, line)
-        endfor
-        sleep 2
-        return res
-    endif
-endfunction
-autocmd FileType mail set omnifunc=EMAIL_OMNI
+"function! EMAIL_OMNI(findstart, base)
+"    if a:findstart
+"        let line = getline('.')
+"        let start = col('.') - 1
+"        while start > 0 && line[start - 1] =~ '\S'
+"            let start -= 1
+"        endwhile
+"        return start
+"    else
+"        let res = []
+"        if a:base == ""
+"            return res
+"        endif
+"        let data=split(system("$HOME/.bin/email_addrs broadcom search " . a:base), "\n")
+"        for line in data
+"            call add(res, line)
+"        endfor
+"        sleep 2
+"        return res
+"    endif
+"endfunction
+"autocmd FileType mail set omnifunc=EMAIL_OMNI
 
 autocmd Filetype java setlocal omnifunc=javacomplete#Complete
 
@@ -662,6 +651,42 @@ function! s:check_pager_mode()
 endfunction
 autocmd VimEnter * :call s:check_pager_mode()
 
+" project specific mappings
+function! ConfigEnv()
+  if ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/iproc')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/iproc<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/iproc<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware<CR>
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/arch')
+    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/arch<CR>
+    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/arch<CR>
+  endif
+endfunction
+autocmd! BufReadPost,BufNewFile * call ConfigEnv()
+
 "nmap <Leader>cN :vs<CR><C-w>h<Leader>cn:vertical res 40<CR>
 "                \ggdddd:set scb<CR>:set nowrap<CR><C-w>lgg:set scb<CR>
 "                \:set nowrap<CR>
@@ -669,22 +694,22 @@ autocmd VimEnter * :call s:check_pager_mode()
 "let g:aliases_file='$HOME/.mutt/aliases'
 "autocmd FileType mail set omnifunc=muttaliasescomplete#Complete
 
-function! EMake(target)
-  let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-  echo "cd $HOME/work/" . module
-  execute "cd $HOME/work/" . module
-  if (a:target == 'clean')
-    set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\ clean\'\"
-    execute "make!" . module
-  else
-    set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\'\"
-    execute "make! " . module
-    call QuickfixOpen(1)
-  endif
-  cd -
-endfunction
-command! -nargs=0 -complete=command M call EMake('')
-command! -nargs=0 -complete=command MC call EMake('clean')
+"function! EMake(target)
+"  let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+"  echo "cd $HOME/work/" . module
+"  execute "cd $HOME/work/" . module
+"  if (a:target == 'clean')
+"    set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\ clean\'\"
+"    execute "make!" . module
+"  else
+"    set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\'\"
+"    execute "make! " . module
+"    call QuickfixOpen(1)
+"  endif
+"  cd -
+"endfunction
+"command! -nargs=0 -complete=command M call EMake('')
+"command! -nargs=0 -complete=command MC call EMake('clean')
 
 "function! EMake(target)
 "  if (getcwd() =~ '^.*/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
@@ -883,11 +908,29 @@ if has("cscope")
   elseif ($PWD =~ '^.*temp/edavis/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
     let module = substitute($PWD, '^.*temp/edavis/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
   elseif ($PWD =~ '^.*temp/edavis/kame[0-9]*\($\|/.*$\)')
-    " specific case for kame* on nseg
     let module = substitute($PWD, '^.*temp/edavis/\(kame[0-9]*\)\($\|/.*$\)', '\1', '')
-  elseif ($PWD =~ '^/usr/src/sys')
-    " specific case for FreeBSD kernel
+  elseif ($PWD =~ '^/usr/src/sys') " FreeBSD
     let module = 'sys'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/iproc')
+    let module = '/ccx-sw-arch/edavis/git/iproc'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware')
+    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware'
+  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/arch')
+    let module = '/ccx-sw-arch/edavis/git/arch'
   endif
 
   if (module != "")
