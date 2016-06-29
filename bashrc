@@ -59,8 +59,7 @@ export DVT=swdvt.lab.irv.broadcom.com
 
 exists vim && export P4EDITOR=vim
 
-#export PACMAN=pacman-color
-exists yaourt && alias pacman="HTTPS_PROXY=socks5://127.0.0.1:9999 yaourt"
+exists pacaur && alias pacman="pacaur"
 
 alias ipv6="sudo tcpdump -i eth1 -s 0 -XX -vvv ip6"
 #alias xrootevo="qiv -o black -x $HOME/pics/evo_chevy.jpg"
@@ -75,6 +74,7 @@ alias vncstart="$HOME/.vnc/vncstart"
 alias vnckill="$HOME/.vnc/vnckill"
 alias ldap="$HOME/.mutt/ldap"
 alias socks='ssh -ND 9999 edavis@insanum.com'
+alias brcm_tun='ssh -N -D 9999 -L 7777:ltirv-edavis1:3389 edavis@192.168.168.3'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
 alias gn='tsocks geeknote'
@@ -650,60 +650,6 @@ function reportimgs()
     mv ${6} dvt_conv_trend.png
 }
 
-
-function wow()
-{
-    #killall xcompmgr
-    #killall cairo-compmgr
-    #sleep 2
-
-    WOW=$HOME/.wine/drive_c/Program\ Files/World\ of\ Warcraft
-    D3=$HOME/.wine/drive_c/Program\ Files/Diablo\ III
-    HS=$HOME/.wine/drive_c/Program\ Files\ \(x86\)/Hearthstone
-
-    # start capture: 'dmenu fraps'
-    # stop capture: 'dmenu kfraps'
-
-    if [[ $1 = d3d ]]; then
-        echo "Wine (d3d) Wow.exe..."
-        cd "$WOW"
-        #WINEARCH=win32 wine Wow.exe
-        wine Wow-64.exe -d3d
-        cd -
-    elif [[ $1 = opengl ]]; then
-        echo "Wine (opengl) Wow.exe..."
-        cd "$WOW"
-        #wine64 Wow-64.exe -opengl
-        wine Wow-64.exe -opengl
-        cd -
-    elif [[ $1 == launcher ]]; then
-        echo "Wine Launcher..."
-        cd "$WOW"
-        wine "World of Warcraft Launcher.exe" -opengl
-        cd -
-    elif [[ $1 == hs ]]; then
-        echo "Wine 'Hearthstone.exe'"
-        cd "$HS"
-        wine Hearthstone.exe
-    elif [[ $1 == d3 ]]; then
-        echo "Wine 'Diablo III.exe'"
-        cd "$D3"
-        #WINEARCH=win32 wine Diablo\ III.exe -launch
-        #WINEARCH=win32 wine explorer /desktop=Diablo,1680x1050 Diablo\ III.exe -launch
-        #WINEARCH=win32 setarch i386 -3 -L -B -R wine explorer /desktop=Diablo,1680x1050 Diablo\ III.exe -launch
-        WINEARCH=win32 taskset -c 0 setarch i386 -3 wine explorer /desktop=Diablo,1680x1050 Diablo\ III.exe -launch
-        cd -
-    elif [[ $1 == glc ]]; then
-        echo "GLC Wine Wow.exe..."
-        cd "$WOW"
-        # start/stop capture: Shift-F8
-        # start capture with new capture number: Shift-F9
-        glc-capture --draw-indicator --capture=back --fps=24 --lock-fps -o /mnt/raid/wow_vids/wow_%year%%month%%day%_%hour%%min%_%capture%.glc WINEARCH=win32 wine Wow.exe
-        cd -
-    else
-        echo "Huh?"
-    fi
-}
 
 function fixkeys()
 {

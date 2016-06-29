@@ -12,11 +12,11 @@ ctrl + F7
     brightness up
 # volume
 ctrl + F8
-    amixer -q sset Master toggle
+    amixer -q sset Speaker toggle
 ctrl + F9
-    amixer -q sset Master 1-
+    amixer -q sset Speaker 1-
 ctrl + F10
-    amixer -q sset Master 1+
+    amixer -q sset Speaker 1+
 # ----------
 
 # quit bspwm
@@ -25,7 +25,7 @@ mod3 + alt + Escape
 
 # close window
 mod3 + shift + c
-    bspc window -c
+    bspc node -c
 
 # cycle desktop layouts (monocle/tiled)
 mod3 + t
@@ -33,100 +33,87 @@ mod3 + t
 
 # cycle window focus (useful for monocle)
 #mod3 + {_,shift + }c
-#    bspc window -f {next,prev}
+#    bspc node -f {next,prev}
 mod3 + {_,shift + }Tab
-    bspc window -f {next,prev}
+    bspc node -f {next,prev}
 
 # balance split ratios of tree
 mod3 + b
-    bspc desktop -B
+    bspc node -B
 
 # toggle window floating,fullscreen
-mod3 + {s,f}
-    bspc window -t {floating,fullscreen}
-# pseudo_tiled | locked | sticky | private=[on|off]
+mod3 + {s,d,f}
+    bspc node -t ~{floating,tiled,fullscreen}
+# pseudo_tiled
 
 # focus last focused window
 #mod3 + {grave,Tab}
-#    bspc {window,desktop} -f last
+#    bspc {node,desktop} -f last
 
 # swap current window with last focused window
 mod3 + apostrophe
-    bspc window -s last
+    bspc node -s last
 
 # cycle through previous focused windows (history)
 #mod3 + {o,i}
-#    bspc control --record-history off; \
-#    bspc window {older,newer} -f; \
-#    bspc control --record-history on
+#    bspc wm --record-history off; \
+#    bspc node {older,newer} -f; \
+#    bspc wm --record-history on
 
 # don't yet know what this does...
 #mod3 + y
-#    bspc window -w last.manual
+#    bspc node -n last.manual
 
 # swap current window with the biggest window on the desktop
 mod3 + m
-    bspc window -s biggest
+    bspc node -s biggest
 
 # move focus in direction or move current window in direction
 mod3 + {_,shift + }{h,j,k,l}
-    bspc window -{f,s} {left,down,up,right}
+    bspc node -{f,s} {west,south,north,east}
 
 # cycle/rotate windows around the desktop
 mod3 + {comma,period}
-    bspc desktop -C {backward,forward}
+    bspc node -C {backward,forward}
 
 # cycle monitor focus
 mod3 + {w,e}
     bspc monitor -f {prev,next}
 
 # cycle desktop focus
-#mod3 + bracket{left,right}
+#mod3 + bracket{west,east}
 mod3 + {comma,period}
     bspc desktop -f {prev,next}
 
 # set manual preselect split direction on current window
 mod3 + ctrl + {h,j,k,l}
-    bspc window -p {left,down,up,right}
+    bspc node -p {west,south,north,east}
 
 # cancel the manual preselect direction on the current window or all windows on the desktop
 mod3 + ctrl + {_,shift + }space
-    bspc {window -p cancel,desktop -c}
+    bspc {node -p cancel,desktop -c}
 
 # resize window in direction ('shift' to go smaller)
 mod3 + alt + {h,j,k,l}
-    bspc window -e {left -10,down +10,up -10,right +10}
+    bspc node @{west -10,south +10,north -10,east +10}
 mod3 + alt + shift + {h,j,k,l}
-    bspc window -e {right -10,up +10,down -10,left +10}
+    bspc node @{east -10,north +10,south -10,west +10}
 
 # set the splitting ratio for the currently selected window
 mod3 + ctrl + {1-9}
-    bspc window -r 0.{1-9}
+    bspc node -r 0.{1-9}
 
 # move/focus a desktop to the current focused monitor
 mod3 + {1-9,0}
-    bspc desktop {1-9,10} -m focused -f; \
-    bspc query -m focused -D | sort -n | xargs bspc monitor focused -o
-mod3 + {1-9,0}
-    bspc desktop {1-9,10} -m focused -f; \
-    bspc query -m focused -D | sort -n | xargs bspc monitor focused -o
+    bspc desktop {1-9,10} -f
+    #bspc desktop {1-9,10} -m focused -f; bspc query -m ^1 -T | jshon -e desktops -a -e name -u | sort -n | xargs bspc monitor ^1 -o; bspc query -m ^2 -T | jshon -e desktops -a -e name -u | sort -n | xargs bspc monitor ^2 -o
+
+mod3 + shift + {w,e}
+    bspc desktop -m ^{1,2}; bspc query -m ^1 -T | jshon -e desktops -a -e name -u | sort -n | xargs bspc monitor ^1 -o; bspc query -m ^2 -T | jshon -e desktops -a -e name -u | sort -n | xargs bspc monitor ^2 -o
 
 # send the current window to a desktop
 mod3 + shift + {1-9,0}
-    bspc window focused -d {1-9,10}
-
-# focus window on button press
-~button1
-    bspc pointer -g focus
-
-mod3 + button{1-3}
-    bspc pointer -g {move,resize_side,resize_corner}
-
-mod3 + !button{1-3}
-    bspc pointer -t %i %i
-
-mod3 + @button{1-3}
-    bspc pointer -u
+    bspc node focused -d {1-9,10}
 
 #################
 # OTHER HOTKEYS #
@@ -134,9 +121,9 @@ mod3 + @button{1-3}
 
 # volume up/down
 mod3 + Up
-    amixer -q sset Master 1+
+    amixer -q sset Speaker 1+
 mod3 + Down
-    amixer -q sset Master 1-
+    amixer -q sset Speaker 1-
 
 # smplayer controls
 mod3 + q

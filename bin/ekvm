@@ -180,6 +180,8 @@ start)
 
     # '-boot d' boots from the cdrom first
     #ARGS="-boot d -enable-kvm"
+    # '-cpu core2duo,+nx,kvm=off' for Windows 7->10 Upgrade
+    #ARGS="-enable-kvm -cpu core2duo,+nx,kvm=off"
     ARGS="-enable-kvm"
 
     if [[ -n "$EKVM_NAME" ]]; then
