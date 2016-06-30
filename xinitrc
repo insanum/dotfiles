@@ -83,7 +83,7 @@ if [[ -n "$CHROMEBOOK" ]]; then
 fi
 
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
-    feh --bg-tile $HOME/unison/kole_evo_1920x1080.png
+    feh --bg-tile $HOME/kole_evo_1920x1080.png
 elif [[ -n "$CHROMEBOOK" ]]; then
     feh --bg-scale $HOME/rogue_warcraft.jpg
 fi
@@ -187,7 +187,7 @@ fi
 #exec awesome   # Awesome => You suck SO bad!
 #exec xmonad    # xmonad, you rule... but Haskell? Really!?
 #exec wmfs -C ~/.wmfsrc # Yikes, bar happy and a bit over-engineered no?
-#exec i3 -V > ~/.i3/i3log 2>&1 # Meh.
+exec i3 -V > ~/.i3/i3log 2>&1 # Meh.
 #exec herbstluftwm --autostart ~/.herbstluftwm # Love it... FU for no floating layer!
 
 sxhkd -c $HOME/.sxhkdrc &

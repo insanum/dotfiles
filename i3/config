@@ -1,7 +1,7 @@
 
-set $mod Mod4
+set $mod Mod3
 
-font pango:Terminus Bold 15
+font pango:Inconsolata Bold 12
 
 floating_modifier $mod
 focus_follows_mouse yes
@@ -10,14 +10,15 @@ mouse_warping output
 default_orientation horizontal
 workspace_layout default
 
-new_window pixel 4
-new_float pixel 4
-hide_edge_borders none
-
 popup_during_fullscreen smart
 force_focus_wrapping yes
 workspace_auto_back_and_forth yes
 force_display_urgency_hint 2000ms
+
+gaps inner 10
+gaps inner 10
+#smart_gaps on
+#smart_borders on
 
 # 'background' is the visible border and 'border' are the title lines
 #colorclass             border  backgr. text    indicator
@@ -28,11 +29,6 @@ client.urgent           #FF0000 #8C5665 #999999 #8C5665
 #client.placeholder      #000000 #DA6F00 #000000 #000000
 #client.background       #000000
 
-
-
-
-
-
 # Switch between tiling layer and floating layer
 bindsym $mod+Shift+t focus mode_toggle
 
@@ -40,18 +36,16 @@ bindsym $mod+Shift+t focus mode_toggle
 bindsym $mod+Shift+space floating toggle
 
 # Borders!
-bindsym $mod+b border toggle
+#bindsym $mod+b border toggle
 
 # Fullscreen
 bindsym $mod+f fullscreen
-# Global Fullscreen!
-bindsym $mod+Shift+f fullscreen global
 
 # Stacking
-bindsym $mod+s layout stacking
+#bindsym $mod+s layout stacking
 
 # Tabbed
-bindsym $mod+t layout tabbed
+#bindsym $mod+t layout tabbed
 
 # Default
 bindsym $mod+d layout default
@@ -69,22 +63,22 @@ bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
 # Snap
-bindsym $mod+Control+h layout stacking
-bindsym $mod+Control+j layout stacking
-bindsym $mod+Control+k layout stacking
-bindsym $mod+Control+l layout stacking
+#bindsym $mod+Control+h layout stacking
+#bindsym $mod+Control+j layout stacking
+#bindsym $mod+Control+k layout stacking
+#bindsym $mod+Control+l layout stacking
 
 # Focus Container
-bindsym $mod+Control+a focus parent; focus left
-bindsym $mod+Control+s focus parent; focus down
-bindsym $mod+Control+w focus parent; focus up
-bindsym $mod+Control+d focus parent; focus right
+#bindsym $mod+Control+a focus parent; focus left
+#bindsym $mod+Control+s focus parent; focus down
+#bindsym $mod+Control+w focus parent; focus up
+#bindsym $mod+Control+d focus parent; focus right
 
 # Move Container
-bindsym $mod+Shift+a focus parent; move left
-bindsym $mod+Shift+s focus parent; move down
-bindsym $mod+Shift+w focus parent; move up
-bindsym $mod+Shift+d focus parent; move right
+#bindsym $mod+Shift+a focus parent; move left
+#bindsym $mod+Shift+s focus parent; move down
+#bindsym $mod+Shift+w focus parent; move up
+#bindsym $mod+Shift+d focus parent; move right
 
 # Workspace
 bindsym $mod+1 workspace 1
@@ -97,6 +91,14 @@ bindsym $mod+7 workspace 7
 bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
+
+# Focus Workspace
+bindsym $mod+e focus output right
+bindsym $mod+w focus output left
+
+# Move Workspace
+bindsym $mod+Control+e move workspace to output right
+bindsym $mod+Control+w move workspace to output left
 
 # Move to Workspace
 bindsym $mod+Shift+1 move workspace 1
@@ -140,12 +142,6 @@ bindsym $mod+Control+q restart
 # Reload i3
 bindsym $mod+q reload
 
-
-
-
-
-
-
 bindsym $mod+Return    exec termite -c ~/.termiterc -e "bash -li"
 bindsym $mod+p         exec dwm_launch prog
 bindsym $mod+Shift+p   exec dwm_launch mpc
@@ -153,7 +149,7 @@ bindsym $mod+Control+p exec gmrun
 bindsym $mod+Up        exec amixer -q sset Master 1+
 bindsym $mod+Down      exec amixer -q sset Master 1-
 
-assign [class="Chromium"]                      1
+assign [class="chromium"]                      1
 assign [class="Firefox"]                       2
 assign [class="Pidgin"]                        2
 assign [class="Thunderbird"]                   2
@@ -172,12 +168,15 @@ assign [class="Vncviewer"]                     5
 assign [class="Termite" title="work1"]         8
 assign [class="Termite" title="work2"]         9
 
-for_window [class="Chromium" title="Untitled"] floating enable
-for_window [class="Pidgin"]                    floating enable
-for_window [class="Gimp"]                      floating enable
-for_window [class="Gxmessage"]                 floating enable
-for_window [class="Gmrun"]                     floating enable
-for_window [class="Wine"]                      fullscreen
+for_window [class="chromium" instance="crx_nckgahadagoaajjgafhacjanaoiihapd"] floating enable, sticky enable
+#for_window [class="chromium" title="Untitled"] floating enable
+for_window [class="Pidgin"] floating enable
+for_window [class="Gimp"] floating enable
+for_window [class="Gxmessage"] floating enable
+for_window [class="Gmrun"] floating enable
+for_window [class="Wine"] fullscreen enable
+
+for_window [class="^.*"] border pixel 4
 
 ipc-socket ~/.i3/ipc.sock
 
@@ -186,7 +185,7 @@ bar {
     #tray_output DVI-I-1
     position top
     i3bar_command i3bar
-    status_command i3status
+    status_command i3blocks
     workspace_buttons yes
     binding_mode_indicator yes
 }
