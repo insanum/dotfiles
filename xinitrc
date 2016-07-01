@@ -80,12 +80,11 @@ if [[ -n "$CHROMEBOOK" ]]; then
     xmodmap -e "remove mod4 = Control_L" # make sure X keeps it out of the mod4 group
     xmodmap -e "add Control = Control_L" # add the new Control_L to the control group
     xmodmap -e "keycode 108 = Super_L"   # reassign Alt_R to Super_L
+    synclient TapButton1=1 TapButton2=3 TapButton3=2
 fi
 
-if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp ]]; then
+if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp || -n $CHROMEBOOK ]]; then
     feh --bg-tile $HOME/kole_evo_1920x1080.png
-elif [[ -n "$CHROMEBOOK" ]]; then
-    feh --bg-scale $HOME/rogue_warcraft.jpg
 fi
 
 #$HOME/bin/mpc_osd_py &

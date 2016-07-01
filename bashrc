@@ -80,6 +80,10 @@ alias httpdir='python -m SimpleHTTPServer'
 alias gn='tsocks geeknote'
 function sn() { vim -c ":Simplenote -l $1"; }
 
+if [[ -n "$CHROMEBOOK" ]]; then
+	alias startx=xinit
+fi
+
 if [[ -f $HOME/.herbstluftwm_hacks ]]; then
     source $HOME/.herbstluftwm_hacks
 fi
