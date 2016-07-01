@@ -1,5 +1,8 @@
 # ~/.bash_profile: executed by bash for login shells.
 
+# Chromebooks w/ Crouton, add this to /etc/profile:
+# export CHROMEBOOK=1
+
 if [[ $OSTYPE =~ freebsd ]]; then
     export LANG=en_US.UTF-8
     export MM_CHARSET=ISO-8859-1
