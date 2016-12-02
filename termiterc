@@ -12,16 +12,17 @@ clickable_url = true
 #font = Terminus 12
 #font = Droid Sans Mono 11
 #font = Inconsolata 10
-font = Inconsolata-g 10
+#font = Inconsolata-g 10
 #font = Source Code Pro 10
+font = Hack 13
 scrollback_lines = 1000
 search_wrap = true
 #icon_name = terminal
 #geometry = 640x480
 
 # 0.0: opaque, 1.0: transparent
-transparency = 0.15
-pseudo_transparency = true
+#transparency = 1.0
+#pseudo_transparency = true
 
 # "system", "on" or "off"
 cursor_blink = system
@@ -39,67 +40,83 @@ cursor_shape = block
 # set size hints for the window
 #size_hints = false
 
+#[colors]
+#foreground = #dcdccc
+#foreground_bold = #ffffff
+##foreground_dim = #888888
+##background = #000000
+#background = #121212
+##cursor = #dcdccc
+#
+## if unset, will reverse foreground and background
+##highlight = #2f2f2f
+#
+## black dark / light
+#color0 = #1b1d1e
+#color8 = #505354
+## red dark / light
+#color1 = #f92672
+#color9 = #ff5995
+## green dark / light
+#color2 = #82b414
+#color10 = #b6e354
+## yellow dark / light
+#color3 = #fd971f
+#color11 = #feed6c
+## blue dark / light
+#color4 = #56c2d6
+#color12 = #8cedff
+## magenta dark / light
+#color5 = #8c54fe
+#color13 = #9e6ffe
+## cyan dark / light
+#color6 = #465457
+#color14 = #899ca1
+## white dark / light
+#color7 = #ccccc6
+#color15 = #f8f8f2
+
 [colors]
-foreground = #dcdccc
-foreground_bold = #ffffff
-#foreground_dim = #888888
-#background = #000000
+# GRUVBOX!!!
+# hard contrast: background = #1d2021
+#background = #282828
 background = #121212
-#cursor = #dcdccc
+# soft contrast: background = #32302f
+#foreground = #ebdbb2
+foreground = #ffffff
+foreground_bold = #ebdbb2
 
-# if unset, will reverse foreground and background
-#highlight = #2f2f2f
+# dark0 + gray
+color0 = #282828
+color8 = #928374
 
-# colors from color0 to color254 can be set
-#color0 = #3f3f3f
-#color1 = #705050
-#color2 = #60b48a
-#color3 = #dfaf8f
-#color4 = #506070
-#color5 = #dc8cc3
-#color6 = #8cd0d3
-#color7 = #dcdccc
-#color8 = #709080
-#color9 = #dca3a3
-#color10 = #c3bf9f
-#color11 = #f0dfaf
-#color12 = #94bff3
-#color13 = #ec93d3
-#color14 = #93e0e3
-#color15 = #ffffff
+# neutral_red + bright_red
+color1 = #cc241d
+color9 = #fb4934
 
-# black dark
-color0 = #1b1d1e
-# black light
-color8 = #505354
-# red dark
-color1 = #f92672
-# red light
-color9 = #ff5995
-# green dark
-color2 = #82b414
-# green light
-color10 = #b6e354
-# yellow dark
-color3 = #fd971f
-# yellow light
-color11 = #feed6c
-# blue dark
-color4 = #56c2d6
-# blue light
-color12 = #8cedff
-# magenta dark
-color5 = #8c54fe
-# magenta light
-color13 = #9e6ffe
-# cyan dark
-color6 = #465457
-# cyan light
-color14 = #899ca1
-# white dark
-color7 = #ccccc6
-# white light
-color15 = #f8f8f2
+# neutral_green + bright_green
+color2 = #98971a
+color10 = #b8bb26
+
+# neutral_yellow + bright_yellow
+color3 = #d79921
+color11 = #fabd2f
+
+# neutral_blue + bright_blue
+color4 = #458588
+color12 = #83a598
+
+# neutral_purple + bright_purple
+color5 = #b16286
+color13 = #d3869b
+
+# neutral_aqua + faded_aqua
+color6 = #689d6a
+color14 = #8ec07c
+
+# light4 + light1
+color7 = #a89984
+color15 = #ebdbb2
 
 [hints]
 #font = Monospace 12
