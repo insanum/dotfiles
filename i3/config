@@ -1,7 +1,8 @@
 
 set $mod Mod3
 
-font pango:Inconsolata Bold 12
+#font pango:Inconsolata Bold 12
+font pango:Hack Bold 11
 
 floating_modifier $mod
 focus_follows_mouse yes
@@ -12,7 +13,7 @@ workspace_layout default
 
 popup_during_fullscreen smart
 force_focus_wrapping yes
-workspace_auto_back_and_forth yes
+workspace_auto_back_and_forth no
 force_display_urgency_hint 2000ms
 
 gaps inner 10
@@ -143,13 +144,12 @@ bindsym $mod+Control+q restart
 bindsym $mod+q reload
 
 bindsym $mod+Return    exec termite -c ~/.termiterc -e "bash -li"
-bindsym $mod+p         exec dwm_launch prog
-bindsym $mod+Shift+p   exec dwm_launch mpc
+bindsym $mod+p         exec launcher
 bindsym $mod+Control+p exec gmrun
 bindsym $mod+Up        exec amixer -q sset Master 1+
 bindsym $mod+Down      exec amixer -q sset Master 1-
 
-assign [class="chromium"]                      1
+assign [class="Chromium"]                      1
 assign [class="Firefox"]                       2
 assign [class="Pidgin"]                        2
 assign [class="Thunderbird"]                   2
@@ -168,8 +168,8 @@ assign [class="Vncviewer"]                     5
 assign [class="Termite" title="work1"]         8
 assign [class="Termite" title="work2"]         9
 
-for_window [class="chromium" instance="crx_nckgahadagoaajjgafhacjanaoiihapd"] floating enable, sticky enable
-#for_window [class="chromium" title="Untitled"] floating enable
+for_window [class="Chromium" instance="crx_nckgahadagoaajjgafhacjanaoiihapd"] floating enable, sticky enable
+#for_window [class="Chromium" title="Untitled"] floating enable
 for_window [class="Pidgin"] floating enable
 for_window [class="Gimp"] floating enable
 for_window [class="Gxmessage"] floating enable

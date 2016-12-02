@@ -83,7 +83,12 @@ umask 022
 # if not running interactively then bail
 [[ $- != *i* ]] && return
 
+# disable XON/XOFF flow control on the terminal
 stty -ixon
+
+if [[ -e ~/.fzf.bash ]] ; then
+  source ~/.fzf.bash
+fi
 
 if [[ -e ~/.bashrc ]] ; then
   source ~/.bashrc

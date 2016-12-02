@@ -1,0 +1,148 @@
+#!/bin/bash
+
+function usage()
+{
+    echo ""
+    echo "Usage: "`basename $0`" < help | reset | amac | tftp | nitro >"
+}
+
+SRC_IP=172.16.0.2
+DST_IP=172.16.0.1
+
+AMAC=eth0
+NITRO0=eth1
+NITRO1=eth2
+NITRO2=eth3
+NITRO3=eth4
+
+case $1 in
+    help)
+        usage
+        ;;
+
+    reset)
+        $HOME/ccx-sw-arch/edavis/sentry_reboot_ns2 reset > /dev/null &
+        ;;
+
+    env)
+        tmux send-keys "\
+setenv ipaddr 172.16.0.2; \
+setenv netmask 255.255.255.0; \
+setenv serverip 172.16.0.1; \
+setenv bootdelay 5; \
+setenv bootcmd 'tftpboot 0x8007ffc0 edavis/uImage.img; bootm 0x8007ffc0'; \
+saveenv \
+" "Enter"
+        ;;
+
+    boot)
+        # If something goes wrong here... flash could get hosed!
+        TFTP_HOST=eadfat4h.swdvt.lab.irv.broadcom.com
+        TFTP_ROOT=/srv/tftp/edavis
+        BL0_SIZE=`ssh ${TFTP_HOST} ls -l ${TFTP_ROOT}/bl0.bin | cut -d' ' -f 5`
+        BL0_SIZE=`printf "0x%x" "${BL0_SIZE}"`
+        FIP_SIZE=`ssh ${TFTP_HOST} ls -l ${TFTP_ROOT}/fip.bin | cut -d' ' -f 5`
+        FIP_SIZE=`printf "0x%x" "${FIP_SIZE}"`
+        eblk=0x10000
+        BL0_ERASE_SIZE=`printf "0x%x" "$(((BL0_SIZE + eblk) & ~(eblk-1)))"`
+        FIP_ERASE_SIZE=`printf "0x%x" "$(((FIP_SIZE + eblk) & ~(eblk-1)))"`
+        re='^0x[0-9a-f]+$'
+        if [[ ! "${BL0_SIZE}" =~ $re ]]; then exit; fi
+        if [[ ! "${BL0_ERASE_SIZE}" =~ $re ]]; then exit; fi
+        if [[ ! "${FIP_SIZE}" =~ $re ]]; then exit; fi
+        if [[ ! "${FIP_ERASE_SIZE}" =~ $re ]]; then exit; fi
+        tmux send-keys "\
+tftpboot 0x85000000 edavis/bl0.bin; \
+tftpboot 0x86000000 edavis/fip.bin; \
+sf probe; \
+sf erase 0 ${BL0_ERASE_SIZE}; \
+sf write 0x85000000 0 ${BL0_SIZE}; \
+sf erase 0x80000 ${FIP_ERASE_SIZE}; \
+sf write 0x86000000 0x80000 ${FIP_SIZE} \
+" "Enter"
+        ;;
+
+    amac)
+        tmux send-keys "\
+devmem 0x67002800 32 0; \
+mkdir -p /mnt/huge; \
+mount -t hugetlbfs nodev /mnt/huge; \
+echo 64 > /proc/sys/vm/nr_hugepages; \
+ifconfig ${AMAC} ${SRC_IP} netmask 255.255.255.0 up; \
+ping -c 2 172.16.0.1 \
+" "Enter"
+#ifconfig ${AMAC} 10.13.114.39 netmask 255.255.254.0 up
+#route add default gw 10.13.114.1
+#echo -e 'domain broadcom.com\nnameserver 10.10.10.10' > /etc/resolv.conf
+#sshfs edavis@xlinux:/projects/ccx-sw-arch/edavis /mnt
+        ;;
+
+    dma0)
+        tmux send-keys "\
+rmmod pmd_ctl; \
+tftp -g -r edavis/pl330.ko ${DST_IP}; \
+tftp -g -r edavis/dmatest.ko ${DST_IP}; \
+tftp -g -r edavis/pmd_ctl.ko ${DST_IP}; \
+tftp -g -r edavis/pl330_test ${DST_IP}; \
+tftp -g -r edavis/dma330_test ${DST_IP}; \
+chmod 755 pl330_test; \
+chmod 755 dma330_test; \
+insmod ./pmd_ctl.ko \
+" "Enter"
+        ;;
+
+    dma)
+        tmux send-keys "\
+tftp -g -r edavis/dma330_test ${DST_IP}; \
+chmod 755 dma330_test; \
+" "Enter"
+        ;;
+
+    tftp)
+        tmux send-keys "\
+tftp -g -r edavis/nitro.ko ${DST_IP}; \
+tftp -g -r edavis/pmd_ctl.ko ${DST_IP}; \
+tftp -g -r edavis/odp_echo_srv ${DST_IP}; \
+tftp -g -r edavis/odp_route ${DST_IP}; \
+tftp -g -r edavis/odp_reflector ${DST_IP}; \
+tftp -g -r edavis/bench ${DST_IP}; \
+tftp -g -r edavis/nitro_debug ${DST_IP}; \
+chmod 755 odp_* bench nitro_debug; \
+ls -l \
+" "Enter"
+        ;;
+
+    linaro)
+        tmux send-keys "\
+tftp -g -r edavis/linaro/nitro.ko ${DST_IP}; \
+tftp -g -r edavis/linaro/pmd_ctl.ko ${DST_IP}; \
+tftp -g -r edavis/linaro/odp_echo_srv_edavis ${DST_IP}; \
+tftp -g -r edavis/linaro/odp_echo_srv_donw ${DST_IP}; \
+tftp -g -r edavis/linaro/odp_route_edavis ${DST_IP}; \
+tftp -g -r edavis/linaro/odp_route_donw ${DST_IP}; \
+tftp -g -r edavis/linaro/odp_reflector_edavis ${DST_IP}; \
+tftp -g -r edavis/linaro/odp_reflector_donw ${DST_IP}; \
+tftp -g -r edavis/linaro/bench ${DST_IP}; \
+chmod 755 odp_* bench; \
+ls -l \
+" "Enter"
+        ;;
+
+    nitro)
+        tmux send-keys "\
+i2cset -y 1 0x70 0 7 && i2cset -y 1 0x24 0xff 0x0; \
+insmod ./pmd_ctl.ko; \
+insmod ./nitro.ko port_0_1_speed_1000=1 rx_ring_size=127 tx_ring_size=127; \
+ifconfig ${NITRO3} 172.16.66.2 netmask 255.255.255.0; \
+ifconfig ${NITRO2} 172.16.67.2 netmask 255.255.255.0; \
+ping -c 2 172.16.66.1 \
+" "Enter"
+        ;;
+
+    *)
+        echo "ERROR: Invalid argument \"$1\""
+        usage
+        ;;
+
+esac
+

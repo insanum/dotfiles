@@ -84,7 +84,8 @@ if [[ -n "$CHROMEBOOK" ]]; then
 fi
 
 if [[ $HOSTNAME = eadmaka || $HOSTNAME = skylark || $HOSTNAME = jackshrimp || -n $CHROMEBOOK ]]; then
-    feh --bg-tile $HOME/kole_evo_1920x1080.png
+    #feh --bg-tile $HOME/kole_evo_1920x1080.png
+    feh --bg-scale $HOME/chromeos_landscape1.jpg
 fi
 
 #$HOME/bin/mpc_osd_py &
@@ -186,11 +187,12 @@ fi
 #exec awesome   # Awesome => You suck SO bad!
 #exec xmonad    # xmonad, you rule... but Haskell? Really!?
 #exec wmfs -C ~/.wmfsrc # Yikes, bar happy and a bit over-engineered no?
-exec i3 -V > ~/.i3/i3log 2>&1 # Meh.
 #exec herbstluftwm --autostart ~/.herbstluftwm # Love it... FU for no floating layer!
 
-sxhkd -c $HOME/.sxhkdrc &
-exec bspwm -c $HOME/.bspwmrc # Big <3 !
+#sxhkd -c $HOME/.sxhkdrc &
+#exec bspwm -c $HOME/.bspwmrc # WTF, hate the new abstract node direction...
+
+exec i3 -V > ~/.i3/i3log 2>&1 # Big <3 !
 
 # Falling back to DWM...
 

@@ -11,7 +11,11 @@ elif [[ $OSTYPE =~ freebsd ]]; then
 elif [[ $OSTYPE == linux-gnu ]]; then
   #eval `dircolors $HOME/bin/dircolors_solarized`
   # -> from 'dircolors -b' / 'dircolors -p' <- changed ln to 33 (yellow), added m3u = mp3
-  export LS_COLORS='no=00:fi=00:di=01;34:ln=01;33:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42:ow=45:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.m3u=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:';
+  #export LS_COLORS='no=00:fi=00:di=01;34:ln=01;33:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:tw=30;42:ow=45:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.m3u=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:';
+
+  # Don't remember where I got this... but I like it!
+  export LS_COLORS='no=00;38;5;252:rs=0:di=01;38;5;198:ln=01;38;5;37:mh=00:pi=48;5;230;38;5;136;01:so=48;5;230;38;5;136;01:do=48;5;230;38;5;136;01:bd=48;5;230;38;5;244;01:cd=48;5;230;38;5;244;01:or=48;5;235;38;5;160:su=48;5;160;38;5;230:sg=48;5;136;38;5;230:ca=30;41:tw=48;5;64;38;5;230:ow=48;5;235;38;5;33:st=48;5;33;38;5;230:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:ex=01;38;5;82:*.cmd=00;38;5;82:*.exe=00;38;5;82:*.com=00;38;5;82:*.btm=00;38;5;82:*.bat=00;38;5;82:*.jpg=00;38;5;37:*.jpeg=00;38;5;37:*.png=00;38;5;37:*.gif=00;38;5;37:*.bmp=00;38;5;37:*.xbm=00;38;5;37:*.xpm=00;38;5;37:*.tif=00;38;5;37:*.tiff=00;38;5;37:*.pdf=00;38;5;98:*.odf=00;38;5;98:*.doc=00;38;5;98:*.ppt=00;38;5;98:*.pptx=00;38;5;98:*.db=00;38;5;98:*.aac=00;38;5;208:*.au=00;38;5;208:*.flac=00;38;5;208:*.mid=00;38;5;208:*.midi=00;38;5;208:*.mka=00;38;5;208:*.mp3=00;38;5;208:*.mpc=00;38;5;208:*.ogg=00;38;5;208:*.ra=00;38;5;208:*.wav=00;38;5;208:*.m4a=00;38;5;208:*.axa=00;38;5;208:*.oga=00;38;5;208:*.spx=00;38;5;208:*.xspf=00;38;5;208:*.mov=01;38;5;208:*.mpg=01;38;5;208:*.mpeg=01;38;5;208:*.3gp=01;38;5;208:*.m2v=01;38;5;208:*.mkv=01;38;5;208:*.ogm=01;38;5;208:*.mp4=01;38;5;208:*.m4v=01;38;5;208:*.mp4v=01;38;5;208:*.vob=01;38;5;208:*.qt=01;38;5;208:*.nuv=01;38;5;208:*.wmv=01;38;5;208:*.asf=01;38;5;208:*.rm=01;38;5;208:*.rmvb=01;38;5;208:*.flc=01;38;5;208:*.avi=01;38;5;208:*.fli=01;38;5;208:*.flv=01;38;5;208:*.gl=01;38;5;208:*.m2ts=01;38;5;208:*.divx=01;38;5;208:*.log=00;38;5;240:*.bak=00;38;5;240:*.aux=00;38;5;240:*.bbl=00;38;5;240:*.blg=00;38;5;240:*~=00;38;5;240:*#=00;38;5;240:*.part=00;38;5;240:*.incomplete=00;38;5;240:*.swp=00;38;5;240:*.tmp=00;38;5;240:*.temp=00;38;5;240:*.o=00;38;5;246:*.pyc=00;38;5;240:*.class=00;38;5;240:*.cache=00;38;5;240:';
+
   # -> no bold
   eval "export LS_COLORS=\"`echo $LS_COLORS | sed 's/=01;/=00;/g'`\""
 fi
@@ -55,7 +59,8 @@ if [[ $OSTYPE == linux-gnu ]]; then
     export VDPAU_NVIDIA_NO_OVERLAY=1
 fi
 
-export DVT=swdvt.lab.irv.broadcom.com
+export FZF_DEFAULT_OPTS='--preview="cat {}" --bind ctrl-d:page-down,ctrl-u:page-up'
+export FZF_TMUX=0
 
 exists vim && export P4EDITOR=vim
 
@@ -150,8 +155,6 @@ if [[ $OSTYPE =~ solaris ]]; then
   }
 fi
 
-export RSYNC_RSH="ssh -c blowfish"
-
 if [[ $OSTYPE =~ solaris ]]; then
   if [[ "`grep -i illumos /etc/release`" != "" ]]; then
     LS=/usr/gnu/bin/ls
@@ -217,7 +220,7 @@ alias h="history"
 alias where="type -a"
 #alias which="type -a"
 alias www="w3m http://www.insanum.com"
-alias gcalcli="tsocks $HOME/src/gcalcli/gcalcli"
+alias gcalcli="tsocks gcalcli"
 alias sncli="tsocks sncli"
 alias trellocli="http_proxy=127.0.0.1:8118 go run $HOME/src/trellocli/trellocli.go"
 alias bitter="$HOME/src/bitter/bitter"
@@ -259,7 +262,8 @@ alias nostalgic="$HOME/src/nostalgic/nostalgic"
 #    fi
 #}
 
-function rdesk() { rdesktop -g 90% -r sound:local -K -0 $1; }
+# 24px panel + 10px window gap + 5px window border (1890x1026+10+34)
+function rdesk() { rdesktop -T ltirv-edavis1 -g 1890x1026+10+34 -0 -E -D -K -P -z -a 32 -x 80 -r sound:local $1; }
 function findsuid() { find $1 -xdev -type f \( -perm -u=s -o -perm -g=s \) -exec ls -l {} \;; }
 
 alias mypydoc="epydoc --html --no-frames --show-imports --graph=all -o mypydoc __builtin__ os sys commands string shlex getopt datetime urllib urllib2 httplib urlparse time re atom dateutil pytz gdata"
@@ -618,7 +622,7 @@ if [[ -n "$PS1" ]]; then
       #fi
 
       case "$TERM" in
-      screen-256color|xterm*)
+      screen-256color|st*|xterm*)
         # bold...
         #PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BRIGHT_BLUE $rtee$dash$ltee $BRIGHT_YELLOW\${host}$BRIGHT_BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE $rtee$dash$dash\n$BRIGHT_BLUE$lbot$dash$ltee $BRIGHT_CYAN\$(_pwd_chomp) ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE$rtee$dash$dash$CLEAR "
         # not bold...
@@ -706,4 +710,7 @@ function gitp4clone()
                  --destination $P4GITPATH       \
                  --use-client-spec $P4GITDEPOTS
 }
+
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 

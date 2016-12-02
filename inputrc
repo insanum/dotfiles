@@ -3,6 +3,7 @@ set bell-style none
 
 set show-all-if-ambiguous On
 set print-completions-horizontally On
+set horizontal-scroll-mode On
 set visible-stats On
 
 "\C-x\C-r": re-read-init-file

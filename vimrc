@@ -1,99 +1,128 @@
 " vim:foldmethod=marker
 
 " VIM config file - Eric Davis
-"------------------------------------------------
+" ------------------------------------------------
+" Plugins managed via vim-plug: https://github.com/junegunn/vim-plug
 
 let ostype=system('echo -n $OSTYPE')
 
-" cd ~/.vim
-" git clone https://github.com/gmarik/vundle.git
-" vim -c ":BundleInstall"
-" vim -c ":BundleUpdate"
+if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
+    call plug#begin('~/.vim/plugged')
 
-" YouCompleteMe completion engine setup:
-"     cd ~/.vim/bundle/YouCompleteMe
-"     ./install.sh --clang-completer --gocode-completer
-" Generate .ycm_extra_conf.py for C projects:
-"     cd ~/.vim/bundle/YCM-Generator
-"     ./config_gen.py <path_to_c_project>
+    " Notable plugins used in the past:
+    "
+    " https://github.com/bling/vim-airline
+    " https://github.com/kergoth/vim-hilinks.git
+    " https://github.com/rking/ag.vim
+    " https://github.com/scrooloose/nerdcommenter
+    " https://github.com/kien/rainbow_parentheses.vim
+    "    autocmd VimEnter * RainbowParenthesesToggle
+    "    autocmd Syntax * RainbowParenthesesLoadRound
+    "    autocmd Syntax * RainbowParenthesesLoadSquare
+    "    autocmd Syntax * RainbowParenthesesLoadBraces
+    "    "autocmd Syntax * RainbowParenthesesLoadChevron
+    " https://github.com/kien/ctrlp.vim
+    "    "let g:ctrlp_regexp = 1
+    "    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+    "    let g:ctrlp_show_hidden = 1
+    "    let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+    "    let g:ctrlp_extensions= ['buffertag', 'mixed']
+    "    let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
+    "    let g:ctrlp_cmd = 'CtrlPMixed'
+    "    let g:ctrlp_working_path_mode = 'c'
+    " https://github.com/Shougo/vimproc.vim
+    " https://github.com/Shougo/unite.vim
+    " https://github.com/mhinz/vim-signify
+    " https://github.com/adragomir/javacomplete
+    " https://github.com/rdnetto/YCM-Generator
+    " https://github.com/Valloric/YouCompleteMe.git
+    "    "YouCompleteMe completion engine setup:
+    "    "  cd ~/.vim/bundle/YouCompleteMe
+    "    "  ./install.sh --clang-completer --gocode-completer
+    "    "Generate .ycm_extra_conf.py for C projects:
+    "    "  cd ~/.vim/bundle/YCM-Generator
+    "    "  ./config_gen.py <path_to_c_project>
+    "    let g:ycm_confirm_extra_conf=0
+    "    let g:ycm_extra_conf_globlist=['*']
+    "    let g:ycm_show_diagnostics_ui=0
+    "    let g:ycm_collect_identifiers_from_tags_files=1
+    "    set completeopt=menuone
+    " https://github.com/honza/vim-snippets.git
+    " https://github.com/SirVer/ultisnips.git
+    " https://github.com/lifepillar/vim-mucomplete
+    "    let g:mucomplete#enable_auto_at_startup = 1
+    " https://github.com/maralla/validator.vim
+    " https://github.com/nelstrom/vim-markdown-folding.git
+    " https://github.com/waylan/vim-markdown-extra-preview.git
+    "    let g:VMEPextensions=['extra', 'codehilite']
+    "    let g:VMEPtemplate=expand('./template.html')
+    " https://github.com/hsanson/vim-android.git
+    "    let g:android_sdk_path="/opt/android-sdk"
+    " https://github.com/nathanaelkane/vim-indent-guides
+    "    let g:indent_guides_enable_on_vim_startup = 1
+    "    let g:indent_guides_guide_size = 1
+    "    let g:indent_guides_auto_colors = 0
+    "    autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=234
+    "    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=234
+    "    autocmd OptionSet * call indent_guides#process_autocmds()
 
-if filereadable(expand("$HOME/.vim/vundle/autoload/vundle.vim"))
-  set rtp+=$HOME/.vim/vundle/
-  call vundle#rc()
 
-  "Bundle "https://github.com/bling/vim-airline"
-  Bundle "https://github.com/scrooloose/nerdtree"
+    Plug 'https://github.com/scrooloose/nerdtree'
 
-  "Bundle "https://github.com/kergoth/vim-hilinks.git"
-  Bundle "https://github.com/tomasr/molokai.git"
-  Bundle "https://github.com/nanotech/jellybeans.vim"
-  Bundle "https://github.com/altercation/vim-colors-solarized.git"
-  Bundle "https://github.com/chriskempson/vim-tomorrow-theme"
+    Plug 'https://github.com/morhetz/gruvbox'
+    Plug 'https://github.com/tomasr/molokai.git'
+    Plug 'https://github.com/nanotech/jellybeans.vim'
+    Plug 'https://github.com/dracula/vim'
+    Plug 'https://github.com/romainl/Apprentice'
+    Plug 'https://github.com/reedes/vim-colors-pencil'
+    Plug 'https://github.com/chriskempson/vim-tomorrow-theme'
+    Plug 'https://github.com/altercation/vim-colors-solarized.git'
 
-  Bundle "https://github.com/vim-scripts/Align"
-  Bundle "https://github.com/rking/ag.vim"
-  Bundle "https://github.com/scrooloose/nerdcommenter"
+    Plug 'https://github.com/vim-scripts/Align'
 
-  Bundle "https://github.com/kien/rainbow_parentheses.vim"
+    Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
+    let g:rainbow#max_level = 32
+    let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
-  Bundle "https://github.com/majutsushi/tagbar.git"
-  if ostype == "solaris2.10"
-    let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
-  elseif ostype == "solaris2.11"
-    let g:tagbar_ctags_bin = '/usr/bin/exctags'
-  else
-    let g:tagbar_ctags_bin = '/usr/bin/ctags'
-  endif
-  let g:tagbar_autoclose = 1
-  let g:tagbar_width = 30
-  nmap <F8> :TagbarToggle<CR>
+    Plug 'https://github.com/majutsushi/tagbar.git'
+    if ostype == "solaris2.10"
+        let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
+    elseif ostype == "solaris2.11"
+        let g:tagbar_ctags_bin = '/usr/bin/exctags'
+    else
+        let g:tagbar_ctags_bin = '/usr/bin/ctags'
+    endif
+    let g:tagbar_autoclose = 1
+    let g:tagbar_width = 30
+    nmap <F8> :TagbarToggle<CR>
 
-  Bundle "https://github.com/kien/ctrlp.vim"
-  "let g:ctrlp_regexp = 1
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-  let g:ctrlp_show_hidden = 1
-  let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-  let g:ctrlp_extensions= ['buffertag', 'mixed']
-  let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
-  let g:ctrlp_cmd = 'CtrlPMixed'
-  let g:ctrlp_working_path_mode = 'c'
+    Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
+    Plug 'junegunn/fzf.vim'
+    let g:fzf_command_prefix = 'Z'
+    let g:fzf_layout = { }
 
-  Bundle "https://github.com/kshenoy/vim-signature"
+    Plug 'https://github.com/kshenoy/vim-signature'
 
-  Bundle "https://github.com/easymotion/vim-easymotion"
-  let g:EasyMotion_leader_key='\'
+    Plug 'https://github.com/easymotion/vim-easymotion'
+    let g:EasyMotion_leader_key='\'
 
-  "Bundle "https://github.com/mhinz/vim-signify"
-  Bundle "https://github.com/tpope/vim-fugitive"
+    Plug 'https://github.com/tpope/vim-fugitive'
 
-  Bundle "https://github.com/honza/vim-snippets.git"
-  Bundle "https://github.com/SirVer/ultisnips.git"
-  let g:UltiSnipsExpandTrigger="<c-h>"
-  let g:UltiSnipsListSnippets="<c-s>"
-  let g:UltiSnipsJumpForwardTrigger="<c-j>"
-  let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+    Plug 'https://github.com/honza/vim-snippets.git'
+    Plug 'https://github.com/SirVer/ultisnips.git'
+    let g:UltiSnipsExpandTrigger="<c-h>"
+    let g:UltiSnipsListSnippets="<c-s>"
+    let g:UltiSnipsJumpForwardTrigger="<c-j>"
+    let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
-  Bundle "https://github.com/adragomir/javacomplete"
-  Bundle "https://github.com/rdnetto/YCM-Generator"
-  Bundle "https://github.com/Valloric/YouCompleteMe.git"
-  let g:ycm_confirm_extra_conf=0
-  let g:ycm_extra_conf_globlist=['*']
-  let g:ycm_show_diagnostics_ui=0
-  set completeopt=menuone
+    Plug 'https://github.com/maralla/completor.vim'
+    let g:completor_clang_binary = '/usr/bin/clang'
 
-  Bundle "https://github.com/yuratomo/w3m.vim.git"
+    Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
+    Plug 'https://github.com/insanum/vim-rst-tables.git'
+    Plug 'https://github.com/insanum/votl.git'
 
-  "Bundle "https://github.com/vim-scripts/calendar.vim--Matsumoto"
-  "Bundle "https://github.com/insanum/vim-rst-tables.git"
-  "Bundle "https://github.com/insanum/votl.git"
-
-  Bundle "https://github.com/nelstrom/vim-markdown-folding.git"
-  Bundle "https://github.com/waylan/vim-markdown-extra-preview.git"
-  let g:VMEPextensions=['extra', 'codehilite']
-  let g:VMEPtemplate=expand('./template.html')
-
-  "Bundle "https://github.com/hsanson/vim-android.git"
-  "let g:android_sdk_path="/opt/android-sdk"
+    call plug#end()
 endif
 
 "------------------------------------------------
@@ -152,7 +181,7 @@ set verbosefile=$HOME/vim_verbose.txt
 
 set swapfile
 if !isdirectory(expand('$HOME/.vim_swap'))
-  call mkdir(expand('$HOME/.vim_swap'))
+    call mkdir(expand('$HOME/.vim_swap'))
 endif
 set directory^=$HOME/.vim_swap//
 
@@ -187,8 +216,8 @@ set vb t_vb=
 nnoremap ; :
 nnoremap ! :!
 
-imap <C-n> <ESC>
-nmap <C-n> <ESC>
+inoremap <C-n> <ESC>
+nnoremap <C-n> <ESC>
 "nmap <C-k> :res<CR>
 nmap <Leader><C-l> :redraw!<CR>
 
@@ -197,8 +226,8 @@ noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
 
-" auto save when leaving insert mode
-autocmd InsertLeave * if expand('%') != '' | update | endif
+" auto save when leaving insert mode (slow)
+"autocmd InsertLeave * if expand('%') != '' | update | endif
 nmap <C-s> :update<CR>
 
 " window tab stuff
@@ -213,49 +242,49 @@ nmap tH :tabmove -1<CR>
 nmap tL :tabmove +1<CR>
 
 function! TabOpenFileFunc(file)
-  tabnew
-  execute "e" a:file
+    tabnew
+    execute "e" a:file
 endfunction
 command! -nargs=1 -complete=command -complete=dir -complete=file T call TabOpenFileFunc(<f-args>)
 
 function! MyTabLine()
-  let s = ''
-  for i in range(tabpagenr('$'))
-    " select the highlighting
-    if i + 1 == tabpagenr()
-      let s .= '%#TabLineSel#'
-    else
-      let s .= '%#TabLine#'
-    endif
+    let s = ''
+    for i in range(tabpagenr('$'))
+        " select the highlighting
+        if i + 1 == tabpagenr()
+            let s .= '%#TabLineSel#'
+        else
+            let s .= '%#TabLine#'
+        endif
 
-    " set the tab page number (for mouse clicks)
-    "let s .= '%' . (i + 1) . 'T'
+        " set the tab page number (for mouse clicks)
+        "let s .= '%' . (i + 1) . 'T'
 
-    " the label is made by MyTabLabel()
-    let s .= ' [' . (i + 1) . '] %{MyTabLabel(' . (i + 1) . ')} '
-  endfor
+        " the label is made by MyTabLabel()
+        let s .= ' [' . (i + 1) . '] %{MyTabLabel(' . (i + 1) . ')} '
+    endfor
 
-  " after the last tab fill with TabLineFill and reset tab page nr
-  "let s .= '%#TabLineFill#%T'
-  let s .= '%#TabLineFill#'
+    " after the last tab fill with TabLineFill and reset tab page nr
+    "let s .= '%#TabLineFill#%T'
+    let s .= '%#TabLineFill#'
 
-  " right-align the label to close the current tab page
-  "if tabpagenr('$') > 1
-  "  let s .= '%=%#TabLine#%999Xclose'
-  "endif
+    " right-align the label to close the current tab page
+    "if tabpagenr('$') > 1
+    "    let s .= '%=%#TabLine#%999Xclose'
+    "endif
 
-  return s
+    return s
 endfunction
 
 function! MyTabLabel(n)
-  let buflist = tabpagebuflist(a:n)
-  let winnr = tabpagewinnr(a:n)
-  "let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':~')
-  let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':t')
-  if tmp == ''
-      return '<empty>'
-  endif
-  return tmp
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    "let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':~')
+    let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':t')
+    if tmp == ''
+        return '<empty>'
+    endif
+    return tmp
 endfunction
 
 " turn off the hlsearch highlights
@@ -283,14 +312,13 @@ nmap <Leader>da 1G/Last Modified:\s*/e+1<CR>Cabdate<ESC>
 
 " grep all files in the currect directory for the word under the cursor
 if ostype == "solaris2.10" || ostype == "solaris2.11"
-  nmap <Leader>gr :!ggrep -n --color=always <cword> *<CR>
+    nmap <Leader>gr :!ggrep -n --color=always <cword> *<CR>
 else
-  nmap <Leader>gr :!grep -r -n --color=always <cword> *<CR>
+    nmap <Leader>gr :!grep -r -n --color=always <cword> *<CR>
 endif
 "nmap <Leader>gr :grep --color=always <cword> *.[^o]<CR>
 "nmap <Leader>gr :grep <cword> *.[^o]<CR>
 "nmap <Leader>gr :exec('vimgrep /' . expand('<cword>') . '/j *[^.o$]')<CR>,m
-nmap <Leader>ag :Ag <cword><CR>
 
 " clearcase check in/out
 "nmap <Leader>co :!cleartool co -nc -unr %:p<CR>
@@ -326,11 +354,11 @@ nmap <Leader>pe :exec('!e4 edit ' . expand("%"))<CR>:w!<CR>
 nmap <Leader>dw :set diffopt=filler,iwhite<CR>
 
 " perforce diff current file (vs previous)
-nmap <Leader>pdp :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=:call MyColorScheme('solarized')<CR>
+nmap <Leader>pdp :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
 
 " git diff current file (unstaged and staged vs previous)
-nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=:call MyColorScheme('solarized')<CR>
-nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=:call MyColorScheme('solarized')<CR>
+nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
+nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
 
 " turn diff off for all windows in current tab
 nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
@@ -378,10 +406,10 @@ nmap <Leader>fo :%foldopen!<CR>
 nmap <Leader>fc :%foldclose!<CR>
 
 function! CCLfunc()
-  99wincmd j
-  wincmd k
-  ccl
-  q
+    99wincmd j
+    wincmd k
+    ccl
+    q
 endfunction
 command! -nargs=0 -complete=command CCL call CCLfunc()
 
@@ -455,13 +483,9 @@ map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans
             \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
             \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
-" AUTOCOMMAND STUFF
+" AUTOCOMMAND
 
-autocmd VimEnter * RainbowParenthesesToggle
-autocmd Syntax * RainbowParenthesesLoadRound
-autocmd Syntax * RainbowParenthesesLoadSquare
-autocmd Syntax * RainbowParenthesesLoadBraces
-"autocmd Syntax * RainbowParenthesesLoadChevron
+autocmd Syntax * RainbowParentheses
 
 autocmd Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
 autocmd Syntax c,cc,cpp syn keyword cType S8 U8 S16 U16 S32 U32 S64 U64
@@ -475,20 +499,20 @@ autocmd BufNewFile,BufRead /tmp/alot.\w\+ setf mail
 "autocmd BufWritePre,FileWritePre *.html ks|1,$g/Last Modified: /normal f:lD:read !date<CR>kJ's
 
 "if !&diff
-"  autocmd WinEnter * resize
+"    autocmd WinEnter * resize
 "endif
 
 " macros to put the quickfix window in proper place
 function! QuickfixOpen(bottom)
-  if (a:bottom)
-    ccl
-    bot cw 10
-    "set previewwindow
-  else
-    ccl
-    cw 40
-    "set previewwindow
-  endif
+    if (a:bottom)
+        ccl
+        bot cw 10
+        "set previewwindow
+    else
+        ccl
+        cw 40
+        "set previewwindow
+    endif
 endfunction
 nmap ,M :call QuickfixOpen(0)<CR>
 nmap ,m :call QuickfixOpen(1)<CR>
@@ -529,163 +553,59 @@ autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php 
 
 " search for all lines longer than textwidth
 "if &textwidth > 0
-"  execute "nmap <Leader>L /\%" . &textwidth . "v.\+<CR>"
+"    execute "nmap <Leader>L /\%" . &textwidth . "v.\+<CR>"
 "endif
 
 "nmap <F7> <C-E>:sleep 3<CR><C-E>:redraw<CR><F7>
 
-" This function is broken if called repeatedly... clobbers syntax highlights!
-function! MySwapColorScheme()
-  if !exists('g:colors_name') || g:colors_name == 'custom'
-    call MyColorScheme('molokai')
-  elseif g:colors_name == 'molokai'
-    call MyColorScheme('solarized')
-  elseif g:colors_name == 'solarized'
-    call MyColorScheme('jellybeans')
-  elseif g:colors_name == 'jellybeans'
-    call MyColorScheme('Tomorrow-Night-Bright')
-  elseif g:colors_name == 'Tomorrow-Night-Bright'
-    call MyColorScheme('custom')
-    let g:colors_name = 'custom'
-  endif
-  call MySwitchTransparency()
-  if !filereadable(expand("$HOME/.vim/bundle/vim-airline/plugin/airline.vim"))
-    call MyStatusColorScheme()
-  endif
-endfunction
-map <Leader>> :call MySwapColorScheme()<CR>
-
-function! MySwitchTransparency()
-  if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
-    hi Normal ctermbg=None
-  else
-    hi Normal ctermbg=233
-  endif
-endfunction
-map <Leader>< :call MySwitchTransparency()<CR>
-
-function! MyColorScheme(scheme)
-  if a:scheme != 'custom'
-    if a:scheme == 'solarized'
-        set background=dark
-        let g:solarized_termcolors=256
-        "let g:solarized_termtrans=1
-        "let g:solarized_bold=0
-        "let g:solarized_underline=0
-        let g:solarized_italic=0
-    endif
-    execute "colorscheme" a:scheme
-    "hi link cError Normal
-    hi MatchParen ctermfg=148 ctermbg=None cterm=bold
-    return
-  endif
-
-  colorscheme molokai
-  hi Normal ctermfg=252 ctermbg=233
-  hi clear Comment
-  hi Comment ctermfg=33
-  hi clear Visual
-  hi Visual ctermbg=237
-  hi link cError Normal
-  hi clear cOperator
-  hi cOperator ctermfg=160
-  hi clear cNumber
-  hi cNumber ctermfg=87
-  hi clear Function
-  hi Function ctermfg=177
-  hi clear Search
-  hi clear IncSearch
-  hi Search    ctermfg=255 ctermbg=18 cterm=bold
-  hi IncSearch ctermfg=255 ctermbg=18 cterm=bold
-  hi clear Todo
-  hi Todo ctermfg=232 ctermbg=207 cterm=bold
-  hi CtrlPMatch ctermfg=40
-  hi CtrlPPrtText ctermfg=40
-  hi clear TabLineSel
-  hi TabLineSel ctermfg=232 ctermbg=207 cterm=bold
-  hi clear TabLine
-  hi TabLine ctermfg=207 ctermbg=236 cterm=bold
-  hi clear TabLineFill
-  hi TabLineFill ctermfg=231 ctermbg=240 cterm=bold
-  hi clear Pmenu
-  hi Pmenu ctermfg=192 ctermbg=236 cterm=bold
-  hi clear PmenuSel
-  hi PmenuSel ctermfg=192 ctermbg=234 cterm=bold
-  hi clear PmenuSbar
-  hi PmenuSbar ctermfg=255 ctermbg=240 cterm=bold
-  hi clear PmenuThumb
-  hi PmenuThumb ctermfg=192 ctermbg=192 cterm=bold
-  hi clear MatchParen
-  hi MatchParen ctermfg=148 ctermbg=None cterm=bold
-endfunction
-
-if !&diff
-  "call MyColorScheme('custom')
-  call MyColorScheme('molokai')
-  "call MyColorScheme('solarized')
-  "call MyColorScheme('jellybeans')
-  "call MyColorScheme('Tomorrow-Night-Bright')
-else
-  " solarized is really good in diff mode (molokai is horrible)
-  call MyColorScheme('solarized')
-endif
-call MySwitchTransparency()
-
 function! s:check_pager_mode()
-  if exists("g:loaded_less") && g:loaded_less
-    " we're in vimpager / less.sh / man mode
-    set laststatus=0
-    set showtabline=0
-    set foldmethod=manual
-    set foldlevel=99
-    set nolist
-    go
-  elseif &diff
-    set nospell
-  elseif !&diff
-    "wincmd l
-    "Hexplore
-    "execute "normal! zt"
-    "wincmd h
-  endif
+    if exists("g:loaded_less") && g:loaded_less
+        " we're in vimpager / less.sh / man mode
+        set laststatus=0
+        set showtabline=0
+        set foldmethod=manual
+        set foldlevel=99
+        set nolist
+        go
+    elseif &diff
+        set nospell
+    elseif !&diff
+        "wincmd l
+        "Hexplore
+        "execute "normal! zt"
+        "wincmd h
+    endif
 endfunction
 autocmd VimEnter * :call s:check_pager_mode()
 
+function! NotifyPrint(msg)
+    execute "silent !notify-send '" . a:msg . "'"
+endfunction
+
 " project specific mappings
 function! ConfigEnv()
-  if ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/iproc')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/iproc<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/iproc<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware<CR>
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/arch')
-    nmap <buffer> <Leader>ag :Ag <cword> $HOME/ccx-sw-arch/edavis/git/arch<CR>
-    nmap <buffer> <C-p> :CtrlP $HOME/ccx-sw-arch/edavis/git/arch<CR>
-  endif
+    if ($PWD =~ $HOME . '/arch/git/iproc')
+        nmap <buffer> <C-p> :ZFiles $HOME/arch/git/iproc<CR>
+    elseif ($PWD =~ $HOME . '/arch/git/arch')
+        nmap <buffer> <C-p> :ZFiles $HOME/arch/git/arch<CR>
+    elseif ($PWD =~ $HOME . '/arch/git/netxtreme')
+        " ccx-sw-arch: netxtreme, netxtreme_a1, netxtreme_ovs
+        let nxgit = substitute($PWD, $HOME . '/arch/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+        execute 'nmap <buffer> <C-p> :ZFiles $HOME/arch/git/netxtreme'.nxgit.'/main/Cumulus<CR>'
+        "execute 'nmap <buffer> <C-p> :call fzf#vim#files("$HOME/arch/git/netxtreme'.nxgit.'/main/Cumulus", {"options": "--bind ctrl-d:page-down,ctrl-u:page-up"})<CR>'
+    elseif ($PWD =~ '/mnt/work/git/netxtreme')
+        " local: netxtreme, netxtreme_a1, netxtreme_ovs
+        let nxgit = substitute($PWD, '/mnt/work/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+        execute 'nmap <buffer> <C-p> :ZFiles /mnt/work/git/netxtreme'.nxgit.'/main/Cumulus<CR>'
+        "execute 'nmap <buffer> <C-p> :call fzf#vim#files("/mnt/work/git/netxtreme'.nxgit.'/main/Cumulus", {"options": "--bind ctrl-d:page-down,ctrl-u:page-up"})<CR>'
+    else
+        nmap <buffer> <C-p> :ZFiles<CR>
+    endif
+    nmap <buffer> <Leader>ag :call fzf#vim#ag(expand('<cword>'))<CR>
+    nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'))<CR>
+    "nmap <buffer> <Leader>... 
 endfunction
-autocmd! BufReadPost,BufNewFile * call ConfigEnv()
+autocmd! VimEnter,BufReadPost,BufNewFile * call ConfigEnv()
 
 "nmap <Leader>cN :vs<CR><C-w>h<Leader>cn:vertical res 40<CR>
 "                \ggdddd:set scb<CR>:set nowrap<CR><C-w>lgg:set scb<CR>
@@ -695,491 +615,404 @@ autocmd! BufReadPost,BufNewFile * call ConfigEnv()
 "autocmd FileType mail set omnifunc=muttaliasescomplete#Complete
 
 "function! EMake(target)
-"  let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"  echo "cd $HOME/work/" . module
-"  execute "cd $HOME/work/" . module
-"  if (a:target == 'clean')
-"    set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\ clean\'\"
-"    execute "make!" . module
-"  else
-"    set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\'\"
-"    execute "make! " . module
-"    call QuickfixOpen(1)
-"  endif
-"  cd -
+"    let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+"    echo "cd $HOME/work/" . module
+"    execute "cd $HOME/work/" . module
+"    if (a:target == 'clean')
+"        set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\ clean\'\"
+"        execute "make!" . module
+"    else
+"        set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\'\"
+"        execute "make! " . module
+"        call QuickfixOpen(1)
+"    endif
+"    cd -
 "endfunction
 "command! -nargs=0 -complete=command M call EMake('')
 "command! -nargs=0 -complete=command MC call EMake('clean')
 
 "function! EMake(target)
-"  if (getcwd() =~ '^.*/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-"    let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"    echo "cd $HOME/work/" . module
-"    execute "cd $HOME/work/" . module
-"    execute "make! " . a:target
-"    if (a:target == 'clean')
-"      ccl
-"    else
-"      call QuickfixOpen(1)
+"    if (getcwd() =~ '^.*/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
+"        let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+"        echo "cd $HOME/work/" . module
+"        execute "cd $HOME/work/" . module
+"        execute "make! " . a:target
+"        if (a:target == 'clean')
+"            ccl
+"        else
+"            call QuickfixOpen(1)
+"        endif
+"        cd -
 "    endif
-"    cd -
-"  endif
 "endfunction
 "command! -nargs=0 -complete=command M call EMake('all')
 "command! -nargs=0 -complete=command MC call EMake('clean')
 
-"------------------- VSS crap ------------------- {{{1
-
-""let g:ssExecutable='/cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio/VSS/win32/ss.exe'
-"let g:ssExecutable='/cygdrive/c/PROGRA~1/MICROS~3/VSS/win32/ss.exe'
-"
-"function! VssLoad()
-""  if !g:loadVssPlugin
-""    return
-""  endif
-"  if (getcwd() =~ '^.*edavis/vss/\w*\($\|/.*$\)')
-"    let vss_root = substitute(getcwd(), '\(^.*edavis/vss/\)\w*\($\|/.*$\)', '\1', '')
-"    let vss_module = substitute(getcwd(), '^.*edavis/vss/\(\w*\)\($\|/.*$\)', '\1', '')
-"    if !filereadable(vss_root.vss_module."/.project")
-"      echo 'WARNING: VSS .project file does not exist for "'.vss_module.'"'
-"      if confirm('Do you want to create a .project file?', "&Yes\n&No", 2) == 2
-"        echo 'VSS plugin not loaded'
-"      else
-"        let vss_path = input('VSS Project Path: ', '$/Source/bcm5706/')
-"        if vss_path == ''
-"          echo 'Invalid input: VSS plugin not loaded'
-"        else
-"          call system('echo "'.vss_path.'" > '.vss_root.vss_module.'/.project')
-"          let g:loadVssPlugin=1
-"        endif
-"      endif
-"    else
-"      let g:loadVssPlugin=1
-"    endif
-"  endif
-"endfunction
-"let g:loadVssPlugin=0
-""call VssLoad()
-
-" End of VSS crap }}}1
-
-"------------------- ORG MODE STUFF (vim-orgmode) ------------------- {{{1
-
-"let g:org_todo_keywords=
-"\ [
-"\  ['TODO(t)', 'STARTED(s)', '|', 'DONE(d)'],
-"\  ['CANCELED(c)']
-"\ ]
-"let g:org_todo_keyword_faces=
-"\ [
-"\  ['TODO',     [':foreground brown',
-"\                ':background none',
-"\                ':decoration underline']],
-"\  ['STARTED',  [':foreground yellow',
-"\                ':background none',
-"\                ':decoration underline']],
-"\  ['CANCELED', [':foreground red',
-"\                ':background none',
-"\                ':decoration underline']],
-"\  ['DONE',     [':foreground lightgreen',
-"\                ':background none',
-"\                ':decoration underline']]
-"\ ]
-"let g:org_heading_highlight_colors=
-"\ ['OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'OL6', 'OL7', 'OL8']
-"let g:org_tag_column=80
-"let g:org_agenda_files=['~/unison/insanum.org']
-"
-"nmap <Leader>ta :OrgTagsRealign<CR>
-"nmap <Leader><up> :py ORGMODE.plugins["EditStructure"].new_heading(below=True, end_of_last_child=True)<CR>
-"nmap <Leader>td o:CLOSED:<<C-R>=strftime("%Y-%m-%d %a")<CR>><ESC>
-"vmap <LocalLeader>W <ESC>'<O#+BEGIN_EXAMPLE<ESC>'>o#+END_EXAMPLE<ESC>
-"
-"function! OrgModeColors()
-"  "hi Normal ctermfg=green ctermbg=black
-"
-"  hi Folded ctermbg=black ctermfg=green cterm=bold
-"  hi LineNr ctermbg=black ctermfg=grey cterm=bold
-"
-"  hi org_comment ctermfg=red
-"  hi org_timestamp ctermfg=magenta
-"  hi org_shade_stars ctermfg=darkgray
-"
-"  hi OL1 ctermfg=lightblue
-"  hi OL2 ctermfg=red
-"  hi OL3 ctermfg=brown
-"  hi OL4 ctermfg=yellow
-"  hi OL5 ctermfg=lightblue
-"  hi OL6 ctermfg=red
-"  hi OL7 ctermfg=brown
-"  hi OL8 ctermfg=yellow
-"
-"  syntax match org_tags /\s*:\S*:\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
-"  hi org_tags ctermfg=red
-"  syntax match org_example /\s*#+.*_EXAMPLE\s*$/ containedin=org_heading1,org_heading2,org_heading3,org_heading4,org_heading5,org_heading6,org_heading7,org_heading8
-"  hi org_example ctermfg=darkgrey
-"
-"  " Properties (taken from vim-orgmode/syntax/org.vim since org_tags conflicts)
-"  syn region Error matchgroup=org_properties_delimiter start=/^\s*:PROPERTIES:\s*$/ end=/^\s*:END:\s*$/ contains=org_property keepend
-"endfunction
-"autocmd BufEnter *.org call OrgModeColors()
-"
-"function! OrgWrapExample()
-"  exe "normal '>o#+END_EXAMPLE"
-"  exe "normal '<O#+BEGIN_EXAMPLE"
-"endfunction
-"vmap <localleader>we <Esc>:call OrgWrapExample()<CR>
-"
-"function! OrgWrapSource()
-"  exe "normal '>o#+END_SRC"
-"  exe "normal '<O#+BEGIN_SRC"
-"endfunction
-"vmap <localleader>ws <Esc>:call OrgWrapSource()<CR>
-
-" End of ORG MODE STUFF (vim-orgmode) }}}1
-
-"------------------- ORG MODE STUFF (VimOrganizer) ------------------- {{{1
-
-"let g:org_todo_setup="TODO NEXT STARTED | DONE CANCELED"
-""let g:org_tag_setup="{home(o) brcm(k)} \n {high(1) medium(2) low(3)} \n {easy(y) meh(m) hard(h)} \n {bnxe(a) bnx(b) bge(c) misc(d) meeting(e)}"
-"let g:agenda_files = ["$HOME/insanum.org"]
-"
-"autocmd! BufRead,BufWrite,BufWritePost,BufNewFile *.org
-"autocmd BufRead,BufNewFile *.org call org#SetOrgFileType()
-"autocmd BufRead *.org :PreLoadTags
-"autocmd BufWrite *.org :PreWriteTags
-"autocmd BufWritePost *.org :PostWriteTags
-"
-"function! OrgModeColors()
-"  colorscheme org_dark
-"  hi TabLine     ctermfg=252 ctermbg=233
-"  hi TabLineSel  ctermfg=252 ctermbg=233 cterm=bold gui=bold
-"  hi TabLineFill ctermfg=252 ctermbg=233 cterm=reverse gui=reverse
-"endfunction
-"autocmd BufEnter *.org call OrgModeColors()
-"
-""autocmd BufEnter *.org set mouse=a
-""autocmd BufLeave *.org set mouse-=a
-"
-"function! Org_property_changed_functions(line, key, val)
-"  call confirm("prop changed: ".a:line."--key:".a:key." val:".a:val)
-"endfunction
-"
-"function! XXX_Org_after_todo_state_change_hook(line, state1, state2)
-"  call OrgConfirmDrawer("LOGBOOK")
-"  "let str = ": - State: " . org#Pad(a:state2,10) . "   from: " . org#Pad(a:state1,10) . '    [' . org#Timestamp() . ']'
-"  let str = ": - State: " . org#Pad(a:state2,10) . '    [' . org#Timestamp() . ']'
-"  call append(line("."), repeat(' ',len(matchstr(getline(line(".")),'^\s*'))) . str)
-"endfunction
-
-" End of ORG MODE STUFF (VimOrganizer) }}}1
-
-"------------------- CSCOPE STUFF ------------------- {{{1
+"------------------- CSCOPE ------------------- {{{1
 
 " location of tag files
 "set tags=./tags,tags,/vob/infra/tags
 
 if has("cscope")
 
-  let usequickfix=1
+    let usequickfix=1
 
-  let ostype=system('echo -n $OSTYPE')
-  if ostype =~ "solaris"
-    set csprg=/opt/csw/bin/cscope
-  elseif ostype =~ "freebsd"
-    set csprg=/usr/local/bin/cscope
-  else
-    set csprg=/usr/bin/cscope
-  endif
-  set cst
-  set csto=0
-  set nocsverb
-
-  let module=""
-
-  if ($PWD =~ $HOME . '/work/git/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-    let module = substitute($PWD, $HOME . '/work/git/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-  elseif ($PWD =~ $HOME . '/work/solaris_source/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-    let module = substitute($PWD, $HOME . '/work/solaris_source/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-  elseif ($PWD =~ $HOME . '/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-    let module = substitute($PWD, $HOME . '/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-  elseif ($PWD =~ $HOME . '/vss/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-    let module = substitute($PWD, $HOME . '/vss/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-  elseif ($PWD =~ '^.*temp/edavis/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-    let module = substitute($PWD, '^.*temp/edavis/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-  elseif ($PWD =~ '^.*temp/edavis/kame[0-9]*\($\|/.*$\)')
-    let module = substitute($PWD, '^.*temp/edavis/\(kame[0-9]*\)\($\|/.*$\)', '\1', '')
-  elseif ($PWD =~ '^/usr/src/sys') " FreeBSD
-    let module = 'sys'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/iproc')
-    let module = '/ccx-sw-arch/edavis/git/iproc'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/linux'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/windows'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/drivers/diag'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme_sr/main/Cumulus/firmware'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/linux'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/windows'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/drivers/diag'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware')
-    let module = '/ccx-sw-arch/edavis/git/netxtreme/main/Cumulus/firmware'
-  elseif ($PWD =~ $HOME . '/ccx-sw-arch/edavis/git/arch')
-    let module = '/ccx-sw-arch/edavis/git/arch'
-  endif
-
-  if (module != "")
-    execute "cscope add $HOME/cscope/" . hostname() . "/" . module . "/cscope.out"
-    execute "set tags=$HOME/cscope/" . hostname() . "/" . module . "/TAGS"
-  endif
-
-  "setlocal omnifunc=ccomplete#Complete
-
-  let cs_tab="tab"
-  let cs_split="split"
-  let cs_vsplit="vsplit"
-  let cs_none="none"
-
-  function! CscopeCmd(win, type, tag)
-    if a:win == g:cs_tab
-      tabnew
-      let cmd="cscope"
-    elseif a:win == g:cs_split
-      let cmd="scscope"
-    elseif a:win == g:cs_vsplit
-      let cmd="vert scscope"
-    else " a:win == g:cs_none
-      let cmd="cscope"
+    let ostype=system('echo -n $OSTYPE')
+    if ostype =~ "solaris"
+        set csprg=/opt/csw/bin/cscope
+    elseif ostype =~ "freebsd"
+        set csprg=/usr/local/bin/cscope
+    else
+        set csprg=/usr/bin/cscope
     endif
-    execute cmd "find" a:type a:tag
-  endfunction
+    set cst
+    set csto=0
+    set nocsverb
 
-  command! -nargs=1 -complete=command -complete=tag F  call CscopeCmd(cs_split,  "g", <f-args>)
-  command! -nargs=1 -complete=command -complete=tag FV call CscopeCmd(cs_vsplit, "g", <f-args>)
-  command! -nargs=1 -complete=command -complete=tag FT call CscopeCmd(cs_tab,    "g", <f-args>)
+    let git_branch=system('git rev-parse --quiet --abbrev-ref HEAD 2> /dev/null')
+    let module=""
 
-  set csverb
+    if ($PWD =~ $HOME . '/work/git/[0-9A-Za-z_.\-]*\($\|/.*$\)')
+        let module = substitute($PWD, $HOME . '/work/git/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+    elseif ($PWD =~ $HOME . '/work/solaris_source/[0-9A-Za-z_.\-]*\($\|/.*$\)')
+        let module = substitute($PWD, $HOME . '/work/solaris_source/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+    elseif ($PWD =~ $HOME . '/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
+        let module = substitute($PWD, $HOME . '/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+    elseif ($PWD =~ $HOME . '/vss/[0-9A-Za-z_.\-]*\($\|/.*$\)')
+        let module = substitute($PWD, $HOME . '/vss/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+    elseif ($PWD =~ '^.*temp/edavis/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
+        let module = substitute($PWD, '^.*temp/edavis/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+    elseif ($PWD =~ '^.*temp/edavis/kame[0-9]*\($\|/.*$\)')
+        let module = substitute($PWD, '^.*temp/edavis/\(kame[0-9]*\)\($\|/.*$\)', '\1', '')
+    elseif ($PWD =~ '^/usr/src/sys') " FreeBSD
+        let module = 'sys'
+    elseif ($PWD =~ $HOME . '/arch/git/iproc')
+        let module = '/arch/git/iproc/' . git_branch
+    elseif ($PWD =~ $HOME . '/arch/git/netxtreme')
+        " ccx-sw-arch: netxtreme, netxtreme_a1, netxtreme_ovs
+        let nxgit = substitute($PWD, $HOME . '/arch/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+        let module = '/arch/git/netxtreme'.nxgit.'/' . git_branch
+    elseif ($PWD =~ '/mnt/work/git/netxtreme')
+        " local: netxtreme, netxtreme_a1, netxtreme_ovs
+        let nxgit = substitute($PWD, '/mnt/work/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
+        let module = '/mnt/work/git/netxtreme'.nxgit.'/' . git_branch
+    elseif ($PWD =~ $HOME . '/arch/git/arch')
+        let module = '/arch/git/arch/' . git_branch
+    endif
 
-  " :cs find ? <symbol|pattern|file>
-  " s  symbol   - find all references to the symbol under cursor
-  " g  global   - find global definitions of the symbol under cursor
-  " d  called   - find all functions that the function under cursor calls
-  " c  calls    - find all functions calling the function under cursor
-  " t  text     - find all instances of the text under cursor
-  " e  egrep    - find the egrep pattern
-  " f  file     - find the file under cursor
-  " i  includes - find files that include the filename under cursor
+    let mtags=""
+    for m in split(module)
+        execute "cscope add $HOME/cscope/" . hostname() . m . "/cscope.out"
+        let mtags=mtags . "$HOME/cscope/" . hostname() . m . "/TAGS,"
+    endfor
+    execute "set tags=" . mtags
 
-  set cscopequickfix=s-,d-,c-,t-,e-,i-
+    "setlocal omnifunc=ccomplete#Complete
 
-  nmap <C-c>s      :call CscopeCmd(cs_split, "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
-  nmap <C-c>S      :call CscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>,m<C-W>k
-  nmap <C-c><C-c>s :call CscopeCmd(cs_none,  "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    let cs_tab="tab"
+    let cs_split="split"
+    let cs_vsplit="vsplit"
+    let cs_none="none"
 
-  nmap <C-c>d      :call CscopeCmd(cs_split, "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
-  nmap <C-c>D      :call CscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>,m<C-W>k
-  nmap <C-c><C-c>d :call CscopeCmd(cs_none,  "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    function! CscopeCmd(win, type, tag)
+        if a:win == g:cs_tab
+            tabnew
+            let cmd="cscope"
+        elseif a:win == g:cs_split
+            let cmd="scscope"
+        elseif a:win == g:cs_vsplit
+            let cmd="vert scscope"
+        else " a:win == g:cs_none
+            let cmd="cscope"
+        endif
+        execute cmd "find" a:type a:tag
+    endfunction
 
-  nmap <C-c>c      :call CscopeCmd(cs_split, "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
-  nmap <C-c>C      :call CscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>,m<C-W>k
-  nmap <C-c><C-c>c :call CscopeCmd(cs_none,  "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    command! -nargs=1 -complete=command -complete=tag F  call CscopeCmd(cs_split,  "g", <f-args>)
+    command! -nargs=1 -complete=command -complete=tag FV call CscopeCmd(cs_vsplit, "g", <f-args>)
+    command! -nargs=1 -complete=command -complete=tag FT call CscopeCmd(cs_tab,    "g", <f-args>)
 
-  nmap <C-c>t      :call CscopeCmd(cs_split, "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
-  nmap <C-c>T      :call CscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>,m<C-W>k
-  nmap <C-c><C-c>t :call CscopeCmd(cs_none,  "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    set csverb
 
-  nmap <C-c>i      :call CscopeCmd(cs_split, "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
-  nmap <C-c>I      :call CscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>,m<C-W>k
-  nmap <C-c><C-c>i :call CscopeCmd(cs_none,  "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
+    " :cs find ? <symbol|pattern|file>
+    " s  symbol   - find all references to the symbol under cursor
+    " g  global   - find global definitions of the symbol under cursor
+    " d  called   - find all functions that the function under cursor calls
+    " c  calls    - find all functions calling the function under cursor
+    " t  text     - find all instances of the text under cursor
+    " e  egrep    - find the egrep pattern
+    " f  file     - find the file under cursor
+    " i  includes - find files that include the filename under cursor
 
-  nmap <C-c>g           :call CscopeCmd(cs_split,  "g", expand("<cword>"))<CR>
-  nmap <C-c>G           :call CscopeCmd(cs_tab,    "g", expand("<cword>"))<CR>
-  nmap <C-c><C-c>g      :call CscopeCmd(cs_vsplit, "g", expand("<cword>"))<CR>
-  nmap <C-c><C-c><C-c>g :call CscopeCmd(cs_none,   "g", expand("<cword>"))<CR>
+    set cscopequickfix=s-,d-,c-,t-,e-,i-
 
-  nmap <C-c>f      :call CscopeCmd(cs_split, "f", expand("<cfile>"))<CR>
-  nmap <C-c>F      :call CscopeCmd(cs_tab,   "f", expand("<cfile>"))<CR>
-  nmap <C-c><C-c>f :call CscopeCmd(cs_none,  "f", expand("<cfile>"))<CR>
+    nmap <C-c>s      :call CscopeCmd(cs_split, "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>S      :call CscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>s :call CscopeCmd(cs_none,  "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
+
+    nmap <C-c>d      :call CscopeCmd(cs_split, "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>D      :call CscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>d :call CscopeCmd(cs_none,  "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
+
+    nmap <C-c>c      :call CscopeCmd(cs_split, "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>C      :call CscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>c :call CscopeCmd(cs_none,  "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
+
+    nmap <C-c>t      :call CscopeCmd(cs_split, "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>T      :call CscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>t :call CscopeCmd(cs_none,  "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
+
+    nmap <C-c>i      :call CscopeCmd(cs_split, "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>I      :call CscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>i :call CscopeCmd(cs_none,  "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
+
+    nmap <C-c>g           :call CscopeCmd(cs_split,  "g", expand("<cword>"))<CR>
+    nmap <C-c>G           :call CscopeCmd(cs_tab,    "g", expand("<cword>"))<CR>
+    nmap <C-c><C-c>g      :call CscopeCmd(cs_vsplit, "g", expand("<cword>"))<CR>
+    nmap <C-c><C-c><C-c>g :call CscopeCmd(cs_none,   "g", expand("<cword>"))<CR>
+
+    nmap <C-c>f      :call CscopeCmd(cs_split, "f", expand("<cfile>"))<CR>
+    nmap <C-c>F      :call CscopeCmd(cs_tab,   "f", expand("<cfile>"))<CR>
+    nmap <C-c><C-c>f :call CscopeCmd(cs_none,  "f", expand("<cfile>"))<CR>
 
 endif
 
-" End of CSCOPE STUFF }}}1
+" End of CSCOPE }}}1
 
-"------------------- VOTL STUFF ------------------- {{{1
+"------------------- VOTL ------------------- {{{1
 
 function! VotlColors()
-  hi OL1 ctermfg=255 ctermbg=57
-  hi OL2 ctermfg=196
-  hi OL3 ctermfg=39
-  hi OL4 ctermfg=252
-  hi OL5 ctermfg=196
-  hi OL6 ctermfg=39
-  hi OL7 ctermfg=252
-  hi OL8 ctermfg=196
-  hi OL9 ctermfg=39
+    hi OL1 ctermfg=255 ctermbg=57
+    hi OL2 ctermfg=196
+    hi OL3 ctermfg=39
+    hi OL4 ctermfg=252
+    hi OL5 ctermfg=196
+    hi OL6 ctermfg=39
+    hi OL7 ctermfg=252
+    hi OL8 ctermfg=196
+    hi OL9 ctermfg=39
 
-  " color for body text
-  for i in range(1, 9)
-     execute "hi BT" . i . " ctermfg=141"
-  endfor
+    " color for body text
+    for i in range(1, 9)
+        execute "hi BT" . i . " ctermfg=141"
+    endfor
 
-  " color for pre-formatted body text
-  for i in range(1, 9)
-     execute "hi BP" . i . " ctermfg=213"
-  endfor
+    " color for pre-formatted body text
+    for i in range(1, 9)
+        execute "hi BP" . i . " ctermfg=213"
+    endfor
 
-  " color for tables
-  for i in range(1, 9)
-     execute "hi TA" . i . " ctermfg=136"
-  endfor
+    " color for tables
+    for i in range(1, 9)
+        execute "hi TA" . i . " ctermfg=136"
+    endfor
 
-  " color for user text
-  "for i in range(1, 9)
-  "   execute "hi UT" . i . " ctermfg=41"
-  "endfor
+    " color for user text
+    "for i in range(1, 9)
+    "    execute "hi UT" . i . " ctermfg=41"
+    "endfor
 
-  " color for pre-formatted user text
-  "for i in range(1, 9)
-  "   execute "hi UP" . i . " ctermfg=51"
-  "endfor
+    " color for pre-formatted user text
+    "for i in range(1, 9)
+    "    execute "hi UP" . i . " ctermfg=51"
+    "endfor
 
-  hi VotlTags       ctermfg=253 ctermbg=21
-  hi VotlDate       ctermfg=129
-  hi VotlTime       ctermfg=129
-  hi VotlChecked    ctermfg=149
-  hi VotlCheckbox   ctermfg=171
-  hi VotlPercentage ctermfg=149
-  hi VotlTableLines ctermfg=242
+    hi VotlTags       ctermfg=253 ctermbg=21
+    hi VotlDate       ctermfg=129
+    hi VotlTime       ctermfg=129
+    hi VotlChecked    ctermfg=149
+    hi VotlCheckbox   ctermfg=171
+    hi VotlPercentage ctermfg=149
+    hi VotlTableLines ctermfg=242
 
-  set cursorline
+    set cursorline
 endfunction
 autocmd FileType votl call VotlColors()
 
 autocmd FileType votl setlocal nospell
 
-" End of VOTL STUFF }}}1
+" End of VOTL }}}1
 
 "------------------- STATUSLINE ------------------- {{{1
 
 function! MyStatusColorScheme()
-  hi ST_M_NORMAL  ctermfg=22  ctermbg=148 cterm=bold
-  hi ST_M_INSERT  ctermfg=23  ctermbg=231 cterm=bold
-  hi ST_M_VISUAL  ctermfg=88  ctermbg=208 cterm=bold
-  hi ST_M_REPLACE ctermfg=231 ctermbg=160 cterm=bold
-  hi ST_M_SELECT  ctermfg=231 ctermbg=241 cterm=bold
+    hi ST_M_NORMAL  ctermfg=22  ctermbg=148 cterm=bold
+    hi ST_M_INSERT  ctermfg=23  ctermbg=231 cterm=bold
+    hi ST_M_VISUAL  ctermfg=88  ctermbg=208 cterm=bold
+    hi ST_M_REPLACE ctermfg=231 ctermbg=160 cterm=bold
+    hi ST_M_SELECT  ctermfg=231 ctermbg=241 cterm=bold
 
-  hi ST_FILET     ctermfg=247 ctermbg=236 cterm=bold
-  hi ST_FILET_I   ctermfg=117 ctermbg=24  cterm=bold
+    hi ST_FILET     ctermfg=247 ctermbg=236 cterm=bold
+    hi ST_FILET_I   ctermfg=117 ctermbg=24  cterm=bold
 
-  hi ST_FLAGS     ctermfg=227 ctermbg=52  cterm=bold
-  hi ST_DOS       ctermfg=189 ctermbg=55  cterm=bold
+    hi ST_FLAGS     ctermfg=227 ctermbg=52  cterm=bold
+    hi ST_DOS       ctermfg=189 ctermbg=55  cterm=bold
 
-  hi ST_FILE      ctermfg=231 ctermbg=240 cterm=bold
-  hi ST_FILE_I    ctermfg=231 ctermbg=31  cterm=bold
+    hi ST_FILE      ctermfg=231 ctermbg=240 cterm=bold
+    hi ST_FILE_I    ctermfg=231 ctermbg=31  cterm=bold
 
-  hi ST_CHAR      ctermfg=247 ctermbg=236 cterm=bold
-  hi ST_CHAR_I    ctermfg=117 ctermbg=24  cterm=bold
+    hi ST_CHAR      ctermfg=247 ctermbg=236 cterm=bold
+    hi ST_CHAR_I    ctermfg=117 ctermbg=24  cterm=bold
 
-  hi ST_SCROLL    ctermfg=250 ctermbg=240 cterm=bold
-  hi ST_SCROLL_I  ctermfg=117 ctermbg=31  cterm=bold
+    hi ST_SCROLL    ctermfg=250 ctermbg=240 cterm=bold
+    hi ST_SCROLL_I  ctermfg=117 ctermbg=31  cterm=bold
 
-  hi ST_CURSOR    ctermfg=236 ctermbg=252 cterm=bold
-  hi ST_CURSOR_I  ctermfg=23  ctermbg=117 cterm=bold
+    hi ST_CURSOR    ctermfg=236 ctermbg=252 cterm=bold
+    hi ST_CURSOR_I  ctermfg=23  ctermbg=117 cterm=bold
 
-  hi ST_TAG       ctermfg=244 ctermbg=236 cterm=bold
-  hi ST_TAG_I     ctermfg=244 ctermbg=24  cterm=bold
+    hi ST_TAG       ctermfg=244 ctermbg=236 cterm=bold
+    hi ST_TAG_I     ctermfg=244 ctermbg=24  cterm=bold
 endfunction
 
 function! MyStatusGetMode()
-  let mode = mode()
-  if     mode ==# 'v'        | return "%#ST_M_VISUAL# VISUAL %*"
-  elseif mode ==# 'V'        | return "%#ST_M_VISUAL# V.LINE %*"
-  elseif mode ==# ''       | return "%#ST_M_VISUAL# V.BLOCK %*"
-  elseif mode ==# 's'        | return "%#ST_M_SELECT# SELECT %*"
-  elseif mode ==# 'S'        | return "%#ST_M_SELECT# S.LINE %*"
-  elseif mode ==# ''       | return "%#ST_M_SELECT# S.BLOCK %*"
-  elseif mode =~# '\vi'      | return "%#ST_M_INSERT# INSERT %*"
-  elseif mode =~# '\v(R|Rv)' | return "%#ST_M_REPLACE# REPLACE %*"
-  else                       | return "%#ST_M_NORMAL# NORMAL %*"
-  endif
+    let mode = mode()
+    if     mode ==# 'v'        | return "%#ST_M_VISUAL# VISUAL %*"
+    elseif mode ==# 'V'        | return "%#ST_M_VISUAL# V.LINE %*"
+    elseif mode ==# ''       | return "%#ST_M_VISUAL# V.BLOCK %*"
+    elseif mode ==# 's'        | return "%#ST_M_SELECT# SELECT %*"
+    elseif mode ==# 'S'        | return "%#ST_M_SELECT# S.LINE %*"
+    elseif mode ==# ''       | return "%#ST_M_SELECT# S.BLOCK %*"
+    elseif mode =~# '\vi'      | return "%#ST_M_INSERT# INSERT %*"
+    elseif mode =~# '\v(R|Rv)' | return "%#ST_M_REPLACE# REPLACE %*"
+    else                       | return "%#ST_M_NORMAL# NORMAL %*"
+    endif
 endfunction " }}}
 
 function! MyStatusGetFileType()
-  let higrp = 'ST_FILET'
-  if mode() ==# 'i' | let higrp = 'ST_FILET_I' | endif
-  return '%#' . higrp . '# %y %*'
+    let higrp = 'ST_FILET'
+    if mode() ==# 'i' | let higrp = 'ST_FILET_I' | endif
+    return '%#' . higrp . '# %y %*'
 endfunction
 
 function! MyStatusGetFlags()
-  return '%#ST_FLAGS#%( [%M%H%R%W] %)%*'
+    return '%#ST_FLAGS#%( [%M%H%R%W] %)%*'
 endfunction
 
 function! MyStatusGetFFDos()
-  if &ff != 'dos' | return '' | endif
-  return '%#ST_DOS# [dos] %*'
+    if &ff != 'dos' | return '' | endif
+    return '%#ST_DOS# [dos] %*'
 endfunction
 
 function! MyStatusGetFile()
-  let higrp = 'ST_FILE'
-  if mode() ==# 'i' | let higrp = 'ST_FILE_I' | endif
-  return '%#' . higrp . '# %t ' " no %* here to extend right
+    let higrp = 'ST_FILE'
+    if mode() ==# 'i' | let higrp = 'ST_FILE_I' | endif
+    return '%#' . higrp . '# %t ' " no %* here to extend right
 endfunction
 
 function! MyStatusGetChar()
-  let higrp = 'ST_CHAR'
-  if mode() ==# 'i' | let higrp = 'ST_CHAR_I' | endif
-  return '%#' . higrp . '# x%02B:d%03b %*' " 2 hex, 3 dec
+    let higrp = 'ST_CHAR'
+    if mode() ==# 'i' | let higrp = 'ST_CHAR_I' | endif
+    return '%#' . higrp . '# x%02B:d%03b %*' " 2 hex, 3 dec
 endfunction
 
 function! MyStatusGetScroll()
-  let higrp = 'ST_SCROLL'
-  if mode() ==# 'i' | let higrp = 'ST_SCROLL_I' | endif
-  return '%#' . higrp . '# %P %*'
+    let higrp = 'ST_SCROLL'
+    if mode() ==# 'i' | let higrp = 'ST_SCROLL_I' | endif
+    return '%#' . higrp . '# %P %*'
 endfunction
 
 function! MyStatusGetCursor()
-  let higrp = 'ST_CURSOR'
-  if mode() ==# 'i' | let higrp = 'ST_CURSOR_I' | endif
-  return '%#' . higrp . '# %5.5l:%-3.3c %*' " 5 line, 3 column
+    let higrp = 'ST_CURSOR'
+    if mode() ==# 'i' | let higrp = 'ST_CURSOR_I' | endif
+    return '%#' . higrp . '# %5.5l:%-3.3c %*' " 5 line, 3 column
 endfunction
 
 function! MyStatusGetTag()
-  return ''
-  if !filereadable(expand("$HOME/.vim/bundle/tagbar/plugin/tagbar.vim"))
     return ''
-  endif
-  let curtag = tagbar#currenttag('%s', '')
-  if curtag == ''
-    return ''
-  endif
-  let higrp = 'ST_TAG'
-  if mode() ==# 'i' | let higrp = 'ST_TAG_I' | endif
-  return '%#' . higrp . '#' . curtag . ' %*'
+    if !filereadable(expand("$HOME/.vim/bundle/tagbar/plugin/tagbar.vim"))
+        return ''
+    endif
+    let curtag = tagbar#currenttag('%s', '')
+    if curtag == ''
+        return ''
+    endif
+    let higrp = 'ST_TAG'
+    if mode() ==# 'i' | let higrp = 'ST_TAG_I' | endif
+    return '%#' . higrp . '#' . curtag . ' %*'
 endfunction
 
 function! MyStatus()
-  return
-    \ MyStatusGetMode() .
-    \ MyStatusGetFlags() .
-    \ MyStatusGetFFDos() .
-    \ MyStatusGetFileType() .
-    \ MyStatusGetTag() .
-    \ MyStatusGetFile() .
-    \ '%=' .
-    \ MyStatusGetChar() .
-    \ MyStatusGetScroll() .
-    \ MyStatusGetCursor()
+    return
+        \ MyStatusGetMode() .
+        \ MyStatusGetFlags() .
+        \ MyStatusGetFFDos() .
+        \ MyStatusGetFileType() .
+        \ MyStatusGetTag() .
+        \ MyStatusGetFile() .
+        \ '%=' .
+        \ MyStatusGetChar() .
+        \ MyStatusGetScroll() .
+        \ MyStatusGetCursor()
 endfunction
 
-if !filereadable(expand("$HOME/.vim/bundle/vim-airline/plugin/airline.vim"))
-  set statusline=%!MyStatus()
-  call MyStatusColorScheme()
+set statusline=%!MyStatus()
+autocmd InsertEnter,InsertLeave * :redraws!
+
+" End of STATUSLINE }}}1
+
+"------------------- COLORSCHEMES ------------------- {{{1
+
+function! MySwitchTransparency()
+    if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
+        hi Normal ctermbg=None
+    else
+        hi Normal ctermbg=233
+    endif
+endfunction
+map <Leader>< :call MySwitchTransparency()<CR>
+
+function! MyColorScheme(scheme)
+    set background=dark
+    if a:scheme == 'molokai'
+        let g:rehash256 = 1
+    elseif a:scheme == 'solarized'
+        let g:solarized_termcolors = 256
+    endif
+    execute "colorscheme" a:scheme
+    "hi link cError Normal
+    hi MatchParen ctermfg=190 ctermbg=None cterm=bold
+    hi Constant cterm=bold
+    hi CursorLine ctermbg=234
+    hi CursorLineNr ctermfg=97 ctermbg=None cterm=bold
+    hi LineNr ctermfg=238 cterm=bold
+    "hi Comment ctermfg=213
+    call MySwitchTransparency()
+    call MyStatusColorScheme()
+endfunction
+
+" This really doesn't work as syntax highlights get trashed...
+function! MyCycleColorScheme()
+    let clrs =
+        \[
+        \  'gruvbox',
+        \  'molokai',
+        \  'jellybeans',
+        \  'dracula',
+        \  'apprentice',
+        \  'pencil',
+        \  'Tomorrow-Night-Bright',
+        \  'solarized',
+        \]
+    let i = 0
+    while i < len(clrs)
+        if g:colors_name == clrs[i]
+            let i += 1
+            break
+        endif
+        let i += 1
+    endwhile
+    if i == len(clrs) | let i = 0 | endif
+    call MyColorScheme(clrs[i])
+endfunction
+map <Leader>> :call MyCycleColorScheme()<CR>
+
+if exists('g:mycolor')
+    " Set the colorscheme from the command line:
+    " vi --cmd 'let g:mycolor="jellybeans"' ...
+    call MyColorScheme(g:mycolor)
+else
+    call MyColorScheme('gruvbox')
 endif
 
-" End of STATUSLINE STUFF }}}1
+" End of COLORSCHEMES }}}1
 

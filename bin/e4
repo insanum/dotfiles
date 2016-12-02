@@ -155,8 +155,11 @@ try:
         clientName = re.match('^.*/work/qlogic/([-_.0-9a-zA-Z]*)($|/.*$)',
                               os.getcwd()).group(1)
     else:
-        clientName = re.match('^.*/work/([-_.0-9a-zA-Z]*)($|/.*$)',
+        #clientName = re.match('^.*/work/([-_.0-9a-zA-Z]*)($|/.*$)',
+        #                      os.getcwd()).group(1)
+        clientName = re.match('^.*/([-_.0-9a-zA-Z]*)($|/.*$)',
                               os.getcwd()).group(1)
+
 except AttributeError:
     clientName = ''
     #PrintErrMsg('Bite me...\n')
@@ -229,12 +232,15 @@ if ((args[0] == 'mods') or (args[0] == 'update')):
         # 'headRev/haveRev' 'flags' 'fileName'
         fmt = '%3s/%-3s %-3s %s\n'
 
+        #print data
         fullFileName = data['clientFile']
         if p4port == p4port_ql:
             relFileName = re.match('^.*/work/qlogic/' + clientName + '/(.*)$',
                                    fullFileName).group(1)
         else:
-            relFileName = re.match('^.*/work/' + clientName + '/(.*)$',
+            #relFileName = re.match('^.*/work/' + clientName + '/(.*)$',
+            #                       fullFileName).group(1)
+            relFileName = re.match('^.*/' + clientName + '/(.*)$',
                                    fullFileName).group(1)
 
         openFlagNone   = '  '
