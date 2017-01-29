@@ -150,10 +150,10 @@ bindsym $mod+Up        exec amixer -q sset Master 1+
 bindsym $mod+Down      exec amixer -q sset Master 1-
 
 assign [class="Chromium"]                      1
-assign [class="Firefox"]                       2
 assign [class="Pidgin"]                        2
 assign [class="Thunderbird"]                   2
 assign [class="Thunderbird-nightly"]           2
+assign [class="Firefox"]                       3
 assign [class="Acroread"]                      3
 assign [class="Evince"]                        3
 assign [class="Apvlv"]                         3
@@ -165,6 +165,7 @@ assign [class="Wine"]                          4
 assign [class="Spicy"]                         4
 assign [class="rdesktop"]                      5
 assign [class="Vncviewer"]                     5
+assign [class="processing-app-Base"]           6
 assign [class="Termite" title="work1"]         8
 assign [class="Termite" title="work2"]         9
 
@@ -174,7 +175,8 @@ for_window [class="Pidgin"] floating enable
 for_window [class="Gimp"] floating enable
 for_window [class="Gxmessage"] floating enable
 for_window [class="Gmrun"] floating enable
-for_window [class="Wine"] fullscreen enable
+for_window [class="Wine"] fullscreen enable, move workspace 4
+#for_window [class="Wine"] fullscreen enable
 
 for_window [class="^.*"] border pixel 4
 

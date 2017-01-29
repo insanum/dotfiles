@@ -80,6 +80,7 @@ alias vnckill="$HOME/.vnc/vnckill"
 alias ldap="$HOME/.mutt/ldap"
 alias socks='ssh -ND 9999 edavis@insanum.com'
 alias brcm_tun='ssh -N -D 9999 -L 7777:ltirv-edavis1:3389 edavis@192.168.168.3'
+alias win7_tun='ssh -N -D 9999 -L 7777:edavis-win7-kvm:3389 edavis@192.168.168.3'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
 alias gn='tsocks geeknote'
