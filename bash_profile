@@ -3,6 +3,8 @@
 # Chromebooks w/ Crouton, add this to /etc/profile:
 # export CHROMEBOOK=1
 
+export LC_COLLATE=C
+
 if [[ $OSTYPE =~ freebsd ]]; then
     export LANG=en_US.UTF-8
     export MM_CHARSET=ISO-8859-1

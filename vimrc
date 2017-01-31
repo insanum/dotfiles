@@ -66,7 +66,6 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     "    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=234
     "    autocmd OptionSet * call indent_guides#process_autocmds()
 
-
     Plug 'https://github.com/scrooloose/nerdtree'
 
     Plug 'https://github.com/morhetz/gruvbox'
@@ -98,6 +97,7 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
 
     Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
+    let g:fzf_buffers_jump = 1
     let g:fzf_command_prefix = 'Z'
     let g:fzf_layout = { }
 
@@ -118,9 +118,23 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     Plug 'https://github.com/maralla/completor.vim'
     let g:completor_clang_binary = '/usr/bin/clang'
 
-    Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
-    Plug 'https://github.com/insanum/vim-rst-tables.git'
+    "Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
+    "Plug 'https://github.com/insanum/vim-rst-tables.git'
     Plug 'https://github.com/insanum/votl.git'
+    "Plug 'https://github.com/xolox/vim-notes'
+    "Plug 'https://github.com/xolox/vim-misc'
+    Plug 'https://github.com/plasticboy/vim-markdown'
+    let g:vim_markdown_folding_style_pythonic=1
+
+    "Plug 'https://github.com/mattn/webapi-vim'
+    "Plug 'https://github.com/mattn/gist-vim'
+    "let g:github_user = 'insanum'
+    "let g:gist_post_private = 1
+    "let g:gist_show_privates = 1
+    "let g:gist_get_multiplefile = 1
+    "let g:gist_list_vsplit = 1
+    "let g:gist_edit_with_buffers = 1
+    "let g:gist_open_browser_after_post = 1
 
     call plug#end()
 endif
@@ -189,19 +203,39 @@ set directory^=$HOME/.vim_swap//
 "set printexpr=system('print_vim\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
 nmap <Leader>ha :!enscript -M Letter -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true %:p<CR>
 
-" Here is were the *real* magic is (when programming, default Linux style)...
-set tabstop=8
-set softtabstop=8
-set shiftwidth=8
+" Stupid tabs, default Tab-8 Linux coding style...
+set autoindent
 set nosmarttab
 set noexpandtab
 set nosmartindent
-set autoindent
-
-" Stupid tabs / different tabstops / and the Linux kernel coding style...
-nmap <Leader>t4 :set tabstop=4 softtabstop=4 shiftwidth=4 smarttab expandtab<CR>
-nmap <Leader>t8 :set tabstop=8 softtabstop=8 shiftwidth=4 smarttab expandtab<CR>
-nmap <Leader>tl :set tabstop=8 softtabstop=8 shiftwidth=8 nosmarttab noexpandtab<CR>
+set tabstop=8 softtabstop=8 shiftwidth=8
+" mapping for swithing tab settings on the fly...
+nmap <Leader>t4 :set
+                \ tabstop=4
+                \ softtabstop=4
+                \ shiftwidth=4
+                \ smarttab
+                \ expandtab<CR>
+nmap <Leader>t8 :set
+                \ tabstop=8
+                \ softtabstop=8
+                \ shiftwidth=4
+                \ smarttab
+                \ expandtab<CR>
+nmap <Leader>tl :set
+                \ tabstop=8
+                \ softtabstop=8
+                \ shiftwidth=8
+                \ nosmarttab
+                \ noexpandtab<CR>
+" Tab-4 for shell scripts, vim, text files etc...
+autocmd FileType sh,vim,text,markdown,org,votl
+    \ set
+    \ tabstop=4
+    \ softtabstop=4
+    \ shiftwidth=4
+    \ smarttab
+    \ expandtab
 
 " the following are set in an autocmd below
 "set cindent
@@ -602,7 +636,9 @@ function! ConfigEnv()
         nmap <buffer> <C-p> :ZFiles<CR>
     endif
     nmap <buffer> <Leader>ag :call fzf#vim#ag(expand('<cword>'))<CR>
+    "nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'), { 'options': '--exact' })<CR>
     nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'))<CR>
+    nmap <buffer> <Leader>b :call fzf#vim#buffers()<CR>
     "nmap <buffer> <Leader>... 
 endfunction
 autocmd! VimEnter,BufReadPost,BufNewFile * call ConfigEnv()

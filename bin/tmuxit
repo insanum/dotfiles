@@ -35,6 +35,9 @@ if [[ $1 = cfw-t3-bmc ]]; then
 fi
 
 if [[ $1 = cfw-t3 ]]; then
+    # have to tunnel back through for sshfs as lab network can reach xlinux
+    # send remote tunnel was for sshfs mount of ARM tools
+    #exec ssh -R 8888:xlinux.irv.broadcom.com:22 -R 9999:127.0.0.1:22 cfw-t3.swdvt.lab.irv.broadcom.com
     exec ssh -R 8888:xlinux.irv.broadcom.com:22 cfw-t3.swdvt.lab.irv.broadcom.com
 fi
 

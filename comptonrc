@@ -25,7 +25,9 @@ opacity-rule = [
                  "99:class_g = 'sun-awt-X11-XFramePeer'",
                  "99:class_g = 'java-lang-Thread'",
                  "99:class_g = 'Atasjni'",
+                 "99:class_g = 'Emacs'",
                  "99:class_g = 'Termite'",
+                 "99:class_g = 'Evince'",
                  "99:class_g = 'st-256color'"
                ]
 
