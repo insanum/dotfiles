@@ -2,8 +2,6 @@
 set bell-style none
 
 set show-all-if-ambiguous On
-set print-completions-horizontally On
-set horizontal-scroll-mode On
 set visible-stats On
 
 "\C-x\C-r": re-read-init-file
@@ -11,7 +9,9 @@ set visible-stats On
 "\C-e": alias-expand-line
 
 set editing-mode vi
-"\C-n": vi-movement-mode
+
+"jk": vi-movement-mode
+#"\C-n": vi-movement-mode
 #"\C-j": vi-movement-mode
 #"\C-k": complete
 

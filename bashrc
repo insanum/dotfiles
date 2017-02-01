@@ -6,7 +6,7 @@ export SHELL=/bin/bash
 
 if [[ $OSTYPE == cygwin || $OSTYPE =~ solaris ]]; then
   export LS_COLORS="no=37:fi=37:*.zip=31:*.gz=31:*.tgz=31:*.tar=31:*.Z=31:*.bz2=31:di=36:ex=32:ln=33"
-elif [[ $OSTYPE =~ freebsd ]]; then
+elif [[ $OSTYPE =~ freebsd || $OSTYPE =~ darwin16 ]]; then
   export LSCOLORS="exfxcxdxbxegedabagacad"
 elif [[ $OSTYPE == linux-gnu ]]; then
   #eval `dircolors $HOME/bin/dircolors_solarized`
@@ -79,8 +79,8 @@ alias vncstart="$HOME/.vnc/vncstart"
 alias vnckill="$HOME/.vnc/vnckill"
 alias ldap="$HOME/.mutt/ldap"
 alias socks='ssh -ND 9999 edavis@insanum.com'
-alias brcm_tun='ssh -N -D 9999 -L 7777:ltirv-edavis1:3389 edavis@192.168.168.3'
-alias win7_tun='ssh -N -D 9999 -L 7777:edavis-win7-kvm:3389 edavis@192.168.168.3'
+alias brcm_tun='ssh -N -D 9999 -L 7777:edavis-win-kvm:3389 -L 7778:edavis-win7-kvm:3389 edavis@192.168.168.3'
+alias brcm_skylark='ssh -t edavis@insanum.com ssh edavis@192.168.168.3'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
 alias gn='tsocks geeknote'
@@ -166,7 +166,7 @@ else
   LS=ls
 fi
 
-if [[ $OSTYPE =~ freebsd ]]; then
+if [[ $OSTYPE =~ freebsd || $OSTYPE =~ darwin16 ]]; then
   LSC="-G"
 else
   LSC="--color=auto"
@@ -458,7 +458,9 @@ if [[ -n "$PS1" ]]; then
   set -o vi 
 
   #shopt -s cdspell
-  shopt -s autocd
+  if [[ ! $OSTYPE =~ darwin16 ]]; then
+      shopt -s autocd
+  fi
   shopt -s cmdhist
   shopt -s dotglob
   shopt -s checkwinsize
@@ -529,6 +531,8 @@ if [[ -n "$PS1" ]]; then
   else
       if [[ $OSTYPE =~ freebsd ]]; then
           osrel="freebsd `uname -r`"
+      elif [[ $OSTYPE =~ darwin16 ]]; then
+          osrel="darwin"
       else
           osrel="linux"
       fi
@@ -627,7 +631,7 @@ if [[ -n "$PS1" ]]; then
         # bold...
         #PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BRIGHT_BLUE $rtee$dash$ltee $BRIGHT_YELLOW\${host}$BRIGHT_BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE $rtee$dash$dash\n$BRIGHT_BLUE$lbot$dash$ltee $BRIGHT_CYAN\$(_pwd_chomp) ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE$rtee$dash$dash$CLEAR "
         # not bold...
-        PS1="$BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BLUE $rtee$dash$ltee $YELLOW\${host}$BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BLUE $rtee$dash$dash\n$BLUE$lbot$dash$ltee $CYAN\$(_pwd_chomp) ${GREEN}\$CONS_TAG\$MNT_TAG$BLUE$rtee$dash$dash$CLEAR "
+        PS1="$BLUE$ltop$dash\${pFill}$dash$ltee $MAGENTA\${osrel}$BLUE $rtee$dash$ltee $YELLOW\${host}$BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BLUE $rtee$dash$dash\n$BLUE$lbot$dash$ltee $CYAN\$(_pwd_chomp) ${GREEN}\$CONS_TAG\$MNT_TAG$BLUE$rtee$dash$dash$CLEAR "
         ;;
       *)
         # bold...

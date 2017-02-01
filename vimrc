@@ -250,8 +250,8 @@ set vb t_vb=
 nnoremap ; :
 nnoremap ! :!
 
-inoremap <C-n> <ESC>
-nnoremap <C-n> <ESC>
+inoremap jk <ESC>
+
 "nmap <C-k> :res<CR>
 nmap <Leader><C-l> :redraw!<CR>
 
@@ -696,7 +696,7 @@ if has("cscope")
     let ostype=system('echo -n $OSTYPE')
     if ostype =~ "solaris"
         set csprg=/opt/csw/bin/cscope
-    elseif ostype =~ "freebsd"
+    elseif ostype =~ "freebsd" || ostype =~ "darwin16"
         set csprg=/usr/local/bin/cscope
     else
         set csprg=/usr/bin/cscope
