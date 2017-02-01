@@ -115,7 +115,7 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     let g:UltiSnipsJumpForwardTrigger="<c-j>"
     let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
-    Plug 'https://github.com/maralla/completor.vim'
+    "Plug 'https://github.com/maralla/completor.vim'
     let g:completor_clang_binary = '/usr/bin/clang'
 
     "Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
@@ -551,13 +551,8 @@ endfunction
 nmap ,M :call QuickfixOpen(0)<CR>
 nmap ,m :call QuickfixOpen(1)<CR>
 
-autocmd BufNewFile,BufRead *.c,*.cc,*.cpp,*.h,*.java set textwidth=80
-autocmd BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
-
-autocmd FileType c,cc,cpp set comments-=://
-autocmd FileType c,cc,cpp set comments+=f://
-autocmd FileType vim set comments-=:\"
-autocmd FileType vim set comments+=f:\"
+autocmd BufNewFile,BufRead *.c,*.cc,*.cpp,*.h,*.java,*.js,*.lua set textwidth=80
+autocmd BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.js,*.lua set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
 
 autocmd FileType votl,txt set textwidth=79
 
@@ -583,7 +578,7 @@ autocmd Syntax mail setlocal comments=n:>,n::,n:#,n:%,n:\|
 
 "autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%>' . &textwidth . 'v.\+/' | endif
 "autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
-autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
+autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
 
 " search for all lines longer than textwidth
 "if &textwidth > 0
