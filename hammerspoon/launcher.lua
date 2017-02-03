@@ -1,6 +1,8 @@
 
-local mash       = {"cmd", "alt", "ctrl"}
-local mash_shift = {"cmd", "alt", "ctrl", "shift"}
+--local mash       = {"cmd", "alt", "ctrl"}
+--local mash_shift = {"cmd", "alt", "ctrl", "shift"}
+local mash       = {"cmd", "ctrl"}
+local mash_shift = {"cmd", "ctrl", "shift"}
 
 local lastWin = nil
 
@@ -60,8 +62,7 @@ local function launcher_cbk(selection)
     if lastWin ~= nil then lastWin:focus() end -- focus last window
     selection = { ["text"] = "Launcher cancelled..." }
   end
-  hs.notify.new({title="Hammerspoon",
-                informativeText=selection.text}):send()
+  hsNotify(selection.text)
   if selection.app ~= nil then
     hs.application.launchOrFocus(selection.app)
   end

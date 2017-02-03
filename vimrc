@@ -104,7 +104,8 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     Plug 'https://github.com/kshenoy/vim-signature'
 
     Plug 'https://github.com/easymotion/vim-easymotion'
-    let g:EasyMotion_leader_key='\'
+    " default is <Leader><Leader> = ',,'
+    "let g:EasyMotion_leader_key='\'
 
     Plug 'https://github.com/tpope/vim-fugitive'
 
@@ -124,7 +125,14 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     "Plug 'https://github.com/xolox/vim-notes'
     "Plug 'https://github.com/xolox/vim-misc'
     Plug 'https://github.com/plasticboy/vim-markdown'
-    let g:vim_markdown_folding_style_pythonic=1
+    "let g:vim_markdown_folding_disabled = 1
+    let g:vim_markdown_folding_style_pythonic = 1
+    let g:vim_markdown_math = 1
+    let g:vim_markdown_frontmatter = 1
+    let g:vim_markdown_new_list_item_indent = 0
+    let g:vim_markdown_conceal = 0
+    let g:vim_markdown_fenced_languages =
+        \ ['yaml=yaml', 'json=json', 'bash=sh', 'bat=dosbatch', 'C=c', 'html=html']
 
     "Plug 'https://github.com/mattn/webapi-vim'
     "Plug 'https://github.com/mattn/gist-vim'
@@ -229,7 +237,7 @@ nmap <Leader>tl :set
                 \ nosmarttab
                 \ noexpandtab<CR>
 " Tab-4 for shell scripts, vim, text files etc...
-autocmd FileType sh,vim,text,markdown,org,votl
+autocmd FileType sh,yaml,json,javascript,lua,vim,text,markdown,org,votl
     \ set
     \ tabstop=4
     \ softtabstop=4
