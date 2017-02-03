@@ -718,4 +718,5 @@ function gitp4clone()
 
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+bind -r "\C-t"
 

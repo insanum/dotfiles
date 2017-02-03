@@ -169,3 +169,28 @@ hs.hotkey.bind(mash, "m", function() moveWindowSpace("right") end)
 
 require('launcher')
 
+-- watch for space changes (broken, always "-1")
+--[[
+spaceWatch = hs.spaces.watcher.new(function(space)
+    hsNotify("space changed: " .. space)
+end)
+spaceWatch:start()
+--]]
+
+-- watch for screen changes (on mouse click, not movement)
+--[[
+screenWatch = hs.screen.watcher.newWithActiveScreen(function()
+    hsNotify("screen changed")
+end)
+screenWatch:start()
+--]]
+
+-- grid stuff
+
+hs.grid.setGrid('4x4')
+hs.hotkey.bind(mash, "g", function() hs.grid.toggleShow() end)
+hs.hotkey.bind(mash, "w", function() hs.grid.pushWindowUp(hs.window.focusedWindow())    end)
+hs.hotkey.bind(mash, "a", function() hs.grid.pushWindowLeft(hs.window.focusedWindow())  end)
+hs.hotkey.bind(mash, "s", function() hs.grid.pushWindowDown(hs.window.focusedWindow())  end)
+hs.hotkey.bind(mash, "d", function() hs.grid.pushWindowRight(hs.window.focusedWindow()) end)
+
