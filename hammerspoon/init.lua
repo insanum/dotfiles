@@ -1,4 +1,11 @@
 
+-- application launcher (like spotlight)
+require('launcher')
+
+-- volume commands
+require('volume')
+
+
 --local mash       = {"cmd", "alt", "ctrl"}
 --local mash_shift = {"cmd", "alt", "ctrl", "shift"}
 local mash       = {"cmd", "ctrl"}
@@ -166,8 +173,6 @@ end
 
 hs.hotkey.bind(mash, "n", function() moveWindowSpace("left")  end)
 hs.hotkey.bind(mash, "m", function() moveWindowSpace("right") end)
-
-require('launcher')
 
 -- watch for space changes (broken, always "-1")
 --[[
