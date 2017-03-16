@@ -83,6 +83,11 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     let g:rainbow#max_level = 32
     let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
+    Plug 'https://github.com/Yggdroot/indentLine'
+    let g:indentLine_char = '.'
+    let g:indentLine_first_char = '.'
+    let g:indentLine_showFirstIndentLevel = 1
+
     Plug 'https://github.com/majutsushi/tagbar.git'
     if ostype == "solaris2.10"
         let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
@@ -218,6 +223,12 @@ set noexpandtab
 set nosmartindent
 set tabstop=8 softtabstop=8 shiftwidth=8
 " mapping for swithing tab settings on the fly...
+nmap <Leader>t2 :set
+                \ tabstop=2
+                \ softtabstop=2
+                \ shiftwidth=2
+                \ smarttab
+                \ expandtab<CR>
 nmap <Leader>t4 :set
                 \ tabstop=4
                 \ softtabstop=4
@@ -227,7 +238,7 @@ nmap <Leader>t4 :set
 nmap <Leader>t8 :set
                 \ tabstop=8
                 \ softtabstop=8
-                \ shiftwidth=4
+                \ shiftwidth=8
                 \ smarttab
                 \ expandtab<CR>
 nmap <Leader>tl :set
@@ -237,11 +248,19 @@ nmap <Leader>tl :set
                 \ nosmarttab
                 \ noexpandtab<CR>
 " Tab-4 for shell scripts, vim, text files etc...
-autocmd FileType sh,yaml,json,javascript,lua,vim,text,markdown,org,votl
+autocmd FileType sh,json,javascript,lua,vim,text,markdown,org,votl
     \ set
     \ tabstop=4
     \ softtabstop=4
     \ shiftwidth=4
+    \ smarttab
+    \ expandtab
+" Tab-2 for yaml...
+autocmd FileType yaml
+    \ set
+    \ tabstop=2
+    \ softtabstop=2
+    \ shiftwidth=2
     \ smarttab
     \ expandtab
 

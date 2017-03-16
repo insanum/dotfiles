@@ -567,6 +567,8 @@ if [[ -n "$PS1" ]]; then
 
       if [[ $OSTYPE =~ solaris ]]; then
           local DF='df -n'
+      elif [[ $OSTYPE =~ linux-android ]]; then
+          local DF='df'
       else
           local DF='df -T'
       fi
