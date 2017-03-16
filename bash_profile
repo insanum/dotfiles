@@ -77,6 +77,8 @@ fi
 [[ -d "/opt/SUNWspro/man" ]]      && MANPATH="$MANPATH:/opt/SUNWspro/man"
 [[ -d "/opt/sunstudio12.1/man" ]] && MANPATH="$MANPATH:/opt/sunstudio12.1/man"
 
+exists pyenv && eval "$(pyenv init -)"
+
 exists vim && export EDITOR=vim
 exists chromium && export BROWSER=chromium
 

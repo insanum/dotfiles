@@ -62,7 +62,7 @@ local function launcher_cbk(selection)
     if lastWin ~= nil then lastWin:focus() end -- focus last window
     selection = { ["text"] = "Launcher cancelled..." }
   end
-  hsNotify(selection.text)
+  --hsNotify(selection.text)
   if selection.app ~= nil then
     hs.application.launchOrFocus(selection.app)
   end

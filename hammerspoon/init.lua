@@ -5,11 +5,21 @@ require('launcher')
 -- volume commands
 require('volume')
 
+-- stock quotes
+require('stocks')
 
 --local mash       = {"cmd", "alt", "ctrl"}
 --local mash_shift = {"cmd", "alt", "ctrl", "shift"}
 local mash       = {"cmd", "ctrl"}
 local mash_shift = {"cmd", "ctrl", "shift"}
+
+-- pomodoro
+--[[
+local Pomo = require('pomodoro')
+hs.hotkey.bind(mash, 'u', Pomo.startNew)
+hs.hotkey.bind(mash, 'i', Pomo.togglePaused)
+hs.hotkey.bind(mash, 'o', Pomo.toggleLatestDisplay)
+--]]
 
 -- trigger notification
 function hsNotify(msg)
@@ -24,17 +34,27 @@ end)
 
 -- maximize window
 hs.hotkey.bind(mash, "f", function()
+    local ad = hs.window.animationDuration
+    hs.window.animationDuration = 0
+
     local win = hs.window.focusedWindow()
     win:maximize()
+
+    hs.window.animationDuration = ad
 end)
 
 local function winMove(win, x, y, w, h)
+    local ad = hs.window.animationDuration
+    hs.window.animationDuration = 0
+
     local f = win:frame()
     f.x = x
     f.y = y
     f.w = w
     f.h = h
     win:setFrame(f)
+
+    hs.window.animationDuration = ad
 end
 
 -- center window

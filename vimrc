@@ -68,6 +68,7 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
 
     Plug 'https://github.com/scrooloose/nerdtree'
 
+    Plug 'https://github.com/arcticicestudio/nord-vim'
     Plug 'https://github.com/morhetz/gruvbox'
     Plug 'https://github.com/tomasr/molokai.git'
     Plug 'https://github.com/nanotech/jellybeans.vim'
@@ -77,11 +78,16 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     Plug 'https://github.com/chriskempson/vim-tomorrow-theme'
     Plug 'https://github.com/altercation/vim-colors-solarized.git'
 
+    Plug 'https://github.com/jelera/vim-javascript-syntax'
+    Plug 'https://github.com/jason0x43/vim-js-indent'
+    let g:js_indent_flat_switch = 1
+
     Plug 'https://github.com/vim-scripts/Align'
 
     Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
-    let g:rainbow#max_level = 32
+    "let g:rainbow#max_level = 32
     let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+    let g:rainbow#blacklist = [15, '#D8DEE9', '#ECEFF4', '#80a0ff']
 
     Plug 'https://github.com/Yggdroot/indentLine'
     let g:indentLine_char = '.'
@@ -248,7 +254,7 @@ nmap <Leader>tl :set
                 \ nosmarttab
                 \ noexpandtab<CR>
 " Tab-4 for shell scripts, vim, text files etc...
-autocmd FileType sh,json,javascript,lua,vim,text,markdown,org,votl
+autocmd FileType sh,json,javascript,lua,vim,text,markdown,css,less,org,votl
     \ set
     \ tabstop=4
     \ softtabstop=4
@@ -278,6 +284,9 @@ nnoremap ; :
 nnoremap ! :!
 
 inoremap jk <ESC>
+
+map Q <Nop>
+map gQ <Nop>
 
 "nmap <C-k> :res<CR>
 nmap <Leader><C-l> :redraw!<CR>
@@ -394,7 +403,7 @@ nmap <Leader>dt4 :%s/	/    /g<CR>
 nmap <Leader>dt8 :%s/	/        /g<CR>
 
 " delete all line trailing whitespace
-nmap <Leader>des mz:%s/\s\+$//e<CR>,.'z
+nmap <Leader>des mz:%s/\s\+$//e<CR>,.'z:delm z<CR>
 
 " delete all empty lines
 nmap <Leader>dl mz:%g/^\s*$/d<CR>,.'z
@@ -422,7 +431,7 @@ nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<
 nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
 
 " turn diff off for all windows in current tab
-nmap <Leader>do :diffoff!<CR>:call MyColorScheme('molokai')<CR>
+nmap <Leader>do :diffoff!<CR>:call MyColorScheme(g:default_theme)<CR>
 
 " write visual data to $HOME/t
 vmap <Leader>w :w! $HOME/t<CR>
@@ -508,7 +517,7 @@ command! -nargs=0 -complete=command SYN call AIKSAURUS(expand("<cword>"))
 "endfunction
 "autocmd FileType mail set omnifunc=EMAIL_OMNI
 
-autocmd Filetype java setlocal omnifunc=javacomplete#Complete
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 "nmap <Leader>pm :!perldoc <CR>
 "nmap <Leader>pf :!perldoc -f <CR>
@@ -579,7 +588,12 @@ nmap ,M :call QuickfixOpen(0)<CR>
 nmap ,m :call QuickfixOpen(1)<CR>
 
 autocmd BufNewFile,BufRead *.c,*.cc,*.cpp,*.h,*.java,*.js,*.lua set textwidth=80
-autocmd BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.js,*.lua set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
+autocmd BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.lua
+    \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
+
+autocmd Syntax javascript
+    \ syn match LodashLazy '\v<(H|G|S)>' containedin=javaScriptFuncDef,javaScriptFuncKeyword |
+    \ hi LodashLazy ctermfg=9 cterm=bold
 
 autocmd FileType votl,txt set textwidth=79
 
@@ -605,7 +619,8 @@ autocmd Syntax mail setlocal comments=n:>,n::,n:#,n:%,n:\|
 
 "autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%>' . &textwidth . 'v.\+/' | endif
 "autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
-autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
+autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua
+    \ if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
 
 " search for all lines longer than textwidth
 "if &textwidth > 0
@@ -661,7 +676,7 @@ function! ConfigEnv()
     "nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'), { 'options': '--exact' })<CR>
     nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'))<CR>
     nmap <buffer> <Leader>b :call fzf#vim#buffers()<CR>
-    "nmap <buffer> <Leader>... 
+    "nmap <buffer> <Leader>...
 endfunction
 autocmd! VimEnter,BufReadPost,BufNewFile * call ConfigEnv()
 
@@ -1021,27 +1036,39 @@ map <Leader>< :call MySwitchTransparency()<CR>
 
 function! MyColorScheme(scheme)
     set background=dark
+
     if a:scheme == 'molokai'
         let g:rehash256 = 1
     elseif a:scheme == 'solarized'
         let g:solarized_termcolors = 256
     endif
+
     execute "colorscheme" a:scheme
+
     "hi link cError Normal
     hi MatchParen ctermfg=190 ctermbg=None cterm=bold
     hi Constant cterm=bold
     hi CursorLine ctermbg=234
     hi CursorLineNr ctermfg=97 ctermbg=None cterm=bold
     hi LineNr ctermfg=238 cterm=bold
-    "hi Comment ctermfg=213
+    hi link javaScriptTemplateDelim  Keyword
+    hi link javaScriptTemplateVar    Identifier
+    hi link javaScriptTemplateString String
+
     call MySwitchTransparency()
     call MyStatusColorScheme()
+
+    if a:scheme == 'nord'
+        " comments need to pop more under nord
+        hi Comment ctermfg=9
+    endif
 endfunction
 
 " This really doesn't work as syntax highlights get trashed...
-function! MyCycleColorScheme()
+function! MyCycleColorScheme(dir)
     let clrs =
         \[
+        \  'nord',
         \  'gruvbox',
         \  'molokai',
         \  'jellybeans',
@@ -1054,23 +1081,26 @@ function! MyCycleColorScheme()
     let i = 0
     while i < len(clrs)
         if g:colors_name == clrs[i]
-            let i += 1
+            let i += a:dir
             break
         endif
         let i += 1
     endwhile
-    if i == len(clrs) | let i = 0 | endif
+    if i == len(clrs) | let i = 0             | endif
+    if i == -1        | let i = len(clrs) - 1 | endif
     call MyColorScheme(clrs[i])
+    echom "Changed color scheme to " . clrs[i]
 endfunction
-map <Leader>> :call MyCycleColorScheme()<CR>
+map <Leader>> :call MyCycleColorScheme(1)<CR>
+map <Leader>< :call MyCycleColorScheme(-1)<CR>
 
-if exists('g:mycolor')
+let g:default_theme='nord'
+if exists('g:theme')
     " Set the colorscheme from the command line:
-    " vi --cmd 'let g:mycolor="jellybeans"' ...
-    call MyColorScheme(g:mycolor)
-else
-    call MyColorScheme('gruvbox')
+    " vi --cmd 'let g:theme="jellybeans"' ...
+    let g:default_theme=g:theme
 endif
+call MyColorScheme(g:default_theme)
 
 " End of COLORSCHEMES }}}1
 

@@ -1,9 +1,10 @@
-#!/usr/bin/python2
+#!/usr/bin/env python2
 
 p4bin      = 'p4'
 p4port_ql  = 'pf-irv-cubasw.irv.broadcom.com:9002'
 p4port_sj  = 'pf-sj1-slb.sj.broadcom.com:1666'
-p4port_irv = 'pf-irva-ecs:1666' # irvine depot
+#p4port_irv = 'pf-irva-ecs:1666' # irvine depot
+p4port_irv = 'pf-irv-12.lvn.broadcom.net:1666' # irvine depot
 
 
 import os, sys, re, marshal, getopt
