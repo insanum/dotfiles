@@ -3,6 +3,8 @@
 " VIM config file - Eric Davis
 " ------------------------------------------------
 " Plugins managed via vim-plug: https://github.com/junegunn/vim-plug
+" curl -L -o ~/.vim/autoload/plug.vim --create-dirs https://goo.gl/a0PUdV
+" -> https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 let ostype=system('echo -n $OSTYPE')
 
@@ -154,6 +156,14 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     "let g:gist_list_vsplit = 1
     "let g:gist_edit_with_buffers = 1
     "let g:gist_open_browser_after_post = 1
+
+    Plug 'https://github.com/takac/vim-hardtime'
+    let g:hardtime_default_on = 1
+    let g:hardtime_showmsg = 1
+    let g:hardtime_ignore_quickfix = 1
+    let g:hardtime_maxcount = 2
+    let g:hardtime_allow_different_key = 1 " needed for ESC=jk
+    nmap <F4> :HardTimeToggle<CR>
 
     call plug#end()
 endif
