@@ -95,6 +95,7 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     let g:indentLine_char = '.'
     let g:indentLine_first_char = '.'
     let g:indentLine_showFirstIndentLevel = 1
+    let g:indentLine_concealcursor = ''
 
     Plug 'https://github.com/majutsushi/tagbar.git'
     if ostype == "solaris2.10"
@@ -138,7 +139,6 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     "Plug 'https://github.com/xolox/vim-notes'
     "Plug 'https://github.com/xolox/vim-misc'
     Plug 'https://github.com/plasticboy/vim-markdown'
-    "let g:vim_markdown_folding_disabled = 1
     let g:vim_markdown_folding_style_pythonic = 1
     let g:vim_markdown_math = 1
     let g:vim_markdown_frontmatter = 1
@@ -146,6 +146,14 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_fenced_languages =
         \ ['yaml=yaml', 'json=json', 'bash=sh', 'bat=dosbatch', 'C=c', 'html=html']
+    autocmd FileType markdown call MyColorScheme('pencil')
+
+    Plug 'https://github.com/junegunn/goyo.vim'
+    let g:goyo_linenr = 1
+    Plug 'https://github.com/junegunn/limelight.vim'
+    let g:limelight_conceal_ctermfg = 242
+    autocmd! User GoyoEnter Limelight
+    autocmd! User GoyoLeave Limelight!
 
     "Plug 'https://github.com/mattn/webapi-vim'
     "Plug 'https://github.com/mattn/gist-vim'
