@@ -11,30 +11,8 @@ let ostype=system('echo -n $OSTYPE')
 if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     call plug#begin('~/.vim/plugged')
 
-    " Notable plugins used in the past:
-    "
-    " https://github.com/bling/vim-airline
-    " https://github.com/kergoth/vim-hilinks.git
-    " https://github.com/rking/ag.vim
-    " https://github.com/scrooloose/nerdcommenter
-    " https://github.com/kien/rainbow_parentheses.vim
-    "    autocmd VimEnter * RainbowParenthesesToggle
-    "    autocmd Syntax * RainbowParenthesesLoadRound
-    "    autocmd Syntax * RainbowParenthesesLoadSquare
-    "    autocmd Syntax * RainbowParenthesesLoadBraces
-    "    "autocmd Syntax * RainbowParenthesesLoadChevron
-    " https://github.com/kien/ctrlp.vim
-    "    "let g:ctrlp_regexp = 1
-    "    let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-    "    let g:ctrlp_show_hidden = 1
-    "    let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
-    "    let g:ctrlp_extensions= ['buffertag', 'mixed']
-    "    let g:ctrlp_buftag_ctags_bin = g:tagbar_ctags_bin
-    "    let g:ctrlp_cmd = 'CtrlPMixed'
-    "    let g:ctrlp_working_path_mode = 'c'
-    " https://github.com/Shougo/vimproc.vim
-    " https://github.com/Shougo/unite.vim
-    " https://github.com/mhinz/vim-signify
+    Plug 'https://github.com/mhinz/vim-startify'
+
     " https://github.com/adragomir/javacomplete
     " https://github.com/rdnetto/YCM-Generator
     " https://github.com/Valloric/YouCompleteMe.git
@@ -49,29 +27,23 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     "    let g:ycm_show_diagnostics_ui=0
     "    let g:ycm_collect_identifiers_from_tags_files=1
     "    set completeopt=menuone
-    " https://github.com/honza/vim-snippets.git
-    " https://github.com/SirVer/ultisnips.git
     " https://github.com/lifepillar/vim-mucomplete
     "    let g:mucomplete#enable_auto_at_startup = 1
-    " https://github.com/maralla/validator.vim
-    " https://github.com/nelstrom/vim-markdown-folding.git
-    " https://github.com/waylan/vim-markdown-extra-preview.git
-    "    let g:VMEPextensions=['extra', 'codehilite']
-    "    let g:VMEPtemplate=expand('./template.html')
-    " https://github.com/hsanson/vim-android.git
-    "    let g:android_sdk_path="/opt/android-sdk"
-    " https://github.com/nathanaelkane/vim-indent-guides
-    "    let g:indent_guides_enable_on_vim_startup = 1
-    "    let g:indent_guides_guide_size = 1
-    "    let g:indent_guides_auto_colors = 0
-    "    autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=234
-    "    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=234
-    "    autocmd OptionSet * call indent_guides#process_autocmds()
 
-    Plug 'https://github.com/scrooloose/nerdtree'
+    "https://github.com/maralla/validator.vim
+    Plug 'https://github.com/maralla/completor.vim'
+    let g:completor_clang_binary = '/usr/bin/clang'
 
+    Plug 'https://github.com/ludovicchabant/vim-gutentags'
+
+    "Plug 'https://github.com/scrooloose/nerdtree',
+    "         \ { 'on': [ 'NERDTreeToggle' ] }
+    "nmap <F9> :NERDTreeToggle<CR>
+
+    "https://github.com/kergoth/vim-hilinks.git
     Plug 'https://github.com/arcticicestudio/nord-vim'
     Plug 'https://github.com/morhetz/gruvbox'
+    Plug 'https://github.com/junegunn/seoul256.vim'
     Plug 'https://github.com/tomasr/molokai.git'
     Plug 'https://github.com/nanotech/jellybeans.vim'
     Plug 'https://github.com/dracula/vim'
@@ -80,16 +52,41 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     Plug 'https://github.com/chriskempson/vim-tomorrow-theme'
     Plug 'https://github.com/altercation/vim-colors-solarized.git'
 
-    Plug 'https://github.com/jelera/vim-javascript-syntax'
-    Plug 'https://github.com/jason0x43/vim-js-indent'
+    Plug 'https://github.com/ap/vim-css-color'
+
+    "Plug 'https://github.com/flowtype/vim-flow'
+    Plug 'https://github.com/jelera/vim-javascript-syntax',
+             \ { 'for': [ 'javascript' ] }
+    Plug 'https://github.com/jason0x43/vim-js-indent',
+             \ { 'for': [ 'javascript' ] }
     let g:js_indent_flat_switch = 1
 
-    Plug 'https://github.com/vim-scripts/Align'
+    Plug 'https://github.com/junegunn/vim-easy-align'
+    xmap ga <Plug>(EasyAlign)
+    nmap ga <Plug>(EasyAlign)
+
+    Plug 'https://github.com/scrooloose/nerdcommenter'
+    Plug 'https://github.com/tpope/vim-surround'
+
+    "set incsearch
+    set hlsearch
+    Plug 'https://github.com/haya14busa/incsearch.vim'
+    map /  <Plug>(incsearch-forward)
+    map ?  <Plug>(incsearch-backward)
+    map g/ <Plug>(incsearch-stay)
+    let g:incsearch#auto_nohlsearch = 1
+    map n  <Plug>(incsearch-nohl-n)
+    map N  <Plug>(incsearch-nohl-N)
+    map *  <Plug>(incsearch-nohl-*)
+    map #  <Plug>(incsearch-nohl-#)
+    map g* <Plug>(incsearch-nohl-g*)
+    map g# <Plug>(incsearch-nohl-g#)
 
     Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
     "let g:rainbow#max_level = 32
     let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
     let g:rainbow#blacklist = [15, '#D8DEE9', '#ECEFF4', '#80a0ff']
+    autocmd Syntax * RainbowParentheses
 
     Plug 'https://github.com/Yggdroot/indentLine'
     let g:indentLine_char = '.'
@@ -97,23 +94,30 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     let g:indentLine_showFirstIndentLevel = 1
     let g:indentLine_concealcursor = ''
 
-    Plug 'https://github.com/majutsushi/tagbar.git'
-    if ostype == "solaris2.10"
-        let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
-    elseif ostype == "solaris2.11"
-        let g:tagbar_ctags_bin = '/usr/bin/exctags'
-    else
-        let g:tagbar_ctags_bin = '/usr/bin/ctags'
-    endif
-    let g:tagbar_autoclose = 1
-    let g:tagbar_width = 30
-    nmap <F8> :TagbarToggle<CR>
+    "Plug 'https://github.com/majutsushi/tagbar.git',
+    "         \ { 'on': [ 'TagbarToggle' ] }
+    "if ostype == "solaris2.10"
+    "    let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
+    "elseif ostype == "solaris2.11"
+    "    let g:tagbar_ctags_bin = '/usr/bin/exctags'
+    "elseif ostype =~ "darwin"
+    "    let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
+    "else
+    "    let g:tagbar_ctags_bin = '/usr/bin/ctags'
+    "endif
+    "let g:tagbar_autoclose = 1
+    "let g:tagbar_width = 30
+    "nmap <F8> :TagbarToggle<CR>
 
     Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
     let g:fzf_buffers_jump = 1
     let g:fzf_command_prefix = 'Z'
-    let g:fzf_layout = { }
+    "let g:fzf_layout = { }
+    "imap <c-x><c-k> <plug>(fzf-complete-word)
+    "imap <c-x><c-f> <plug>(fzf-complete-path)
+    "imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+    "imap <c-x><c-l> <plug>(fzf-complete-line)
 
     Plug 'https://github.com/kshenoy/vim-signature'
 
@@ -122,34 +126,42 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     "let g:EasyMotion_leader_key='\'
 
     Plug 'https://github.com/tpope/vim-fugitive'
+    Plug 'https://github.com/junegunn/gv.vim'
+    Plug 'https://github.com/airblade/vim-gitgutter'
 
     Plug 'https://github.com/honza/vim-snippets.git'
     Plug 'https://github.com/SirVer/ultisnips.git'
     let g:UltiSnipsExpandTrigger="<c-h>"
-    let g:UltiSnipsListSnippets="<c-s>"
+    let g:UltiSnipsListSnippets="<c-l>"
     let g:UltiSnipsJumpForwardTrigger="<c-j>"
     let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-
-    "Plug 'https://github.com/maralla/completor.vim'
-    let g:completor_clang_binary = '/usr/bin/clang'
 
     "Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
     "Plug 'https://github.com/insanum/vim-rst-tables.git'
     Plug 'https://github.com/insanum/votl.git'
-    "Plug 'https://github.com/xolox/vim-notes'
-    "Plug 'https://github.com/xolox/vim-misc'
-    Plug 'https://github.com/plasticboy/vim-markdown'
-    let g:vim_markdown_folding_style_pythonic = 1
+
+    Plug 'https://github.com/dkarter/bullets.vim'
+    let g:bullets_enabled_file_types =
+	\ [ 'markdown', 'text', 'gitcommit' ]
+
+    Plug 'https://github.com/plasticboy/vim-markdown',
+             \ { 'for': [ 'markdown' ] }
+    let g:vim_markdown_folding_style_pythonic = 0
     let g:vim_markdown_math = 1
     let g:vim_markdown_frontmatter = 1
     let g:vim_markdown_new_list_item_indent = 0
     let g:vim_markdown_conceal = 0
     let g:vim_markdown_fenced_languages =
-        \ ['yaml=yaml', 'json=json', 'bash=sh', 'bat=dosbatch', 'C=c', 'html=html']
-    autocmd FileType markdown call MyColorScheme('pencil')
+        \ [ 'yaml=yaml', 'json=json', 'bash=sh',
+        \   'bat=dosbatch', 'C=c', 'html=html' ]
+    autocmd FileType markdown call MyColorScheme('molokai')
 
-    Plug 'https://github.com/junegunn/goyo.vim'
+    Plug 'https://github.com/junegunn/goyo.vim',
+             \ { 'on': [ 'Goyo' ] }
+    let g:goyo_width  = '90%'
+    let g:goyo_height = '85%'
     let g:goyo_linenr = 1
+
     Plug 'https://github.com/junegunn/limelight.vim'
     let g:limelight_conceal_ctermfg = 242
     autocmd! User GoyoEnter Limelight
@@ -169,7 +181,7 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     let g:hardtime_default_on = 1
     let g:hardtime_showmsg = 1
     let g:hardtime_ignore_quickfix = 1
-    let g:hardtime_maxcount = 2
+    let g:hardtime_maxcount = 4
     let g:hardtime_allow_different_key = 1 " needed for ESC=jk
     nmap <F4> :HardTimeToggle<CR>
 
@@ -196,8 +208,6 @@ set autowrite
 set showmode
 set shiftround
 set showcmd
-set incsearch
-set hlsearch
 set laststatus=2
 set fileformat=unix
 set nobackup
@@ -376,8 +386,8 @@ function! MyTabLabel(n)
 endfunction
 
 " turn off the hlsearch highlights
-nmap ,/ :nohlsearch<CR>
-nmap ,. :nohlsearch<CR>
+"nmap ,/ :nohlsearch<CR>
+"nmap ,. :nohlsearch<CR>
 
 set nopaste
 nmap <Leader>v :set paste!<CR>:set paste?<CR>
@@ -385,11 +395,10 @@ nmap <Leader>v :set paste!<CR>:set paste?<CR>
 set noignorecase
 nmap <Leader>i :set ignorecase!<CR>:set ignorecase?<CR>
 
-set nonumber
-nmap <Leader>n :set number!<CR>:set number?<CR>
-nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
 set number
 set relativenumber
+nmap <Leader>n :set number!<CR>:set number?<CR>
+nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
 
 set nolist
 nmap <Leader>l :set list!<CR>:set list?<CR>
@@ -452,7 +461,7 @@ nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp
 nmap <Leader>do :diffoff!<CR>:call MyColorScheme(g:default_theme)<CR>
 
 " write visual data to $HOME/t
-vmap <Leader>w :w! $HOME/t<CR>
+xmap <Leader>w :w! $HOME/t<CR>
 map <Leader>r :r $HOME/t<CR>
 
 " write file as root
@@ -543,37 +552,16 @@ autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 "nmap ,t :!(cd %:p:h;ctags -V *)<CR>
 
-" Abbreviations for C/C++ Programming
-iab blogdate <C-R>=BlogStamp()<CR><CR><p><CR></p><ESC>ko
-iab cwrite Console.Write("{0}\n",
-iab Cblock <ESC>0i/*<CR>*<CR>*<CR>*/<ESC>2ka
-iab Ccomm /*  */<ESC>3hi
-iab Cdef <ESC>0C#define
-iab Cinc <ESC>0C#include
-iab Cif if ()<CR>{<CR>}<CR><ESC>3k$h
-iab Celif else if ()<CR>{<CR>}<CR><ESC>3k$h
-iab Celse else<CR>{<CR>}<CR><ESC>2k
-iab Cifall if ()<CR>{<CR>}<CR>else if ()<CR>{<CR>}<CR>else<CR>{<CR>}<CR><ESC>9k$h
-iab Cswitch switch ()<CR>{<CR>case 0:<CR>break;<CR><CR>case 1:<CR>break;<CR><CR>default:<CR>break;<CR>}<CR><ESC>11k$h
-iab Cfor for (;;)<CR>{<CR>}<CR><ESC>3k$3h
-iab Cwhile while ()<CR>{<CR>}<CR><ESC>3k$h
-iab Cmain int main(int argc, char * argv[])<CR>{<CR>}<CR><ESC>kO<ESC>i<Tab>
-iab Cstruct typedef struct<CR>{<CR>} XXX;<CR><ESC>3k$a
-"iab Cclass class<CR>{<CR>private:<CR><CR>protected:<CR><CR>public:<CR><CR>};<CR><ESC>9k$a
-
 "source $VIMRUNTIME/syntax/syntax.vim
 syntax enable
 set cursorline
 
-map <F9> :NERDTreeToggle<CR>
-
-map <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+map <F10>
+  \ :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+  \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+  \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 " AUTOCOMMAND
-
-autocmd Syntax * RainbowParentheses
 
 autocmd Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
 autocmd Syntax c,cc,cpp syn keyword cType S8 U8 S16 U16 S32 U32 S64 U64
@@ -690,7 +678,8 @@ function! ConfigEnv()
     else
         nmap <buffer> <C-p> :ZFiles<CR>
     endif
-    nmap <buffer> <Leader>ag :call fzf#vim#ag(expand('<cword>'))<CR>
+    "nmap <buffer> <Leader>ag :call fzf#vim#ag(expand('<cword>'))<CR>
+    nmap <buffer> <Leader>ag :call fzf#vim#ag(<c-r><c-w>)<CR>
     "nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'), { 'options': '--exact' })<CR>
     nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'))<CR>
     nmap <buffer> <Leader>b :call fzf#vim#buffers()<CR>
@@ -1073,6 +1062,12 @@ function! MyColorScheme(scheme)
     hi link javaScriptTemplateVar    Identifier
     hi link javaScriptTemplateString String
 
+    let g:incsearch#separate_highlight = 1
+    hi IncSearchMatchReverse ctermfg=0 ctermbg=14
+    hi IncSearchMatch        ctermfg=0 ctermbg=10
+    hi IncSearchOnCursor     ctermfg=0 ctermbg=9
+    hi IncSearchCursor       ctermfg=0 ctermbg=11
+
     call MySwitchTransparency()
     call MyStatusColorScheme()
 
@@ -1088,6 +1083,7 @@ function! MyCycleColorScheme(dir)
         \[
         \  'nord',
         \  'gruvbox',
+        \  'seoul256',
         \  'molokai',
         \  'jellybeans',
         \  'dracula',
