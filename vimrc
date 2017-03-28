@@ -14,6 +14,8 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     Plug 'https://github.com/mhinz/vim-startify'
 
     " https://github.com/adragomir/javacomplete
+    "autocmd FileType java setlocal omnifunc=javacomplete#Complete
+
     " https://github.com/rdnetto/YCM-Generator
     " https://github.com/Valloric/YouCompleteMe.git
     "    "YouCompleteMe completion engine setup:
@@ -89,10 +91,14 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     autocmd Syntax * RainbowParentheses
 
     Plug 'https://github.com/Yggdroot/indentLine'
-    let g:indentLine_char = '.'
+    let g:indentLine_char = '┆'
     let g:indentLine_first_char = '.'
     let g:indentLine_showFirstIndentLevel = 1
     let g:indentLine_concealcursor = ''
+    " no indent lines for vim help pages
+    autocmd FileType help let g:indentLine_conceallevel = 0
+    " workaround for the stupid json conceal syntax
+    autocmd BufNewFile,BufRead *.json set ft=javascript
 
     "Plug 'https://github.com/majutsushi/tagbar.git',
     "         \ { 'on': [ 'TagbarToggle' ] }
@@ -144,17 +150,7 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     let g:bullets_enabled_file_types =
 	\ [ 'markdown', 'text', 'gitcommit' ]
 
-    Plug 'https://github.com/plasticboy/vim-markdown',
-             \ { 'for': [ 'markdown' ] }
-    let g:vim_markdown_folding_style_pythonic = 0
-    let g:vim_markdown_math = 1
-    let g:vim_markdown_frontmatter = 1
-    let g:vim_markdown_new_list_item_indent = 0
-    let g:vim_markdown_conceal = 0
-    let g:vim_markdown_fenced_languages =
-        \ [ 'yaml=yaml', 'json=json', 'bash=sh',
-        \   'bat=dosbatch', 'C=c', 'html=html' ]
-    autocmd FileType markdown call MyColorScheme('molokai')
+    Plug 'https://github.com/gabrielelana/vim-markdown'
 
     Plug 'https://github.com/junegunn/goyo.vim',
              \ { 'on': [ 'Goyo' ] }
@@ -178,7 +174,7 @@ if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
     "let g:gist_open_browser_after_post = 1
 
     Plug 'https://github.com/takac/vim-hardtime'
-    let g:hardtime_default_on = 1
+    let g:hardtime_default_on = 0
     let g:hardtime_showmsg = 1
     let g:hardtime_ignore_quickfix = 1
     let g:hardtime_maxcount = 4
@@ -543,8 +539,6 @@ command! -nargs=0 -complete=command SYN call AIKSAURUS(expand("<cword>"))
 "    endif
 "endfunction
 "autocmd FileType mail set omnifunc=EMAIL_OMNI
-
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 "nmap <Leader>pm :!perldoc <CR>
 "nmap <Leader>pf :!perldoc -f <CR>
