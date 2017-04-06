@@ -6,197 +6,116 @@
 " curl -L -o ~/.vim/autoload/plug.vim --create-dirs https://goo.gl/a0PUdV
 " -> https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-let ostype=system('echo -n $OSTYPE')
+unlet! skip_defaults_vim
+source $VIMRUNTIME/defaults.vim
+let s:ostype=system('echo -n $OSTYPE')
 
-if filereadable(expand("$HOME/.vim/autoload/plug.vim"))
-    call plug#begin('~/.vim/plugged')
+augroup insanum
+    autocmd!
+augroup END
 
-    Plug 'https://github.com/mhinz/vim-startify'
+" VIM-PLUG --------------------------------------------- {{{
 
-    " https://github.com/adragomir/javacomplete
-    "autocmd FileType java setlocal omnifunc=javacomplete#Complete
+silent! if plug#begin('~/.vim/plugged')
 
-    " https://github.com/rdnetto/YCM-Generator
-    " https://github.com/Valloric/YouCompleteMe.git
-    "    "YouCompleteMe completion engine setup:
-    "    "  cd ~/.vim/bundle/YouCompleteMe
-    "    "  ./install.sh --clang-completer --gocode-completer
-    "    "Generate .ycm_extra_conf.py for C projects:
-    "    "  cd ~/.vim/bundle/YCM-Generator
-    "    "  ./config_gen.py <path_to_c_project>
-    "    let g:ycm_confirm_extra_conf=0
-    "    let g:ycm_extra_conf_globlist=['*']
-    "    let g:ycm_show_diagnostics_ui=0
-    "    let g:ycm_collect_identifiers_from_tags_files=1
-    "    set completeopt=menuone
-    " https://github.com/lifepillar/vim-mucomplete
-    "    let g:mucomplete#enable_auto_at_startup = 1
+"Plug 'https://github.com/mhinz/vim-startify'
 
-    "https://github.com/maralla/validator.vim
-    Plug 'https://github.com/maralla/completor.vim'
-    let g:completor_clang_binary = '/usr/bin/clang'
+" https://github.com/adragomir/javacomplete
+"autocmd insanum FileType java setlocal omnifunc=javacomplete#Complete
 
-    Plug 'https://github.com/ludovicchabant/vim-gutentags'
+" https://github.com/rdnetto/YCM-Generator
+" https://github.com/Valloric/YouCompleteMe.git
+"    "YouCompleteMe completion engine setup:
+"    "  cd ~/.vim/bundle/YouCompleteMe
+"    "  ./install.sh --clang-completer --gocode-completer
+"    "Generate .ycm_extra_conf.py for C projects:
+"    "  cd ~/.vim/bundle/YCM-Generator
+"    "  ./config_gen.py <path_to_c_project>
+"    let g:ycm_confirm_extra_conf=0
+"    let g:ycm_extra_conf_globlist=['*']
+"    let g:ycm_show_diagnostics_ui=0
+"    let g:ycm_collect_identifiers_from_tags_files=1
+"    set completeopt=menuone
+" https://github.com/lifepillar/vim-mucomplete
+"    let g:mucomplete#enable_auto_at_startup = 1
 
-    "Plug 'https://github.com/scrooloose/nerdtree',
-    "         \ { 'on': [ 'NERDTreeToggle' ] }
-    "nmap <F9> :NERDTreeToggle<CR>
+""https://github.com/maralla/validator.vim
+"Plug 'https://github.com/maralla/completor.vim'
+"let g:completor_clang_binary = '/usr/bin/clang'
 
-    "https://github.com/kergoth/vim-hilinks.git
-    Plug 'https://github.com/arcticicestudio/nord-vim'
-    Plug 'https://github.com/morhetz/gruvbox'
-    Plug 'https://github.com/junegunn/seoul256.vim'
-    Plug 'https://github.com/tomasr/molokai.git'
-    Plug 'https://github.com/nanotech/jellybeans.vim'
-    Plug 'https://github.com/dracula/vim'
-    Plug 'https://github.com/romainl/Apprentice'
-    Plug 'https://github.com/reedes/vim-colors-pencil'
-    Plug 'https://github.com/chriskempson/vim-tomorrow-theme'
-    Plug 'https://github.com/altercation/vim-colors-solarized.git'
+Plug 'https://github.com/ludovicchabant/vim-gutentags'
 
-    Plug 'https://github.com/ap/vim-css-color'
+"Plug 'https://github.com/scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle' ] }
 
-    "Plug 'https://github.com/flowtype/vim-flow'
-    Plug 'https://github.com/jelera/vim-javascript-syntax',
-             \ { 'for': [ 'javascript' ] }
-    Plug 'https://github.com/jason0x43/vim-js-indent',
-             \ { 'for': [ 'javascript' ] }
-    let g:js_indent_flat_switch = 1
+"https://github.com/kergoth/vim-hilinks.git
+Plug 'https://github.com/arcticicestudio/nord-vim'
+Plug 'https://github.com/morhetz/gruvbox'
+Plug 'https://github.com/junegunn/seoul256.vim'
+Plug 'https://github.com/tomasr/molokai.git'
+Plug 'https://github.com/nanotech/jellybeans.vim'
+Plug 'https://github.com/dracula/vim'
+Plug 'https://github.com/romainl/Apprentice'
+Plug 'https://github.com/reedes/vim-colors-pencil'
+Plug 'https://github.com/chriskempson/vim-tomorrow-theme'
+Plug 'https://github.com/altercation/vim-colors-solarized.git'
 
-    Plug 'https://github.com/junegunn/vim-easy-align'
-    xmap ga <Plug>(EasyAlign)
-    nmap ga <Plug>(EasyAlign)
+Plug 'https://github.com/ap/vim-css-color'
 
-    Plug 'https://github.com/scrooloose/nerdcommenter'
-    Plug 'https://github.com/tpope/vim-surround'
+"Plug 'https://github.com/flowtype/vim-flow'
+Plug 'https://github.com/jelera/vim-javascript-syntax'
+Plug 'https://github.com/jason0x43/vim-js-indent'
 
-    "set incsearch
-    set hlsearch
-    Plug 'https://github.com/haya14busa/incsearch.vim'
-    map /  <Plug>(incsearch-forward)
-    map ?  <Plug>(incsearch-backward)
-    map g/ <Plug>(incsearch-stay)
-    let g:incsearch#auto_nohlsearch = 1
-    map n  <Plug>(incsearch-nohl-n)
-    map N  <Plug>(incsearch-nohl-N)
-    map *  <Plug>(incsearch-nohl-*)
-    map #  <Plug>(incsearch-nohl-#)
-    map g* <Plug>(incsearch-nohl-g*)
-    map g# <Plug>(incsearch-nohl-g#)
+Plug 'https://github.com/junegunn/vim-easy-align'
 
-    Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
-    "let g:rainbow#max_level = 32
-    let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
-    let g:rainbow#blacklist = [15, '#D8DEE9', '#ECEFF4', '#80a0ff']
-    autocmd Syntax * RainbowParentheses
+Plug 'https://github.com/scrooloose/nerdcommenter'
+Plug 'https://github.com/tpope/vim-surround'
 
-    Plug 'https://github.com/Yggdroot/indentLine'
-    let g:indentLine_char = '┆'
-    let g:indentLine_first_char = '.'
-    let g:indentLine_showFirstIndentLevel = 1
-    let g:indentLine_concealcursor = ''
-    " no indent lines for vim help pages
-    autocmd FileType help let g:indentLine_conceallevel = 0
-    " workaround for the stupid json conceal syntax
-    autocmd BufNewFile,BufRead *.json set ft=javascript
+Plug 'https://github.com/haya14busa/incsearch.vim'
 
-    "Plug 'https://github.com/majutsushi/tagbar.git',
-    "         \ { 'on': [ 'TagbarToggle' ] }
-    "if ostype == "solaris2.10"
-    "    let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
-    "elseif ostype == "solaris2.11"
-    "    let g:tagbar_ctags_bin = '/usr/bin/exctags'
-    "elseif ostype =~ "darwin"
-    "    let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
-    "else
-    "    let g:tagbar_ctags_bin = '/usr/bin/ctags'
-    "endif
-    "let g:tagbar_autoclose = 1
-    "let g:tagbar_width = 30
-    "nmap <F8> :TagbarToggle<CR>
+Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
 
-    Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
-    Plug 'junegunn/fzf.vim'
-    let g:fzf_buffers_jump = 1
-    let g:fzf_command_prefix = 'Z'
-    "let g:fzf_layout = { }
-    "imap <c-x><c-k> <plug>(fzf-complete-word)
-    "imap <c-x><c-f> <plug>(fzf-complete-path)
-    "imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-    "imap <c-x><c-l> <plug>(fzf-complete-line)
+"Plug 'https://github.com/Yggdroot/indentLine'
 
-    Plug 'https://github.com/kshenoy/vim-signature'
+"Plug 'https://github.com/majutsushi/tagbar.git', { 'on': [ 'TagbarToggle' ] }
 
-    Plug 'https://github.com/easymotion/vim-easymotion'
-    " default is <Leader><Leader> = ',,'
-    "let g:EasyMotion_leader_key='\'
+Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
-    Plug 'https://github.com/tpope/vim-fugitive'
-    Plug 'https://github.com/junegunn/gv.vim'
-    Plug 'https://github.com/airblade/vim-gitgutter'
+Plug 'https://github.com/easymotion/vim-easymotion'
 
-    Plug 'https://github.com/honza/vim-snippets.git'
-    Plug 'https://github.com/SirVer/ultisnips.git'
-    let g:UltiSnipsExpandTrigger="<c-h>"
-    let g:UltiSnipsListSnippets="<c-l>"
-    let g:UltiSnipsJumpForwardTrigger="<c-j>"
-    let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+Plug 'https://github.com/tpope/vim-fugitive'
+Plug 'https://github.com/junegunn/gv.vim'
 
-    "Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
-    "Plug 'https://github.com/insanum/vim-rst-tables.git'
-    Plug 'https://github.com/insanum/votl.git'
+Plug 'https://github.com/kshenoy/vim-signature'
+Plug 'https://github.com/airblade/vim-gitgutter'
 
-    Plug 'https://github.com/dkarter/bullets.vim'
-    let g:bullets_enabled_file_types =
-	\ [ 'markdown', 'text', 'gitcommit' ]
+Plug 'https://github.com/honza/vim-snippets.git'
+Plug 'https://github.com/SirVer/ultisnips.git'
 
-    Plug 'https://github.com/gabrielelana/vim-markdown'
+"Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
+"Plug 'https://github.com/insanum/vim-rst-tables.git'
+Plug 'https://github.com/insanum/votl.git', { 'for': [ 'votl' ] }
 
-    Plug 'https://github.com/junegunn/goyo.vim',
-             \ { 'on': [ 'Goyo' ] }
-    let g:goyo_width  = '90%'
-    let g:goyo_height = '85%'
-    let g:goyo_linenr = 1
+Plug 'https://github.com/dkarter/bullets.vim',
+         \ { 'for': [ 'markdown', 'text' ] }
 
-    Plug 'https://github.com/junegunn/limelight.vim'
-    let g:limelight_conceal_ctermfg = 242
-    autocmd! User GoyoEnter Limelight
-    autocmd! User GoyoLeave Limelight!
+Plug 'https://github.com/gabrielelana/vim-markdown'
 
-    "Plug 'https://github.com/mattn/webapi-vim'
-    "Plug 'https://github.com/mattn/gist-vim'
-    "let g:github_user = 'insanum'
-    "let g:gist_post_private = 1
-    "let g:gist_show_privates = 1
-    "let g:gist_get_multiplefile = 1
-    "let g:gist_list_vsplit = 1
-    "let g:gist_edit_with_buffers = 1
-    "let g:gist_open_browser_after_post = 1
+Plug 'https://github.com/junegunn/goyo.vim', { 'on': [ 'Goyo' ] }
+Plug 'https://github.com/junegunn/limelight.vim'
 
-    Plug 'https://github.com/takac/vim-hardtime'
-    let g:hardtime_default_on = 0
-    let g:hardtime_showmsg = 1
-    let g:hardtime_ignore_quickfix = 1
-    let g:hardtime_maxcount = 4
-    let g:hardtime_allow_different_key = 1 " needed for ESC=jk
-    nmap <F4> :HardTimeToggle<CR>
-
-    call plug#end()
+call plug#end()
 endif
 
-"------------------------------------------------
+" VIM-PLUG (END) --------------------------------------- }}}
 
-set t_Sf=[3%p1%dm
-set t_Sb=[4%p1%dm
-set t_Co=256
+let mapleader      = ','
+let maplocalleader = ','
 
-filetype plugin indent on
-let mapleader=','
+"filetype plugin indent on
 
-" Broadcom specific stuff (WinDDK)
-"set makeprg=wow
-"set errorformat=%f(%l)\ :\ error\ C%n:\ %m
-" -----------------------
+" I like everything unfolded by default...
+set foldlevelstart=99
 
 set showmatch
 set ruler
@@ -209,6 +128,7 @@ set fileformat=unix
 set nobackup
 set backspace=2
 set dictionary=/usr/share/dict/words
+set thesaurus=$HOME/.vim/thesaurus/mthesaur.txt
 set complete=.,w,b,u,t,i,k
 set noinsertmode
 set joinspaces
@@ -219,11 +139,10 @@ set mouse-=a
 set updatecount=200
 set updatetime=1000
 set ttyfast
+set lazyredraw
 set nocompatible
 set notitle
-set wrapscan
 "set whichwrap=h,l
-set stal=2
 set listchars=tab:>-,eol:$,trail:-
 set keywordprg=""
 set wildignore=*.o,*.obj,*.bak,*.exe,*.rom,*.bin
@@ -235,120 +154,311 @@ set noequalalways
 set pumheight=20
 set hidden
 set verbosefile=$HOME/vim_verbose.txt
+set nostartofline
+set nofixeol
+set ignorecase smartcase
+set timeoutlen=500
 
+set textwidth=0
+set colorcolumn=80
+set cursorline
+
+" No bells or screen flashes!
+set novisualbell
+set vb t_vb=
+
+" Format options and wrapping
+set formatoptions+=1j
+let &showbreak = '↳'
+"set breakindent
+set breakindentopt=sbr
+
+" Home direcotry for swapfiles
 set swapfile
 if !isdirectory(expand('$HOME/.vim_swap'))
     call mkdir(expand('$HOME/.vim_swap'))
 endif
 set directory^=$HOME/.vim_swap//
 
-" requires 'print_vim' or 'print' shell script (i.e. Cygwin/Windows Ghostscript wrapper)
-"set printexpr=system('print_vim\ '\ .\ v:fname_in)\ .\ delete(v:fname_in)\ +\ v:shell_error
-nmap <Leader>ha :!enscript -M Letter -G -2 -r --mark-wrapped-lines=box -E -DDuplex:true %:p<CR>
+" Try to stay off the Escape key!
+" My name is Eric and I have a 2016 MacBook Pro w/ Touch Bar ... /facepalm
+inoremap jk <Esc>
+xnoremap jk <Esc>
 
-" Stupid tabs, default Tab-8 Linux coding style...
-set autoindent
-set nosmarttab
-set noexpandtab
-set nosmartindent
-set tabstop=8 softtabstop=8 shiftwidth=8
-" mapping for swithing tab settings on the fly...
-nmap <Leader>t2 :set
-                \ tabstop=2
-                \ softtabstop=2
-                \ shiftwidth=2
-                \ smarttab
-                \ expandtab<CR>
-nmap <Leader>t4 :set
-                \ tabstop=4
-                \ softtabstop=4
-                \ shiftwidth=4
-                \ smarttab
-                \ expandtab<CR>
-nmap <Leader>t8 :set
-                \ tabstop=8
-                \ softtabstop=8
-                \ shiftwidth=8
-                \ smarttab
-                \ expandtab<CR>
-nmap <Leader>tl :set
-                \ tabstop=8
-                \ softtabstop=8
-                \ shiftwidth=8
-                \ nosmarttab
-                \ noexpandtab<CR>
-" Tab-4 for shell scripts, vim, text files etc...
-autocmd FileType sh,json,javascript,lua,vim,text,markdown,css,less,org,votl
-    \ set
-    \ tabstop=4
-    \ softtabstop=4
-    \ shiftwidth=4
-    \ smarttab
-    \ expandtab
-" Tab-2 for yaml...
-autocmd FileType yaml
-    \ set
-    \ tabstop=2
-    \ softtabstop=2
-    \ shiftwidth=2
-    \ smarttab
-    \ expandtab
-
-" the following are set in an autocmd below
-"set cindent
-"set cinoptions=>s,e0,n0,f1s,{1s,}0,^0,:0,=s,gs,hs,ps,t0,+s,c0,(0,us,)20,*30
-
-" No bells or screen flashes!
-set novisualbell
-set vb t_vb=
-
-" Mappings
-
-nnoremap ; :
-nnoremap ! :!
-
-inoremap jk <ESC>
-
+" Uh, NOPE! I hate getting stuck in Ex mode...
 map Q <Nop>
 map gQ <Nop>
 
-"nmap <C-k> :res<CR>
-nmap <Leader><C-l> :redraw!<CR>
+" Macro record with 'qq' and replay with 'Q'
+nnoremap Q @q
 
+" Quickly jump between windows
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-h> <C-w>h
 noremap <C-l> <C-w>l
 
-" auto save when leaving insert mode (slow)
-"autocmd InsertLeave * if expand('%') != '' | update | endif
-nmap <C-s> :update<CR>
+" Force a redraw of the screen
+nmap <Leader><C-l> :redraw!<CR>
 
-" window tab stuff
+" I'm a compulsive <C-s> masher...
+nnoremap <C-s> :update<CR>
+inoremap <C-s> <C-o>:update<CR>
 
-set showtabline=2
-set tabline=%!MyTabLine()
+" Toggle paste
+set nopaste
+nmap <Leader>v :set paste!<CR>:set paste?<CR>
 
+" Toggle line numbers
+set number
+set relativenumber
+nmap <Leader>n :set number!<CR>:set number?<CR>
+nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
+
+" Toggle list chars
+set nolist
+nmap <Leader>l :set list!<CR>:set list?<CR>
+
+" Edit and/or (re)Source this .vimrc file
+nmap <Leader>rce :tabnew $HOME/.vimrc<CR>
+nmap <Leader>rcs :source $HOME/.vimrc<CR>
+
+" (re)Write the file as root
+cmap w!! w !sudo tee % > /dev/null
+
+" TABS-v-SPACES ---------------------------------------- {{{
+
+" (sigh) tabs-v-spaces, default Tab-8-noexpand for Linux coding style...
+set autoindent
+set nosmarttab
+set noexpandtab
+set nosmartindent
+set tabstop=8 softtabstop=8 shiftwidth=8
+
+" mappings for switching Tab settings on the fly...
+
+" (Tab-2-expand)
+function! s:t2e()
+    set tabstop=2
+      \ softtabstop=2
+      \ shiftwidth=2
+      \ smarttab
+      \ expandtab
+endfunction
+nmap <Leader>t2e :call <SID>t2e()<CR>
+
+" (Tab-4-expand)
+function! s:t4e()
+    set tabstop=4
+      \ softtabstop=4
+      \ shiftwidth=4
+      \ smarttab
+      \ expandtab
+endfunction
+nmap <Leader>t4e :call <SID>t4e()<CR>
+
+" (Tab-8-expand)
+function! s:t8e()
+    set tabstop=8
+      \ softtabstop=8
+      \ shiftwidth=8
+      \ smarttab
+      \ expandtab
+endfunction
+nmap <Leader>t8e :call <SID>t8e()<CR>
+
+" (Tab-2-noexpand)
+function! s:t2t()
+    set tabstop=2
+      \ softtabstop=2
+      \ shiftwidth=2
+      \ nosmarttab
+      \ noexpandtab
+endfunction
+nmap <Leader>t2t :call <SID>t2t()<CR>
+
+" (Tab-4-noexpand)
+function! s:t4t()
+    set tabstop=4
+      \ softtabstop=4
+      \ shiftwidth=4
+      \ nosmarttab
+      \ noexpandtab
+endfunction
+nmap <Leader>t4t :call <SID>t4t()<CR>
+
+" (Tab-8-noexpand)
+function! s:t8t()
+    set tabstop=8
+      \ softtabstop=8
+      \ shiftwidth=8
+      \ nosmarttab
+      \ noexpandtab
+endfunction
+nmap <Leader>t8t :call <SID>t8t()<CR>
+
+" Default Tab-4-expand for filetypes...
+autocmd insanum FileType
+    \ sh,json,javascript,lua,vim,text,markdown,css,less,org
+    \ call <SID>t4t()
+
+" Default Tab-2-expand for filetypes...
+autocmd insanum FileType
+    \ yaml
+    \ call <SID>t2e()
+
+" TABS-v-SPACES (END) ---------------------------------- }}}
+
+" Insert the current date/time at the cursor
+iab abdate <C-R>=strftime("%a %b %d %T %Z %Y")<CR>
+
+" grep all files in the current directory for the word under the cursor
+"if s:ostype == "solaris2.10" || s:ostype == "solaris2.11"
+"    nmap <Leader>gr :!ggrep -n --color=always <cword> *<CR>
+"else
+"    nmap <Leader>gr :!grep -r -n --color=always <cword> *<CR>
+"endif
+"nmap <Leader>gr :grep --color=always <cword> *.[^o]<CR>
+"nmap <Leader>gr :grep <cword> *.[^o]<CR>
+"nmap <Leader>gr :exec('vimgrep /' . expand('<cword>') . '/j *[^.o$]')<CR>,m
+
+" Delete all line trailing white space
+" XXX Don't allow this for Markdown!
+nmap <Leader>des mz:%s/\s\+$//e<CR>,.'z:delm z<CR>
+
+" Perforce open the current file for edit
+nmap <Leader>pe :exec('!e4 edit ' . expand("%"))<CR>:w!<CR>
+
+" Perforce diff current file (vs previous)
+nmap <Leader>pd :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
+
+" Git diff current file (unstaged or staged vs previous)
+"nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
+"nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
+
+" Turn diff off for all windows in current tab
+nmap <Leader>do :diffoff!<CR>:call <SID>myColorScheme(g:default_theme)<CR>
+
+map <F10>
+  \ :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+  \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+  \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
+" AUTOCOMMAND
+
+autocmd insanum Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
+autocmd insanum Syntax c,cc,cpp syn keyword cType S8 U8 S16 U16 S32 U32 S64 U64
+autocmd insanum Syntax c,cc,cpp syn keyword cType u_int8_t u_int16_t u_int32_t u_int64_t u_char u_short u_int
+autocmd insanum Syntax c,cc,cpp syn keyword cConstant TRUE FALSE B_TRUE B_FALSE
+
+autocmd insanum BufNewFile,BufReadPost *.c@@/*,*.h@@/*,%@@/* setf c
+autocmd insanum BufNewFile,BufRead .tmux.conf*,tmux.conf* setf tmux
+autocmd insanum BufNewFile,BufRead /tmp/alot.\w\+ setf mail
+
+" macros to put the quickfix window in proper place
+function! s:quickfixOpen(bottom)
+    if (a:bottom)
+        ccl
+        bot cw 10
+        "set previewwindow
+    else
+        ccl
+        cw 40
+        "set previewwindow
+    endif
+endfunction
+nmap ,M :call <SID>quickfixOpen(0)<CR>
+nmap ,m :call <SID>quickfixOpen(1)<CR>
+
+autocmd insanum BufNewFile,BufRead *.c,*.cc,*.cpp,*.h,*.java,*.js,*.lua set textwidth=80
+autocmd insanum BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.lua
+    \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
+
+autocmd insanum Syntax javascript
+    \ syn match LodashLazy '\v<(H|G|S)>' containedin=javaScriptFuncDef,javaScriptFuncKeyword |
+    \ hi LodashLazy ctermfg=9 cterm=bold
+
+autocmd insanum FileType markdown,yaml,txt
+    \ setlocal textwidth=80
+    \          spell
+    \          spelllang=en_us
+
+autocmd insanum Syntax python,perl,php setlocal textwidth=80
+autocmd insanum Syntax qf set textwidth=0
+
+autocmd insanum Syntax help setlocal nospell
+nmap <Leader>s :set spell!<CR>:set spell?<CR>
+
+" spell check the current buffer
+"nmap <Leader>s :w!<CR>:!aspell -c %:p<CR>:e!<CR><CR>
+
+"map ,kqs :/^[ ]*> -- *$/;?^[ >][ >]*$?;.,/^[ ]*$/-1d<CR>
+autocmd insanum FileType mail
+    \ setlocal textwidth=78
+    \          spell
+    \          spelllang=en_us
+    \          formatoptions=tcqnl
+    \          comments=n:>,n::,n:#,n:%,n:\|
+
+"autocmd insanum BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%>' . &textwidth . 'v.\+/' | endif
+"autocmd insanum BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
+autocmd insanum BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua
+    \ if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
+
+" search for all lines longer than textwidth
+"if &textwidth > 0
+"    execute "nmap <Leader>L /\%" . &textwidth . "v.\+<CR>"
+"endif
+
+function! s:check_pager_mode()
+    if exists("g:loaded_less") && g:loaded_less
+        " we're in vimpager / less.sh / man mode
+        set laststatus=0
+        set showtabline=0
+        set foldmethod=manual
+        set foldlevel=99
+        set nolist
+        go
+    elseif &diff
+        set nospell
+    elseif !&diff
+        "wincmd l
+        "Hexplore
+        "execute "normal! zt"
+        "wincmd h
+    endif
+endfunction
+autocmd insanum VimEnter * call <SID>check_pager_mode()
+
+" WINDOW TABS ------------------------------------------ {{{
+
+" Quickly jump between tabs
 nmap tn :tabnew<CR>
 nmap th :tabprevious<CR>
 nmap tl :tabnext<CR>
 nmap tH :tabmove -1<CR>
 nmap tL :tabmove +1<CR>
 
-function! TabOpenFileFunc(file)
-    tabnew
-    execute "e" a:file
+set showtabline=2
+set tabline=%!MyTabLine()
+
+function! MyTabLabel(n)
+    let buflist = tabpagebuflist(a:n)
+    let winnr = tabpagewinnr(a:n)
+    "let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':~')
+    let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':t')
+    if empty(tmp)
+        return '<empty>'
+    endif
+    return tmp
 endfunction
-command! -nargs=1 -complete=command -complete=dir -complete=file T call TabOpenFileFunc(<f-args>)
 
 function! MyTabLine()
     let s = ''
     for i in range(tabpagenr('$'))
         " select the highlighting
-        if i + 1 == tabpagenr()
-            let s .= '%#TabLineSel#'
-        else
-            let s .= '%#TabLine#'
+        if i + 1 == tabpagenr() | let s .= '%#TabLineSel#'
+        else                    | let s .= '%#TabLine#'
         endif
 
         " set the tab page number (for mouse clicks)
@@ -370,101 +480,12 @@ function! MyTabLine()
     return s
 endfunction
 
-function! MyTabLabel(n)
-    let buflist = tabpagebuflist(a:n)
-    let winnr = tabpagewinnr(a:n)
-    "let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':~')
-    let tmp = fnamemodify(bufname(buflist[winnr - 1]), ':t')
-    if tmp == ''
-        return '<empty>'
-    endif
-    return tmp
-endfunction
+" WINDOW TABS (END) ------------------------------------ }}}
 
-" turn off the hlsearch highlights
-"nmap ,/ :nohlsearch<CR>
-"nmap ,. :nohlsearch<CR>
-
-set nopaste
-nmap <Leader>v :set paste!<CR>:set paste?<CR>
-
-set noignorecase
-nmap <Leader>i :set ignorecase!<CR>:set ignorecase?<CR>
-
-set number
-set relativenumber
-nmap <Leader>n :set number!<CR>:set number?<CR>
-nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
-
-set nolist
-nmap <Leader>l :set list!<CR>:set list?<CR>
-
-" insert the currect date/time at the cursor
-iab abdate <C-R>=strftime("%a %b %d %T %Z %Y")<CR>
-nmap <Leader>da 1G/Last Modified:\s*/e+1<CR>Cabdate<ESC>
-
-" grep all files in the currect directory for the word under the cursor
-if ostype == "solaris2.10" || ostype == "solaris2.11"
-    nmap <Leader>gr :!ggrep -n --color=always <cword> *<CR>
-else
-    nmap <Leader>gr :!grep -r -n --color=always <cword> *<CR>
-endif
-"nmap <Leader>gr :grep --color=always <cword> *.[^o]<CR>
-"nmap <Leader>gr :grep <cword> *.[^o]<CR>
-"nmap <Leader>gr :exec('vimgrep /' . expand('<cword>') . '/j *[^.o$]')<CR>,m
-
-" clearcase check in/out
-"nmap <Leader>co :!cleartool co -nc -unr %:p<CR>
-"nmap <Leader>ci :!cleartool ci -nc %:p<CR>
-
-" edit and source the rc file
-nmap <Leader>rce :new $HOME/.vimrc<CR>
-nmap <Leader>rcs :source $HOME/.vimrc<CR>
-
-" delete tabs and replace with 4 or 8 spaces
-nmap <Leader>dt4 :%s/	/    /g<CR>
-nmap <Leader>dt8 :%s/	/        /g<CR>
-
-" delete all line trailing whitespace
-nmap <Leader>des mz:%s/\s\+$//e<CR>,.'z:delm z<CR>
-
-" delete all empty lines
-nmap <Leader>dl mz:%g/^\s*$/d<CR>,.'z
-
-" read in $HOME/t, save, go to next file
-"nmap <Leader>rt O<ESC>:r $HOME/t<CR>:w<CR>:n<CR>
-
-"nmap <Leader>dm :set hidden<CR>:only<CR>:diffsplit %@@/main/development/LATEST<CR>:%foldopen!<CR>:set foldcolumn=0<CR><C-w>j:%foldopen!<CR>:set foldcolumn=0<CR>:autocmd! WinEnter * <CR><C-w>=
-"nmap <Leader>dr4 :set hidden<CR>:only<CR>:diffsplit %@@/main/development/release_1.4/LATEST<CR>:%foldopen!<CR>:set foldcolumn=0<CR><C-w>j:%foldopen!<CR>:set foldcolumn=0<CR>:autocmd! WinEnter * <CR><C-w>=
-"nmap <Leader>dr5 :set hidden<CR>:only<CR>:diffsplit %@@/main/development/release_1.5/LATEST<CR>:%foldopen!<CR>:set foldcolumn=0<CR><C-w>j:%foldopen!<CR>:set foldcolumn=0<CR>:autocmd! WinEnter * <CR><C-w>=
-"nmap <Leader>dr6 :set hidden<CR>:only<CR>:diffsplit %@@/main/development/release_1.6/LATEST<CR>:%foldopen!<CR>:set foldcolumn=0<CR><C-w>j:%foldopen!<CR>:set foldcolumn=0<CR>:autocmd! WinEnter * <CR><C-w>=
-"nmap <Leader>dd :set noscrollbind<CR>:set foldmethod=manual<CR>:set nodiff<CR>:set foldcolumn=0<CR>:set wrap<CR>:autocmd! WinEnter * <CR>:autocmd WinEnter * resize<CR>:bdelete @@/main/development<CR>:unhide<CR>:set nohidden<CR><C-w>t
-
-" perforce open for edit current file
-nmap <Leader>pe :exec('!e4 edit ' . expand("%"))<CR>:w!<CR>
-
-" diff ignore whitespace
-nmap <Leader>dw :set diffopt=filler,iwhite<CR>
-
-" perforce diff current file (vs previous)
-nmap <Leader>pdp :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-
-" git diff current file (unstaged and staged vs previous)
-nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-
-" turn diff off for all windows in current tab
-nmap <Leader>do :diffoff!<CR>:call MyColorScheme(g:default_theme)<CR>
-
-" write visual data to $HOME/t
-xmap <Leader>w :w! $HOME/t<CR>
-map <Leader>r :r $HOME/t<CR>
-
-" write file as root
-cmap w!! w !sudo tee % > /dev/null
+" FOLDING ---------------------------------------------- {{{
 
 " What function is the cursor in?
-nmap <Leader>fi mk[[?(<CR>bve"fy`k:echo "-> <C-R>f()"<CR>
+"nmap <Leader>fi mk[[?(<CR>bve"fy`k:echo "-> <C-R>f()"<CR>
 
 " fold #if block that the cursor is in
 nmap <Leader>fd [#V]#kzf
@@ -473,7 +494,7 @@ nmap <Leader>fd [#V]#kzf
 nmap <Leader>ff [[V%kzf
 
 " fold all functions in the buffer
-function! FoldAllFunctions()
+function! s:foldAllFunctions()
     let lastline = line("$")
     let numfunctions = 0
     normal 1G
@@ -489,7 +510,7 @@ function! FoldAllFunctions()
     normal 1G
     echo numfunctions . " functions have been folded..."
 endfunction
-nmap <Leader>fa :call FoldAllFunctions()<CR>
+nmap <Leader>fa :call <SID>foldAllFunctions()<CR>
 
 " fold the current block that the cursor is in
 nmap <Leader>fb [{V%kzf
@@ -498,243 +519,20 @@ nmap <Leader>fb [{V%kzf
 nmap <Leader>fo :%foldopen!<CR>
 nmap <Leader>fc :%foldclose!<CR>
 
-function! CCLfunc()
-    99wincmd j
-    wincmd k
-    ccl
-    q
-endfunction
-command! -nargs=0 -complete=command CCL call CCLfunc()
+" FOLDING (END) ---------------------------------------- }}}
 
-function! AIKSAURUS(word)
-    copen
-    set modifiable
-    exec "r! aiksaurus " . a:word
-    normal gg
-    normal dd
-    set nomodifiable
-    set nomodified
-endfunction
-command! -nargs=0 -complete=command SYN call AIKSAURUS(expand("<cword>"))
-
-"function! EMAIL_OMNI(findstart, base)
-"    if a:findstart
-"        let line = getline('.')
-"        let start = col('.') - 1
-"        while start > 0 && line[start - 1] =~ '\S'
-"            let start -= 1
-"        endwhile
-"        return start
-"    else
-"        let res = []
-"        if a:base == ""
-"            return res
-"        endif
-"        let data=split(system("$HOME/.bin/email_addrs broadcom search " . a:base), "\n")
-"        for line in data
-"            call add(res, line)
-"        endfor
-"        sleep 2
-"        return res
-"    endif
-"endfunction
-"autocmd FileType mail set omnifunc=EMAIL_OMNI
-
-"nmap <Leader>pm :!perldoc <CR>
-"nmap <Leader>pf :!perldoc -f <CR>
-"nmap <Leader>pq :!perldoc -q <CR>
-
-"nmap ,t :!(cd %:p:h;ctags -V *)<CR>
-
-"source $VIMRUNTIME/syntax/syntax.vim
-syntax enable
-set cursorline
-
-map <F10>
-  \ :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-  \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-  \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-
-" AUTOCOMMAND
-
-autocmd Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
-autocmd Syntax c,cc,cpp syn keyword cType S8 U8 S16 U16 S32 U32 S64 U64
-autocmd Syntax c,cc,cpp syn keyword cType u_int8_t u_int16_t u_int32_t u_int64_t u_char u_short u_int
-autocmd Syntax c,cc,cpp syn keyword cConstant TRUE FALSE B_TRUE B_FALSE
-
-autocmd BufNewFile,BufReadPost *.c@@/*,*.h@@/*,%@@/* setf c
-autocmd BufNewFile,BufRead .tmux.conf*,tmux.conf* setf tmux
-autocmd BufNewFile,BufRead /tmp/alot.\w\+ setf mail
-
-"autocmd BufWritePre,FileWritePre *.html ks|1,$g/Last Modified: /normal f:lD:read !date<CR>kJ's
-
-"if !&diff
-"    autocmd WinEnter * resize
-"endif
-
-" macros to put the quickfix window in proper place
-function! QuickfixOpen(bottom)
-    if (a:bottom)
-        ccl
-        bot cw 10
-        "set previewwindow
-    else
-        ccl
-        cw 40
-        "set previewwindow
-    endif
-endfunction
-nmap ,M :call QuickfixOpen(0)<CR>
-nmap ,m :call QuickfixOpen(1)<CR>
-
-autocmd BufNewFile,BufRead *.c,*.cc,*.cpp,*.h,*.java,*.js,*.lua set textwidth=80
-autocmd BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.lua
-    \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
-
-autocmd Syntax javascript
-    \ syn match LodashLazy '\v<(H|G|S)>' containedin=javaScriptFuncDef,javaScriptFuncKeyword |
-    \ hi LodashLazy ctermfg=9 cterm=bold
-
-autocmd FileType votl,txt set textwidth=79
-
-autocmd BufReadPre,FileReadPre *.txt,*.TXT,.*.org,*.otl,*.votl,*.markdown,*.md set textwidth=79
-"autocmd BufReadPre,FileReadPre *.html set textwidth=75
-autocmd Syntax svn set textwidth=76
-autocmd Syntax qf set textwidth=0
-
-autocmd Syntax python,perl,php setlocal textwidth=80
-
-autocmd BufNewFile,BufReadPost *.txt,*.TXT setlocal spell spelllang=en_us
-autocmd Syntax mail setlocal spell spelllang=en_us
-autocmd Syntax help setlocal nospell
-nmap <Leader>s :set spell!<CR>:set spell?<CR>
-" spell check the current buffer
-"nmap <Leader>s :w!<CR>:!aspell -c %:p<CR>:e!<CR><CR>
-
-"map ,kqs :/^[ ]*> -- *$/;?^[ >][ >]*$?;.,/^[ ]*$/-1d<CR>
-autocmd Syntax mail setlocal textwidth=72
-"autocmd Syntax mail setlocal digraph
-autocmd Syntax mail setlocal formatoptions=tcqnl
-autocmd Syntax mail setlocal comments=n:>,n::,n:#,n:%,n:\|
-
-"autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%>' . &textwidth . 'v.\+/' | endif
-"autocmd BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
-autocmd BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua
-    \ if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
-
-" search for all lines longer than textwidth
-"if &textwidth > 0
-"    execute "nmap <Leader>L /\%" . &textwidth . "v.\+<CR>"
-"endif
-
-"nmap <F7> <C-E>:sleep 3<CR><C-E>:redraw<CR><F7>
-
-function! s:check_pager_mode()
-    if exists("g:loaded_less") && g:loaded_less
-        " we're in vimpager / less.sh / man mode
-        set laststatus=0
-        set showtabline=0
-        set foldmethod=manual
-        set foldlevel=99
-        set nolist
-        go
-    elseif &diff
-        set nospell
-    elseif !&diff
-        "wincmd l
-        "Hexplore
-        "execute "normal! zt"
-        "wincmd h
-    endif
-endfunction
-autocmd VimEnter * :call s:check_pager_mode()
-
-function! NotifyPrint(msg)
-    execute "silent !notify-send '" . a:msg . "'"
-endfunction
-
-" project specific mappings
-function! ConfigEnv()
-    if ($PWD =~ $HOME . '/arch/git/iproc')
-        nmap <buffer> <C-p> :ZFiles $HOME/arch/git/iproc<CR>
-    elseif ($PWD =~ $HOME . '/arch/git/arch')
-        nmap <buffer> <C-p> :ZFiles $HOME/arch/git/arch<CR>
-    elseif ($PWD =~ $HOME . '/arch/git/netxtreme')
-        " ccx-sw-arch: netxtreme, netxtreme_a1, netxtreme_ovs
-        let nxgit = substitute($PWD, $HOME . '/arch/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-        execute 'nmap <buffer> <C-p> :ZFiles $HOME/arch/git/netxtreme'.nxgit.'/main/Cumulus<CR>'
-        "execute 'nmap <buffer> <C-p> :call fzf#vim#files("$HOME/arch/git/netxtreme'.nxgit.'/main/Cumulus", {"options": "--bind ctrl-d:page-down,ctrl-u:page-up"})<CR>'
-    elseif ($PWD =~ '/mnt/work/git/netxtreme')
-        " local: netxtreme, netxtreme_a1, netxtreme_ovs
-        let nxgit = substitute($PWD, '/mnt/work/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-        execute 'nmap <buffer> <C-p> :ZFiles /mnt/work/git/netxtreme'.nxgit.'/main/Cumulus<CR>'
-        "execute 'nmap <buffer> <C-p> :call fzf#vim#files("/mnt/work/git/netxtreme'.nxgit.'/main/Cumulus", {"options": "--bind ctrl-d:page-down,ctrl-u:page-up"})<CR>'
-    else
-        nmap <buffer> <C-p> :ZFiles<CR>
-    endif
-    "nmap <buffer> <Leader>ag :call fzf#vim#ag(expand('<cword>'))<CR>
-    nmap <buffer> <Leader>ag :call fzf#vim#ag(<c-r><c-w>)<CR>
-    "nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'), { 'options': '--exact' })<CR>
-    nmap <buffer> <Leader>ta :call fzf#vim#tags(expand('<cword>'))<CR>
-    nmap <buffer> <Leader>b :call fzf#vim#buffers()<CR>
-    "nmap <buffer> <Leader>...
-endfunction
-autocmd! VimEnter,BufReadPost,BufNewFile * call ConfigEnv()
-
-"nmap <Leader>cN :vs<CR><C-w>h<Leader>cn:vertical res 40<CR>
-"                \ggdddd:set scb<CR>:set nowrap<CR><C-w>lgg:set scb<CR>
-"                \:set nowrap<CR>
-
-"let g:aliases_file='$HOME/.mutt/aliases'
-"autocmd FileType mail set omnifunc=muttaliasescomplete#Complete
-
-"function! EMake(target)
-"    let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"    echo "cd $HOME/work/" . module
-"    execute "cd $HOME/work/" . module
-"    if (a:target == 'clean')
-"        set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\ clean\'\"
-"        execute "make!" . module
-"    else
-"        set makeprg=ssh\ -t\ eadsun\ \"ssh\ sunny\ \'cd\ work/$*;\ dmake\'\"
-"        execute "make! " . module
-"        call QuickfixOpen(1)
-"    endif
-"    cd -
-"endfunction
-"command! -nargs=0 -complete=command M call EMake('')
-"command! -nargs=0 -complete=command MC call EMake('clean')
-
-"function! EMake(target)
-"    if (getcwd() =~ '^.*/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-"        let module = substitute(getcwd(), '^.*/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"        echo "cd $HOME/work/" . module
-"        execute "cd $HOME/work/" . module
-"        execute "make! " . a:target
-"        if (a:target == 'clean')
-"            ccl
-"        else
-"            call QuickfixOpen(1)
-"        endif
-"        cd -
-"    endif
-"endfunction
-"command! -nargs=0 -complete=command M call EMake('all')
-"command! -nargs=0 -complete=command MC call EMake('clean')
-
-"------------------- CSCOPE ------------------- {{{1
+" CSCOPE/CTAGS ----------------------------------------- {{{
 
 " location of tag files
-"set tags=./tags,tags,/vob/infra/tags
+"set tags=./tags,tags
 
 if has("cscope")
 
     let usequickfix=1
 
-    let ostype=system('echo -n $OSTYPE')
-    if ostype =~ "solaris"
+    if s:ostype =~ "solaris"
         set csprg=/opt/csw/bin/cscope
-    elseif ostype =~ "freebsd" || ostype =~ "darwin16"
+    elseif s:ostype =~ "freebsd" || s:ostype =~ "darwin16"
         set csprg=/usr/local/bin/cscope
     else
         set csprg=/usr/bin/cscope
@@ -788,7 +586,7 @@ if has("cscope")
     let cs_vsplit="vsplit"
     let cs_none="none"
 
-    function! CscopeCmd(win, type, tag)
+    function! s:cscopeCmd(win, type, tag)
         if a:win == g:cs_tab
             tabnew
             let cmd="cscope"
@@ -802,9 +600,9 @@ if has("cscope")
         execute cmd "find" a:type a:tag
     endfunction
 
-    command! -nargs=1 -complete=command -complete=tag F  call CscopeCmd(cs_split,  "g", <f-args>)
-    command! -nargs=1 -complete=command -complete=tag FV call CscopeCmd(cs_vsplit, "g", <f-args>)
-    command! -nargs=1 -complete=command -complete=tag FT call CscopeCmd(cs_tab,    "g", <f-args>)
+    command! -nargs=1 -complete=command -complete=tag F  call <SID>cscopeCmd(cs_split,  "g", <f-args>)
+    command! -nargs=1 -complete=command -complete=tag FV call <SID>cscopeCmd(cs_vsplit, "g", <f-args>)
+    command! -nargs=1 -complete=command -complete=tag FT call <SID>cscopeCmd(cs_tab,    "g", <f-args>)
 
     set csverb
 
@@ -820,42 +618,238 @@ if has("cscope")
 
     set cscopequickfix=s-,d-,c-,t-,e-,i-
 
-    nmap <C-c>s      :call CscopeCmd(cs_split, "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-c>S      :call CscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-c><C-c>s :call CscopeCmd(cs_none,  "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>s      :call <SID>cscopeCmd(cs_split, "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>S      :call <SID>cscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>s :call <SID>cscopeCmd(cs_none,  "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-c>d      :call CscopeCmd(cs_split, "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-c>D      :call CscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-c><C-c>d :call CscopeCmd(cs_none,  "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>d      :call <SID>cscopeCmd(cs_split, "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>D      :call <SID>cscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>d :call <SID>cscopeCmd(cs_none,  "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-c>c      :call CscopeCmd(cs_split, "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-c>C      :call CscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-c><C-c>c :call CscopeCmd(cs_none,  "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>c      :call <SID>cscopeCmd(cs_split, "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>C      :call <SID>cscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>c :call <SID>cscopeCmd(cs_none,  "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-c>t      :call CscopeCmd(cs_split, "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
-    nmap <C-c>T      :call CscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>,m<C-W>k
-    nmap <C-c><C-c>t :call CscopeCmd(cs_none,  "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>t      :call <SID>cscopeCmd(cs_split, "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>T      :call <SID>cscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>t :call <SID>cscopeCmd(cs_none,  "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-c>i      :call CscopeCmd(cs_split, "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
-    nmap <C-c>I      :call CscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>,m<C-W>k
-    nmap <C-c><C-c>i :call CscopeCmd(cs_none,  "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>i      :call <SID>cscopeCmd(cs_split, "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
+    nmap <C-c>I      :call <SID>cscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>,m<C-W>k
+    nmap <C-c><C-c>i :call <SID>cscopeCmd(cs_none,  "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
 
-    nmap <C-c>g           :call CscopeCmd(cs_split,  "g", expand("<cword>"))<CR>
-    nmap <C-c>G           :call CscopeCmd(cs_tab,    "g", expand("<cword>"))<CR>
-    nmap <C-c><C-c>g      :call CscopeCmd(cs_vsplit, "g", expand("<cword>"))<CR>
-    nmap <C-c><C-c><C-c>g :call CscopeCmd(cs_none,   "g", expand("<cword>"))<CR>
+    nmap <C-c>g           :call <SID>cscopeCmd(cs_split,  "g", expand("<cword>"))<CR>
+    nmap <C-c>G           :call <SID>cscopeCmd(cs_tab,    "g", expand("<cword>"))<CR>
+    nmap <C-c><C-c>g      :call <SID>cscopeCmd(cs_vsplit, "g", expand("<cword>"))<CR>
+    nmap <C-c><C-c><C-c>g :call <SID>cscopeCmd(cs_none,   "g", expand("<cword>"))<CR>
 
-    nmap <C-c>f      :call CscopeCmd(cs_split, "f", expand("<cfile>"))<CR>
-    nmap <C-c>F      :call CscopeCmd(cs_tab,   "f", expand("<cfile>"))<CR>
-    nmap <C-c><C-c>f :call CscopeCmd(cs_none,  "f", expand("<cfile>"))<CR>
+    nmap <C-c>f      :call <SID>cscopeCmd(cs_split, "f", expand("<cfile>"))<CR>
+    nmap <C-c>F      :call <SID>cscopeCmd(cs_tab,   "f", expand("<cfile>"))<CR>
+    nmap <C-c><C-c>f :call <SID>cscopeCmd(cs_none,  "f", expand("<cfile>"))<CR>
 
 endif
 
-" End of CSCOPE }}}1
+" CSCOPE/CTAGS (END) ----------------------------------- }}}
 
-"------------------- VOTL ------------------- {{{1
+" PLUG FZF --------------------------------------------- {{{
 
-function! VotlColors()
+let g:fzf_buffers_jump = 1
+"let g:fzf_command_prefix = 'Z'
+"let g:fzf_layout = { }
+let g:fzf_action =
+        \ {
+        \   'ctrl-t': 'tab split',
+        \   'ctrl-s': 'split',
+        \   'ctrl-v': 'vsplit'
+        \ }
+
+" print current working directory
+nmap <C-p> :pwd<CR>
+
+" file selection (current directory) with fzf
+nmap <Leader>f :Files<CR>
+
+" file selection (choose/complete directory) with fzf
+nmap <Leader>F :Files
+
+" git file (git ls-files) selection with fzf
+nmap <Leader>g :GFiles<CR>
+
+" git file (git status) selection with fzf
+nmap <Leader>G :GFiles?<CR>
+
+nmap <Leader>ag :Ag <C-r><C-w><CR>
+
+" ag selection (word under cursor, current directory) with fzf
+nmap <Leader>ag :Ag <C-r><C-w><CR>
+
+" ag selection (word under cursor, choose/complete directory) with fzf
+"nmap <Leader>Ag :call fzf#vim#ag(expand('<cword>'))<CR>
+
+" tags selection (word under cursor) with fzf
+"nmap <Leader>ta :call fzf#vim#tags(expand('<cword>'), { 'options': '--exact' })<CR>
+nmap <Leader>ta :Tags <C-r><C-w><CR>
+
+" buffer selection with fzf
+"nmap <Leader>b :call fzf#vim#buffers()<CR>
+nmap <Leader>b :Buffers<CR>
+
+" marks selection with fzf
+"nmap <Leader>` :call fzf#vim#marks()<CR>
+nmap <Leader>` :Marks<CR>
+
+" history (previous edited files) selection with fzf
+nmap <Leader>H :History<CR>
+
+" 'locate' with fzf
+nmap <Leader>L :Locate
+
+" replace i_CTRL-X_CTRL-K dictionary lookup with fzf
+imap <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
+
+" XXX replace i_CTRL-X_CTRL-T thesaurus lookup with fzf
+"imap <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
+
+" replace i_CTRL-X_CTRL-F filename lookup with fzf
+imap <C-x><C-f> <plug>(fzf-complete-path)
+imap <C-x><C-j> <plug>(fzf-complete-file-ag)
+
+" replace i_CTRL-X_CTRL-L whole line lookup with fzf
+imap <C-x><C-l> <plug>(fzf-complete-line)
+
+" mappings selection with fzf
+nmap <Leader><tab> <plug>(fzf-maps-n)
+xmap <Leader><tab> <plug>(fzf-maps-x)
+omap <Leader><tab> <plug>(fzf-maps-o)
+"imap <Leader><tab> <plug>(fzf-maps-i)
+
+" PLUG FZF (END) --------------------------------------- }}}
+
+" PLUG GOYO/LIMELIGHT ---------------------------------- {{{
+
+let g:goyo_width  = '90%'
+let g:goyo_height = '85%'
+let g:goyo_linenr = 1
+let g:limelight_conceal_ctermfg = 242
+
+autocmd! User GoyoEnter
+    \ Limelight
+
+autocmd! User GoyoLeave
+    \ Limelight! |
+    \ call <SID>myColorScheme(g:default_theme)
+
+" PLUG GOYO/LIMELIGHT (END) ---------------------------- }}}
+
+" PLUG EASYALIGN --------------------------------------- {{{
+
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" PLUG EASYALIGN (END) --------------------------------- }}}
+
+" PLUG GITGUTTER --------------------------------------- {{{
+
+let g:gitgutter_sign_added            = '+'
+let g:gitgutter_sign_modified         = '~'
+let g:gitgutter_sign_removed          = '-'
+let g:gitgutter_sign_modified_removed = '>'
+
+" PLUG GITGUTTER (END) --------------------------------- }}}
+
+" PLUG ULTISNIPS --------------------------------------- {{{
+
+let g:UltiSnipsExpandTrigger       = '<c-h>'
+let g:UltiSnipsListSnippets        = '<c-l>'
+let g:UltiSnipsJumpForwardTrigger  = '<c-j>'
+let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
+
+" PLUG ULTISNIPS (END) --------------------------------- }}}
+
+" PLUG RAINBOW PARENS ---------------------------------- {{{
+
+"let g:rainbow#max_level = 32
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+let g:rainbow#blacklist = [15, '#D8DEE9', '#ECEFF4', '#80a0ff']
+
+autocmd insanum Syntax * RainbowParentheses
+
+" PLUG RAINBOW PARENS (END) ---------------------------- }}}
+
+" PLUG JS-INDENT --------------------------------------- {{{
+
+let g:js_indent_flat_switch = 1
+
+" PLUG JS-INDENT (END) --------------------------------- }}}
+
+" PLUG INDENTLINE -------------------------------------- {{{
+
+if exists('g:indentLine_loaded')
+    let g:indentLine_char = '┆'
+    let g:indentLine_first_char = '┆'
+    let g:indentLine_showFirstIndentLevel = 1
+    let g:indentLine_concealcursor = ''
+    let g:indentLine_faster = 1
+    " no indent lines for vim help pages
+    autocmd insanum FileType help let g:indentLine_conceallevel = 0
+    " workaround for the stupid json conceal syntax
+    autocmd insanum BufNewFile,BufRead *.json set ft=javascript
+endif
+
+" PLUG INDENTLINE (END) -------------------------------- }}}
+
+" PLUG TAGBAR ------------------------------------------ {{{
+
+if exists('g:loaded_tagbar')
+    if s:ostype == "solaris2.10"
+        let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
+    elseif s:ostype == "solaris2.11"
+        let g:tagbar_ctags_bin = '/usr/bin/exctags'
+    elseif s:ostype =~ "darwin"
+        let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
+    else
+        let g:tagbar_ctags_bin = '/usr/bin/ctags'
+    endif
+    let g:tagbar_autoclose = 1
+    let g:tagbar_width = 30
+    nmap <F8> :TagbarToggle<CR>
+endif
+
+" PLUG TAGBAR (END) ------------------------------------ }}}
+
+" PLUG INCSEARCH --------------------------------------- {{{
+
+set hlsearch
+"set incsearch
+"nmap ,/ :nohlsearch<CR>
+"nmap ,. :nohlsearch<CR>
+
+let g:incsearch#auto_nohlsearch = 1
+
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+map n  <Plug>(incsearch-nohl-n)
+map N  <Plug>(incsearch-nohl-N)
+map *  <Plug>(incsearch-nohl-*)
+map #  <Plug>(incsearch-nohl-#)
+map g* <Plug>(incsearch-nohl-g*)
+map g# <Plug>(incsearch-nohl-g#)
+
+" PLUG INCSEARCH (END) --------------------------------- }}}
+
+" PLUG NERDTREE ---------------------------------------- {{{
+
+if exists('g:loaded_nerd_tree')
+    nmap <F9> :NERDTreeToggle<CR>
+endif
+
+" PLUG NERDTREE (END) ---------------------------------- }}}
+
+" PLUG VOTL -------------------------------------------- {{{
+
+function! s:votlColors()
     hi OL1 ctermfg=255 ctermbg=57
     hi OL2 ctermfg=196
     hi OL3 ctermfg=39
@@ -898,18 +892,20 @@ function! VotlColors()
     hi VotlCheckbox   ctermfg=171
     hi VotlPercentage ctermfg=149
     hi VotlTableLines ctermfg=242
-
-    set cursorline
 endfunction
-autocmd FileType votl call VotlColors()
 
-autocmd FileType votl setlocal nospell
+autocmd insanum FileType votl
+    \ setlocal textwidth=80
+    \          nospell
+    \          spelllang=en_us |
+    \ call <SID>t4e() |
+    \ call <SID>votlColors()
 
-" End of VOTL }}}1
+" PLUG VOTL (END) -------------------------------------- }}}
 
-"------------------- STATUSLINE ------------------- {{{1
+" STATUSLINE ------------------------------------------- {{{
 
-function! MyStatusColorScheme()
+function! s:myStatusColorScheme()
     hi ST_M_NORMAL  ctermfg=22  ctermbg=148 cterm=bold
     hi ST_M_INSERT  ctermfg=23  ctermbg=231 cterm=bold
     hi ST_M_VISUAL  ctermfg=88  ctermbg=208 cterm=bold
@@ -931,11 +927,18 @@ function! MyStatusColorScheme()
     hi ST_SCROLL    ctermfg=250 ctermbg=240 cterm=bold
     hi ST_SCROLL_I  ctermfg=117 ctermbg=31  cterm=bold
 
-    hi ST_CURSOR    ctermfg=236 ctermbg=252 cterm=bold
-    hi ST_CURSOR_I  ctermfg=23  ctermbg=117 cterm=bold
+    hi ST_CURSOR    ctermfg=236 ctermbg=247 cterm=bold
+    hi ST_CURSOR_I  ctermfg=117 ctermbg=24  cterm=bold
+
+    hi ST_WIDTH     ctermfg=245 ctermbg=238 cterm=bold
+    hi ST_WIDTH_I   ctermfg=117 ctermbg=31  cterm=bold
 
     hi ST_TAG       ctermfg=244 ctermbg=236 cterm=bold
     hi ST_TAG_I     ctermfg=244 ctermbg=24  cterm=bold
+endfunction
+
+function! MyStatusHL(normal, insert)
+    return mode() ==# 'i' ? a:insert : a:normal
 endfunction
 
 function! MyStatusGetMode()
@@ -950,12 +953,12 @@ function! MyStatusGetMode()
     elseif mode =~# '\v(R|Rv)' | return "%#ST_M_REPLACE# REPLACE %*"
     else                       | return "%#ST_M_NORMAL# NORMAL %*"
     endif
-endfunction " }}}
+endfunction
 
 function! MyStatusGetFileType()
-    let higrp = 'ST_FILET'
-    if mode() ==# 'i' | let higrp = 'ST_FILET_I' | endif
-    return '%#' . higrp . '# %y %*'
+    return '%#' .
+         \ MyStatusHL('ST_FILET', 'ST_FILET_I') .
+         \ '# %y %*'
 endfunction
 
 function! MyStatusGetFlags()
@@ -968,41 +971,79 @@ function! MyStatusGetFFDos()
 endfunction
 
 function! MyStatusGetFile()
-    let higrp = 'ST_FILE'
-    if mode() ==# 'i' | let higrp = 'ST_FILE_I' | endif
-    return '%#' . higrp . '# %t ' " no %* here to extend right
+    return '%#' .
+         \ MyStatusHL('ST_FILE', 'ST_FILE_I') .
+         \ '# %t ' " no %* here to extend right
 endfunction
 
 function! MyStatusGetChar()
-    let higrp = 'ST_CHAR'
-    if mode() ==# 'i' | let higrp = 'ST_CHAR_I' | endif
-    return '%#' . higrp . '# x%02B:d%03b %*' " 2 hex, 3 dec
+    return '%#' .
+         \ MyStatusHL('ST_CHAR', 'ST_CHAR_I') .
+         \ '# x%02B:d%03b %*' " 2 hex, 3 dec
 endfunction
 
 function! MyStatusGetScroll()
-    let higrp = 'ST_SCROLL'
-    if mode() ==# 'i' | let higrp = 'ST_SCROLL_I' | endif
-    return '%#' . higrp . '# %P %*'
+    return '%#' .
+         \ MyStatusHL('ST_SCROLL', 'ST_SCROLL_I') .
+         \ '# %P %*'
 endfunction
 
 function! MyStatusGetCursor()
-    let higrp = 'ST_CURSOR'
-    if mode() ==# 'i' | let higrp = 'ST_CURSOR_I' | endif
-    return '%#' . higrp . '# %5.5l:%-3.3c %*' " 5 line, 3 column
+    return '%#' .
+         \ MyStatusHL('ST_CURSOR', 'ST_CURSOR_I') .
+         \ '# %l:%c %*'
+         "\ '# %5.5l:%-3.3c %*' " 5 line, 3 column
 endfunction
 
-function! MyStatusGetTag()
-    return ''
+function! MyStatusGetWidthBuf()
+    let l:ww = winwidth(0)
+    if has('signs')
+        redir => l:signs
+        silent execute 'sign place buffer=' . bufnr('')
+        redir end
+        if len(split(l:signs, '\n')) > 2
+            let l:ww -= 2
+        endif
+    endif
+    if has('folding')
+        let l:ww -= &foldcolumn
+    endif
+    if &number || &relativenumber
+        let l:ww -= &numberwidth + 1
+    endif
+    return l:ww
+endfunction
+function! MyStatusGetWidth()
+    return '%#' .
+         \ MyStatusHL('ST_WIDTH', 'ST_WIDTH_I') .
+         \ '# %{MyStatusGetWidthBuf()}w %*'
+endfunction
+
+function! MyStatusGetGitBuf()
+    if !exists('g:loaded_fugitive')
+        return ''
+    endif
+    if empty(fugitive#head())
+        return ''
+    endif
+    return fugitive#statusline() . ' '
+endfunction
+function! MyStatusGetGit()
+    return '%#' .
+         \ MyStatusHL('ST_TAG', 'ST_TAG_I') .
+         \ '#%{MyStatusGetGitBuf()}%*'
+endfunction
+
+function! MyStatusGetTagBuf()
     if !filereadable(expand("$HOME/.vim/bundle/tagbar/plugin/tagbar.vim"))
         return ''
     endif
-    let curtag = tagbar#currenttag('%s', '')
-    if curtag == ''
-        return ''
-    endif
-    let higrp = 'ST_TAG'
-    if mode() ==# 'i' | let higrp = 'ST_TAG_I' | endif
-    return '%#' . higrp . '#' . curtag . ' %*'
+    return tagbar#currenttag('%s', '')
+endfunction
+function! MyStatusGetTag()
+    return '%#' .
+         \ MyStatusHL('ST_TAG', 'ST_TAG_I') .
+         \ '#%{MyStatusGetTagBuf()} %*'
 endfunction
 
 function! MyStatus()
@@ -1011,31 +1052,31 @@ function! MyStatus()
         \ MyStatusGetFlags() .
         \ MyStatusGetFFDos() .
         \ MyStatusGetFileType() .
-        \ MyStatusGetTag() .
+        \ MyStatusGetGit() .
         \ MyStatusGetFile() .
         \ '%=' .
+        \ MyStatusGetCursor() .
         \ MyStatusGetChar() .
         \ MyStatusGetScroll() .
-        \ MyStatusGetCursor()
+        \ MyStatusGetWidth()
 endfunction
 
 set statusline=%!MyStatus()
-autocmd InsertEnter,InsertLeave * :redraws!
+autocmd insanum InsertEnter,InsertLeave * redraws!
 
-" End of STATUSLINE }}}1
+" STATUSLINE (END) ------------------------------------- }}}
 
-"------------------- COLORSCHEMES ------------------- {{{1
+" COLORSCHEMES ----------------------------------------- {{{
 
-function! MySwitchTransparency()
+function! s:mySwitchTransparency()
     if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
         hi Normal ctermbg=None
     else
         hi Normal ctermbg=233
     endif
 endfunction
-map <Leader>< :call MySwitchTransparency()<CR>
 
-function! MyColorScheme(scheme)
+function! s:myColorScheme(scheme)
     set background=dark
 
     if a:scheme == 'molokai'
@@ -1049,6 +1090,7 @@ function! MyColorScheme(scheme)
     "hi link cError Normal
     hi MatchParen ctermfg=190 ctermbg=None cterm=bold
     hi Constant cterm=bold
+    hi ColorColumn ctermbg=234
     hi CursorLine ctermbg=234
     hi CursorLineNr ctermfg=97 ctermbg=None cterm=bold
     hi LineNr ctermfg=238 cterm=bold
@@ -1062,17 +1104,37 @@ function! MyColorScheme(scheme)
     hi IncSearchOnCursor     ctermfg=0 ctermbg=9
     hi IncSearchCursor       ctermfg=0 ctermbg=11
 
-    call MySwitchTransparency()
-    call MyStatusColorScheme()
+    hi GitGutterAdd          ctermfg=34  cterm=bold
+    hi GitGutterDelete       ctermfg=196 cterm=bold
+    hi GitGutterChangeDelete ctermfg=208 cterm=bold
+    hi GitGutterChange       ctermfg=220 cterm=bold
+
+    hi SignatureMarkText   ctermfg=201 cterm=bold
+    hi SignatureMarkerText ctermfg=226 cterm=bold
+
+    hi VertSplit ctermfg=110 ctermbg=16
 
     if a:scheme == 'nord'
         " comments need to pop more under nord
-        hi Comment ctermfg=9
+        hi Comment ctermfg=9 cterm=italic
+
+        hi markdownItemDelimiter ctermfg=214 cterm=bold
+
+        hi markdownHeadingDelimiter ctermfg=214 cterm=bold
+        hi markdownH1 ctermfg=39 cterm=bold
+        hi markdownH2 ctermfg=38 cterm=bold
+        hi markdownH3 ctermfg=37 cterm=bold
+        hi markdownH4 ctermfg=36 cterm=bold
+        hi markdownH5 ctermfg=35 cterm=bold
+        hi markdownH6 ctermfg=34 cterm=bold
     endif
+
+    call <SID>mySwitchTransparency()
+    call <SID>myStatusColorScheme()
 endfunction
 
 " This really doesn't work as syntax highlights get trashed...
-function! MyCycleColorScheme(dir)
+function! s:myCycleColorScheme(dir)
     let clrs =
         \[
         \  'nord',
@@ -1096,19 +1158,23 @@ function! MyCycleColorScheme(dir)
     endwhile
     if i == len(clrs) | let i = 0             | endif
     if i == -1        | let i = len(clrs) - 1 | endif
-    call MyColorScheme(clrs[i])
+    let g:default_theme = clrs[i]
+    call <SID>myColorScheme(g:default_theme)
     echom "Changed color scheme to " . clrs[i]
 endfunction
-map <Leader>> :call MyCycleColorScheme(1)<CR>
-map <Leader>< :call MyCycleColorScheme(-1)<CR>
+map <Leader>> :call <SID>myCycleColorScheme(1)<CR>
+map <Leader>< :call <SID>myCycleColorScheme(-1)<CR>
 
-let g:default_theme='nord'
+let g:default_theme = 'nord'
 if exists('g:theme')
     " Set the colorscheme from the command line:
     " vi --cmd 'let g:theme="jellybeans"' ...
-    let g:default_theme=g:theme
+    let g:default_theme = g:theme
 endif
-call MyColorScheme(g:default_theme)
 
-" End of COLORSCHEMES }}}1
+call <SID>myColorScheme(g:default_theme)
+
+set guifont=Hack:h14
+
+" COLORSCHEMES (END) ----------------------------------- }}}
 

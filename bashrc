@@ -59,7 +59,7 @@ if [[ $OSTYPE == linux-gnu ]]; then
     export VDPAU_NVIDIA_NO_OVERLAY=1
 fi
 
-export FZF_DEFAULT_OPTS='--preview="cat {}" --bind ctrl-d:page-down,ctrl-u:page-up'
+export FZF_DEFAULT_OPTS="--bind ctrl-d:page-down,ctrl-u:page-up --preview='(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null'"
 export FZF_TMUX=0
 
 exists vim && export P4EDITOR=vim
@@ -629,7 +629,7 @@ if [[ -n "$PS1" ]]; then
       #fi
 
       case "$TERM" in
-      screen-256color|st*|xterm*)
+      screen-256color|tmux*|st*|xterm*)
         # bold...
         #PS1="$BRIGHT_BLUE$ltop$dash\$pFill$dash$ltee $MAGENTA\${osrel}$BRIGHT_BLUE $rtee$dash$ltee $BRIGHT_YELLOW\${host}$BRIGHT_BLUE $rtee$dash$ltee $RED\$(date '+%H:%M:%S')$BRIGHT_BLUE $rtee$dash$dash\n$BRIGHT_BLUE$lbot$dash$ltee $BRIGHT_CYAN\$(_pwd_chomp) ${BRIGHT_GREEN}\$CONS_TAG\$MNT_TAG$BRIGHT_BLUE$rtee$dash$dash$CLEAR "
         # not bold...

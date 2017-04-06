@@ -37,6 +37,8 @@ fi
 
 [[ -d "$HOME/.priv/bin" ]] && PATH="$PATH:$HOME/.priv/bin"
 
+[[ -d "$HOME/.cargo/bin" ]] && PATH="$PATH:$HOME/.cargo/bin"
+
 [[ -d "/cygdrive/c/edavis/usr/bin" ]]   && PATH="$PATH:/cygdrive/c/edavis/usr/bin"
 [[ -d "/cygdrive/c/WINDOWS/system32" ]] && PATH="$PATH:/cygdrive/c/WINDOWS/system32"
 

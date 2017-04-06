@@ -9,6 +9,11 @@ local lastWin = nil
 local apps =
 {
   {
+    ["text"] = "Alacritty",
+    ["subText"] = "Hacker terminal",
+    ["app"] = "Alacritty"
+  },
+  {
     ["text"] = "iTerm2",
     ["subText"] = "Hacker terminal",
     ["app"] = "iTerm"
