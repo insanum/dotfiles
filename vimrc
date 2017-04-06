@@ -705,10 +705,10 @@ nmap <Leader>H :History<CR>
 nmap <Leader>L :Locate
 
 " replace i_CTRL-X_CTRL-K dictionary lookup with fzf
-imap <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
+imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
 
 " XXX replace i_CTRL-X_CTRL-T thesaurus lookup with fzf
-"imap <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
+"imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
 
 " replace i_CTRL-X_CTRL-F filename lookup with fzf
 imap <C-x><C-f> <plug>(fzf-complete-path)
