@@ -15,7 +15,7 @@ local STOCKS_UPDATE_TIMER = 30 -- minutes
 
 local function stocksUpdate(exitCode, stdOut, stdErr)
     if exitCode ~= 0 then
-        hs.alert("Stock update failed!")
+        --hs.alert("Stock update failed!")
         return
     end
 
@@ -25,7 +25,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
     end
 
     menubar:setTitle("[ " .. txt .. "]")
-    hs.alert("Stock quotes updated!")
+    --hs.alert("Stock quotes updated!")
 end
 
 local function doUpdate()

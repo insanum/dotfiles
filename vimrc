@@ -47,7 +47,6 @@ Plug 'https://github.com/ludovicchabant/vim-gutentags'
 
 "Plug 'https://github.com/scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle' ] }
 
-"https://github.com/kergoth/vim-hilinks.git
 Plug 'https://github.com/arcticicestudio/nord-vim'
 Plug 'https://github.com/morhetz/gruvbox'
 Plug 'https://github.com/junegunn/seoul256.vim'
@@ -100,6 +99,9 @@ Plug 'https://github.com/dkarter/bullets.vim',
          \ { 'for': [ 'markdown', 'text' ] }
 
 Plug 'https://github.com/gabrielelana/vim-markdown'
+"Plug 'https://github.com/dhruvasagar/vim-table-mode'
+Plug 'https://github.com/insanum/iwgsd.vim'
+Plug 'https://github.com/tpope/vim-speeddating'
 
 Plug 'https://github.com/junegunn/goyo.vim', { 'on': [ 'Goyo' ] }
 Plug 'https://github.com/junegunn/limelight.vim'
@@ -300,7 +302,7 @@ nmap <Leader>t8t :call <SID>t8t()<CR>
 " Default Tab-4-expand for filetypes...
 autocmd insanum FileType
     \ sh,json,javascript,lua,vim,text,markdown,css,less,org
-    \ call <SID>t4t()
+    \ call <SID>t4e()
 
 " Default Tab-2-expand for filetypes...
 autocmd insanum FileType
@@ -310,7 +312,10 @@ autocmd insanum FileType
 " TABS-v-SPACES (END) ---------------------------------- }}}
 
 " Insert the current date/time at the cursor
-iab abdate <C-R>=strftime("%a %b %d %T %Z %Y")<CR>
+"iab idate <C-R>=strftime("%a %b %d %T %Z %Y")<CR>
+"iab idate <C-R>=strftime("{%F %R}")<CR>
+"iab inxt <C-R>=systemlist('date -v+1d "+{+ at'.input('Time:').' of %-e of %b}"')[0]<CR>
+"iab inxw <C-R>=systemlist('date -v+1w "+{+ at'.input('Time:').' of %-e of %b}"')[0]<CR>
 
 " grep all files in the current directory for the word under the cursor
 "if s:ostype == "solaris2.10" || s:ostype == "solaris2.11"
@@ -339,10 +344,14 @@ nmap <Leader>pd :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:ve
 " Turn diff off for all windows in current tab
 nmap <Leader>do :diffoff!<CR>:call <SID>myColorScheme(g:default_theme)<CR>
 
-map <F10>
-  \ :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-  \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-  \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+" Print the highlight group stack for the current cursor location
+function! s:hlGroup()
+    echo  'hi: ' .
+        \ join(map(reverse(synstack(line('.'), col('.'))),
+        \         'synIDattr(v:val, "name")'),
+        \     '/')
+endfunction
+map <F10> :call <SID>hlGroup()<CR>
 
 " AUTOCOMMAND
 
@@ -376,7 +385,7 @@ autocmd insanum BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.lua
 
 autocmd insanum Syntax javascript
     \ syn match LodashLazy '\v<(H|G|S)>' containedin=javaScriptFuncDef,javaScriptFuncKeyword |
-    \ hi LodashLazy ctermfg=9 cterm=bold
+    \ hi LodashLazy ctermfg=1 cterm=bold
 
 autocmd insanum FileType markdown,yaml,txt
     \ setlocal textwidth=80
@@ -651,6 +660,12 @@ endif
 
 " CSCOPE/CTAGS (END) ----------------------------------- }}}
 
+" PLUG IWGSD ------------------------------------------- {{{
+
+autocmd insanum FileType markdown IWGSDEnable
+
+" PLUG IWGSD (END) ------------------------------------- }}}
+
 " PLUG FZF --------------------------------------------- {{{
 
 let g:fzf_buffers_jump = 1
@@ -664,7 +679,7 @@ let g:fzf_action =
         \ }
 
 " print current working directory
-nmap <C-p> :pwd<CR>
+nmap <C-p> :echo 'cwd: ' . getcwd()<CR>
 
 " file selection (current directory) with fzf
 nmap <Leader>f :Files<CR>
@@ -678,10 +693,11 @@ nmap <Leader>g :GFiles<CR>
 " git file (git status) selection with fzf
 nmap <Leader>G :GFiles?<CR>
 
-nmap <Leader>ag :Ag <C-r><C-w><CR>
-
 " ag selection (word under cursor, current directory) with fzf
 nmap <Leader>ag :Ag <C-r><C-w><CR>
+nmap <Leader>Ag :Ag <C-r><C-a><CR>
+
+nmap <Leader>T :call fzf#vim#ag('\s<C-r><C-a>', {'options': '--preview-window=right:0'})<CR>
 
 " ag selection (word under cursor, choose/complete directory) with fzf
 "nmap <Leader>Ag :call fzf#vim#ag(expand('<cword>'))<CR>
@@ -850,24 +866,25 @@ endif
 " PLUG VOTL -------------------------------------------- {{{
 
 function! s:votlColors()
-    hi OL1 ctermfg=255 ctermbg=57
-    hi OL2 ctermfg=196
-    hi OL3 ctermfg=39
-    hi OL4 ctermfg=252
-    hi OL5 ctermfg=196
-    hi OL6 ctermfg=39
-    hi OL7 ctermfg=252
-    hi OL8 ctermfg=196
-    hi OL9 ctermfg=39
+
+	hi OL1 ctermfg=39 cterm=bold
+	hi OL2 ctermfg=38
+	hi OL3 ctermfg=37
+	hi OL4 ctermfg=36
+	hi OL5 ctermfg=35
+	hi OL6 ctermfg=34
+	hi OL7 ctermfg=28
+	hi OL8 ctermfg=22
+	hi OL9 ctermfg=242
 
     " color for body text
     for i in range(1, 9)
-        execute "hi BT" . i . " ctermfg=141"
+        execute "hi BT" . i . " ctermfg=216"
     endfor
 
     " color for pre-formatted body text
     for i in range(1, 9)
-        execute "hi BP" . i . " ctermfg=213"
+        execute "hi BP" . i . " ctermfg=215"
     endfor
 
     " color for tables
@@ -885,11 +902,11 @@ function! s:votlColors()
     "    execute "hi UP" . i . " ctermfg=51"
     "endfor
 
-    hi VotlTags       ctermfg=253 ctermbg=21
-    hi VotlDate       ctermfg=129
-    hi VotlTime       ctermfg=129
-    hi VotlChecked    ctermfg=149
-    hi VotlCheckbox   ctermfg=171
+    hi VotlTags       ctermfg=45 ctermbg=21 cterm=bold
+    hi VotlDate       ctermfg=141
+    hi VotlTime       ctermfg=141
+    hi VotlChecked    ctermfg=160 cterm=bold
+    hi VotlCheckbox   ctermfg=242
     hi VotlPercentage ctermfg=149
     hi VotlTableLines ctermfg=242
 endfunction
@@ -898,7 +915,7 @@ autocmd insanum FileType votl
     \ setlocal textwidth=80
     \          nospell
     \          spelllang=en_us |
-    \ call <SID>t4e() |
+    \ call <SID>t4t() |
     \ call <SID>votlColors()
 
 " PLUG VOTL (END) -------------------------------------- }}}
@@ -1099,10 +1116,10 @@ function! s:myColorScheme(scheme)
     hi link javaScriptTemplateString String
 
     let g:incsearch#separate_highlight = 1
-    hi IncSearchMatchReverse ctermfg=0 ctermbg=14
-    hi IncSearchMatch        ctermfg=0 ctermbg=10
-    hi IncSearchOnCursor     ctermfg=0 ctermbg=9
-    hi IncSearchCursor       ctermfg=0 ctermbg=11
+    hi IncSearchMatchReverse ctermfg=0 ctermbg=5
+    hi IncSearchMatch        ctermfg=0 ctermbg=2
+    hi IncSearchOnCursor     ctermfg=0 ctermbg=1
+    hi IncSearchCursor       ctermfg=0 ctermbg=3
 
     hi GitGutterAdd          ctermfg=34  cterm=bold
     hi GitGutterDelete       ctermfg=196 cterm=bold
@@ -1116,8 +1133,9 @@ function! s:myColorScheme(scheme)
 
     if a:scheme == 'nord'
         " comments need to pop more under nord
-        hi Comment ctermfg=9 cterm=italic
+        hi Comment ctermfg=1 cterm=italic
 
+        hi markdownXmlElement ctermfg=153
         hi markdownItemDelimiter ctermfg=214 cterm=bold
 
         hi markdownHeadingDelimiter ctermfg=214 cterm=bold
