@@ -1,97 +1,73 @@
 
---local mash       = {"cmd", "alt", "ctrl"}
---local mash_shift = {"cmd", "alt", "ctrl", "shift"}
-local mash       = {"cmd", "ctrl"}
-local mash_shift = {"cmd", "ctrl", "shift"}
+--local mash       = {'cmd', 'alt', 'ctrl'}
+--local mash_shift = {'cmd', 'alt', 'ctrl', 'shift'}
+local mash       = {'cmd', 'ctrl'}
+local mash_shift = {'cmd', 'ctrl', 'shift'}
 
-local commands = {}
-local pomo     = {}
+local pomo = {
+    bar_height     = 0.1, -- ratio of the height of the menubar (0..1)
+    bar_alpha      = 0.6,
+    bar_past_clr   = hs.drawing.color.red,
+    bar_past       = nil,
+    bar_future_clr = hs.drawing.color.green,
+    bar_future     = nil,
 
-pomo.bar = {
-    height     = 0.1, -- ratio of the height of the menubar (0..1)
-    alpha      = 0.6,
-    clr_future = hs.drawing.color.green,
-    clr_past   = hs.drawing.color.red,
-    future     = nil,
-    past       = nil
-}
+    -- 52x17
+    def_work_secs = 52 * 60,
+    def_rest_secs = 17 * 60,
+    -- 25x5
+    --def_work_secs = 25 * 60,
+    --def_rest_secs = 5 * 60,
 
-pomo.time = {
-    -- 52.17
-    work_secs = 52 * 60,
-    rest_secs = 17 * 60
-    -- 25.5
-    --work_secs = 25 * 60,
-    --rest_secs = 5 * 60
-}
-
-pomo.var = {
     is_active     = false,
     disable_count = 0,
     work_count    = 0,
-    cur_state     = "work", -- {"work", "rest"}
-    time_left     = pomo.time.work_secs,
-    max_time_sec  = pomo.time.work_secs,
+    cur_state     = 'work', -- {'work', 'rest'}
+    time_left     = 0,
+    max_time_sec  = 0,
     menu          = nil,
     timer         = nil
 }
 
 -- draw the pomodoro bar
 function pomo_draw_bar(time_left, max_time)
-    local main_screen = hs.screen.mainScreen()
-    local screeng     = main_screen:fullFrame()
-    local time_ratio  = (time_left / max_time)
-    local width       = math.ceil(screeng.w * time_ratio)
-    local left_width  = (screeng.w - width)
+    local screen_usable = hs.screen.mainScreen():frame()
+    local screen_full   = hs.screen.mainScreen():fullFrame()
 
-    local draw = function(bar, screen, offset, width, fill_color)
-        local screeng                  = screen:fullFrame()
-        local screen_frame_height      = screen:frame().y
-        local screen_full_frame_height = screeng.y
-        local height_delta             = (screen_frame_height -
-                                          screen_full_frame_height)
-        local height                   = (pomo.bar.height * (height_delta))
+    local future_width  = math.ceil(screen_full.w * (time_left / max_time))
+    local past_width    = (screen_full.w - future_width)
 
-        bar:setSize(hs.geometry.rect((screeng.x + offset),
-                                     screen_full_frame_height,
+    local draw = function(bar, offset, width)
+        -- get the height in pixels as a percentage of the non-usable menu
+        -- space at the top of the current screen
+        local height = (pomo.bar_height * (screen_usable.y - screen_full.y))
+
+        bar:setSize(hs.geometry.rect((screen_full.x + offset),
+                                     screen_full.y,
                                      width,
                                      height))
-        bar:setTopLeft(hs.geometry.point((screeng.x + offset),
-                                         screen_full_frame_height))
-        bar:setFillColor(fill_color)
-        bar:setFill(true)
-        bar:setAlpha(pomo.bar.alpha)
-        bar:setLevel(hs.drawing.windowLevels.overlay)
-        bar:setStroke(false)
-        bar:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        bar:setTopLeft(hs.geometry.point((screen_full.x + offset),
+                                         screen_full.y))
         bar:show()
     end
 
-    draw(pomo.bar.future,
-         main_screen,
-         left_width,
-         width,
-         pomo.bar.clr_future)
-    draw(pomo.bar.past,
-         main_screen,
-         0,
-         left_width,
-         pomo.bar.clr_past)
+    draw(pomo.bar_past, 0, past_width)
+    draw(pomo.bar_future, past_width, future_width)
 end
 
 -- update the pomodoro display
 local function pomo_update_display()
-    local time_min = math.floor(pomo.var.time_left / 60)
-    local time_sec = (pomo.var.time_left - (time_min * 60))
-    local str = string.format ("[ %s %02d:%02d #%02d ]",
-                               pomo.var.cur_state,
+    local time_min = math.floor(pomo.time_left / 60)
+    local time_sec = (pomo.time_left - (time_min * 60))
+    local str = string.format ('[ %s %02d:%02d #%02d ]',
+                               pomo.cur_state,
                                time_min,
                                time_sec,
-                               pomo.var.work_count)
-    pomo.var.menu:setTitle(str)
+                               pomo.work_count)
+    pomo.menu:setTitle(str)
 
-    if (pomo.var.is_active) then
-        pomo_draw_bar(pomo.var.time_left, pomo.var.max_time_sec)
+    if (pomo.is_active) then
+        pomo_draw_bar(pomo.time_left, pomo.max_time_sec)
     end
 end
 
@@ -99,37 +75,37 @@ end
 --  * first disable will pause the pomodoro
 --  * second disable will reset the pomodoro and hide the bar
 local function pomo_disable()
-    pomo.var.is_active = false
+    pomo.is_active = false
 
-    if (pomo.var.disable_count == 0) then
+    if (pomo.disable_count == 0) then
         -- stop the pomodoro timer
-        if (pomo.var.timer ~= nil) then
-            pomo.var.timer:stop()
-            pomo.var.timer = nil
+        if (pomo.timer ~= nil) then
+            pomo.timer:stop()
+            pomo.timer = nil
         end
 
-        pomo.var.disable_count = 1
+        pomo.disable_count = 1
         return
     end
 
-    if (pomo.var.disable_count == 1) then
+    if (pomo.disable_count == 1) then
         -- reset the pomodoro state
-        pomo.var.time_left    = pomo.time.work_secs
-        pomo.var.max_time_sec = pomo.time.work_secs
-        pomo.var.cur_state    = "work"
+        pomo.time_left    = pomo.def_work_secs
+        pomo.max_time_sec = pomo.def_work_secs
+        pomo.cur_state    = 'work'
 
         -- update the display
         pomo_update_display()
 
-        -- delete the future bar
-        pomo.bar.future:delete()
-        pomo.bar.future = nil
-
         -- delete the past bar
-        pomo.bar.past:delete()
-        pomo.bar.past = nil
+        pomo.bar_past:delete()
+        pomo.bar_past = nil
 
-        pomo.var.disable_count = 2
+        -- delete the future bar
+        pomo.bar_future:delete()
+        pomo.bar_future = nil
+
+        pomo.disable_count = 2
         return
     end
 end
@@ -148,27 +124,27 @@ end
 
 -- update the pomodoro state
 local function pomo_update_state()
-    if (pomo.var.is_active == false) then
+    if (pomo.is_active == false) then
         return
     end
 
-    pomo.var.time_left = (pomo.var.time_left - 1)
+    pomo.time_left = (pomo.time_left - 1)
 
-    if (pomo.var.time_left > 0 ) then
+    if (pomo.time_left > 0 ) then
         return
     end
 
-    if (pomo.var.cur_state == "work") then
+    if (pomo.cur_state == 'work') then
         pomo_notify('Work completed!')
-        pomo.var.work_count   = (pomo.var.work_count + 1)
-        pomo.var.cur_state    = "rest"
-        pomo.var.time_left    = pomo.time.rest_secs
-        pomo.var.max_time_sec = pomo.time.rest_secs
-    else -- (pomo.var.cur_state == "rest")
+        pomo.work_count   = (pomo.work_count + 1)
+        pomo.cur_state    = 'rest'
+        pomo.time_left    = pomo.def_rest_secs
+        pomo.max_time_sec = pomo.def_rest_secs
+    else -- (pomo.cur_state == 'rest')
         pomo_notify('Get back to work!')
-        pomo.var.cur_state    = "work"
-        pomo.var.time_left    = pomo.time.work_secs
-        pomo.var.max_time_sec = pomo.time.work_secs
+        pomo.cur_state    = 'work'
+        pomo.time_left    = pomo.def_work_secs
+        pomo.max_time_sec = pomo.def_work_secs
     end
 end
 
@@ -180,32 +156,48 @@ end
 
 -- create the pomodoro display (menu and bar)
 local function pomo_create_display()
-    if (pomo.var.menu == nil) then
-        pomo.var.menu = hs.menubar.new()
+    if (pomo.menu == nil) then
+        pomo.menu = hs.menubar.new()
     end
 
-    if (pomo.bar.future == nil) then
-        pomo.bar.future = hs.drawing.rectangle(hs.geometry.rect(0,0,0,0))
-        pomo.bar.past   = hs.drawing.rectangle(hs.geometry.rect(0,0,0,0))
+    local init_bar = function(bar, color)
+        bar:setFill(true)
+        bar:setFillColor(color)
+        bar:setAlpha(pomo.bar_alpha)
+        bar:setLevel(hs.drawing.windowLevels.overlay)
+        bar:setStroke(false)
+        bar:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+    end
+
+    if (pomo.bar_past == nil) then
+        pomo.bar_past = hs.drawing.rectangle(hs.geometry.rect(0,0,0,0))
+        init_bar(pomo.bar_past, pomo.bar_past_clr)
+    end
+
+    if (pomo.bar_future == nil) then
+        pomo.bar_future = hs.drawing.rectangle(hs.geometry.rect(0,0,0,0))
+        init_bar(pomo.bar_future, pomo.bar_future_clr)
     end
 end
 
 -- start the pomodoro timer
 local function pomo_enable()
-    pomo.var.disable_count = 0
+    pomo.disable_count = 0
 
-    if (pomo.var.is_active) then
+    if (pomo.is_active) then
         return
     end
 
     pomo_create_display()
-    pomo.var.is_active = true
+    pomo.is_active = true
 
-    pomo.var.timer = hs.timer.new(1, pomo_update)
-    pomo.var.timer:start()
+    pomo.timer = hs.timer.new(1, pomo_update)
+    pomo.timer:start()
 end
 
 -- initialize the pomodoro state and display
+pomo.time_left    = pomo.def_work_secs
+pomo.max_time_sec = pomo.def_work_secs
 pomo_create_display()
 pomo_update()
 
