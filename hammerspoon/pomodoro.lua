@@ -1,186 +1,214 @@
--- WIP pomodoro menubar timer
---
--- Notes:
--- * You want to set your Hammerspoon notification settings to Alert
---   if you wish to make the notifications dismissable
---
--- Resources:
--- https://learnxinyminutes.com/docs/lua/
--- http://www.hammerspoon.org/docs/hs.menubar.html
--- http://www.hammerspoon.org/docs/hs.timer.html#doEvery
 
-hs.logger.defaultLogLevel = 4   -- Enable debug logging
-local hsLog = hs.logger.new('pomo')
-local menu = hs.menubar.new()
-local currentPomo = nil
-local alertId = nil
+--local mash       = {"cmd", "alt", "ctrl"}
+--local mash_shift = {"cmd", "alt", "ctrl", "shift"}
+local mash       = {"cmd", "ctrl"}
+local mash_shift = {"cmd", "ctrl", "shift"}
 
-local TIMER_INTERVAL = 60  -- 60 (one minute) for real use; set lower for debugging
-local POMO_LENGTH    = 30  -- Length in minutes of one work interval
-local LOG_FILE       = '~/.pomo'
+local commands = {}
+local pomo     = {}
 
--- Namespace tables
-local Commands = {}
-local Log = {}
-local App = {}
+pomo.bar = {
+    height     = 0.1, -- ratio of the height of the menubar (0..1)
+    alpha      = 0.6,
+    clr_future = hs.drawing.color.green,
+    clr_past   = hs.drawing.color.red,
+    future     = nil,
+    past       = nil
+}
 
--- (ab)use hs.chooser as a text input with the possibility of using other options
-local showChooserPrompt = function(options, callback)
-    local chooser = hs.chooser.new(function(item)
-        if item then callback(item.text) end
-        if chooser then chooser:delete() end
-    end)
+pomo.time = {
+    -- 52.17
+    work_secs = 52 * 60,
+    rest_secs = 17 * 60
+    -- 25.5
+    --work_secs = 25 * 60,
+    --rest_secs = 5 * 60
+}
 
-    -- The table of choices to present to the user. It's comprised of one empty
-    -- item (which we update as the user types), and those passed in as options
-    local choiceList = { {text=''} }
-    for i=1, #options do
-        choiceList[#choiceList+1] = {text=options[i]}
+pomo.var = {
+    is_active     = false,
+    disable_count = 0,
+    work_count    = 0,
+    cur_state     = "work", -- {"work", "rest"}
+    time_left     = pomo.time.work_secs,
+    max_time_sec  = pomo.time.work_secs,
+    menu          = nil,
+    timer         = nil
+}
+
+-- draw the pomodoro bar
+function pomo_draw_bar(time_left, max_time)
+    local main_screen = hs.screen.mainScreen()
+    local screeng     = main_screen:fullFrame()
+    local time_ratio  = (time_left / max_time)
+    local width       = math.ceil(screeng.w * time_ratio)
+    local left_width  = (screeng.w - width)
+
+    local draw = function(bar, screen, offset, width, fill_color)
+        local screeng                  = screen:fullFrame()
+        local screen_frame_height      = screen:frame().y
+        local screen_full_frame_height = screeng.y
+        local height_delta             = (screen_frame_height -
+                                          screen_full_frame_height)
+        local height                   = (pomo.bar.height * (height_delta))
+
+        bar:setSize(hs.geometry.rect((screeng.x + offset),
+                                     screen_full_frame_height,
+                                     width,
+                                     height))
+        bar:setTopLeft(hs.geometry.point((screeng.x + offset),
+                                         screen_full_frame_height))
+        bar:setFillColor(fill_color)
+        bar:setFill(true)
+        bar:setAlpha(pomo.bar.alpha)
+        bar:setLevel(hs.drawing.windowLevels.overlay)
+        bar:setStroke(false)
+        bar:setBehavior(hs.drawing.windowBehaviors.canJoinAllSpaces)
+        bar:show()
     end
 
-    chooser:choices(function()
-        choiceList[1]['text'] = chooser:query()
-        return choiceList
-    end)
-
-    -- Re-compute the choices every time a key is pressed, to ensure that the top
-    -- choice is always the entered text:
-    chooser:queryChangedCallback(function() chooser:refreshChoicesCallback() end)
-
-    chooser:show()
+    draw(pomo.bar.future,
+         main_screen,
+         left_width,
+         width,
+         pomo.bar.clr_future)
+    draw(pomo.bar.past,
+         main_screen,
+         0,
+         left_width,
+         pomo.bar.clr_past)
 end
 
--- Read the last {count} lines of the log file, ordered with the most recent one first
-Log.read = function(count)
-    if not count then count = 10 end
-    -- Note the funky sed command at the end is to reverse the ordering of the lines:
-    return hs.execute('tail -' .. count .. ' ' .. LOG_FILE .. " | sed '1!G;h;$!d' ${inputfile}")
+-- update the pomodoro display
+local function pomo_update_display()
+    local time_min = math.floor(pomo.var.time_left / 60)
+    local time_sec = (pomo.var.time_left - (time_min * 60))
+    local str = string.format ("[ %s %02d:%02d #%02d ]",
+                               pomo.var.cur_state,
+                               time_min,
+                               time_sec,
+                               pomo.var.work_count)
+    pomo.var.menu:setTitle(str)
+
+    if (pomo.var.is_active) then
+        pomo_draw_bar(pomo.var.time_left, pomo.var.max_time_sec)
+    end
 end
 
-Log.writeItem = function(pomo)
-    local timestamp = os.date('%Y-%m-%d %H:%M')
-    local isFirstToday = #(Log.getCompletedToday()) == 0
+-- stop the pomodoro timer
+--  * first disable will pause the pomodoro
+--  * second disable will reset the pomodoro and hide the bar
+local function pomo_disable()
+    pomo.var.is_active = false
 
-    if (isFirstToday) then hs.execute('echo "" >> ' .. LOG_FILE) end  -- Add linebreak between days
-    hs.execute('echo "[' .. timestamp .. '] ' .. pomo.name .. '" >> ' .. LOG_FILE)
-end
-
-Log.getLatestItems = function(count)
-    local logs = Log.read(count)
-    local logItems = {}
-    for match in logs:gmatch('(.-)\r?\n') do table.insert(logItems, match) end
-    return logItems
-end
-
-Log.getCompletedToday = function()
-    local logItems = Log.getLatestItems(20)
-    local timestamp = os.date('%Y-%m-%d')
-    local todayItems = hs.fnutils.filter(logItems, function(s)
-        return string.find(s, timestamp, 1, true) ~= nil
-    end)
-    return todayItems
-end
-
--- Return a table of recent task names, most recent first
-Log.getRecentTaskNames = function()
-    local tasks = Log.getLatestItems(10)
-    local nonEmptyTasks = hs.fnutils.filter(tasks, function(t) return t ~= '' end)
-    local names = hs.fnutils.map(nonEmptyTasks, function(taskWithTimestamp)
-        local taskStartPosition = string.find(taskWithTimestamp, ']') + 2
-        return string.sub(taskWithTimestamp, taskStartPosition)
-    end)
-
-    -- TODO: dedupe these items before returning
-    return names
-end
-
-Commands.startNew = function()
-    local options = Log.getRecentTaskNames()
-    showChooserPrompt(options, function(taskName)
-        if taskName then
-            currentPomo = {minutesLeft=POMO_LENGTH, name=taskName}
+    if (pomo.var.disable_count == 0) then
+        -- stop the pomodoro timer
+        if (pomo.var.timer ~= nil) then
+            pomo.var.timer:stop()
+            pomo.var.timer = nil
         end
-        App.updateUI()
-    end)
-end
 
-Commands.togglePaused = function()
-    if not currentPomo then return end
-    currentPomo.paused = not currentPomo.paused
-    App.updateUI()
-end
+        pomo.var.disable_count = 1
+        return
+    end
 
-Commands.toggleLatestDisplay = function()
-    local logs = Log.read(15)
-    local displayDuration = 500
-    if alertId then
-        hs.alert.closeSpecific(alertId)
-        alertId = nil
-    else
-        alertId = hs.alert('LATEST ACTIVITY\n\n' .. logs, {textFont='Courier'}, displayDuration)
+    if (pomo.var.disable_count == 1) then
+        -- reset the pomodoro state
+        pomo.var.time_left    = pomo.time.work_secs
+        pomo.var.max_time_sec = pomo.time.work_secs
+        pomo.var.cur_state    = "work"
+
+        -- update the display
+        pomo_update_display()
+
+        -- delete the future bar
+        pomo.bar.future:delete()
+        pomo.bar.future = nil
+
+        -- delete the past bar
+        pomo.bar.past:delete()
+        pomo.bar.past = nil
+
+        pomo.var.disable_count = 2
+        return
     end
 end
 
-App.complete = function(pomo)
-    Log.writeItem(pomo)
-    currentPomo = nil
+-- send a pomodoro state completion notification
+local function pomo_notify(msg)
+    local n = hs.notify.new({
+        title           = msg,
+        informativeText = 'Completed at ' .. os.date('%H:%M'),
+        soundName       = 'Hero'
+    })
+    n:autoWithdraw(false)
+    n:hasActionButton(false)
+    n:send()
 end
 
-App.timerCallback = function()
-    if currentPomo then hsLog.d('tick', currentPomo.name, currentPomo.minutesLeft)
-    else hsLog.d('tick (none)')
+-- update the pomodoro state
+local function pomo_update_state()
+    if (pomo.var.is_active == false) then
+        return
     end
 
-    if not currentPomo then return end
-    if currentPomo.paused then return end
-    currentPomo.minutesLeft = currentPomo.minutesLeft - 1
-    if (currentPomo.minutesLeft <= 0) then
-        local n = hs.notify.new({
-            title='Pomodoro complete',
-            subTitle=currentPomo.name,
-            informativeText='Completed at ' .. os.date('%H:%M'),
-            soundName='Hero'
-        })
-        n:autoWithdraw(false)
-        n:hasActionButton(false)
-        n:send()
-        App.complete(currentPomo)
+    pomo.var.time_left = (pomo.var.time_left - 1)
+
+    if (pomo.var.time_left > 0 ) then
+        return
     end
-    App.updateUI()
-end
 
-App.getMenubarTitle = function(pomo)
-    local title = '🍅'
-    if pomo then
-        title = title .. ('0:' .. string.format('%02d', pomo.minutesLeft))
-        if pomo.paused then
-            title = title .. ' (paused)'
-        end
+    if (pomo.var.cur_state == "work") then
+        pomo_notify('Work completed!')
+        pomo.var.work_count   = (pomo.var.work_count + 1)
+        pomo.var.cur_state    = "rest"
+        pomo.var.time_left    = pomo.time.rest_secs
+        pomo.var.max_time_sec = pomo.time.rest_secs
+    else -- (pomo.var.cur_state == "rest")
+        pomo_notify('Get back to work!')
+        pomo.var.cur_state    = "work"
+        pomo.var.time_left    = pomo.time.work_secs
+        pomo.var.max_time_sec = pomo.time.work_secs
     end
-    return title
 end
 
-App.updateUI = function()
-    menu:setTitle(App.getMenubarTitle(currentPomo))
+-- timer function to update the pomodoro state and display (menu and bar)
+local function pomo_update()
+    pomo_update_state()
+    pomo_update_display()
 end
 
-App.init = function()
-    hs.timer.doEvery(TIMER_INTERVAL, App.timerCallback)
+-- create the pomodoro display (menu and bar)
+local function pomo_create_display()
+    if (pomo.var.menu == nil) then
+        pomo.var.menu = hs.menubar.new()
+    end
 
-    menu:setMenu(function()
-        local completedCount = #(Log.getCompletedToday())
-        return {
-          -- TODO: make these menu items contextual:
-          { title=completedCount .. ' pomos completed today', disabled=true },
-          { title='Start', fn=Commands.startNew },
-          { title='Pause', fn=Commands.togglePaused }
-        }
-    end)
-
-    App.updateUI()
+    if (pomo.bar.future == nil) then
+        pomo.bar.future = hs.drawing.rectangle(hs.geometry.rect(0,0,0,0))
+        pomo.bar.past   = hs.drawing.rectangle(hs.geometry.rect(0,0,0,0))
+    end
 end
 
-App.init()
+-- start the pomodoro timer
+local function pomo_enable()
+    pomo.var.disable_count = 0
 
-return Commands
+    if (pomo.var.is_active) then
+        return
+    end
+
+    pomo_create_display()
+    pomo.var.is_active = true
+
+    pomo.var.timer = hs.timer.new(1, pomo_update)
+    pomo.var.timer:start()
+end
+
+-- initialize the pomodoro state and display
+pomo_create_display()
+pomo_update()
+
+hs.hotkey.bind(mash, '9', pomo_enable)
+hs.hotkey.bind(mash, '0', pomo_disable)
 

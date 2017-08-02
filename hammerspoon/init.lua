@@ -8,18 +8,13 @@ require('volume')
 -- stock quotes
 require('stocks')
 
+-- pomodoro timer
+require('pomodoro')
+
 --local mash       = {"cmd", "alt", "ctrl"}
 --local mash_shift = {"cmd", "alt", "ctrl", "shift"}
 local mash       = {"cmd", "ctrl"}
 local mash_shift = {"cmd", "ctrl", "shift"}
-
--- pomodoro
---[[
-local Pomo = require('pomodoro')
-hs.hotkey.bind(mash, 'u', Pomo.startNew)
-hs.hotkey.bind(mash, 'i', Pomo.togglePaused)
-hs.hotkey.bind(mash, 'o', Pomo.toggleLatestDisplay)
---]]
 
 -- trigger notification
 function hsNotify(msg)

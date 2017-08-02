@@ -340,16 +340,10 @@ elif (args[0] == 'diff'):
         PrintErrMsg('Bite me...\n')
         sys.exit(1)
 
-    if re.match('sunos.*$', sys.platform):
-        if (ignoreWhitespace):
-            CmdSys('export P4DIFF=diff;' + p4 + ' ' + args[0] + ' -d\'wU10\' ' + cmdArgs)
-        else:
-            CmdSys('export P4DIFF=diff;' + p4 + ' ' + args[0] + ' -d\'U10\' ' + cmdArgs)
+    if (ignoreWhitespace):
+        CmdSys('export P4DIFF=diff;' + p4 + ' ' + args[0] + ' -d\'wU10\' ' + cmdArgs)
     else:
-        if (ignoreWhitespace):
-            CmdSys('export P4DIFF=colordiff;' + p4 + ' ' + args[0] + ' -d\'wU10\' ' + cmdArgs)
-        else:
-            CmdSys('export P4DIFF=colordiff;' + p4 + ' ' + args[0] + ' -d\'U10\' ' + cmdArgs)
+        CmdSys('export P4DIFF=diff;' + p4 + ' ' + args[0] + ' -d\'U10\' ' + cmdArgs)
 
 else:
 

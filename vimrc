@@ -172,8 +172,9 @@ set vb t_vb=
 " Format options and wrapping
 set formatoptions+=1j
 let &showbreak = '↳'
-"set breakindent
+set breakindent
 set breakindentopt=sbr
+set linebreak
 
 " Home direcotry for swapfiles
 set swapfile
@@ -387,7 +388,12 @@ autocmd insanum Syntax javascript
     \ syn match LodashLazy '\v<(H|G|S)>' containedin=javaScriptFuncDef,javaScriptFuncKeyword |
     \ hi LodashLazy ctermfg=1 cterm=bold
 
-autocmd insanum FileType markdown,yaml,txt
+autocmd insanum FileType yaml,txt
+    \ setlocal textwidth=80
+    \          spell
+    \          spelllang=en_us
+
+autocmd insanum FileType markdown
     \ setlocal textwidth=80
     \          spell
     \          spelllang=en_us
@@ -837,10 +843,8 @@ endif
 
 set hlsearch
 "set incsearch
-"nmap ,/ :nohlsearch<CR>
-"nmap ,. :nohlsearch<CR>
-
-let g:incsearch#auto_nohlsearch = 1
+"let g:incsearch#auto_nohlsearch = 1
+nmap ,. :nohlsearch<CR>
 
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
@@ -1105,6 +1109,7 @@ function! s:myColorScheme(scheme)
     execute "colorscheme" a:scheme
 
     "hi link cError Normal
+    hi Comment cterm=italic
     hi MatchParen ctermfg=190 ctermbg=None cterm=bold
     hi Constant cterm=bold
     hi ColorColumn ctermbg=234
@@ -1117,9 +1122,10 @@ function! s:myColorScheme(scheme)
 
     let g:incsearch#separate_highlight = 1
     hi IncSearchMatchReverse ctermfg=0 ctermbg=5
-    hi IncSearchMatch        ctermfg=0 ctermbg=2
-    hi IncSearchOnCursor     ctermfg=0 ctermbg=1
-    hi IncSearchCursor       ctermfg=0 ctermbg=3
+    hi IncSearchMatch        ctermfg=0 ctermbg=1
+    hi IncSearchOnCursor     ctermfg=0 ctermbg=3
+    hi IncSearchCursor       ctermfg=0 ctermbg=7
+    hi Search                ctermfg=0 ctermbg=1
 
     hi GitGutterAdd          ctermfg=34  cterm=bold
     hi GitGutterDelete       ctermfg=196 cterm=bold
@@ -1130,10 +1136,13 @@ function! s:myColorScheme(scheme)
     hi SignatureMarkerText ctermfg=226 cterm=bold
 
     hi VertSplit ctermfg=110 ctermbg=16
+    hi NonText   ctermfg=129 ctermbg=238
 
     if a:scheme == 'nord'
         " comments need to pop more under nord
         hi Comment ctermfg=1 cterm=italic
+
+        hi Folded ctermfg=39 ctermbg=239 cterm=bold
 
         hi markdownXmlElement ctermfg=153
         hi markdownItemDelimiter ctermfg=214 cterm=bold
