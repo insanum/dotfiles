@@ -7,9 +7,9 @@ local mash_shift = {'cmd', 'ctrl', 'shift'}
 local pomo = {
     bar_height     = 0.1, -- ratio of the height of the menubar (0..1)
     bar_alpha      = 0.6,
-    bar_past_clr   = hs.drawing.color.red,
+    bar_past_clr   = hs.drawing.color.x11.blue,
     bar_past       = nil,
-    bar_future_clr = hs.drawing.color.green,
+    bar_future_clr = hs.drawing.color.x11.orange,
     bar_future     = nil,
 
     -- 52x17

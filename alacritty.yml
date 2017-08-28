@@ -31,8 +31,12 @@ padding:
 dpi:
   #x: 96.0
   #y: 96.0
-  x: 166.0
-  y: 166.0
+  # docked
+  #x: 166.0
+  #y: 166.0
+  # retina
+  x: 255.0
+  y: 255.0
 
 # Display tabs using this many cells (changes require restart)
 tabspaces: 8
@@ -195,6 +199,18 @@ colors:
     cyan:    '0x8FBCBB'
     white:   '0xECEFF4'
 
+  # Dim colors (Optional)
+#  dim:
+#    black:   '0x333333'
+#    red:     '0xf2777a'
+#    green:   '0x99cc99'
+#    yellow:  '0xffcc66'
+#    blue:    '0x6699cc'
+#    magenta: '0xcc99cc'
+#    cyan:    '0x66cccc'
+#    white:   '0xdddddd'
+
+
 # Visual Bell
 #
 # Any time the BEL code is received, Alacritty "rings" the visual bell. Once
@@ -260,9 +276,9 @@ key_bindings:
  #- { key: Q,        mods: Command, action: Quit                         }
  #- { key: W,        mods: Command, action: Quit                         }
   - { key: Home,                    chars: "\x1bOH",   mode: AppCursor   }
-  - { key: Home,                    chars: "\x1b[1~",  mode: ~AppCursor  }
+  - { key: Home,                    chars: "\x1b[H",   mode: ~AppCursor  }
   - { key: End,                     chars: "\x1bOF",   mode: AppCursor   }
-  - { key: End,                     chars: "\x1b[4~",  mode: ~AppCursor  }
+  - { key: End,                     chars: "\x1b[F",   mode: ~AppCursor  }
   - { key: PageUp,   mods: Shift,   chars: "\x1b[5;2~"                   }
   - { key: PageUp,   mods: Control, chars: "\x1b[5;5~"                   }
   - { key: PageUp,                  chars: "\x1b[5~"                     }
