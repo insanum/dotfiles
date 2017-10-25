@@ -160,6 +160,7 @@ set nostartofline
 set nofixeol
 set ignorecase smartcase
 set timeoutlen=500
+set fillchars=vert:\ ,fold:/
 
 set textwidth=0
 set colorcolumn=80
@@ -175,6 +176,11 @@ let &showbreak = '↳'
 set breakindent
 set breakindentopt=sbr
 set linebreak
+
+autocmd insanum BufNewFile,BufRead
+    \ *.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua
+    \ set nobreakindent |
+    \ set nolinebreak
 
 " Home direcotry for swapfiles
 set swapfile
@@ -217,6 +223,9 @@ set number
 set relativenumber
 nmap <Leader>n :set number!<CR>:set number?<CR>
 nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
+
+autocmd insanum WinEnter * set relativenumber
+autocmd insanum WinLeave * set norelativenumber
 
 " Toggle list chars
 set nolist
@@ -380,8 +389,8 @@ endfunction
 nmap ,M :call <SID>quickfixOpen(0)<CR>
 nmap ,m :call <SID>quickfixOpen(1)<CR>
 
-autocmd insanum BufNewFile,BufRead *.c,*.cc,*.cpp,*.h,*.java,*.js,*.lua set textwidth=80
-autocmd insanum BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.lua
+autocmd insanum BufNewFile,BufRead *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.js,*.lua set textwidth=80
+autocmd insanum BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.cs,*.java,*.js,*.lua
     \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
 
 autocmd insanum Syntax javascript
@@ -547,7 +556,7 @@ if has("cscope")
 
     if s:ostype =~ "solaris"
         set csprg=/opt/csw/bin/cscope
-    elseif s:ostype =~ "freebsd" || s:ostype =~ "darwin16"
+    elseif s:ostype =~ "freebsd" || s:ostype =~ "darwin17"
         set csprg=/usr/local/bin/cscope
     else
         set csprg=/usr/bin/cscope
@@ -1115,7 +1124,7 @@ function! s:myColorScheme(scheme)
     hi ColorColumn ctermbg=234
     hi CursorLine ctermbg=234
     hi CursorLineNr ctermfg=97 ctermbg=None cterm=bold
-    hi LineNr ctermfg=238 cterm=bold
+    hi LineNr ctermfg=242 cterm=bold
     hi link javaScriptTemplateDelim  Keyword
     hi link javaScriptTemplateVar    Identifier
     hi link javaScriptTemplateString String
@@ -1135,7 +1144,8 @@ function! s:myColorScheme(scheme)
     hi SignatureMarkText   ctermfg=201 cterm=bold
     hi SignatureMarkerText ctermfg=226 cterm=bold
 
-    hi VertSplit ctermfg=110 ctermbg=16
+    "hi VertSplit ctermfg=110 ctermbg=16
+    hi VertSplit ctermfg=none ctermbg=none
     hi NonText   ctermfg=129 ctermbg=238
 
     if a:scheme == 'nord'
@@ -1155,6 +1165,8 @@ function! s:myColorScheme(scheme)
         hi markdownH5 ctermfg=35 cterm=bold
         hi markdownH6 ctermfg=34 cterm=bold
     endif
+
+    hi TabLineSel ctermfg=226 cterm=bold
 
     call <SID>mySwitchTransparency()
     call <SID>myStatusColorScheme()

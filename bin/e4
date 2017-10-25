@@ -1,9 +1,8 @@
 #!/usr/bin/env python2
 
 p4bin      = 'p4'
-#p4user     = 'ed927285'
 #p4user     = 'edavis'
-p4user     = ''
+p4user     = 'ed927285'
 p4port_ql  = 'pf-irv-cubasw.irv.broadcom.com:9002'
 p4port_sj  = 'pf-sj1-slb.sj.broadcom.com:1666'
 #p4port_irv = 'pf-irva-ecs.lvn.broadcom.net:1666'
@@ -182,15 +181,15 @@ p4 = p4bin + ' -p ' + p4port
 
 # if this is a login command then do it now
 if (args[0] == 'login'):
-    CmdSys(p4 + ' login -a ' + p4user)
+    CmdSys(p4 + ' -u ' + p4user + ' login -a')
     sys.exit(1)
 
 
 # build full command line with P4PORT and P4CLIENT
 if not clientName:
-    p4 = p4
+    p4 = p4 + ' -u ' + p4user
 else:
-    p4 = p4 + ' -c ' + clientName
+    p4 = p4 + ' -c ' + clientName + ' -u ' + p4user
 
 
 # convert the current workspace view into a string
