@@ -4,14 +4,24 @@
 local mash       = {"cmd", "ctrl"}
 local mash_shift = {"cmd", "ctrl", "shift"}
 
--- curl -s 'http://download.finance.yahoo.com/d/quotes.csv?s=AVGO,NVDA,LTRX&f=sl1c1p2' | sed 's/[",]/ /g'
-local stock_url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AVGO&f=sl1c1p2'
-local curl      = "/usr/bin/curl"
-local curl_args = { "-s", stock_url }
-local menubar   = hs.menubar.new()
-local stocks    = nil
+local avgo = 'https://api.intrinio.com/data_point?identifier=AVGO&item=last_price,change,percent_change'
+
+local curl    = "/usr/bin/curl"
+local menubar = hs.menubar.new()
+local stocks  = nil
+
+local log = hs.logger.new('stocks','debug')
 
 local STOCKS_UPDATE_TIMER = 30 -- minutes
+
+local function fslurp(path)
+    local f = io.open(path, "r")
+    local s = f:read("*all")
+    f:close()
+    return s
+end
+
+local config = hs.json.decode(fslurp("intrinio.json"))
 
 local function stocksUpdate(exitCode, stdOut, stdErr)
     if exitCode ~= 0 then
@@ -19,18 +29,21 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
         return
     end
 
-    local txt = ""
-    for s in stdOut:gsub("[\",]", " "):gmatch("%S+") do
-        txt = txt .. s .. " "
-    end
+    local data = hs.json.decode(stdOut)
 
-    menubar:setTitle("[ " .. txt .. "]")
+    menubar:setTitle("[ " ..
+                     data.data[1].identifier    .. ": " .. -- name
+                     data.data[1].value         .. " "  .. -- price
+                     data.data[2].value         .. " "  .. -- change
+                     (data.data[3].value * 100) .. "% " .. -- %change
+                     " ]")
     --hs.alert("Stock quotes updated!")
 end
 
 local function doUpdate()
+    local curl_args = { "-s", avgo, "-u", config.user .. ":" .. config.pass }
     if not stocks or not stocks:isRunning() then
-        stocks = hs.task.new(curl, stocksUpdate, { "-s", stock_url })
+        stocks = hs.task.new(curl, stocksUpdate, curl_args )
         stocks:start()
     end
 end

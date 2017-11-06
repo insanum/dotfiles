@@ -23,9 +23,13 @@
 	g = grep --break --heading --line-number
 	####################
 	d = icdiff
+	ds = icdiff --staged
 	dd = diff --patch-with-stat -U10
+	dds = diff --patch-with-stat -U10 --staged
 	dp = diff --patience --patch-with-stat -U10
+	dps = diff --patience --patch-with-stat -U10 --staged
 	dt = difftool
+	dts = difftool --staged
 	####################
 	tree = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"
 	####################
