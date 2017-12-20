@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd notes
+bash ./_git.sh pull
+
