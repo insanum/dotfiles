@@ -4,7 +4,7 @@
 local mash       = {"cmd", "ctrl"}
 local mash_shift = {"cmd", "ctrl", "shift"}
 
-local tickers  = { "AVGO", "NVDA", "TSLA", "INTC", "QCOM" }
+local tickers  = { "AVGO", "QCOM", "NXP", "NVDA", "MLNX", "CAVM", "GOOG", "GOOGL", "AMZN", "AAPL", "MSFT", "FB", "CSCO", "JNPR", "INTC" }
 local intrinio = "https://api.intrinio.com/data_point?identifier=" .. table.concat(tickers,",") .. "&item=last_price,change,percent_change"
 
 local curl    = "/usr/bin/curl"
@@ -38,6 +38,9 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
         for i = 1, #data.data, 1 do
             if data.data[i].identifier == ticker and
                data.data[i].item == item then
+               if data.data[i].value == "na" then
+                   return 0
+               end
                return data.data[i].value
            end
         end
@@ -45,7 +48,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
 
     local ticker_up = function(ticker)
         local change = ticker_value(ticker, "change")
-        if change ~= "na" and change >= 0 then
+        if change >= 0 then
             return true
         end
         return false
