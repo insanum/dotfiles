@@ -59,14 +59,40 @@ end
 local function pomo_update_display()
     local time_min = math.floor(pomo.time_left / 60)
     local time_sec = (pomo.time_left - (time_min * 60))
-    local str = string.format ('[ %s %02d:%02d #%02d ]',
+
+    local str = string.format ('%s %02d:%02d #%02d',
                                pomo.cur_state,
                                time_min,
                                time_sec,
                                pomo.work_count)
-    pomo.menu:setTitle(str)
 
-    if (pomo.is_active) then
+    local font = { name = "Hack", size = 12 }
+
+    local color = hs.drawing.color.x11.dimgray
+    if pomo.is_active then
+        color = hs.drawing.color.x11.magenta
+    elseif pomo.disable_count == 1 then
+        color = hs.drawing.color.x11.red
+    end
+
+    pomo.menu:setTitle(hs.styledtext.new("[",
+                                         {
+                                           font  = font,
+                                           color = hs.drawing.color.x11.white
+                                         }) ..
+                       hs.styledtext.new(str,
+                                         {
+                                           font  = font,
+                                           color = color
+                                         }) ..
+                       hs.styledtext.new("]",
+                                         {
+                                           font  = font,
+                                           color = hs.drawing.color.x11.white
+                                         })
+                      )
+
+    if pomo.is_active then
         pomo_draw_bar(pomo.time_left, pomo.max_time_sec)
     end
 end
@@ -85,6 +111,10 @@ local function pomo_disable()
         end
 
         pomo.disable_count = 1
+
+        -- update the display
+        pomo_update_display()
+
         return
     end
 
@@ -93,9 +123,6 @@ local function pomo_disable()
         pomo.time_left    = pomo.def_work_secs
         pomo.max_time_sec = pomo.def_work_secs
         pomo.cur_state    = 'work'
-
-        -- update the display
-        pomo_update_display()
 
         -- delete the past bar
         pomo.bar_past:delete()
@@ -106,6 +133,10 @@ local function pomo_disable()
         pomo.bar_future = nil
 
         pomo.disable_count = 2
+
+        -- update the display
+        pomo_update_display()
+
         return
     end
 end
@@ -199,6 +230,12 @@ end
 pomo.time_left    = pomo.def_work_secs
 pomo.max_time_sec = pomo.def_work_secs
 pomo_create_display()
+pomo.menu:setMenu(
+    {
+        { title = "Start", fn = pomo_enable  },
+        { title = "Stop",  fn = pomo_disable },
+        { title = "Reset", fn = function() pomo_disable(); pomo_disable() end }
+    })
 pomo_update()
 
 hs.hotkey.bind(mash, '9', pomo_enable)

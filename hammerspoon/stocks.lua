@@ -4,7 +4,8 @@
 local mash       = {"cmd", "ctrl"}
 local mash_shift = {"cmd", "ctrl", "shift"}
 
-local avgo = 'https://api.intrinio.com/data_point?identifier=AVGO&item=last_price,change,percent_change'
+local tickers  = { "AVGO", "NVDA", "TSLA", "INTC", "QCOM" }
+local intrinio = "https://api.intrinio.com/data_point?identifier=" .. table.concat(tickers,",") .. "&item=last_price,change,percent_change"
 
 local curl    = "/usr/bin/curl"
 local menubar = hs.menubar.new()
@@ -31,17 +32,74 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
 
     local data = hs.json.decode(stdOut)
 
-    menubar:setTitle("[ " ..
-                     data.data[1].identifier    .. ": " .. -- name
-                     data.data[1].value         .. " "  .. -- price
-                     data.data[2].value         .. " "  .. -- change
-                     (data.data[3].value * 100) .. "% " .. -- %change
-                     " ]")
+    local font = { name = "Hack", size = 12 }
+
+    local ticker_value = function(ticker, item)
+        for i = 1, #data.data, 1 do
+            if data.data[i].identifier == ticker and
+               data.data[i].item == item then
+               return data.data[i].value
+           end
+        end
+    end
+
+    local ticker_up = function(ticker)
+        local change = ticker_value(ticker, "change")
+        if change ~= "na" and change >= 0 then
+            return true
+        end
+        return false
+    end
+
+    local ticker_text = function(ticker)
+        local color = hs.drawing.color.x11.red
+        local prfx = ""
+        if ticker_up(ticker) then
+            color = hs.drawing.color.x11.green
+            prfx  = "+"
+        end
+
+        return
+        hs.styledtext.new(ticker .. ": ",
+                          {
+                            font  = font,
+                            color = hs.drawing.color.x11.deepskyblue
+                          }) ..
+        hs.styledtext.new(ticker_value(ticker, "last_price") .. " " ..
+                          prfx .. ticker_value(ticker, "change") .. " " ..
+                          prfx .. (ticker_value(ticker, "percent_change") * 100) .. "%",
+                          {
+                            font  = font,
+                            color = color
+                          })
+    end
+
+    menubar:setTitle(hs.styledtext.new("[",
+                                       {
+                                         font  = font,
+                                         color = hs.drawing.color.x11.white
+                                       }) ..
+                     ticker_text(tickers[1]) ..
+                     hs.styledtext.new("]",
+                                       {
+                                         font  = font,
+                                         color = hs.drawing.color.x11.white
+                                       })
+                    )
+
+    if #tickers > 1 then
+        local submenu = { }
+        for i = 2, #tickers, 1 do
+            table.insert(submenu, { title = ticker_text(tickers[i]) })
+        end
+        menubar:setMenu(submenu)
+    end
+
     --hs.alert("Stock quotes updated!")
 end
 
 local function doUpdate()
-    local curl_args = { "-s", avgo, "-u", config.user .. ":" .. config.pass }
+    local curl_args = { "-s", intrinio, "-u", config.user .. ":" .. config.pass }
     if not stocks or not stocks:isRunning() then
         stocks = hs.task.new(curl, stocksUpdate, curl_args )
         stocks:start()
@@ -55,9 +113,4 @@ doUpdate()
 hs.hotkey.bind(mash_shift, "q", function()
     doUpdate()
 end)
-
---local menubar = hs.menubar.new()
---menubar:setTitle(hs.styledtext.new("foo", { color = hs.drawing.color.x11.magenta }))
---local menubar2 = hs.menubar.new()
---menubar2:setTitle(hs.styledtext.new("bar", { color = hs.drawing.color.hammerspoon.osx_red }))
 
