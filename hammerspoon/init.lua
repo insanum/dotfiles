@@ -11,6 +11,9 @@ require('stocks')
 -- pomodoro timer
 require('pomodoro')
 
+-- notification manager
+require('notifications')
+
 --local mash       = {"cmd", "alt", "ctrl"}
 --local mash_shift = {"cmd", "alt", "ctrl", "shift"}
 local mash       = {"cmd", "ctrl"}
@@ -32,7 +35,7 @@ hs.hotkey.bind(mash, "f", function()
     local ad = hs.window.animationDuration
     hs.window.animationDuration = 0
 
-    local win = hs.window.focusedWindow()
+    local win = hs.window.frontmostWindow()
     win:maximize()
 
     hs.window.animationDuration = ad
@@ -54,7 +57,7 @@ end
 
 -- center window
 hs.hotkey.bind(mash, "c", function()
-    local win = hs.window.focusedWindow()
+    local win = hs.window.frontmostWindow()
     local max = win:screen():frame()
     winMove(win, (max.x + (max.w * .10)),
                  (max.y + (max.h * .10)),
@@ -145,7 +148,7 @@ end)
 -- move a window to next monitor
 
 function moveWindowMonitor(direction)
-    local win = hs.window.focusedWindow()
+    local win = hs.window.frontmostWindow()
     if direction == "west" then
         win = win:moveOneScreenWest()
     else -- direciton == "east"
@@ -160,7 +163,7 @@ hs.hotkey.bind(mash_shift, "m", function() moveWindowMonitor("east") end)
 
 function moveWindowSpace(direction)
     local mouseOrigin = hs.mouse.getAbsolutePosition()
-    local win = hs.window.focusedWindow()
+    local win = hs.window.frontmostWindow()
     local clickPoint = win:zoomButtonRect()
 
     clickPoint.x = clickPoint.x + clickPoint.w + 5

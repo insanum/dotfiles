@@ -29,7 +29,9 @@ fi
 #export SCREENDIR=$HOME/.screen
 export BASH_ENV=$HOME/.bashrc
 export TEMP=/tmp
-export TMPDIR=/tmp
+if [[ ! $OSTYPE =~ linux-android ]]; then
+    export TMPDIR=/tmp
+fi
 #export MIBS=all
 #export MIBDIRS=/usr/local/share/snmp/mibs
 
