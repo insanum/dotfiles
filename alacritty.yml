@@ -330,7 +330,7 @@ shell:
 #     strings. For example:
 #     - { ... , command: { program: "alacritty", args: ["-e", "vttest"] } }
 key_bindings:
-  - { key: N,        mods: Command, command: { program: "open", args: ["-n", "/Applications/Alacritty.app", "--args", "-t", "SKYLARK", "-e", "ssh", "skylark" ] } }
+ #- { key: N,        mods: Command, command: { program: "open", args: ["-n", "/Applications/Alacritty.app", "--args", "-t", "SKYLARK", "-e", "ssh", "skylark" ] } }
   - { key: V,        mods: Command, action: Paste                        }
   - { key: C,        mods: Command, action: Copy                         }
  #- { key: Q,        mods: Command, action: Quit                         }

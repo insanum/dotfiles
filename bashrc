@@ -6,7 +6,7 @@ export SHELL=/bin/bash
 
 if [[ $OSTYPE == cygwin || $OSTYPE =~ solaris ]]; then
   export LS_COLORS="no=37:fi=37:*.zip=31:*.gz=31:*.tgz=31:*.tar=31:*.Z=31:*.bz2=31:di=36:ex=32:ln=33"
-elif [[ $OSTYPE =~ freebsd || $OSTYPE =~ darwin17 ]]; then
+elif [[ $OSTYPE =~ freebsd || $OSTYPE =~ darwin ]]; then
   export LSCOLORS="exfxcxdxbxegedabagacad"
 elif [[ $OSTYPE == linux-gnu ]]; then
   #eval `dircolors $HOME/bin/dircolors_solarized`
@@ -168,7 +168,7 @@ else
   LS=ls
 fi
 
-if [[ $OSTYPE =~ freebsd || $OSTYPE =~ darwin17 ]]; then
+if [[ $OSTYPE =~ freebsd || $OSTYPE =~ darwin ]]; then
   LSC="-G"
 else
   LSC="--color=auto"
@@ -461,7 +461,7 @@ if [[ -n "$PS1" ]]; then
   set -o vi 
 
   #shopt -s cdspell
-  if [[ ! $OSTYPE =~ darwin17 ]]; then
+  if [[ ! $OSTYPE =~ darwin ]]; then
       shopt -s autocd
   fi
   shopt -s cmdhist
@@ -534,7 +534,7 @@ if [[ -n "$PS1" ]]; then
   else
       if [[ $OSTYPE =~ freebsd ]]; then
           osrel="freebsd `uname -r`"
-      elif [[ $OSTYPE =~ darwin17 ]]; then
+      elif [[ $OSTYPE =~ darwin ]]; then
           osrel="darwin"
       else
           osrel="linux"
