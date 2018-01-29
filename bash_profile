@@ -42,6 +42,8 @@ fi
 [[ -d "/cygdrive/c/edavis/usr/bin" ]]   && PATH="$PATH:/cygdrive/c/edavis/usr/bin"
 [[ -d "/cygdrive/c/WINDOWS/system32" ]] && PATH="$PATH:/cygdrive/c/WINDOWS/system32"
 
+[[ -d "/sbin" ]] && PATH="$PATH:/sbin"
+
 [[ -d "/usr/sbin" ]] && PATH="$PATH:/usr/sbin"
 [[ -d "/usr/bin" ]]  && PATH="$PATH:/usr/bin"
 
