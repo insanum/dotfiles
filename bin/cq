@@ -1,0 +1,61 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+    echo "ERROR: Must specify language [ c | js | go | rb | py ]"
+    exit 1
+fi
+
+#DB=`basename "$PWD"`.db
+DB=codequery.db
+CSF=.cscope.files
+CSO=.cscope.out
+TAGS=.tags
+
+if [[ $1 == c ]]; then
+
+    find . -iname "*.c"    > $CSF
+    find . -iname "*.cpp" >> $CSF
+    find . -iname "*.cxx" >> $CSF
+    find . -iname "*.cc " >> $CSF
+    find . -iname "*.h"   >> $CSF
+    find . -iname "*.hpp" >> $CSF
+    find . -iname "*.hxx" >> $CSF
+    find . -iname "*.hh " >> $CSF
+
+    # [-q] enable fast symbol lookup (creates two more files and good for large projects)
+    # [-k] kernel mode, do not include the default include directory (/usr/include)
+    # [-c] only use ASCII data in the output and don't compress the data
+    # [-f] output filename (default: cscope.out)
+    # [-i] input filename containing list of files (default: cscope.files)
+    cscope -c -b -i $CSF -f $CSO
+
+elif  [[ $1 == js ]]; then
+
+    find . -iname "*.js" > $CSF
+    starscope -e cscope
+
+elif  [[ $1 == go ]]; then
+
+    find . -iname "*.go" > $CSF
+    starscope -e cscope
+
+elif  [[ $1 == rb ]]; then
+
+    find . -iname "*.rb" > $CSF
+    starscope -e cscope
+
+elif  [[ $1 == py ]]; then
+
+    find . -iname "*.py" > $CSF
+    pycscope -i $CSF
+
+else
+
+    echo "ERROR: Unknown language '$1'"
+    exit 1
+
+fi
+
+ctags --fields=+i -n -R -L $CSF -f $TAGS
+cqmakedb -s $DB -c $CSO -t $TAGS -p
+
