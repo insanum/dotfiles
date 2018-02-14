@@ -679,6 +679,11 @@ nmap <Leader>fc :%foldclose!<CR>
 "set tags=./.tags,./tags,tags
 
 function! CodeQuery(option, query)
+  let cqdb=findfile("codequery.db", getcwd().";$HOME")
+  if empty(cqdb)
+    echo "Failed to find 'codequery.db'!"
+    return
+  endif
   let awk_cmd = '{
     \   x = $1; $1 = "";
     \   y = $2; $2 = "";
@@ -688,7 +693,7 @@ function! CodeQuery(option, query)
     \   printf "\033[35m%s\033[0m:\033[32m%s\033[0m \033[31m%s\033[0m%s\n", z[1], z[2], x, $0;
     \ }'
   let opts = {
-    \   'source':  "cqsearch -s codequery.db -u -p " . a:option . " -t " . a:query . " | awk '" .   awk_cmd . "'",
+    \   'source':  "cqsearch -s " . cqdb . " -u -p " . a:option . " -t " . a:query . " | awk '" .   awk_cmd . "'",
     \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0' ]
     \ }
   function! opts.sink(lines)

@@ -16,7 +16,8 @@ if [[ $1 == c ]]; then
     find . -iname "*.c"    > $CSF
     find . -iname "*.cpp" >> $CSF
     find . -iname "*.cxx" >> $CSF
-    find . -iname "*.cc " >> $CSF
+    find . -iname "*.cc"  >> $CSF
+    find . -iname "*.cu"  >> $CSF
     find . -iname "*.h"   >> $CSF
     find . -iname "*.hpp" >> $CSF
     find . -iname "*.hxx" >> $CSF
