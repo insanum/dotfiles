@@ -5,50 +5,57 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 
-#DB=`basename "$PWD"`.db
-DB=codequery.db
-CSF=.cscope.files
-CSO=.cscope.out
-TAGS=.tags
+GIT_DIR=`basename $(git rev-parse --show-toplevel 2> /dev/null)`
+GIT_BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
+
+DB_DIR=${HOME}/codequery/${HOSTNAME}/${GIT_DIR}/${GIT_BRANCH}
+mkdir -p $DB_DIR
+
+CQ_DB=${DB_DIR}/codequery.db
+CS_FILES=${DB_DIR}/cscope.files
+CS_OUT=${DB_DIR}/cscope.out
+TAGS=${DB_DIR}/tags
+
+# Find files from the current directory under a Git repo...
 
 if [[ $1 == c ]]; then
 
-    find . -iname "*.c"    > $CSF
-    find . -iname "*.cpp" >> $CSF
-    find . -iname "*.cxx" >> $CSF
-    find . -iname "*.cc"  >> $CSF
-    find . -iname "*.cu"  >> $CSF
-    find . -iname "*.h"   >> $CSF
-    find . -iname "*.hpp" >> $CSF
-    find . -iname "*.hxx" >> $CSF
-    find . -iname "*.hh " >> $CSF
+    find . -iname "*.c"    > $CS_FILES
+    find . -iname "*.cpp" >> $CS_FILES
+    find . -iname "*.cxx" >> $CS_FILES
+    find . -iname "*.cc"  >> $CS_FILES
+    find . -iname "*.cu"  >> $CS_FILES
+    find . -iname "*.h"   >> $CS_FILES
+    find . -iname "*.hpp" >> $CS_FILES
+    find . -iname "*.hxx" >> $CS_FILES
+    find . -iname "*.hh " >> $CS_FILES
 
     # [-q] enable fast symbol lookup (creates two more files and good for large projects)
     # [-k] kernel mode, do not include the default include directory (/usr/include)
     # [-c] only use ASCII data in the output and don't compress the data
     # [-f] output filename (default: cscope.out)
     # [-i] input filename containing list of files (default: cscope.files)
-    cscope -c -b -i $CSF -f $CSO
+    cscope -c -b -i $CS_FILES -f $CS_OUT
 
 elif  [[ $1 == js ]]; then
 
-    find . -iname "*.js" > $CSF
+    find . -iname "*.js" > $CS_FILES
     starscope -e cscope
 
 elif  [[ $1 == go ]]; then
 
-    find . -iname "*.go" > $CSF
+    find . -iname "*.go" > $CS_FILES
     starscope -e cscope
 
 elif  [[ $1 == rb ]]; then
 
-    find . -iname "*.rb" > $CSF
+    find . -iname "*.rb" > $CS_FILES
     starscope -e cscope
 
 elif  [[ $1 == py ]]; then
 
-    find . -iname "*.py" > $CSF
-    pycscope -i $CSF
+    find . -iname "*.py" > $CS_FILES
+    pycscope -i $CS_FILES
 
 else
 
@@ -57,6 +64,6 @@ else
 
 fi
 
-ctags --fields=+i -n -R -L $CSF -f $TAGS
-cqmakedb -s $DB -c $CSO -t $TAGS -p
+ctags --fields=+i -n -R -L $CS_FILES -f $TAGS
+cqmakedb -s $CQ_DB -c $CS_OUT -t $TAGS -p
 

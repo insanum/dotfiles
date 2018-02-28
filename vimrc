@@ -679,11 +679,20 @@ nmap <Leader>fc :%foldclose!<CR>
 "set tags=./.tags,./tags,tags
 
 function! CodeQuery(option, query)
-  let cqdb=findfile("codequery.db", getcwd().";$HOME")
+  " Search up the directory path for the database...
+  "let cqdb=findfile("codequery.db", getcwd().";$HOME")
+
+  " Search specific location for the database (hostname/git_repo/branch)...
+  let git_dir=system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
+  let git_dir=system('basename ' . git_dir)[:-2]
+  let git_branch=system('git rev-parse --quiet --abbrev-ref HEAD 2> /dev/null')[:-2]
+  let cqdb='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/codequery.db'
+
   if empty(cqdb)
     echo "Failed to find 'codequery.db'!"
     return
   endif
+
   let awk_cmd = '{
     \   x = $1; $1 = "";
     \   y = $2; $2 = "";
