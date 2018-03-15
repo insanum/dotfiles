@@ -30,6 +30,10 @@ if [[ $1 == c ]]; then
     find . -iname "*.hxx" >> $CS_FILES
     find . -iname "*.hh " >> $CS_FILES
 
+    # XXX modify this to an "exclude" list passed on the command line
+    grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
+    mv -f ${CS_FILES}.new $CS_FILES
+
     # [-q] enable fast symbol lookup (creates two more files and good for large projects)
     # [-k] kernel mode, do not include the default include directory (/usr/include)
     # [-c] only use ASCII data in the output and don't compress the data
@@ -65,5 +69,5 @@ else
 fi
 
 ctags --fields=+i -n -R -L $CS_FILES -f $TAGS
-cqmakedb -s $CQ_DB -c $CS_OUT -t $TAGS -p
+cqmakedb -d -s $CQ_DB -c $CS_OUT -t $TAGS -p
 

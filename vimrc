@@ -703,13 +703,29 @@ function! CodeQuery(option, query)
     \ }'
   let opts = {
     \   'source':  "cqsearch -s " . cqdb . " -u -p " . a:option . " -t " . a:query . " | awk '" .   awk_cmd . "'",
-    \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0' ]
+    \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0', '--expect=ctrl-v,ctrl-s,ctrl-t,enter,ctrl-c' ]
     \ }
   function! opts.sink(lines)
-    let data = split(a:lines)
-    let file = split(data[0], ":")
-    execute 'e ' . '+' . file[1] . ' ' . file[0]
+    let l:key = remove(a:lines, 0)
+    let l:line = remove(a:lines, 0)
+
+    let l:data = split(l:line)
+    let l:file = split(l:data[0], ":")
+    let l:args = '+' . l:file[1] . ' ' . l:file[0]
+
+    if l:key == 'ctrl-c'
+        return
+    elseif l:key == 'ctrl-v'
+      execute 'vsplit ' . l:args
+    elseif l:key == 'ctrl-s'
+      execute 'split ' . l:args
+    elseif l:key == 'ctrl-t'
+      execute 'tab split ' . l:args
+    else
+      execute 'e ' . l:args
+    endif
   endfunction
+  let opts['sink*'] = remove(opts, 'sink')
   call fzf#run(fzf#wrap(opts))
 endfunction
 
