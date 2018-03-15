@@ -28,6 +28,7 @@ if [[ $OSTYPE =~ freebsd || $OSTYPE == linux-gnu ]]; then
 fi
 
 if [[ $HOSTNAME =~ lvn || $HOSTNAME =~ xl- ]]; then
+    export LANG=en_US.UTF-8
     source /tools/bin/common.profile
 fi
 
