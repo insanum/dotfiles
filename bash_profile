@@ -27,6 +27,10 @@ if [[ $OSTYPE =~ freebsd || $OSTYPE == linux-gnu ]]; then
     source /etc/profile
 fi
 
+if [[ $HOSTNAME =~ lvn || $HOSTNAME =~ xl- ]]; then
+    source /tools/bin/common.profile
+fi
+
 if [[ -d "$HOME/.bin" ]]; then
     PATH=$PATH:$HOME/.bin
     for d in `ls "$HOME/.bin/"`; do
