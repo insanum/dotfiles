@@ -1,0 +1,61 @@
+#!/bin/bash
+
+set -e
+set -x
+REL_DIR=$1
+
+if [[ ! -d $REL_DIR ]]; then
+    echo "Invalid release directory!"
+    exit
+fi
+
+OLDDIR=$PWD
+
+# bnxt_en/bnxt_re driver
+
+cd ${REL_DIR}/Linux_Driver
+VERS=`echo netxtreme-bnxt_en-*.tar.gz | sed 's/netxtreme-bnxt_en-\(.*\).tar.gz/\1/'`
+tar -zxvf netxtreme-bnxt_en-${VERS}.tar.gz
+cd netxtreme-bnxt_en-${VERS}
+make clean
+make
+sudo make install
+sudo update-initramfs -u
+cd ${OLDDIR}
+#rm -rf netxtreme-bnxt_en-${VERS}
+
+# libbnxt_re library
+
+cd ${REL_DIR}/Linux_Driver/RoCE_Lib
+#sudo apt install -y automake autoconf libtool
+VERS=`echo libbnxt_re-*.tar.gz | sed 's/libbnxt_re-\(.*\).tar.gz/\1/'`
+tar -zxvf libbnxt_re-${VERS}.tar.gz
+cd libbnxt_re-${VERS}
+#sh autogen.sh
+if [[ -f Makefile ]]; then
+    make distclean
+fi
+./configure
+make
+sudo make install
+egrep -q "^/usr/local/lib$" /etc/ld.so.conf
+if [[ $? -ne 0 ]]; then
+    sudo bash -c "echo /usr/local/lib >> /etc/ld.so.conf"
+    sudo ldconfig
+fi
+if [[ ! -e /etc/libibverbs.d ]]; then
+    sudo ln -s /usr/local/etc/libibverbs.d /etc/libibverbs.d
+fi
+sudo cp bnxt_re.driver /etc/libibverbs.d/
+cd ${OLDDIR}
+#rm -rf libbnxt_re-${VERS}
+
+# firmware update
+
+cd ${REL_DIR}/Board_Pkg_files
+chmod 775 ../bnxtnvm/Linux/bnxtnvm
+sudo ../bnxtnvm/Linux/bnxtnvm install *
+cd ${OLDDIR}
+
+echo "Ready to reboot!"
+

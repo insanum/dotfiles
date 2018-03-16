@@ -1,0 +1,29 @@
+#!/bin/bash
+
+F1=/tmp/roce_debug_1
+F2=/tmp/roce_debug_2
+
+if [[ -n "$1" ]]; then
+    /bin/rm -f $F1
+fi
+
+touch $F2
+
+LCDIAG=lcdiag-4.5.37-x86_64.k406
+
+echo "---------- $$ GRC RXP/PA ----------" >> $F2
+cd $LCDIAG
+sudo ./load.sh -dev 1 -eval "grc_dump RXP ; grc_dump PA" >> $F2
+cd $OLDPWD
+
+echo "---------- $$ BNXT_RE DBG ---------" >> $F2
+sudo cat /sys/kernel/debug/bnxt_re/info >> $F2
+
+if [[ ! -f $F1 ]]; then
+    /bin/cp $F2 $F1
+fi
+
+diff $F1 $F2
+
+/bin/mv -f $F2 $F1
+
