@@ -1,5 +1,7 @@
 #!/bin/bash
 
+LCDIAG=lcdiag-4.5.37-x86_64.k406
+
 F1=/tmp/roce_debug_1
 F2=/tmp/roce_debug_2
 
@@ -8,8 +10,6 @@ if [[ -n "$1" ]]; then
 fi
 
 touch $F2
-
-LCDIAG=lcdiag-4.5.37-x86_64.k406
 
 echo "---------- $$ GRC RXP/PA ----------" >> $F2
 cd $LCDIAG
@@ -24,6 +24,82 @@ if [[ ! -f $F1 ]]; then
 fi
 
 diff $F1 $F2
+
+F1_PORT_STATS=""
+F2_PORT_STATS=""
+ERR_STATS=$(cat $F1 | sed -n '/to_retransmits/,/^$/p' | awk '{ print $1 }')
+
+# args: $1=<search term> $2=<value position> $3=<base[16|10]> $4=<port>
+function scrape() {
+    if [[ $4 -ge 0 ]]; then
+        VAL1=$(echo "$F1_PORT_STATS" | grep "$1" | awk -v col=$2 '{ print $col }')
+        VAL2=$(echo "$F2_PORT_STATS" | grep "$1" | awk -v col=$2 '{ print $col }')
+    else
+        VAL1=$(grep "$1" $F1 | awk -v col=$2 '{ print $col }')
+        VAL2=$(grep "$1" $F2 | awk -v col=$2 '{ print $col }')
+    fi
+    echo "ibase=$3; ${VAL2^^} - ${VAL1^^}" | bc -l
+}
+
+RXP_PKTS=$(scrape eop_pkt_cnt_ls 2 16 -1)
+RXP_DROPS=$(scrape discard_pkt_free_cnt_ls 2 16 -1)
+
+echo "RXP"
+echo "  Rx Pkts:    $RXP_PKTS"
+echo "  Rx Drops:   $RXP_DROPS"
+
+for port in $(ibv_devinfo | grep hca_id | awk '{ print $2 }' | sort); do
+    echo "[$port]"
+
+    F1_PORT_STATS=$(cat $F1 | sed -n "/IBDEV ${port}/,/^\$/p")
+    F2_PORT_STATS=$(cat $F2 | sed -n "/IBDEV ${port}/,/^\$/p")
+
+    ROCE_RX_PKTS=$(scrape "^\s*Rx Pkts:" 3 10 $port)
+    ROCE_RX_BYTES=$(scrape "^\s*Rx Bytes:" 3 10 $port)
+    ROCE_RX_CNP=$(scrape "^\s*CNP Rx Pkts:" 4 10 $port)
+    ROCE_TX_PKTS=$(scrape "^\s*Tx Pkts:" 3 10 $port)
+    ROCE_TX_BYTES=$(scrape "^\s*Tx Bytes:" 3 10 $port)
+    ROCE_TX_CNP=$(scrape "^\s*CNP Tx Pkts:" 4 10 $port)
+
+    if [[ $ROCE_TX_PKTS -gt 0 && $ROCE_RX_CNP -gt 0 ]]; then
+        ROCE_CNP_RATIO_RX=$(echo "scale=4; ($ROCE_RX_CNP / $ROCE_TX_PKTS) * 100" | bc -l)
+    fi
+
+    if [[ $ROCE_RX_PKTS -gt 0 && $ROCE_TX_CNP -gt 0 ]]; then
+        ROCE_CNP_RATIO_TX=$(echo "scale=4; ($ROCE_TX_CNP / $ROCE_RX_PKTS) * 100" | bc -l)
+    fi
+
+    echo "  RoCE Rx"
+    echo "    Rx Pkts:  $ROCE_RX_PKTS"
+    echo "    Rx Bytes: $ROCE_RX_BYTES"
+
+    echo "  RoCE Tx"
+    echo "    Tx Pkts:  $ROCE_TX_PKTS"
+    echo "    Tx Bytes: $ROCE_TX_BYTES"
+
+    echo "  CNP"
+    echo "    Rx CNPs:  $ROCE_RX_CNP $ROCE_CNP_RATIO_RX"
+    echo "    Tx CNPs:  $ROCE_TX_CNP $ROCE_CNP_RATIO_TX"
+
+    # dump any non-zero error stats
+    ERRORS=""
+    VAL=$(scrape "^\s*Recoverable Errors:" 3 10 $port)
+    if [[ $VAL -gt 0 ]]; then
+        ERRORS+=$(printf "    %-23s %d" "Recoverable:" $VAL)
+        ERRORS+="\n"
+    fi
+    for ERR in $ERR_STATS; do
+        VAL=$(scrape "$ERR" 2 10 $port)
+        if [[ $VAL -gt 0 ]]; then
+            ERRORS+=$(printf "    %-23s %d" "$ERR" $VAL)
+            ERRORS+="\n"
+        fi
+    done
+    if [[ -n "$ERRORS" ]]; then
+        echo "  RoCE Errors"
+        echo -e "${ERRORS}"
+    fi
+done
 
 /bin/mv -f $F2 $F1
 
