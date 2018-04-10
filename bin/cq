@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ -z "$1" ]]; then
-    echo "ERROR: Must specify language [ c | js | go | rb | py ]"
+    echo "ERROR: Must specify language [ cscope | c | js | go | rb | py ]"
     exit 1
 fi
 
@@ -18,17 +18,38 @@ TAGS=${DB_DIR}/tags
 
 # Find files from the current directory under a Git repo...
 
-if [[ $1 == c ]]; then
+if [[ $1 == cscope ]]; then
 
-    find . -iname "*.c"    > $CS_FILES
-    find . -iname "*.cpp" >> $CS_FILES
-    find . -iname "*.cxx" >> $CS_FILES
-    find . -iname "*.cc"  >> $CS_FILES
-    find . -iname "*.cu"  >> $CS_FILES
-    find . -iname "*.h"   >> $CS_FILES
-    find . -iname "*.hpp" >> $CS_FILES
-    find . -iname "*.hxx" >> $CS_FILES
-    find . -iname "*.hh " >> $CS_FILES
+    find $PWD -iname "*.c"    > $CS_FILES
+    find $PWD -iname "*.cpp" >> $CS_FILES
+    find $PWD -iname "*.cxx" >> $CS_FILES
+    find $PWD -iname "*.cc"  >> $CS_FILES
+    find $PWD -iname "*.cu"  >> $CS_FILES
+    find $PWD -iname "*.h"   >> $CS_FILES
+    find $PWD -iname "*.hpp" >> $CS_FILES
+    find $PWD -iname "*.hxx" >> $CS_FILES
+    find $PWD -iname "*.hh " >> $CS_FILES
+
+    # XXX modify this to an "exclude" list passed on the command line
+    grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
+    mv -f ${CS_FILES}.new $CS_FILES
+
+    # [-k] kernel mode, do not include the default include directory (/usr/include)
+    # [-f] output filename (default: cscope.out)
+    # [-i] input filename containing list of files (default: cscope.files)
+    cscope -k -b -i $CS_FILES -f $CS_OUT
+
+elif [[ $1 == c ]]; then
+
+    find $PWD -iname "*.c"    > $CS_FILES
+    find $PWD -iname "*.cpp" >> $CS_FILES
+    find $PWD -iname "*.cxx" >> $CS_FILES
+    find $PWD -iname "*.cc"  >> $CS_FILES
+    find $PWD -iname "*.cu"  >> $CS_FILES
+    find $PWD -iname "*.h"   >> $CS_FILES
+    find $PWD -iname "*.hpp" >> $CS_FILES
+    find $PWD -iname "*.hxx" >> $CS_FILES
+    find $PWD -iname "*.hh " >> $CS_FILES
 
     # XXX modify this to an "exclude" list passed on the command line
     grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
@@ -43,22 +64,22 @@ if [[ $1 == c ]]; then
 
 elif  [[ $1 == js ]]; then
 
-    find . -iname "*.js" > $CS_FILES
+    find $PWD -iname "*.js" > $CS_FILES
     starscope -e cscope
 
 elif  [[ $1 == go ]]; then
 
-    find . -iname "*.go" > $CS_FILES
+    find $PWD -iname "*.go" > $CS_FILES
     starscope -e cscope
 
 elif  [[ $1 == rb ]]; then
 
-    find . -iname "*.rb" > $CS_FILES
+    find $PWD -iname "*.rb" > $CS_FILES
     starscope -e cscope
 
 elif  [[ $1 == py ]]; then
 
-    find . -iname "*.py" > $CS_FILES
+    find $PWD -iname "*.py" > $CS_FILES
     pycscope -i $CS_FILES
 
 else
@@ -68,6 +89,8 @@ else
 
 fi
 
-ctags --fields=+i -n -R -L $CS_FILES -f $TAGS
-cqmakedb -d -s $CQ_DB -c $CS_OUT -t $TAGS -p
+if [[ $1 != cscope ]]; then
+    ctags --fields=+i -n -R -L $CS_FILES -f $TAGS
+    cqmakedb -d -s $CQ_DB -c $CS_OUT -t $TAGS -p
+fi
 

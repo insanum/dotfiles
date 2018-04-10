@@ -671,38 +671,36 @@ nmap <Leader>fc :%foldclose!<CR>
 "
 "endif
 
-" CSCOPE/CTAGS (END) ----------------------------------- }}}
-
-" CODEQUERY -------------------------------------------- {{{
-
-" location of tag files
-"set tags=./.tags,./tags,tags
-
-function! CodeQuery(option, query)
+function! Cscope(option, query)
   " Search up the directory path for the database...
-  "let cqdb=findfile("codequery.db", getcwd().";$HOME")
+  "let csdb=findfile("cscope.out", getcwd().";$HOME")
+  "let csf=findfile("cscope.files", getcwd().";$HOME")
 
   " Search specific location for the database (hostname/git_repo/branch)...
   let git_dir=system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
   let git_dir=system('basename ' . git_dir)[:-2]
   let git_branch=system('git rev-parse --quiet --abbrev-ref HEAD 2> /dev/null')[:-2]
-  let cqdb='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/codequery.db'
+  let csdb='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/cscope.out'
+  let csf='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/cscope.files'
 
-  if empty(cqdb)
-    echo "Failed to find 'codequery.db'!"
+  if empty(csdb)
+    echo "Failed to find 'cscope.out'!"
+    return
+  endif
+
+  if empty(csf)
+    echo "Failed to find 'cscope.files'!"
     return
   endif
 
   let awk_cmd = '{
     \   x = $1; $1 = "";
     \   y = $2; $2 = "";
-    \   split(y, z, ":");
-    \   sub(/\$HOME/, ENVIRON["HOME"], z[1]);
-    \   sub(ENVIRON["PWD"] "/", "", z[1]);
-    \   printf "\033[35m%s\033[0m:\033[32m%s\033[0m \033[31m%s\033[0m%s\n", z[1], z[2], x, $0;
+    \   z = $3; $3 = "";
+    \   printf "\033[35m%s\033[0m:\033[32m%s\033[0m %s\n", x, z, $0;
     \ }'
   let opts = {
-    \   'source':  "cqsearch -s " . cqdb . " -u -p " . a:option . " -t " . a:query . " | awk '" .   awk_cmd . "'",
+    \   'source':  "cscope -f " . csdb . " -i " . csf . " -k -L -" . a:option . " " . a:query . " | awk '" .   awk_cmd . "'",
     \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0', '--expect=ctrl-v,ctrl-s,ctrl-t,enter,ctrl-c' ]
     \ }
   function! opts.sink(lines)
@@ -729,77 +727,207 @@ function! CodeQuery(option, query)
   call fzf#run(fzf#wrap(opts))
 endfunction
 
-function! CodeQueryQuery(option)
+function! CscopeQuery(option)
   call inputsave()
-  if a:option == '1'
+  if a:option == '0'
     let query = input('(s) Symbol: ')
+  elseif a:option == '1'
+    let query = input('(g) Global definitions: ')
   elseif a:option == '2'
-    let query = input('(g) Function or macro definition: ')
-  elseif a:option == '3'
-    let query = input('(x) Class or struct: ')
-  elseif a:option == '4'
-    let query = input('(i) Files including this file: ')
-  elseif a:option == '5'
-    let query = input('(f) Full file path: ')
-  elseif a:option == '6'
-    let query = input('(c) Functions calling this function: ')
-  elseif a:option == '7'
     let query = input('(d) Functions called by this function: ')
+  elseif a:option == '3'
+    let query = input('(c) Functions calling this function: ')
+  elseif a:option == '4'
+    let query = input('(t) Text search: ')
+  elseif a:option == '6'
+    let query = input('(e) Egrep pattern: ')
+  elseif a:option == '7'
+    let query = input('(f) Full file path: ')
   elseif a:option == '8'
-    let query = input('(D) Calls of this function or macro: ')
-  elseif a:option == '13'
-    let query = input('(t) Functions or macros inside this file: ')
+    let query = input('(i) Files including this file: ')
+  elseif a:option == '9'
+    let query = input('(a) Places where value is assigned: ')
   else
     echo "Invalid option!"
     return
   endif
   call inputrestore()
   if query != ""
-    call CodeQuery(a:option, query)
+    call Cscope(a:option, query)
   else
     echom "Cancelled Search!"
   endif
 endfunction
 
-function! CodeQueryHelp()
+function! CscopeHelp()
     echo ' '
     echo '     <C-c><char> - search word under the cursor'
     echo '<C-c><C-c><char> - prompt for search string'
     echo ' '
     echo '(s) Symbol'
-    echo '(g) Function or macro definition'
-    echo '(x) Class or struct'
-    echo '(i) Files including this file'
-    echo '(f) Full file path'
-    echo '(c) Functions calling this function'
+    echo '(g) Global definitions'
     echo '(d) Functions called by this function'
-    echo '(D) Calls of this function or macro'
-    echo '(t) Functions or macros inside this file'
+    echo '(c) Functions calling this function'
+    echo '(t) Text search'
+    echo '(e) Egrep pattern'
+    echo '(f) Full file path'
+    echo '(i) Files including this file'
+    echo '(a) Places where value is assigned'
     echo ' '
 endfunction
 
-nmap <C-c>h :call CodeQueryHelp()<CR>
-nmap <C-c><C-c>h :call CodeQueryHelp()<CR>
+nmap <C-c>h :call CscopeHelp()<CR>
+nmap <C-c><C-c>h :call CscopeHelp()<CR>
 
-nmap <C-c>s :call CodeQuery('1', expand('<cword>'))<CR>
-nmap <C-c>g :call CodeQuery('2', expand('<cword>'))<CR>
-nmap <C-c>x :call CodeQuery('3', expand('<cword>'))<CR>
-nmap <C-c>i :call CodeQuery('4', expand('<cword>'))<CR>
-nmap <C-c>f :call CodeQuery('5', expand('<cword>'))<CR>
-nmap <C-c>c :call CodeQuery('6', expand('<cword>'))<CR>
-nmap <C-c>d :call CodeQuery('7', expand('<cword>'))<CR>
-nmap <C-c>D :call CodeQuery('8', expand('<cword>'))<CR>
-nmap <C-c>t :call CodeQuery('13', expand('<cword>'))<CR>
+nmap <C-c>s :call Cscope('0', expand('<cword>'))<CR>
+nmap <C-c>g :call Cscope('1', expand('<cword>'))<CR>
+nmap <C-c>d :call Cscope('2', expand('<cword>'))<CR>
+nmap <C-c>c :call Cscope('3', expand('<cword>'))<CR>
+nmap <C-c>t :call Cscope('4', expand('<cword>'))<CR>
+nmap <C-c>e :call Cscope('6', expand('<cword>'))<CR>
+nmap <C-c>f :call Cscope('7', expand('<cword>'))<CR>
+nmap <C-c>i :call Cscope('8', expand('<cword>'))<CR>
+nmap <C-c>a :call Cscope('9', expand('<cword>'))<CR>
 
-nmap <C-c><C-c>s :call CodeQueryQuery('1')<CR>
-nmap <C-c><C-c>g :call CodeQueryQuery('2')<CR>
-nmap <C-c><C-c>x :call CodeQueryQuery('3')<CR>
-nmap <C-c><C-c>i :call CodeQueryQuery('4')<CR>
-nmap <C-c><C-c>f :call CodeQueryQuery('5')<CR>
-nmap <C-c><C-c>c :call CodeQueryQuery('6')<CR>
-nmap <C-c><C-c>d :call CodeQueryQuery('7')<CR>
-nmap <C-c><C-c>D :call CodeQueryQuery('8')<CR>
-nmap <C-c><C-c>t :call CodeQueryQuery('13')<CR>
+nmap <C-c><C-c>s :call CscopeQuery('0')<CR>
+nmap <C-c><C-c>g :call CscopeQuery('1')<CR>
+nmap <C-c><C-c>d :call CscopeQuery('2')<CR>
+nmap <C-c><C-c>c :call CscopeQuery('3')<CR>
+nmap <C-c><C-c>t :call CscopeQuery('4')<CR>
+nmap <C-c><C-c>e :call CscopeQuery('6')<CR>
+nmap <C-c><C-c>f :call CscopeQuery('7')<CR>
+nmap <C-c><C-c>i :call CscopeQuery('8')<CR>
+nmap <C-c><C-c>a :call CscopeQuery('9')<CR>
+
+" CSCOPE/CTAGS (END) ----------------------------------- }}}
+
+" CODEQUERY -------------------------------------------- {{{
+
+" location of tag files
+"set tags=./.tags,./tags,tags
+
+"function! CodeQuery(option, query)
+"  " Search up the directory path for the database...
+"  "let cqdb=findfile("codequery.db", getcwd().";$HOME")
+"
+"  " Search specific location for the database (hostname/git_repo/branch)...
+"  let git_dir=system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
+"  let git_dir=system('basename ' . git_dir)[:-2]
+"  let git_branch=system('git rev-parse --quiet --abbrev-ref HEAD 2> /dev/null')[:-2]
+"  let cqdb='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/codequery.db'
+"
+"  if empty(cqdb)
+"    echo "Failed to find 'codequery.db'!"
+"    return
+"  endif
+"
+"  let awk_cmd = '{
+"    \   x = $1; $1 = "";
+"    \   y = $2; $2 = "";
+"    \   split(y, z, ":");
+"    \   sub(/\$HOME/, ENVIRON["HOME"], z[1]);
+"    \   sub(ENVIRON["PWD"] "/", "", z[1]);
+"    \   printf "\033[35m%s\033[0m:\033[32m%s\033[0m \033[31m%s\033[0m%s\n", z[1], z[2], x, $0;
+"    \ }'
+"  let opts = {
+"    \   'source':  "cqsearch -s " . cqdb . " -u -p " . a:option . " -t " . a:query . " | awk '" .   awk_cmd . "'",
+"    \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0', '--expect=ctrl-v,ctrl-s,ctrl-t,enter,ctrl-c' ]
+"    \ }
+"  function! opts.sink(lines)
+"    let l:key = remove(a:lines, 0)
+"    let l:line = remove(a:lines, 0)
+"
+"    let l:data = split(l:line)
+"    let l:file = split(l:data[0], ":")
+"    let l:args = '+' . l:file[1] . ' ' . l:file[0]
+"
+"    if l:key == 'ctrl-c'
+"        return
+"    elseif l:key == 'ctrl-v'
+"      execute 'vsplit ' . l:args
+"    elseif l:key == 'ctrl-s'
+"      execute 'split ' . l:args
+"    elseif l:key == 'ctrl-t'
+"      execute 'tab split ' . l:args
+"    else
+"      execute 'e ' . l:args
+"    endif
+"  endfunction
+"  let opts['sink*'] = remove(opts, 'sink')
+"  call fzf#run(fzf#wrap(opts))
+"endfunction
+"
+"function! CodeQueryQuery(option)
+"  call inputsave()
+"  if a:option == '1'
+"    let query = input('(s) Symbol: ')
+"  elseif a:option == '2'
+"    let query = input('(g) Function or macro definition: ')
+"  elseif a:option == '3'
+"    let query = input('(x) Class or struct: ')
+"  elseif a:option == '4'
+"    let query = input('(i) Files including this file: ')
+"  elseif a:option == '5'
+"    let query = input('(f) Full file path: ')
+"  elseif a:option == '6'
+"    let query = input('(c) Functions calling this function: ')
+"  elseif a:option == '7'
+"    let query = input('(d) Functions called by this function: ')
+"  elseif a:option == '8'
+"    let query = input('(D) Calls of this function or macro: ')
+"  elseif a:option == '13'
+"    let query = input('(t) Functions or macros inside this file: ')
+"  else
+"    echo "Invalid option!"
+"    return
+"  endif
+"  call inputrestore()
+"  if query != ""
+"    call CodeQuery(a:option, query)
+"  else
+"    echom "Cancelled Search!"
+"  endif
+"endfunction
+"
+"function! CodeQueryHelp()
+"    echo ' '
+"    echo '     <C-c><char> - search word under the cursor'
+"    echo '<C-c><C-c><char> - prompt for search string'
+"    echo ' '
+"    echo '(s) Symbol'
+"    echo '(g) Function or macro definition'
+"    echo '(x) Class or struct'
+"    echo '(i) Files including this file'
+"    echo '(f) Full file path'
+"    echo '(c) Functions calling this function'
+"    echo '(d) Functions called by this function'
+"    echo '(D) Calls of this function or macro'
+"    echo '(t) Functions or macros inside this file'
+"    echo ' '
+"endfunction
+"
+"nmap <C-c>h :call CodeQueryHelp()<CR>
+"nmap <C-c><C-c>h :call CodeQueryHelp()<CR>
+"
+"nmap <C-c>s :call CodeQuery('1', expand('<cword>'))<CR>
+"nmap <C-c>g :call CodeQuery('2', expand('<cword>'))<CR>
+"nmap <C-c>x :call CodeQuery('3', expand('<cword>'))<CR>
+"nmap <C-c>i :call CodeQuery('4', expand('<cword>'))<CR>
+"nmap <C-c>f :call CodeQuery('5', expand('<cword>'))<CR>
+"nmap <C-c>c :call CodeQuery('6', expand('<cword>'))<CR>
+"nmap <C-c>d :call CodeQuery('7', expand('<cword>'))<CR>
+"nmap <C-c>D :call CodeQuery('8', expand('<cword>'))<CR>
+"nmap <C-c>t :call CodeQuery('13', expand('<cword>'))<CR>
+"
+"nmap <C-c><C-c>s :call CodeQueryQuery('1')<CR>
+"nmap <C-c><C-c>g :call CodeQueryQuery('2')<CR>
+"nmap <C-c><C-c>x :call CodeQueryQuery('3')<CR>
+"nmap <C-c><C-c>i :call CodeQueryQuery('4')<CR>
+"nmap <C-c><C-c>f :call CodeQueryQuery('5')<CR>
+"nmap <C-c><C-c>c :call CodeQueryQuery('6')<CR>
+"nmap <C-c><C-c>d :call CodeQueryQuery('7')<CR>
+"nmap <C-c><C-c>D :call CodeQueryQuery('8')<CR>
+"nmap <C-c><C-c>t :call CodeQueryQuery('13')<CR>
 
 " CODEQUERY (END) -------------------------------------- }}}
 
