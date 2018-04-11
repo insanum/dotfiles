@@ -545,162 +545,12 @@ nmap <Leader>fc :%foldclose!<CR>
 
 " CSCOPE/CTAGS ----------------------------------------- {{{
 
-"" location of tag files
-""set tags=./tags,tags
-"
-"if has("cscope")
-"
-"    let usequickfix=1
-"
-"    if s:ostype =~ "solaris"
-"        set csprg=/opt/csw/bin/cscope
-"    elseif s:ostype =~ "freebsd" || s:ostype =~ "darwin17"
-"        set csprg=/usr/local/bin/cscope
-"    else
-"        set csprg=/usr/bin/cscope
-"    endif
-"    set cst
-"    set csto=0
-"    set nocsverb
-"
-"    let git_branch=system('git rev-parse --quiet --abbrev-ref HEAD 2> /dev/null')
-"    let module=""
-"
-"    if ($PWD =~ $HOME . '/work/git/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-"        let module = substitute($PWD, $HOME . '/work/git/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"    elseif ($PWD =~ $HOME . '/work/solaris_source/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-"        let module = substitute($PWD, $HOME . '/work/solaris_source/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"    elseif ($PWD =~ $HOME . '/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-"        let module = substitute($PWD, $HOME . '/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"    elseif ($PWD =~ $HOME . '/vss/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-"        let module = substitute($PWD, $HOME . '/vss/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"    elseif ($PWD =~ '^.*temp/edavis/work/[0-9A-Za-z_.\-]*\($\|/.*$\)')
-"        let module = substitute($PWD, '^.*temp/edavis/work/\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"    elseif ($PWD =~ '^.*temp/edavis/kame[0-9]*\($\|/.*$\)')
-"        let module = substitute($PWD, '^.*temp/edavis/\(kame[0-9]*\)\($\|/.*$\)', '\1', '')
-"    elseif ($PWD =~ '^/usr/src/sys') " FreeBSD
-"        let module = 'sys'
-"    elseif ($PWD =~ $HOME . '/arch/git/iproc')
-"        let module = '/arch/git/iproc/' . git_branch
-"    elseif ($PWD =~ $HOME . '/arch/git/netxtreme')
-"        " ccx-sw-arch: netxtreme, netxtreme_a1, netxtreme_ovs
-"        let nxgit = substitute($PWD, $HOME . '/arch/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"        let module = '/arch/git/netxtreme'.nxgit.'/' . git_branch
-"    elseif ($PWD =~ '/mnt/work/git/netxtreme')
-"        " local: netxtreme, netxtreme_a1, netxtreme_ovs
-"        let nxgit = substitute($PWD, '/mnt/work/git/netxtreme\([0-9A-Za-z_.\-]*\)\($\|/.*$\)', '\1', '')
-"        let module = '/mnt/work/git/netxtreme'.nxgit.'/' . git_branch
-"    elseif ($PWD =~ $HOME . '/arch/git/arch')
-"        let module = '/arch/git/arch/' . git_branch
-"    endif
-"
-"    let mtags=""
-"    for m in split(module)
-"        execute "cscope add $HOME/cscope/" . hostname() . m . "/cscope.out"
-"        let mtags=mtags . "$HOME/cscope/" . hostname() . m . "/TAGS,"
-"    endfor
-"    execute "set tags=" . mtags
-"
-"    "setlocal omnifunc=ccomplete#Complete
-"
-"    let cs_tab="tab"
-"    let cs_split="split"
-"    let cs_vsplit="vsplit"
-"    let cs_none="none"
-"
-"    function! s:cscopeCmd(win, type, tag)
-"        if a:win == g:cs_tab
-"            tabnew
-"            let cmd="cscope"
-"        elseif a:win == g:cs_split
-"            let cmd="scscope"
-"        elseif a:win == g:cs_vsplit
-"            let cmd="vert scscope"
-"        else " a:win == g:cs_none
-"            let cmd="cscope"
-"        endif
-"        execute cmd "find" a:type a:tag
-"    endfunction
-"
-"    command! -nargs=1 -complete=command -complete=tag F  call <SID>cscopeCmd(cs_split,  "g", <f-args>)
-"    command! -nargs=1 -complete=command -complete=tag FV call <SID>cscopeCmd(cs_vsplit, "g", <f-args>)
-"    command! -nargs=1 -complete=command -complete=tag FT call <SID>cscopeCmd(cs_tab,    "g", <f-args>)
-"
-"    set csverb
-"
-"    " :cs find ? <symbol|pattern|file>
-"    " s  symbol   - find all references to the symbol under cursor
-"    " g  global   - find global definitions of the symbol under cursor
-"    " d  called   - find all functions that the function under cursor calls
-"    " c  calls    - find all functions calling the function under cursor
-"    " t  text     - find all instances of the text under cursor
-"    " e  egrep    - find the egrep pattern
-"    " f  file     - find the file under cursor
-"    " i  includes - find files that include the filename under cursor
-"
-"    set cscopequickfix=s-,d-,c-,t-,e-,i-
-"
-"    nmap <C-c>s      :call <SID>cscopeCmd(cs_split, "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"    nmap <C-c>S      :call <SID>cscopeCmd(cs_tab,   "s", expand("<cword>"))<CR>,m<C-W>k
-"    nmap <C-c><C-c>s :call <SID>cscopeCmd(cs_none,  "s", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"
-"    nmap <C-c>d      :call <SID>cscopeCmd(cs_split, "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"    nmap <C-c>D      :call <SID>cscopeCmd(cs_tab,   "d", expand("<cword>"))<CR>,m<C-W>k
-"    nmap <C-c><C-c>d :call <SID>cscopeCmd(cs_none,  "d", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"
-"    nmap <C-c>c      :call <SID>cscopeCmd(cs_split, "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"    nmap <C-c>C      :call <SID>cscopeCmd(cs_tab,   "c", expand("<cword>"))<CR>,m<C-W>k
-"    nmap <C-c><C-c>c :call <SID>cscopeCmd(cs_none,  "c", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"
-"    nmap <C-c>t      :call <SID>cscopeCmd(cs_split, "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"    nmap <C-c>T      :call <SID>cscopeCmd(cs_tab,   "t", expand("<cword>"))<CR>,m<C-W>k
-"    nmap <C-c><C-c>t :call <SID>cscopeCmd(cs_none,  "t", expand("<cword>"))<CR><C-W>J,m<C-W>k
-"
-"    nmap <C-c>i      :call <SID>cscopeCmd(cs_split, "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
-"    nmap <C-c>I      :call <SID>cscopeCmd(cs_tab,   "i", expand("<cfile>"))<CR>,m<C-W>k
-"    nmap <C-c><C-c>i :call <SID>cscopeCmd(cs_none,  "i", expand("<cfile>"))<CR><C-W>J,m<C-W>k
-"
-"    nmap <C-c>g           :call <SID>cscopeCmd(cs_split,  "g", expand("<cword>"))<CR>
-"    nmap <C-c>G           :call <SID>cscopeCmd(cs_tab,    "g", expand("<cword>"))<CR>
-"    nmap <C-c><C-c>g      :call <SID>cscopeCmd(cs_vsplit, "g", expand("<cword>"))<CR>
-"    nmap <C-c><C-c><C-c>g :call <SID>cscopeCmd(cs_none,   "g", expand("<cword>"))<CR>
-"
-"    nmap <C-c>f      :call <SID>cscopeCmd(cs_split, "f", expand("<cfile>"))<CR>
-"    nmap <C-c>F      :call <SID>cscopeCmd(cs_tab,   "f", expand("<cfile>"))<CR>
-"    nmap <C-c><C-c>f :call <SID>cscopeCmd(cs_none,  "f", expand("<cfile>"))<CR>
-"
-"endif
+" location of tag files
+"set tags=./tags,tags
 
 function! Cscope(option, query)
-  " Search up the directory path for the database...
-  "let csdb=findfile("cscope.out", getcwd().";$HOME")
-  "let csf=findfile("cscope.files", getcwd().";$HOME")
-
-  " Search specific location for the database (hostname/git_repo/branch)...
-  let git_dir=system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
-  let git_dir=system('basename ' . git_dir)[:-2]
-  let git_branch=system('git rev-parse --quiet --abbrev-ref HEAD 2> /dev/null')[:-2]
-  let csdb='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/cscope.out'
-  let csf='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/cscope.files'
-
-  if empty(csdb)
-    echo "Failed to find 'cscope.out'!"
-    return
-  endif
-
-  if empty(csf)
-    echo "Failed to find 'cscope.files'!"
-    return
-  endif
-
-  let awk_cmd = '{
-    \   x = $1; $1 = "";
-    \   y = $2; $2 = "";
-    \   z = $3; $3 = "";
-    \   printf "\033[35m%s\033[0m:\033[32m%s\033[0m %s\n", x, z, $0;
-    \ }'
   let opts = {
-    \   'source':  "cscope -f " . csdb . " -i " . csf . " -k -L -" . a:option . " " . a:query . " | awk '" .   awk_cmd . "'",
+    \   'source':  "cq search cscope " . a:option . " " . a:query,
     \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0', '--expect=ctrl-v,ctrl-s,ctrl-t,enter,ctrl-c' ]
     \ }
   function! opts.sink(lines)
@@ -807,30 +657,8 @@ nmap <C-c><C-c>a :call CscopeQuery('9')<CR>
 "set tags=./.tags,./tags,tags
 
 "function! CodeQuery(option, query)
-"  " Search up the directory path for the database...
-"  "let cqdb=findfile("codequery.db", getcwd().";$HOME")
-"
-"  " Search specific location for the database (hostname/git_repo/branch)...
-"  let git_dir=system('git rev-parse --show-toplevel 2> /dev/null')[:-2]
-"  let git_dir=system('basename ' . git_dir)[:-2]
-"  let git_branch=system('git rev-parse --quiet --abbrev-ref HEAD 2> /dev/null')[:-2]
-"  let cqdb='$HOME/codequery/' . hostname() . '/' . git_dir . '/' . git_branch . '/codequery.db'
-"
-"  if empty(cqdb)
-"    echo "Failed to find 'codequery.db'!"
-"    return
-"  endif
-"
-"  let awk_cmd = '{
-"    \   x = $1; $1 = "";
-"    \   y = $2; $2 = "";
-"    \   split(y, z, ":");
-"    \   sub(/\$HOME/, ENVIRON["HOME"], z[1]);
-"    \   sub(ENVIRON["PWD"] "/", "", z[1]);
-"    \   printf "\033[35m%s\033[0m:\033[32m%s\033[0m \033[31m%s\033[0m%s\n", z[1], z[2], x, $0;
-"    \ }'
 "  let opts = {
-"    \   'source':  "cqsearch -s " . cqdb . " -u -p " . a:option . " -t " . a:query . " | awk '" .   awk_cmd . "'",
+"    \   'source':  "cq search codequery " . a:option . " " . a:query,
 "    \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0', '--expect=ctrl-v,ctrl-s,ctrl-t,enter,ctrl-c' ]
 "    \ }
 "  function! opts.sink(lines)

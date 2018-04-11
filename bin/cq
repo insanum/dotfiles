@@ -1,8 +1,18 @@
 #!/bin/bash
 
-if [[ -z "$1" ]]; then
-    echo "ERROR: Must specify language [ cscope | c | js | go | rb | py ]"
-    exit 1
+function usage() {
+    if [[ -n "$1" ]]; then
+        echo "ERROR: $1"
+    fi
+    echo "Usage: cq [ search | build ] ..."
+    echo "  cq search [ cscope | codequery ] # <symbol>"
+    echo "  cq build cscope"
+    echo "  cq build codequery [ c | js | go | rb | py ]"
+    exit
+}
+
+if [[ -z "$1" || "$1" == "-h" ]]; then
+    usage
 fi
 
 GIT_DIR=`basename $(git rev-parse --show-toplevel 2> /dev/null)`
@@ -16,81 +26,102 @@ CS_FILES=${DB_DIR}/cscope.files
 CS_OUT=${DB_DIR}/cscope.out
 TAGS=${DB_DIR}/tags
 
-# Find files from the current directory under a Git repo...
+function cscope_search() {
+    cscope -f $CS_OUT -i $CS_FILES -k -L -$3 $4 | while read match; do
+        read -r -a elems <<< $match
+        rel_file=$(realpath --relative-to=$PWD ${elems[0]})
+        echo -e "\033[35m${rel_file}\033[0m:\033[32m${elems[2]}\033[0m ${elems[@]:3}"
+    done
+}
 
-if [[ $1 == cscope ]]; then
+function codequery_search() {
+    cqsearch -s $CQ_DB -u -p $3 -t $4 | while read match; do
+        IFS=$' \t' read -r -a elems <<< $match
+        IFS=$' :' read -r -a file_line <<< ${elems[1]}
+        rel_file=$(realpath --relative-to=$PWD ${file_line[0]})
+        echo -e "\033[35m${rel_file}\033[0m:\033[32m${file_line[1]}\033[0m ${elems[@]:2}"
+    done
+}
 
-    find $PWD -iname "*.c"    > $CS_FILES
-    find $PWD -iname "*.cpp" >> $CS_FILES
-    find $PWD -iname "*.cxx" >> $CS_FILES
-    find $PWD -iname "*.cc"  >> $CS_FILES
-    find $PWD -iname "*.cu"  >> $CS_FILES
-    find $PWD -iname "*.h"   >> $CS_FILES
-    find $PWD -iname "*.hpp" >> $CS_FILES
-    find $PWD -iname "*.hxx" >> $CS_FILES
-    find $PWD -iname "*.hh " >> $CS_FILES
+if [[ $1 == search ]]; then
 
-    # XXX modify this to an "exclude" list passed on the command line
-    grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
-    mv -f ${CS_FILES}.new $CS_FILES
+    # Search the database for the current Git repo...
+    if [[ $2 == cscope ]]; then
+        cscope_search $*
+    elif [[ $2 == codequery ]]; then
+        codequery_search $*
+    else
+        usage "Unknown search command"
+    fi
 
-    # [-k] kernel mode, do not include the default include directory (/usr/include)
-    # [-f] output filename (default: cscope.out)
-    # [-i] input filename containing list of files (default: cscope.files)
-    cscope -k -b -i $CS_FILES -f $CS_OUT
+elif [[ $1 == build ]]; then
 
-elif [[ $1 == c ]]; then
+    # Build a database for the current Git repo...
 
-    find $PWD -iname "*.c"    > $CS_FILES
-    find $PWD -iname "*.cpp" >> $CS_FILES
-    find $PWD -iname "*.cxx" >> $CS_FILES
-    find $PWD -iname "*.cc"  >> $CS_FILES
-    find $PWD -iname "*.cu"  >> $CS_FILES
-    find $PWD -iname "*.h"   >> $CS_FILES
-    find $PWD -iname "*.hpp" >> $CS_FILES
-    find $PWD -iname "*.hxx" >> $CS_FILES
-    find $PWD -iname "*.hh " >> $CS_FILES
+    /bin/rm -f $CQ_DB
+    /bin/rm -f $CS_FILES
+    /bin/rm -f $CS_OUT
+    /bin/rm -f $TAGS
 
-    # XXX modify this to an "exclude" list passed on the command line
-    grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
-    mv -f ${CS_FILES}.new $CS_FILES
+    if [[ $2 == cscope ]]; then
 
-    # [-q] enable fast symbol lookup (creates two more files and good for large projects)
-    # [-k] kernel mode, do not include the default include directory (/usr/include)
-    # [-c] only use ASCII data in the output and don't compress the data
-    # [-f] output filename (default: cscope.out)
-    # [-i] input filename containing list of files (default: cscope.files)
-    cscope -c -b -i $CS_FILES -f $CS_OUT
+        find $PWD -iname "*.c"    > $CS_FILES
+        find $PWD -iname "*.cpp" >> $CS_FILES
+        find $PWD -iname "*.cxx" >> $CS_FILES
+        find $PWD -iname "*.cc"  >> $CS_FILES
+        find $PWD -iname "*.cu"  >> $CS_FILES
+        find $PWD -iname "*.h"   >> $CS_FILES
+        find $PWD -iname "*.hpp" >> $CS_FILES
+        find $PWD -iname "*.hxx" >> $CS_FILES
+        find $PWD -iname "*.hh " >> $CS_FILES
 
-elif  [[ $1 == js ]]; then
+        # XXX modify this to an "exclude" list passed on the command line
+        grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
+        mv -f ${CS_FILES}.new $CS_FILES
 
-    find $PWD -iname "*.js" > $CS_FILES
-    starscope -e cscope
+        cscope -k -b -i $CS_FILES -f $CS_OUT
 
-elif  [[ $1 == go ]]; then
+    elif [[ $2 == codequery ]]; then
 
-    find $PWD -iname "*.go" > $CS_FILES
-    starscope -e cscope
+        if [[ $3 == c ]]; then
+            find $PWD -iname "*.c"    > $CS_FILES
+            find $PWD -iname "*.cpp" >> $CS_FILES
+            find $PWD -iname "*.cxx" >> $CS_FILES
+            find $PWD -iname "*.cc"  >> $CS_FILES
+            find $PWD -iname "*.cu"  >> $CS_FILES
+            find $PWD -iname "*.h"   >> $CS_FILES
+            find $PWD -iname "*.hpp" >> $CS_FILES
+            find $PWD -iname "*.hxx" >> $CS_FILES
+            find $PWD -iname "*.hh " >> $CS_FILES
 
-elif  [[ $1 == rb ]]; then
+            # XXX modify this to an "exclude" list passed on the command line
+            grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
+            mv -f ${CS_FILES}.new $CS_FILES
 
-    find $PWD -iname "*.rb" > $CS_FILES
-    starscope -e cscope
+            cscope -c -b -i $CS_FILES -f $CS_OUT
+        elif  [[ $3 == js ]]; then
+            find $PWD -iname "*.js" > $CS_FILES
+            starscope -e cscope
+        elif  [[ $3 == go ]]; then
+            find $PWD -iname "*.go" > $CS_FILES
+            starscope -e cscope
+        elif  [[ $3 == rb ]]; then
+            find $PWD -iname "*.rb" > $CS_FILES
+            starscope -e cscope
+        elif  [[ $3 == py ]]; then
+            find $PWD -iname "*.py" > $CS_FILES
+            pycscope -i $CS_FILES
+        else
+            usage "Unknown language '$3'"
+        fi
 
-elif  [[ $1 == py ]]; then
+        ctags --fields=+i -n -R -L $CS_FILES -f $TAGS
+        cqmakedb -d -s $CQ_DB -c $CS_OUT -t $TAGS -p
 
-    find $PWD -iname "*.py" > $CS_FILES
-    pycscope -i $CS_FILES
-
+    else
+        usage "ERROR: Unknown build command"
+    fi
 else
-
-    echo "ERROR: Unknown language '$1'"
-    exit 1
-
-fi
-
-if [[ $1 != cscope ]]; then
-    ctags --fields=+i -n -R -L $CS_FILES -f $TAGS
-    cqmakedb -d -s $CQ_DB -c $CS_OUT -t $TAGS -p
+    usage "ERROR: Unknown command"
 fi
 
