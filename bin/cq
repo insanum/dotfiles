@@ -27,7 +27,7 @@ CS_OUT=${DB_DIR}/cscope.out
 TAGS=${DB_DIR}/tags
 
 function cscope_search() {
-    cscope -f $CS_OUT -i $CS_FILES -k -L -$3 $4 | while read match; do
+    cscope -f $CS_OUT -i $CS_FILES -k -d -L -$3 $4 | while read match; do
         read -r -a elems <<< $match
         rel_file=$(realpath --relative-to=$PWD ${elems[0]})
         echo -e "\033[35m${rel_file}\033[0m:\033[32m${elems[2]}\033[0m ${elems[@]:3}"
@@ -79,7 +79,7 @@ elif [[ $1 == build ]]; then
         grep -v "firmware/RTOS" $CS_FILES > ${CS_FILES}.new
         mv -f ${CS_FILES}.new $CS_FILES
 
-        cscope -k -b -i $CS_FILES -f $CS_OUT
+        cscope -k -b -q -i $CS_FILES -f $CS_OUT
 
     elif [[ $2 == codequery ]]; then
 

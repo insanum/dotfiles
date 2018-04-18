@@ -311,6 +311,9 @@ nmap <Leader>t8t :call <SID>t8t()<CR>
 autocmd insanum FileType
     \ sh,json,javascript,lua,vim,text,markdown,css,less,org
     \ call <SID>t4e()
+autocmd insanum BufRead,BufNewFile
+    \ */main/Cumulus/firmware/*
+    \ call <SID>t4e()
 
 " Default Tab-2-expand for filetypes...
 autocmd insanum FileType

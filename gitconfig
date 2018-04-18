@@ -37,6 +37,7 @@
 	####################
 	# Broadcom Gerrit push...
 	pb = push --tags origin HEAD:refs/for/master
+	pbt = push origin HEAD:refs/for/dev_nxt_nitro
 	####################
 [push]
 	default = simple
