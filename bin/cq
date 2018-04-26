@@ -27,6 +27,11 @@ CS_OUT=${DB_DIR}/cscope.out
 TAGS=${DB_DIR}/tags
 
 function cscope_search() {
+    if [[ ! -f $CS_FILES || ! -f $CS_OUT ]]; then
+        echo "ERROR: cscope database not found"
+        exit 1
+    fi
+
     cscope -f $CS_OUT -i $CS_FILES -k -d -L -$3 $4 | while read match; do
         read -r -a elems <<< $match
         rel_file=$(realpath --relative-to=$PWD ${elems[0]})
@@ -35,6 +40,10 @@ function cscope_search() {
 }
 
 function codequery_search() {
+    if [[ ! -f $CQ_DB ]]; then
+        echo "ERROR: codequery database not found"
+        exit 1
+    fi
     cqsearch -s $CQ_DB -u -p $3 -t $4 | while read match; do
         IFS=$' \t' read -r -a elems <<< $match
         IFS=$' :' read -r -a file_line <<< ${elems[1]}

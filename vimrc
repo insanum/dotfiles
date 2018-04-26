@@ -510,13 +510,13 @@ endfunction
 " FOLDING ---------------------------------------------- {{{
 
 " What function is the cursor in?
-"nmap <Leader>fi mk[[?(<CR>bve"fy`k:echo "-> <C-R>f()"<CR>
+"nmap <Leader>oi mk[[?(<CR>bve"fy`k:echo "-> <C-R>f()"<CR>
 
 " fold #if block that the cursor is in
-nmap <Leader>fd [#V]#kzf
+nmap <Leader>od [#V]#kzf
 
 " fold the function that the cursor is in
-nmap <Leader>ff [[V%kzf
+nmap <Leader>of [[V%kzf
 
 " fold all functions in the buffer
 function! s:foldAllFunctions()
@@ -535,14 +535,14 @@ function! s:foldAllFunctions()
     normal 1G
     echo numfunctions . " functions have been folded..."
 endfunction
-nmap <Leader>fa :call <SID>foldAllFunctions()<CR>
+nmap <Leader>oa :call <SID>foldAllFunctions()<CR>
 
 " fold the current block that the cursor is in
-nmap <Leader>fb [{V%kzf
+nmap <Leader>ob [{V%kzf
 
 " open/close all folds in buffer
-nmap <Leader>fo :%foldopen!<CR>
-nmap <Leader>fc :%foldclose!<CR>
+nmap <Leader>oo :%foldopen!<CR>
+nmap <Leader>oc :%foldclose!<CR>
 
 " FOLDING (END) ---------------------------------------- }}}
 
@@ -780,8 +780,8 @@ nmap <C-p> :echo 'cwd: ' . getcwd()<CR>
 " file selection (current directory) with fzf
 nmap <Leader>f :Files<CR>
 
-" file selection (choose/complete directory) with fzf
-nmap <Leader>F :Files
+" file selection (choose/complete directory) with fzf (note trailing space)
+nmap <Leader>F :Files 
 
 " git file (git ls-files) selection with fzf
 nmap <Leader>g :GFiles<CR>
@@ -820,8 +820,8 @@ nmap <Leader>` :Marks<CR>
 " history (previous edited files) selection with fzf
 nmap <Leader>H :History<CR>
 
-" 'locate' with fzf
-nmap <Leader>L :Locate
+" 'locate' with fzf (note trailing space)
+nmap <Leader>L :Locate 
 
 " replace i_CTRL-X_CTRL-K dictionary lookup with fzf
 imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
