@@ -1,0 +1,26 @@
+#!/bin/bash
+
+RUSER=ed927285
+RHOST=10.13.249.218
+#RHOST=lvnvdb3254.lvn.broadcom.net
+
+LREPO=${HOME}/work/git/nx/main/Cumulus
+RREPO=/projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus
+
+if [[ "$2" != clean ]]; then
+    echo "**************************************"
+    echo "* RSYNC: main/Cumulus/common/include *"
+    echo "**************************************"
+    rsync -avP ${LREPO}/common/include ${RUSER}@${RHOST}:${RREPO}/common/
+
+    echo "********************************"
+    echo "* RSYNC: main/Cumulus/firmware *"
+    echo "********************************"
+    rsync -avP --exclude 'RTOS/*' ${LREPO}/firmware ${RUSER}@${RHOST}:${RREPO}/
+fi
+
+echo "************"
+echo "* BUILDING *"
+echo "************"
+ssh ${RUSER}@${RHOST} ./build_fw $*
+

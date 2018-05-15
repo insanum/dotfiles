@@ -1,0 +1,46 @@
+#!/bin/bash
+
+export MGLS_LICENSE_FILE=/home/ls952535/Site_140637_121817.txt
+
+export MGC_PATH="/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/bin/:/home/ls952535/mgc/embedded/readystart-arm/nucleus/tools/bin/linux/x86/"
+
+export MGC_LIB=/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/
+
+cd /projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware/ChiMP/bootcode
+
+function log()
+{
+    echo "--> ${1}"
+}
+
+function clean()
+{
+    if [[ -d "$1" ]]; then
+        log "Cleaning ${1}..."
+        /bin/rm -rf $1
+    fi
+}
+
+BFILE="make_${1,,}.sh"
+
+if [[ ! -f "$BFILE" ]]; then
+    log "ERROR: Unknown target ($1)"
+    exit
+fi
+
+if [[ "$2" = clean ]]; then
+    clean "${1^^}"
+    clean "${1^^}_DEBUG"
+    clean "obj/${1,,}"
+    clean "obj/${1,,}_debug"
+    exit
+fi
+
+DEBUG=
+if [[ "$2" = debug ]]; then
+    DEBUG=debug
+fi
+
+log "Building ${1}..."
+./${BFILE} ${DEBUG}
+
