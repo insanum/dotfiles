@@ -1,10 +1,12 @@
 #!/bin/bash
 
-export MGLS_LICENSE_FILE=/home/ls952535/Site_140637_121817.txt
+#export MGLS_LICENSE_FILE=/home/ls952535/Site_140637_121817.txt
+#export MGC_PATH="/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/bin/:/home/ls952535/mgc/embedded/readystart-arm/nucleus/tools/bin/linux/x86/"
+#export MGC_LIB=/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/
 
-export MGC_PATH="/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/bin/:/home/ls952535/mgc/embedded/readystart-arm/nucleus/tools/bin/linux/x86/"
-
-export MGC_LIB=/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/
+export MGLS_LICENSE_FILE="17444@lic-sj1-345.broadcom.net"
+export MGC_PATH="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/bin/"
+export MGC_LIB="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/"
 
 cd /projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware/ChiMP/bootcode
 
