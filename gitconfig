@@ -20,8 +20,10 @@
 	lineNumber = true
 [alias]
 	####################
+	# GREP...
 	g = grep --break --heading --line-number
 	####################
+	# DIFF...
 	d = icdiff
 	ds = icdiff --staged
 	dd = diff --patch-with-stat -U10
@@ -31,13 +33,21 @@
 	dt = difftool
 	dts = difftool --staged
 	####################
+	# LOG...
 	tree = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"
 	####################
+	# STATUS...
 	s = status
+	si = status --ignored
 	####################
 	# Broadcom Gerrit push...
 	pb = push --tags origin HEAD:refs/for/master
 	pbt = push origin HEAD:refs/for/dev_nxt_nitro
+	####################
+	# BRANCH...
+	b = branch -vv
+	bv = branch -vv
+	ba = branch -a
 	####################
 [push]
 	default = simple
