@@ -104,6 +104,9 @@ Plug 'https://github.com/tpope/vim-speeddating'
 Plug 'https://github.com/junegunn/goyo.vim', { 'on': [ 'Goyo' ] }
 Plug 'https://github.com/junegunn/limelight.vim'
 
+Plug 'https://github.com/xolox/vim-misc'
+Plug 'https://github.com/xolox/vim-session'
+
 call plug#end()
 endif
 
@@ -969,6 +972,14 @@ if exists('g:loaded_nerd_tree')
 endif
 
 " PLUG NERDTREE (END) ---------------------------------- }}}
+
+" PLUG SESSION ----------------------------------------- {{{
+
+set sessionoptions-=buffers,help
+let g:session_autoload = 'no'
+let g:session_autosave = 'no'
+
+" PLUG SESSION (END) ----------------------------------- }}}
 
 " PLUG VOTL -------------------------------------------- {{{
 
