@@ -6,6 +6,12 @@ kb_alt_shift  = { "cmd", "alt", "shift" }
 
 hs.hotkey.alertDuration = 0
 
+hs.console.consoleFont({ name = "Hack", size = 14 })
+hs.console.darkMode(true)
+hs.console.outputBackgroundColor({ white = 0 })
+hs.console.consolePrintColor({ white = 1 })
+hs.console.consoleCommandColor({ green = 1 })
+
 -- notification manager
 require("notifications")
 

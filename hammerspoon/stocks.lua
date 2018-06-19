@@ -7,8 +7,6 @@ local curl    = "/usr/bin/curl"
 local menubar = hs.menubar.new()
 local stocks  = nil
 
-local log = hs.logger.new("stocks","debug")
-
 local STOCKS_UPDATE_TIMER      = 30 -- minutes
 local STOCKS_UPDATE_HOUR_START = 6  -- 6am market open
 local STOCKS_UPDATE_HOUR_END   = 13 -- 1pm market close
@@ -25,6 +23,7 @@ local config = hs.json.decode(fslurp("intrinio.json"))
 local function stocksUpdate(exitCode, stdOut, stdErr)
     if exitCode ~= 0 then
         --hs.alert("Stock update failed!")
+        print("STOCK TICKER update failed!")
         return
     end
 
@@ -97,6 +96,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
     end
 
     --hs.alert("Stock quotes updated!")
+    print("STOCK TICKER quotes updated!")
 end
 
 local forced_update = false

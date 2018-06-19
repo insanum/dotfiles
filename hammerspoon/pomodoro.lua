@@ -139,12 +139,13 @@ end
 -- send a pomodoro state completion notification
 local function pomo_notify(msg)
     local n = hs.notify.new({
-        title           = msg,
-        informativeText = "Completed at " .. os.date("%H:%M"),
-        soundName       = "Hero"
+        title     = msg,
+        subTitle  = "Completed at " .. os.date("%H:%M"),
+        soundName = "Hero"
     })
+    print("Pomodoro: "..n:title().." "..n:subTitle())
     n:autoWithdraw(false)
-    n:hasActionButton(false)
+    n:hasActionButton(true)
     n:send()
 end
 

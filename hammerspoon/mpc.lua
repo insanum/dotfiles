@@ -1,6 +1,19 @@
 
+local timer   = require("hs.timer")
+local image   = require("hs.image")
+local notify  = require("hs.notify")
+local alert   = require("hs.alert")
+local menubar = require("hs.menubar")
+local window  = require("hs.window")
+local chooser = require("hs.chooser")
+local socket  = require("hs.socket")
+local hotkey  = require("hs.hotkey")
+local stext   = require("hs.styledtext")
+local x11_clr = require("hs.drawing").color.x11
+local cprint  = require("hs.console").printStyledtext
+
 local mpc = {
-    image           = hs.image.imageFromPath("gmusic.png"),
+    image           = image.imageFromPath("gmusic.png"),
     sock_worker     = nil,
     sock            = nil,
     sock_attempts   = 0,
@@ -16,7 +29,11 @@ local mpc = {
     playlist_tracks = { },
     playlists       = { },
     notifications   = true,
-    halt            = false
+    halt            = false,
+    font            = "Hack",
+    fsize_default   = 16,
+    fsize_menu      = 12,
+    fsize_console   = 12
 }
 
 local mpc_get_status, mpc_reset
@@ -34,33 +51,32 @@ local function secs_to_time(secs)
     end
 end
 
-local function st(txt, color, menu)
-    local font = { name = "Hack", size = 16 }
-    if (menu ~= nil) then
-        font.size = 12
+local function st(txt, color, fsize)
+    local font = { font = mpc.font, size = mpc.fsize_default }
+    if (fsize ~= nil) then
+        font.size = fsize
     end
 
-    return hs.styledtext.new(txt,
-                             {
-                               font = font,
-                               color = { hex = color }
-                             })
+    return stext.new(txt, {
+                            font  = font,
+                            color = { hex = color }
+                          })
 end
 
-local function st_red(txt, menu)    return st(txt, "#ff0000", menu) end
-local function st_green(txt, menu)  return st(txt, "#00ff00", menu) end
-local function st_blue(txt, menu)   return st(txt, "#0000ff", menu) end
-local function st_orange(txt, menu) return st(txt, "#ff8c00", menu) end
-local function st_white(txt, menu)  return st(txt, "#ffffff", menu) end
-local function st_grey(txt, menu)   return st(txt, "#696969", menu) end
+local function st_red(txt, fsize)    return st(txt, "#ff0000", fsize) end
+local function st_green(txt, fsize)  return st(txt, "#00ff00", fsize) end
+local function st_blue(txt, fsize)   return st(txt, "#0000ff", fsize) end
+local function st_orange(txt, fsize) return st(txt, "#ff8c00", fsize) end
+local function st_white(txt, fsize)  return st(txt, "#ffffff", fsize) end
+local function st_grey(txt, fsize)   return st(txt, "#696969", fsize) end
 
 -- send a mpc notification
 local function mpc_notify(subtitle, title, info)
-    local n = hs.notify.new({
-        title           = "MPD",
-        subTitle        = subtitle,
-        informativeText = ""
-    })
+    local n = notify.new({
+                           title           = "MPD",
+                           subTitle        = subtitle,
+                           informativeText = ""
+                         })
     if (title ~= nil) then
         n:title(title)
     end
@@ -69,22 +85,28 @@ local function mpc_notify(subtitle, title, info)
     end
     print("MPD: "..n:title().." "..n:subTitle().." "..n:informativeText())
     n:autoWithdraw(false)
-    n:hasActionButton(false)
+    n:hasActionButton(true)
     if (mpc.notifications == true) then
         n:send()
     end
 end
 
+local function mpc_alert(msg)
+    alert(msg, { radius = 0, atScreenEdge = 2 }, 2)
+    print("MPD alert: "..msg:getString())
+    cprint(msg)
+end
+
 local function mpc_worker()
     if (mpc.working == true) then
-        print("MPD: already working")
+        --print("MPD: already working")
         return
     else
         mpc.working = true
     end
 
     if (#mpc.work == 0) then
-        print("MPD: no more work")
+        --print("MPD: no more work")
         mpc.working = false
         return
     end
@@ -92,25 +114,26 @@ local function mpc_worker()
     local wi = table.remove(mpc.work, 1)
 
     if (mpc.work_ok == false) then
-        print("MPD: dropped command ("..wi.id..")")
+        --print("MPD: dropped command ("..wi.id..")")
         if (wi.cbk_fail ~= nil) then
             wi.cbk_fail()
         end
 
         mpc.working = false
-        hs.timer.doAfter(0, mpc_worker)
+        timer.doAfter(0, mpc_worker)
         return
     end
 
     local cmd = wi.cbk(wi.cbk_args)
     if (cmd == nil) then
-        print("MPD: 'nil' command ("..wi.id..")")
+        --print("MPD: 'nil' command ("..wi.id..")")
         mpc.working = false
-        hs.timer.doAfter(0, mpc_worker)
+        timer.doAfter(0, mpc_worker)
         return
     end
 
-    print("MPD: executing command ("..wi.id..")\n"..cmd:match("^(.*)\n"))
+    cprint(st_grey("MPD: executing command ("..wi.id..")\n"..cmd:match("^(.*)\n"),
+                   mpc.fsize_console))
 
     local cmd_result = { }
     local error_msg  = nil
@@ -148,10 +171,10 @@ local function mpc_worker()
 
         print("MPD: finished command ("..wi.id..")")
         mpc.working = false
-        hs.timer.doAfter(0, mpc_worker)
+        timer.doAfter(0, mpc_worker)
     end
 
-    hs.timer.waitUntil(function() return (done == true) end, done_cbk, 0.1)
+    timer.waitUntil(function() return (done == true) end, done_cbk, 0.1)
 end
 
 local function mpc_schedule_work(cbk, cbk_args, cbk_done, cbk_fail)
@@ -171,7 +194,7 @@ local function mpc_schedule_work(cbk, cbk_args, cbk_done, cbk_fail)
                     }
 
     mpc.work[#mpc.work + 1] = cmd_tbl
-    hs.timer.doAfter(0, mpc_worker)
+    timer.doAfter(0, mpc_worker)
 end
 
 local function mpc_status()
@@ -284,9 +307,9 @@ local function mpc_status_menu()
     msg = msg.." "..elapsed.."/"..total_time.." ("..percentage..")"
 
     if (mpc.status.state == "play") then
-        return st_orange(msg, true)
+        return st_orange(msg, mpc.fsize_menu)
     else
-        return st_grey(msg, true)
+        return st_grey(msg, mpc.fsize_menu)
     end
 end
 
@@ -381,7 +404,7 @@ local function mpc_pause()
             play_pause = st_green("Play")
         end
 
-        hs.alert(st_white("MPD ") .. play_pause)
+        mpc_alert(st_white("MPD ") .. play_pause)
         return cmd
     end
 
@@ -405,7 +428,7 @@ local function mpc_random()
             on_off = st_red("ON")
         end
 
-        hs.alert(st_white("MPD Random ") .. on_off)
+        mpc_alert(st_white("MPD Random ") .. on_off)
         return cmd
     end
 
@@ -436,7 +459,7 @@ local function mpc_repeat()
             cycle = st_red("OFF")
         end
 
-        hs.alert(st_white("MPD Repeat ") .. cycle)
+        mpc_alert(st_white("MPD Repeat ") .. cycle)
         return cmd
     end
 
@@ -467,7 +490,7 @@ local function mpc_previous()
 end
 
 local function mpc_play_track()
-    local last_win = hs.window.focusedWindow()
+    local last_win = window.focusedWindow()
 
     local chooser_cbk = function(selection)
         local cbk = function(args)
@@ -509,15 +532,15 @@ local function mpc_play_track()
             }
     end
 
-    chooser = hs.chooser.new(chooser_cbk)
-    chooser:choices(tracks)
-    --chooser:rows(#tracks)
-    chooser:rows(15)
-    chooser:width(40)
-    chooser:bgDark(true)
-    chooser:fgColor(hs.drawing.color.x11.orange)
-    chooser:subTextColor(hs.drawing.color.x11.chocolate)
-    chooser:show()
+    local ch = chooser.new(chooser_cbk)
+    ch:choices(tracks)
+    --ch:rows(#tracks)
+    ch:rows(15)
+    ch:width(40)
+    ch:bgDark(true)
+    ch:fgColor(x11_clr.orange)
+    ch:subTextColor(x11_clr.chocolate)
+    ch:show()
 end
 
 local function mpc_get_playlist_tracks()
@@ -582,7 +605,7 @@ local function mpc_get_playlists()
 end
 
 local function mpc_load_playlist()
-    local last_win = hs.window.focusedWindow()
+    local last_win = window.focusedWindow()
 
     local chooser_cbk = function(selection)
         local cbk = function(args)
@@ -628,15 +651,15 @@ local function mpc_load_playlist()
         return
     end
 
-    chooser = hs.chooser.new(chooser_cbk)
-    chooser:choices(playlists)
-    --chooser:rows(#playlists)
-    chooser:rows(15)
-    chooser:width(40)
-    chooser:bgDark(true)
-    chooser:fgColor(hs.drawing.color.x11.orange)
-    chooser:subTextColor(hs.drawing.color.x11.chocolate)
-    chooser:show()
+    local ch = chooser.new(chooser_cbk)
+    ch:choices(playlists)
+    --ch:rows(#playlists)
+    ch:rows(15)
+    ch:width(40)
+    ch:bgDark(true)
+    ch:fgColor(x11_clr.orange)
+    ch:subTextColor(x11_clr.chocolate)
+    ch:show()
 end
 
 local function mpc_clear()
@@ -670,7 +693,7 @@ local function mpc_set_volume(args)
 
     end
 
-    hs.alert(st_white("MPD Volume ") .. st_orange(volume.."%"))
+    mpc_alert(st_white("MPD Volume ") .. st_orange(volume.."%"))
     return "setvol "..volume.."\n"
 end
 
@@ -695,7 +718,7 @@ mpc_get_status = function()
         for i = 1,#data do
             local key, value = data[i]:match("^(.*):%s+(.+)\n$")
             if (key == "changed") then
-                print("MPD IDLE: "..value)
+                cprint(st_orange("MPD IDLE: "..value, mpc.fsize_console))
                 if (value == "stored_playlist") then
                     -- get a list of the available playlists
                     mpc_get_playlists()
@@ -772,10 +795,10 @@ mpc_get_status = function()
         end
 
         -- update the menu title
-        mpc.menu:setTitle(st_white("[", true) ..
-                          st_grey("MPD: ", true) ..
+        mpc.menu:setTitle(st_white("[", mpc.fsize_menu) ..
+                          st_grey("MPD: ", mpc.fsize_menu) ..
                           mpc_status_menu() ..
-                          st_white("]", true))
+                          st_white("]", mpc.fsize_menu))
 
         -- update the menu tooltip
         local tooltip = ""
@@ -799,10 +822,10 @@ mpc_get_status = function()
         mpc.playlists       = { }
 
         -- update the menu title
-        mpc.menu:setTitle(st_white("[", true) ..
-                          st_grey("MPD: ", true) ..
-                          st_red("none", true) ..
-                          st_white("]", true))
+        mpc.menu:setTitle(st_white("[", mpc.fsize_menu) ..
+                          st_grey("MPD: ", mpc.fsize_menu) ..
+                          st_red("none", mpc.fsize_menu) ..
+                          st_white("]", mpc.fsize_menu))
     end
 
     mpc_schedule_work(cbk, nil, cbk_done, cbk_fail)
@@ -810,7 +833,7 @@ end
 
 local function mpc_sock_connect()
     if (mpc.sock == nil) then
-        mpc.sock = hs.socket.new()
+        mpc.sock = socket.new()
     else
         if (mpc.sock:connected() == true) then
             return
@@ -865,7 +888,7 @@ local function mpc_notifications()
         on_off = st_red("OFF")
     end
 
-    hs.alert(st_white("MPD Notifications ") .. on_off)
+    mpc_alert(st_white("MPD Notifications ") .. on_off)
 
     mpc.menu_table[19].checked = mpc.notifications
     mpc.menu:setMenu(mpc.menu_table)
@@ -885,22 +908,22 @@ local function mpc_halt()
 
         mpc.halt = true
 
-        mpc.menu:setTitle(st_white("[", true) ..
-                          st_grey("MPD: ", true) ..
-                          st_red("halted", true) ..
-                          st_white("]", true))
+        mpc.menu:setTitle(st_white("[", mpc.fsize_menu) ..
+                          st_grey("MPD: ", mpc.fsize_menu) ..
+                          st_red("halted", mpc.fsize_menu) ..
+                          st_white("]", mpc.fsize_menu))
 
         mpc.menu_table[20].checked = mpc.halt
         mpc.menu:setMenu(mpc.menu_table)
 
-        hs.alert(st_white("MPD ") .. st_red("HALTED"))
+        mpc_alert(st_white("MPD ") .. st_red("HALTED"))
     else
         mpc.halt = false
 
         mpc.menu_table[20].checked = mpc.halt
         mpc.menu:setMenu(mpc.menu_table)
 
-        hs.alert(st_white("MPD ") .. st_red("RESET"))
+        mpc_alert(st_white("MPD ") .. st_red("RESET"))
 
         mpc_reset()
     end
@@ -909,11 +932,11 @@ end
 -- defined as local at top of file
 mpc_reset = function()
     if (mpc.menu == nil) then
-        mpc.menu = hs.menubar.new()
+        mpc.menu = menubar.new()
         mpc.menu:setIcon(mpc.image, false)
-        mpc.menu:setTitle(st_white("[", true) ..
-                          st_grey("MPD", true) ..
-                          st_white("]", true))
+        mpc.menu:setTitle(st_white("[", mpc.fsize_menu) ..
+                          st_grey("MPD", mpc.fsize_menu) ..
+                          st_white("]", mpc.fsize_menu))
     end
 
     if (mpc.sock_worker ~= nil) then
@@ -943,10 +966,10 @@ mpc_reset = function()
 
     mpc.sock          = nil
     mpc.sock_attempts = 0
-    mpc.sock_worker   = hs.timer.doEvery(5, mpc_sock_connect)
+    mpc.sock_worker   = timer.doEvery(5, mpc_sock_connect)
 
     mpc.status        = { }
-    mpc.status_worker = hs.timer.doEvery(5, mpc_get_status)
+    mpc.status_worker = timer.doEvery(5, mpc_get_status)
 end
 
 mpc.menu_table =
@@ -977,62 +1000,62 @@ mpc.menu_table =
 -- initialize the mpc state and display
 mpc_reset()
 
-hs.hotkey.bind(kb_alt, "p", "MPD Play/Pause",
+hotkey.bind(kb_alt, "p", "MPD Play/Pause",
 function()
     mpc_pause()
 end)
 
-hs.hotkey.bind(kb_alt, "s", "MPD Stop",
+hotkey.bind(kb_alt, "s", "MPD Stop",
 function()
     mpc_stop()
 end)
 
-hs.hotkey.bind(kb_alt, "n", "MPD Next",
+hotkey.bind(kb_alt, "n", "MPD Next",
 function()
     mpc_next()
 end)
 
-hs.hotkey.bind(kb_alt, "r", "MPD Repeat",
+hotkey.bind(kb_alt, "r", "MPD Repeat",
 function()
     mpc_repeat()
 end)
 
-hs.hotkey.bind(kb_alt, "Up", "MPD Volume +10",
+hotkey.bind(kb_alt, "Up", "MPD Volume +10",
 function()
     mpc_volume_up()
 end)
 
-hs.hotkey.bind(kb_alt, "Down", "MPD Volume -10",
+hotkey.bind(kb_alt, "Down", "MPD Volume -10",
 function()
     mpc_volume_down()
 end)
 
-hs.hotkey.bind(kb_alt, "Left", "MPD Seek -15",
+hotkey.bind(kb_alt, "Left", "MPD Seek -15",
 function()
     mpc_seek_backward()
 end)
 
-hs.hotkey.bind(kb_alt, "Right", "MPD Seek +15",
+hotkey.bind(kb_alt, "Right", "MPD Seek +15",
 function()
     mpc_seek_forward()
 end)
 
-hs.hotkey.bind(kb_alt, "l", "MPD Load Playlist",
+hotkey.bind(kb_alt, "l", "MPD Load Playlist",
 function()
     mpc_load_playlist()
 end)
 
-hs.hotkey.bind(kb_alt, "t", "MPD Play Track",
+hotkey.bind(kb_alt, "t", "MPD Play Track",
 function()
     mpc_play_track()
 end)
 
-hs.hotkey.bind(kb_alt, "a", "MPD Notifications",
+hotkey.bind(kb_alt, "a", "MPD Notifications",
 function()
     mpc_notifications()
 end)
 
-hs.hotkey.bind(kb_alt, "h", "MPD Halt",
+hotkey.bind(kb_alt, "h", "MPD Halt",
 function()
     mpc_halt()
 end)

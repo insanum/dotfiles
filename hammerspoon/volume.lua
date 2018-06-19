@@ -2,11 +2,31 @@
 local volume_step = 10
 
 local function volumeAlert(name, volume)
+    local font = { name = "Hack", size = 16 }
+
     local numBars = math.floor(volume / volume_step)
     local numSpaces = (100 / volume_step) - numBars
-    hs.alert(name .. ": " ..
-             string.rep("||", numBars) ..
-             string.rep("..", numSpaces))
+
+    local msg = hs.styledtext.new(name .. ": ",
+                                  {
+                                    font  = font,
+                                    color = { hex = "#ffffff" }
+                                  }) ..
+                hs.styledtext.new(string.rep("||", numBars),
+                                  {
+                                    font  = font,
+                                    color = { hex = "#ff0000" }
+                                  }) ..
+                hs.styledtext.new(string.rep("..", numSpaces),
+                                  {
+                                    font  = font,
+                                    color = { hex = "#ff8c00" }
+                                  })
+
+    hs.alert(msg, { radius = 0, atScreenEdge = 2 }, 2)
+
+    print("Volume alert: "..msg:getString())
+    hs.console.printStyledtext(msg)
 end
 
 local function toggleMute()
