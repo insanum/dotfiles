@@ -1,7 +1,6 @@
 
 local mpc = {
     image           = hs.image.imageFromPath("gmusic.png"),
-    font            = { name = "Hack", size = 12 },
     sock_worker     = nil,
     sock            = nil,
     sock_attempts   = 0,
@@ -16,7 +15,7 @@ local mpc = {
     playlist_name   = nil,
     playlist_tracks = { },
     playlists       = { },
-    alerts          = true,
+    notifications   = true,
     halt            = false
 }
 
@@ -35,6 +34,26 @@ local function secs_to_time(secs)
     end
 end
 
+local function st(txt, color, menu)
+    local font = { name = "Hack", size = 16 }
+    if (menu ~= nil) then
+        font.size = 12
+    end
+
+    return hs.styledtext.new(txt,
+                             {
+                               font = font,
+                               color = { hex = color }
+                             })
+end
+
+local function st_red(txt, menu)    return st(txt, "#ff0000", menu) end
+local function st_green(txt, menu)  return st(txt, "#00ff00", menu) end
+local function st_blue(txt, menu)   return st(txt, "#0000ff", menu) end
+local function st_orange(txt, menu) return st(txt, "#ff8c00", menu) end
+local function st_white(txt, menu)  return st(txt, "#ffffff", menu) end
+local function st_grey(txt, menu)   return st(txt, "#696969", menu) end
+
 -- send a mpc notification
 local function mpc_notify(subtitle, title, info)
     local n = hs.notify.new({
@@ -51,7 +70,7 @@ local function mpc_notify(subtitle, title, info)
     print("MPD: "..n:title().." "..n:subTitle().." "..n:informativeText())
     n:autoWithdraw(false)
     n:hasActionButton(false)
-    if (mpc.alerts == true) then
+    if (mpc.notifications == true) then
         n:send()
     end
 end
@@ -232,11 +251,7 @@ local function mpc_status_menu()
 
     if ((mpc.status.state == "stop") and
         (tonumber(mpc.status.playlistlength) == 0)) then
-        return hs.styledtext.new("none",
-                                 {
-                                   font  = mpc.font,
-                                   color = { hex = "#696969" }
-                                 })
+        return st_grey("none", true)
     end
 
     local elapsed      = "0:00"
@@ -268,16 +283,11 @@ local function mpc_status_menu()
     msg = "#"..track_idx.."/"..total_tracks
     msg = msg.." "..elapsed.."/"..total_time.." ("..percentage..")"
 
-    local color = { hex = "#696969" }
     if (mpc.status.state == "play") then
-        color = { hex = "#ff8c00" }
+        return st_orange(msg, true)
+    else
+        return st_grey(msg, true)
     end
-
-    return hs.styledtext.new(msg,
-                             {
-                               font  = mpc.font,
-                               color = color
-                             })
 end
 
 local function mpc_seek(args)
@@ -362,16 +372,16 @@ local function mpc_pause()
         local cmd = nil
         if (mpc.status.state == "play") then
             cmd = "pause 1\n"
-            play_pause = "Paused"
+            play_pause = st_orange("Paused")
         elseif (mpc.status.state == "pause") then
             cmd = "pause 0\n"
-            play_pause = "Unpaused"
+            play_pause = st_green("Unpaused")
         elseif (mpc.status.state == "stop") then
             cmd = "play\n"
-            play_pause = "Play"
+            play_pause = st_green("Play")
         end
 
-        hs.alert("MPD "..play_pause)
+        hs.alert(st_white("MPD ") .. play_pause)
         return cmd
     end
 
@@ -389,13 +399,13 @@ local function mpc_random()
         local cmd = nil
         if (tonumber(mpc.status.random) == 0) then
             cmd = "random 1\n"
-            on_off = "ON"
+            on_off = st_green("ON")
         else
             cmd = "random 0\n"
-            on_off = "OFF"
+            on_off = st_red("ON")
         end
 
-        hs.alert("MPD Random "..on_off)
+        hs.alert(st_white("MPD Random ") .. on_off)
         return cmd
     end
 
@@ -413,18 +423,20 @@ local function mpc_repeat()
         local r = tonumber(mpc.status["repeat"])
         local s = tonumber(mpc.status.single)
 
+        local cycle = nil
         local cmd = nil
         if ((r == 0) and (s == 0)) then
-            hs.alert("MPD Repeat")
             cmd = "repeat 1\n"
+            cycle = st_green("ALL")
         elseif ((r == 1) and (s == 0)) then
-            hs.alert("MPD Repeat Single")
             cmd = "single 1\n"
+            cycle = st_orange("SINGLE")
         else -- turn them both off
-            hs.alert("MPD Repeat Off")
             cmd = "command_list_begin\nrepeat 0\nsingle 0\ncommand_list_end\n"
+            cycle = st_red("OFF")
         end
 
+        hs.alert(st_white("MPD Repeat ") .. cycle)
         return cmd
     end
 
@@ -658,7 +670,7 @@ local function mpc_set_volume(args)
 
     end
 
-    hs.alert("MPD Volume "..volume.."%")
+    hs.alert(st_white("MPD Volume ") .. st_orange(volume.."%"))
     return "setvol "..volume.."\n"
 end
 
@@ -760,23 +772,10 @@ mpc_get_status = function()
         end
 
         -- update the menu title
-        mpc.menu:setTitle(hs.styledtext.new("[",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#ffffff" }
-                                            }) ..
-                          hs.styledtext.new("MPD: ",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#696969" }
-                                            }) ..
+        mpc.menu:setTitle(st_white("[", true) ..
+                          st_grey("MPD: ", true) ..
                           mpc_status_menu() ..
-                          hs.styledtext.new("]",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#ffffff" }
-                                            })
-                         )
+                          st_white("]", true))
 
         -- update the menu tooltip
         local tooltip = ""
@@ -800,27 +799,10 @@ mpc_get_status = function()
         mpc.playlists       = { }
 
         -- update the menu title
-        mpc.menu:setTitle(hs.styledtext.new("[",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#ffffff" }
-                                            }) ..
-                          hs.styledtext.new("MPD: ",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#696969" }
-                                            }) ..
-                          hs.styledtext.new("none",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#ff0000" }
-                                            }) ..
-                          hs.styledtext.new("]",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#ffffff" }
-                                            })
-                         )
+        mpc.menu:setTitle(st_white("[", true) ..
+                          st_grey("MPD: ", true) ..
+                          st_red("none", true) ..
+                          st_white("]", true))
     end
 
     mpc_schedule_work(cbk, nil, cbk_done, cbk_fail)
@@ -873,19 +855,19 @@ local function mpc_sock_connect()
     mpc.sock:connect("127.0.0.1", 6600, connect_cbk)
 end
 
-local function mpc_alerts()
+local function mpc_notifications()
     local on_off = nil
-    if (mpc.alerts == false) then
-        mpc.alerts = true
-        on_off = "ON"
+    if (mpc.notifications == false) then
+        mpc.notifications = true
+        on_off = st_green("ON")
     else
-        mpc.alerts = false
-        on_off = "OFF"
+        mpc.notifications = false
+        on_off = st_red("OFF")
     end
 
-    hs.alert("MPD Alerts "..on_off)
+    hs.alert(st_white("MPD Notifications ") .. on_off)
 
-    mpc.menu_table[19].checked = mpc.checked
+    mpc.menu_table[19].checked = mpc.notifications
     mpc.menu:setMenu(mpc.menu_table)
 end
 
@@ -893,21 +875,32 @@ local function mpc_halt()
     if (mpc.halt == false) then
         if (mpc.sock_worker ~= nil) then
             mpc.sock_worker:stop()
+            mpc.sock_worker = nil
         end
 
         if (mpc.status_worker ~= nil) then
             mpc.status_worker:stop()
+            mpc.status_worker = nil
         end
 
         mpc.halt = true
 
+        mpc.menu:setTitle(st_white("[", true) ..
+                          st_grey("MPD: ", true) ..
+                          st_red("halted", true) ..
+                          st_white("]", true))
+
         mpc.menu_table[20].checked = mpc.halt
         mpc.menu:setMenu(mpc.menu_table)
+
+        hs.alert(st_white("MPD ") .. st_red("HALTED"))
     else
         mpc.halt = false
 
         mpc.menu_table[20].checked = mpc.halt
         mpc.menu:setMenu(mpc.menu_table)
+
+        hs.alert(st_white("MPD ") .. st_red("RESET"))
 
         mpc_reset()
     end
@@ -918,22 +911,9 @@ mpc_reset = function()
     if (mpc.menu == nil) then
         mpc.menu = hs.menubar.new()
         mpc.menu:setIcon(mpc.image, false)
-        mpc.menu:setTitle(hs.styledtext.new("[",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#ffffff" }
-                                            }) ..
-                          hs.styledtext.new("MPD",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#696969" }
-                                            }) ..
-                          hs.styledtext.new("]",
-                                            {
-                                              font  = mpc.font,
-                                              color = { hex = "#ffffff" }
-                                            })
-                         )
+        mpc.menu:setTitle(st_white("[", true) ..
+                          st_grey("MPD", true) ..
+                          st_white("]", true))
     end
 
     if (mpc.sock_worker ~= nil) then
@@ -989,7 +969,7 @@ mpc.menu_table =
         { title = "Clear Playlist", fn = mpc_clear },
         { title = "Volume -10",     fn = mpc_volume_down },
         { title = "Volume +10",     fn = mpc_volume_up },
-        { title = "Alerts",         fn = mpc_alerts, checked = true },
+        { title = "Notifications",  fn = mpc_notifications, checked = true },
         { title = "Halt",           fn = mpc_halt, checked = false },
         { title = "Reset",          fn = mpc_reset }
     }
@@ -1047,8 +1027,13 @@ function()
     mpc_play_track()
 end)
 
-hs.hotkey.bind(kb_alt, "a", "MPD Alerts",
+hs.hotkey.bind(kb_alt, "a", "MPD Notifications",
 function()
-    mpc_alerts()
+    mpc_notifications()
+end)
+
+hs.hotkey.bind(kb_alt, "h", "MPD Halt",
+function()
+    mpc_halt()
 end)
 
