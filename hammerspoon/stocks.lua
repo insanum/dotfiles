@@ -1,9 +1,4 @@
 
---local mash       = {"cmd", "alt", "ctrl"}
---local mash_shift = {"cmd", "alt", "ctrl", "shift"}
-local mash       = {"cmd", "ctrl"}
-local mash_shift = {"cmd", "ctrl", "shift"}
-
 -- local tickers  = { "AVGO", "QCOM", "NXP", "NVDA", "MLNX", "CAVM", "GOOG", "GOOGL", "AMZN", "AAPL", "MSFT", "FB", "CSCO", "JNPR", "INTC" }
 local tickers  = { "AVGO" }
 local intrinio = "https://api.intrinio.com/data_point?identifier=" .. table.concat(tickers,",") .. "&item=last_price,change,percent_change"
@@ -12,7 +7,7 @@ local curl    = "/usr/bin/curl"
 local menubar = hs.menubar.new()
 local stocks  = nil
 
-local log = hs.logger.new('stocks','debug')
+local log = hs.logger.new("stocks","debug")
 
 local STOCKS_UPDATE_TIMER      = 30 -- minutes
 local STOCKS_UPDATE_HOUR_START = 6  -- 6am market open
@@ -109,18 +104,18 @@ local forced_update = false
 local function doUpdate()
     -- only execute the update around when the market is open (6am-1pm PST)
     if forced_update then
-        print('STOCK TICKER update forced')
+        print("STOCK TICKER update forced")
         forced_update = false
     else
         local cur_time = os.date("*t")
 
         if cur_time.hour < STOCKS_UPDATE_HOUR_START or
            cur_time.hour > STOCKS_UPDATE_HOUR_END then
-            print('STOCK TICKER update **SKIPPED** (hour=' .. cur_time.hour .. ')')
+            print("STOCK TICKER update **SKIPPED** (hour=" .. cur_time.hour .. ")")
             return
         end
 
-        print('STOCK TICKER update (hour=' .. cur_time.hour .. ')')
+        print("STOCK TICKER update (hour=" .. cur_time.hour .. ")")
     end
 
     local curl_args = { "-s", intrinio, "-u", config.user .. ":" .. config.pass }
@@ -135,7 +130,8 @@ local stockUpdateTimer = hs.timer.doEvery((STOCKS_UPDATE_TIMER * 60), doUpdate)
 forced_update = true
 doUpdate()
 
-hs.hotkey.bind(mash_shift, "q", function()
+hs.hotkey.bind(kb_ctrl_shift, "q", "Refresh stock ticker",
+function()
     forced_update = true
     doUpdate()
 end)

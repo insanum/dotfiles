@@ -1,9 +1,4 @@
 
---local mash       = {'cmd', 'alt', 'ctrl'}
---local mash_shift = {'cmd', 'alt', 'ctrl', 'shift'}
-local mash       = {'cmd', 'ctrl'}
-local mash_shift = {'cmd', 'ctrl', 'shift'}
-
 local pomo = {
     bar_height     = 0.1, -- ratio of the height of the menubar (0..1)
     bar_alpha      = 0.6,
@@ -22,7 +17,7 @@ local pomo = {
     is_active     = false,
     disable_count = 0,
     work_count    = 0,
-    cur_state     = 'work', -- {'work', 'rest'}
+    cur_state     = "work", -- {"work", "rest"}
     time_left     = 0,
     max_time_sec  = 0,
     menu          = nil,
@@ -60,7 +55,7 @@ local function pomo_update_display()
     local time_min = math.floor(pomo.time_left / 60)
     local time_sec = (pomo.time_left - (time_min * 60))
 
-    local str = string.format ('%s %02d:%02d #%02d',
+    local str = string.format ("%s %02d:%02d #%02d",
                                pomo.cur_state,
                                time_min,
                                time_sec,
@@ -122,7 +117,7 @@ local function pomo_disable()
         -- reset the pomodoro state
         pomo.time_left    = pomo.def_work_secs
         pomo.max_time_sec = pomo.def_work_secs
-        pomo.cur_state    = 'work'
+        pomo.cur_state    = "work"
 
         -- delete the past bar
         pomo.bar_past:delete()
@@ -145,8 +140,8 @@ end
 local function pomo_notify(msg)
     local n = hs.notify.new({
         title           = msg,
-        informativeText = 'Completed at ' .. os.date('%H:%M'),
-        soundName       = 'Hero'
+        informativeText = "Completed at " .. os.date("%H:%M"),
+        soundName       = "Hero"
     })
     n:autoWithdraw(false)
     n:hasActionButton(false)
@@ -165,15 +160,15 @@ local function pomo_update_state()
         return
     end
 
-    if (pomo.cur_state == 'work') then
-        pomo_notify('Work completed!')
+    if (pomo.cur_state == "work") then
+        pomo_notify("Work completed!")
         pomo.work_count   = (pomo.work_count + 1)
-        pomo.cur_state    = 'rest'
+        pomo.cur_state    = "rest"
         pomo.time_left    = pomo.def_rest_secs
         pomo.max_time_sec = pomo.def_rest_secs
-    else -- (pomo.cur_state == 'rest')
-        pomo_notify('Get back to work!')
-        pomo.cur_state    = 'work'
+    else -- (pomo.cur_state == "rest")
+        pomo_notify("Get back to work!")
+        pomo.cur_state    = "work"
         pomo.time_left    = pomo.def_work_secs
         pomo.max_time_sec = pomo.def_work_secs
     end
@@ -238,6 +233,6 @@ pomo.menu:setMenu(
     })
 pomo_update()
 
-hs.hotkey.bind(mash, '9', pomo_enable)
-hs.hotkey.bind(mash, '0', pomo_disable)
+hs.hotkey.bind(kb_ctrl, "9", "Pomodoro enable",  pomo_enable)
+hs.hotkey.bind(kb_ctrl, "0", "Pomodoro disable", pomo_disable)
 

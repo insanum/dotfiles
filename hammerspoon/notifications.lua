@@ -1,9 +1,4 @@
 
---local mash       = {"cmd", "alt", "ctrl"}
---local mash_shift = {"cmd", "alt", "ctrl", "shift"}
-local mash       = {"cmd", "ctrl"}
-local mash_shift = {"cmd", "ctrl", "shift"}
-
 -- hack to clear the top showing notification
 
 function clearNotification()
@@ -24,5 +19,9 @@ function clearNotification()
     win:focus()
 end
 
-hs.hotkey.bind(mash, "o", function() clearNotification()  end)
+--hs.hotkey.bind(kb_ctrl, "o", "Clear the top notification",
+hs.hotkey.bind({ "cmd" }, "o", "Clear the top notification",
+function()
+    clearNotification()
+end)
 
