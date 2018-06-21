@@ -369,6 +369,7 @@ local function mpc_play()
             return nil
         end
 
+        mpc_alert(st_white("MPD ") .. st_green("Play"))
         return "play\n"
     end
 
@@ -378,6 +379,7 @@ end
 
 local function mpc_stop()
     local cbk = function()
+        mpc_alert(st_white("MPD ") .. st_red("Stop"))
         return "stop\n"
     end
 
@@ -469,6 +471,7 @@ end
 
 local function mpc_next()
     local cbk = function()
+        mpc_alert(st_white("MPD ") .. st_orange("Next"))
         return "next\n"
     end
 
@@ -480,6 +483,7 @@ end
 
 local function mpc_previous()
     local cbk = function()
+        mpc_alert(st_white("MPD ") .. st_orange("Previous"))
         return "previous\n"
     end
 
@@ -613,6 +617,9 @@ local function mpc_load_playlist()
         end
 
         local cbk_done = function(data)
+            mpc.playlist_tracks = { }
+            mpc_notify("Playlist cleared")
+
             mpc.playlist_name = mpc.playlists[selection.idx]
             mpc_notify("Loaded playlist \""..mpc.playlist_name.."\"")
 
@@ -669,6 +676,7 @@ local function mpc_clear()
 
     local cbk_done = function(data)
         mpc.playlist_tracks = { }
+        mpc_notify("Playlist cleared")
     end
 
     mpc_schedule_work(cbk, nil, cbk_done)
