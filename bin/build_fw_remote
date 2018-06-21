@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ -z "$1" ]]; then
+    echo "Usage: $0 thor_e|creole_e|<target> [clean|debug]"
+    exit
+fi
+
 RUSER=ed927285
 #RHOST=10.13.249.218
 RHOST=lvnvdb3254.lvn.broadcom.net

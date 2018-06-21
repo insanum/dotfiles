@@ -1,53 +1,61 @@
 [user]
-	email = edavis@insanum.com
-	name = Eric Davis
+	email        = edavis@insanum.com
+	name         = Eric Davis
 [git-p4]
-	user = edavis
-	port = pf-irva-ecs.broadcom.com:1666
+	user         = edavis
+	port         = pf-irva-ecs.broadcom.com:1666
 [core]
-	editor = vim
+	editor       = vim
+	pager        = diff-so-fancy | less -RFX
 [color]
-	#diff = always
-	grep = always
+	#diff        = always
+	grep         = always
+	ui           = true
+[color "diff-highlight"]
+	oldNormal    = red bold
+	oldHighlight = red bold 52
+	newNormal    = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta         = yellow
+	frag         = magenta bold
+	commit       = yellow bold
+	old          = red bold
+	new          = green bold
+	whitespace   = red reverse
 [diff]
-	tool = vimdiff
+	tool         = vimdiff
 [difftool]
-	prompt = false
-[icdiff]
-	options = --highlight --line-numbers
+	prompt       = false
 [grep]
 	extendRegexp = true
-	lineNumber = true
+	lineNumber   = true
 [alias]
 	####################
 	# GREP...
-	g = grep --break --heading --line-number
+	g            = grep --break --heading --line-number
 	####################
 	# DIFF...
-	d = icdiff
-	ds = icdiff --staged
-	dd = diff --patch-with-stat -U10
-	dds = diff --patch-with-stat -U10 --staged
-	dp = diff --patience --patch-with-stat -U10
-	dps = diff --patience --patch-with-stat -U10 --staged
-	dt = difftool
-	dts = difftool --staged
+	d            = diff --patience
+	ds           = diff --patience --staged
+	du           = diff --patience --patch-with-stat -U10
+	dus          = diff --patience --patch-with-stat -U10 --staged
+	dt           = difftool
+	dts          = difftool --staged
 	####################
 	# LOG...
-	tree = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"
+	tree         = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"
 	####################
 	# STATUS...
-	s = status
-	si = status --ignored
+	s            = status
+	si           = status --ignored
 	####################
 	# Broadcom Gerrit push...
-	pb = push --tags origin HEAD:refs/for/master
-	pbt = push origin HEAD:refs/for/dev_nxt_nitro
+	pb           = push --tags origin HEAD:refs/for/master
+	pbt          = push origin HEAD:refs/for/dev_nxt_phase5
 	####################
 	# BRANCH...
-	b = branch -vv
-	bv = branch -vv
-	ba = branch -a
+	b            = branch -vv
+	bv           = branch -vv
+	ba           = branch -a
 	####################
-[push]
-	default = simple

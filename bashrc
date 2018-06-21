@@ -61,7 +61,7 @@ if [[ $OSTYPE == linux-gnu ]]; then
     export VDPAU_NVIDIA_NO_OVERLAY=1
 fi
 
-export FZF_DEFAULT_OPTS="--bind ctrl-p:toggle-preview,ctrl-d:page-down,ctrl-u:page-up --preview='(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null'"
+export FZF_DEFAULT_OPTS="--no-mouse --bind ctrl-p:toggle-preview,ctrl-d:page-down,ctrl-u:page-up --preview='(~/.vim/plugged/fzf.vim/bin/preview.rb {} || cat {} || tree -C {})'"
 export FZF_TMUX=0
 
 exists vim && export P4EDITOR=vim

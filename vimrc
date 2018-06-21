@@ -557,7 +557,7 @@ nmap <Leader>oc :%foldclose!<CR>
 function! Cscope(option, query)
   let opts = {
     \   'source':  "cq search cscope " . a:option . " " . a:query,
-    \   'options': [ '--ansi', '--prompt', 'cq> ', '--preview-window=right:0', '--expect=ctrl-v,ctrl-s,ctrl-t,enter,ctrl-c' ]
+    \   'options': [ '--ansi', '--prompt', 'cq> ', '--expect=ctrl-v,ctrl-s,ctrl-t,enter,ctrl-c' ]
     \ }
   function! opts.sink(lines)
     let l:key = remove(a:lines, 0)
