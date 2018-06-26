@@ -12,6 +12,11 @@ local apps =
         ["app"] = "iTerm"
     },
     {
+        ["text"] = "VNC",
+        ["subText"] = "VNC Viewer",
+        ["app"] = "/usr/local/bin/vncviewer"
+    },
+    {
         ["text"] = "Chrome",
         ["subText"] = "Google Chrome web browser",
         ["app"] = "Google Chrome"

@@ -467,6 +467,14 @@ nmap tl :tabnext<CR>
 nmap tH :tabmove -1<CR>
 nmap tL :tabmove +1<CR>
 
+for i in range(1, 9)
+    execute "nmap <Leader>" . i . " " . i . "gt"
+endfor
+nmap <Leader>0 :tablast<CR>
+
+autocmd insanum TabLeave * let g:lasttab = tabpagenr()
+nmap tt :exe "tabn " . g:lasttab<CR>
+
 set showtabline=2
 set tabline=%!MyTabLine()
 

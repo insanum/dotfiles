@@ -13,9 +13,9 @@
 	ui           = true
 [color "diff-highlight"]
 	oldNormal    = red bold
-	oldHighlight = red bold 52
+	oldHighlight = red bold reverse
 	newNormal    = green bold
-	newHighlight = green bold 22
+	newHighlight = green bold reverse
 [color "diff"]
 	meta         = yellow
 	frag         = magenta bold
@@ -42,6 +42,7 @@
 	dus          = diff --patience --patch-with-stat -U10 --staged
 	dt           = difftool
 	dts          = difftool --staged
+	patch        = !git --no-pager diff --no-color
 	####################
 	# LOG...
 	tree         = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"
