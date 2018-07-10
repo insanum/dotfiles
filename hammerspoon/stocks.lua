@@ -7,9 +7,9 @@ local curl    = "/usr/bin/curl"
 local menubar = hs.menubar.new()
 local stocks  = nil
 
-local STOCKS_UPDATE_TIMER      = 30 -- minutes
-local STOCKS_UPDATE_HOUR_START = 6  -- 6am market open
-local STOCKS_UPDATE_HOUR_END   = 13 -- 1pm market close
+local STOCKS_UPDATE_TIMER      = 15 -- minutes
+local STOCKS_UPDATE_HOUR_START = 5  -- 6am market open
+local STOCKS_UPDATE_HOUR_END   = 14 -- 1pm market close
 
 local function fslurp(path)
     local f = io.open(path, "r")
@@ -24,6 +24,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
     if exitCode ~= 0 then
         --hs.alert("Stock update failed!")
         print("STOCK TICKER update failed!")
+        menubar:setTooltip("ERROR: "..os.date("%x %X"))
         return
     end
 
@@ -86,6 +87,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
                                          color = hs.drawing.color.x11.white
                                        })
                     )
+    menubar:setTooltip(os.date("%x %X"))
 
     if #tickers > 1 then
         local submenu = { }
@@ -102,20 +104,21 @@ end
 local forced_update = false
 
 local function doUpdate()
-    -- only execute the update around when the market is open (6am-1pm PST)
+    local cur_time = os.date("*t")
+
+    print("STOCK TICKER update " .. cur_time.hour .. ":" .. cur_time.min)
+
     if forced_update then
-        print("STOCK TICKER update forced")
+        print("STOCK TICKER update **FORCED**")
         forced_update = false
     else
-        local cur_time = os.date("*t")
+        -- only execute the update around when the market is open (6am-1pm PST)
 
         if cur_time.hour < STOCKS_UPDATE_HOUR_START or
            cur_time.hour > STOCKS_UPDATE_HOUR_END then
-            print("STOCK TICKER update **SKIPPED** (hour=" .. cur_time.hour .. ")")
+            print("STOCK TICKER update **SKIPPED**")
             return
         end
-
-        print("STOCK TICKER update (hour=" .. cur_time.hour .. ")")
     end
 
     local curl_args = { "-s", intrinio, "-u", config.user .. ":" .. config.pass }
@@ -125,7 +128,7 @@ local function doUpdate()
     end
 end
 
-local stockUpdateTimer = hs.timer.doEvery((STOCKS_UPDATE_TIMER * 60), doUpdate)
+stock_updater = hs.timer.new((STOCKS_UPDATE_TIMER * 60), doUpdate, true):start()
 
 forced_update = true
 doUpdate()
