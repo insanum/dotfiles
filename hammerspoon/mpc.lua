@@ -553,16 +553,23 @@ local function mpc_get_playlist_tracks()
     end
 
     local cbk_done = function(data)
+        local album  = nil
         local artist = nil
         local track  = nil
 
         for i = 1,#data do
-            local key, value = data[i]:match("^(.*):%s+(.+)\n$")
+            -- Note the '-' is the non-greedy '*' for lua regex
+            local key, value = data[i]:match("^(.-):%s+(.*)\n$")
 
             if (key == "file") then
+                album  = nil
                 artist = nil
-                track = nil
+                track  = nil
                 goto continue
+            end
+
+            if (key == "Album") then
+                album = value
             end
 
             if (key == "Artist") then
@@ -573,10 +580,12 @@ local function mpc_get_playlist_tracks()
                 track = value
             end
 
-            if ((artist ~= nil) and (track ~= nil)) then
-                mpc.playlist_tracks[#mpc.playlist_tracks + 1] = artist.." - "..track
+            if ((album ~= nil) and (artist ~= nil) and (track ~= nil)) then
+                mpc.playlist_tracks[#mpc.playlist_tracks + 1] =
+                    artist.." - "..album.." - "..track
+                album  = nil
                 artist = nil
-                track = nil
+                track  = nil
             end
 
             ::continue::
@@ -596,7 +605,8 @@ local function mpc_get_playlists()
         mpc.playlists = { }
 
         for i = 1,#data do
-            local key, value = data[i]:match("^(.*):%s+(.+)\n$")
+            -- Note the '-' is the non-greedy '*' for lua regex
+            local key, value = data[i]:match("^(.-):%s+(.+)\n$")
             if (key == "playlist") then
                 mpc.playlists[#mpc.playlists + 1] = value
             end
@@ -613,7 +623,7 @@ local function mpc_load_playlist()
 
     local chooser_cbk = function(selection)
         local cbk = function(args)
-            return "command_list_begin\nclear\nload "..args.idx.."\ncommand_list_end\n"
+            return "command_list_begin\nclear\nload \""..args.idx.."\"\ncommand_list_end\n"
         end
 
         local cbk_done = function(data)
@@ -724,7 +734,8 @@ mpc_get_status = function()
     local cbk_done = function(data)
         local res = { }
         for i = 1,#data do
-            local key, value = data[i]:match("^(.*):%s+(.+)\n$")
+            -- Note the '-' is the non-greedy '*' for lua regex
+            local key, value = data[i]:match("^(.-):%s+(.+)\n$")
             if (key == "changed") then
                 cprint(st_orange("MPD IDLE: "..value, mpc.fsize_console))
                 if (value == "stored_playlist") then
@@ -998,8 +1009,8 @@ mpc.menu_table =
         { title = "Play Track",     fn = mpc_play_track },
         { title = "Load Playlist",  fn = mpc_load_playlist },
         { title = "Clear Playlist", fn = mpc_clear },
-        { title = "Volume -10",     fn = mpc_volume_down },
-        { title = "Volume +10",     fn = mpc_volume_up },
+        { title = "Volume -5",      fn = mpc_volume_down },
+        { title = "Volume +5",      fn = mpc_volume_up },
         { title = "Notifications",  fn = mpc_notifications, checked = true },
         { title = "Halt",           fn = mpc_halt, checked = false },
         { title = "Reset",          fn = mpc_reset }
@@ -1028,12 +1039,12 @@ function()
     mpc_repeat()
 end)
 
-hotkey.bind(kb_alt, "Up", "MPD Volume +10",
+hotkey.bind(kb_alt, "Up", "MPD Volume +5",
 function()
     mpc_volume_up()
 end)
 
-hotkey.bind(kb_alt, "Down", "MPD Volume -10",
+hotkey.bind(kb_alt, "Down", "MPD Volume -5",
 function()
     mpc_volume_down()
 end)

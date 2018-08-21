@@ -33,6 +33,9 @@ require("stocks")
 -- pomodoro timer
 require("pomodoro")
 
+-- input logger
+require("ilog")
+
 -- reload config
 hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",
 function()

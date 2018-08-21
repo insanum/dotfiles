@@ -82,6 +82,7 @@ alias brcm_skylark='ssh -t edavis@insanum.com ssh edavis@192.168.168.3'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
 alias gn='tsocks geeknote'
+alias vdi_git='bsub -I -q irv-rhel69 git'
 function sn() { vim -c ":Simplenote -l $1"; }
 
 if [[ -n "$CHROMEBOOK" ]]; then

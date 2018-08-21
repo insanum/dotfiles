@@ -5,12 +5,16 @@ set username apc
 set password foobar
 
 # FPGA and DSTREAM power outlet ports
-set fpga16 [list 1 10 22]
+#set fpga16 [list 1 10 22]
+set fpga16 [list 1]
 set fpga17 [list 3 4 12]
 set fpga18 [list 2 5 6]
-set fpga19 [list 7 20 23]
-set fpga20 [list 11 13 15]
-set fpga21 [list 17 19 21]
+#set fpga19 [list 7 20 23]
+set fpga19 [list 20]
+#set fpga20 [list 11 13 15]
+set fpga20 [list 11]
+#set fpga21 [list 17 19 21]
+set fpga21 [list 17]
 
 proc usage {{error ""}} {
     global argv0

@@ -1,14 +1,17 @@
 #!/bin/bash
 
+export JAVAVER=jdk1.8.0_92
+export PATH=/tools/bin:$PATH
+echo "JAVAVER=$JAVAVER"
+echo "PATH=$PATH"
+
 #export MGLS_LICENSE_FILE=/home/ls952535/Site_140637_121817.txt
 #export MGC_PATH="/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/bin/:/home/ls952535/mgc/embedded/readystart-arm/nucleus/tools/bin/linux/x86/"
 #export MGC_LIB=/home/ls952535/mgc/embedded/toolchains/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/
 
-export MGLS_LICENSE_FILE="17444@lic-sj1-345.broadcom.net"
-export MGC_PATH="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/bin/"
-export MGC_LIB="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/"
-
-cd /projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware/ChiMP/bootcode
+#export MGLS_LICENSE_FILE="17444@lic-sj1-345.broadcom.net"
+#export MGC_PATH="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/bin/"
+#export MGC_LIB="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/"
 
 function log()
 {
@@ -23,10 +26,30 @@ function clean()
     fi
 }
 
+if [[ "$1" = gitclean ]]; then
+    cd /projects/ccx-sw-arch/edavis/git/nx_build
+    log "git checkout -- ."
+    git checkout -- .
+    log "git clean -xdf"
+    git clean -xdf
+    log "git pull"
+    git pull
+    exit
+fi
+
+if [[ $1 = thor || $1 = thor_e ]]; then
+    cd /projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware/THOR
+elif [[ $1 = creole || $1 = creole_e ]]; then
+    cd /projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware/CREOLE
+else
+    log "ERROR: Unknown target directory ($1)"
+    exit
+fi
+
 BFILE="make_${1,,}.sh"
 
 if [[ ! -f "$BFILE" ]]; then
-    log "ERROR: Unknown target ($1)"
+    log "ERROR: Unknown target script ($BFILE)"
     exit
 fi
 

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 if [[ -z "$1" ]]; then
-    echo "Usage: $0 thor_e|creole_e|<target> [clean|debug]"
+    echo "Usage: $0 gitclean"
+    echo "Usage: $0 thor_e|creole_e|<target> [clean|debug] [local_repo]"
     exit
 fi
 
@@ -10,9 +11,23 @@ RUSER=ed927285
 RHOST=lvnvdb3254.lvn.broadcom.net
 
 LREPO=${HOME}/work/git/nx/main/Cumulus
+if [[ -n "$3" ]]; then
+    LREPO=${HOME}/work/git/${3}/main/Cumulus
+fi
+
 RREPO=/projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus
 
-if [[ "$2" != clean ]]; then
+if [[ "$1" == gitclean ]]; then
+    echo "*************"
+    echo "* GIT CLEAN *"
+    echo "*************"
+    ssh ${RUSER}@${RHOST} ./build_fw gitclean
+elif [[ "$2" == clean ]]; then
+    echo "************"
+    echo "* CLEANING *"
+    echo "************"
+    ssh ${RUSER}@${RHOST} ./build_fw $1 clean
+else
     echo "**************************************"
     echo "* RSYNC: main/Cumulus/common/include *"
     echo "**************************************"
@@ -22,10 +37,10 @@ if [[ "$2" != clean ]]; then
     echo "* RSYNC: main/Cumulus/firmware *"
     echo "********************************"
     rsync -avP --exclude 'RTOS/*' ${LREPO}/firmware ${RUSER}@${RHOST}:${RREPO}/
-fi
 
-echo "************"
-echo "* BUILDING *"
-echo "************"
-ssh ${RUSER}@${RHOST} ./build_fw $*
+    echo "************"
+    echo "* BUILDING *"
+    echo "************"
+    ssh ${RUSER}@${RHOST} ./build_fw $1 $2
+fi
 
