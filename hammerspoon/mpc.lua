@@ -46,8 +46,8 @@ local function secs_to_time(secs)
         h = string.format("%d", math.floor(secs / 3600))
         m = string.format("%d", math.floor((secs / 60) - (h * 60)))
         s = string.format("%02.f", math.floor(secs - (h * 3600) - (m * 60)))
-        --return h..":"..m..":"..s
-        return m..":"..s
+        --return h .. ":" .. m .. ":" .. s
+        return m .. ":" .. s
     end
 end
 
@@ -83,7 +83,7 @@ local function mpc_notify(subtitle, title, info)
     if (info ~= nil) then
         n:informativeText(info)
     end
-    print("MPD: "..n:title().." "..n:subTitle().." "..n:informativeText())
+    print("MPD: " .. n:title() .. " " .. n:subTitle() .. " " .. n:informativeText())
     n:autoWithdraw(false)
     n:hasActionButton(true)
     if (mpc.notifications == true) then
@@ -93,7 +93,7 @@ end
 
 local function mpc_alert(msg)
     alert(msg, { radius = 0, atScreenEdge = 2 }, 2)
-    print("MPD alert: "..msg:getString())
+    print("MPD alert: " .. msg:getString())
     cprint(msg)
 end
 
@@ -114,7 +114,7 @@ local function mpc_worker()
     local wi = table.remove(mpc.work, 1)
 
     if (mpc.work_ok == false) then
-        --print("MPD: dropped command ("..wi.id..")")
+        --print("MPD: dropped command (" .. wi.id .. ")")
         if (wi.cbk_fail ~= nil) then
             wi.cbk_fail()
         end
@@ -126,13 +126,13 @@ local function mpc_worker()
 
     local cmd = wi.cbk(wi.cbk_args)
     if (cmd == nil) then
-        --print("MPD: 'nil' command ("..wi.id..")")
+        --print("MPD: 'nil' command (" .. wi.id .. ")")
         mpc.working = false
         timer.doAfter(0, mpc_worker)
         return
     end
 
-    cprint(st_grey("MPD: executing command ("..wi.id..")\n"..cmd:match("^(.*)\n"),
+    cprint(st_grey("MPD: executing command (" .. wi.id .. ")\n" .. cmd:match("^(.*)\n"),
                    mpc.fsize_console))
 
     local cmd_result = { }
@@ -169,7 +169,7 @@ local function mpc_worker()
             wi.cbk_done(cmd_result)
         end
 
-        print("MPD: finished command ("..wi.id..")")
+        print("MPD: finished command (" .. wi.id .. ")")
         mpc.working = false
         timer.doAfter(0, mpc_worker)
     end
@@ -183,7 +183,7 @@ local function mpc_schedule_work(cbk, cbk_args, cbk_done, cbk_fail)
     end
 
     mpc.work_id = mpc.work_id + 1
-    print("MPD: scheduling command ("..mpc.work_id..")")
+    print("MPD: scheduling command (" .. mpc.work_id .. ")")
 
     local cmd_tbl = {
                       id       = mpc.work_id,
@@ -250,18 +250,18 @@ local function mpc_status()
         (mpc.status.Time ~= nil) and
         (tonumber(mpc.status.Time) ~= 0)) then
         percentage = tostring(math.ceil((math.ceil(tonumber(mpc.status.elapsed)) /
-                                         tonumber(mpc.status.Time)) * 100)).."%"
+                                         tonumber(mpc.status.Time)) * 100)) .. "%"
     end
 
-    msg = msg.." #"..track_idx.."/"..total_tracks
-    msg = msg.." "..elapsed.."/"..total_time.." ("..percentage..")"
+    msg = msg .. " #" .. track_idx .. "/" .. total_tracks
+    msg = msg .. " " .. elapsed .. "/" .. total_time .. " (" .. percentage .. ")"
 
     if ((artist ~= nil) and (title ~= nil)) then
-        mpc_notify(msg, artist.." - "..title)
+        mpc_notify(msg, artist .. " - " .. title)
     elseif (artist ~= nil) then
-        mpc_notify(msg, artist.." - (unknown)")
+        mpc_notify(msg, artist .. " - (unknown)")
     elseif (title ~= nil) then
-        mpc_notify(msg, "(unknown) - "..title)
+        mpc_notify(msg, "(unknown) - " .. title)
     else
         mpc_notify(msg)
     end
@@ -300,11 +300,11 @@ local function mpc_status_menu()
         (mpc.status.Time ~= nil) and
         (tonumber(mpc.status.Time) ~= 0)) then
         percentage = tostring(math.ceil((math.ceil(tonumber(mpc.status.elapsed)) /
-                                         tonumber(mpc.status.Time)) * 100)).."%"
+                                         tonumber(mpc.status.Time)) * 100)) .. "%"
     end
 
-    msg = "#"..track_idx.."/"..total_tracks
-    msg = msg.." "..elapsed.."/"..total_time.." ("..percentage..")"
+    msg = "#" .. track_idx .. "/" .. total_tracks
+    msg = msg .. " " .. elapsed .. "/" .. total_time .. " (" .. percentage .. ")"
 
     if (mpc.status.state == "play") then
         return st_orange(msg, mpc.fsize_menu)
@@ -321,17 +321,17 @@ local function mpc_seek(args)
     end
 
     if (args.delta ~= nil) then
-        return "seekcur "..args.delta..args.location.."\n"
+        return "seekcur " .. args.delta .. args.location .. "\n"
     else
         if (args.location == "start") then
             return "seekcur 0\n"
         elseif (args.location == "end") then
-            return "seekcur "..mpc.status.Time.."\n"
+            return "seekcur " .. mpc.status.Time .. "\n"
         elseif (args.location == "mhack") then
             local loc = math.floor(mpc.status.Time - 10)
-            return "seekcur "..loc.."\n"
+            return "seekcur " .. loc .. "\n"
         else
-            return "seekcur "..args.location.."\n"
+            return "seekcur " .. args.location .. "\n"
         end
     end
 end
@@ -498,7 +498,7 @@ local function mpc_play_track()
 
     local chooser_cbk = function(selection)
         local cbk = function(args)
-            return "play "..args.idx.."\n"
+            return "play " .. args.idx .. "\n"
         end
 
         local cbk_done = function(data)
@@ -531,8 +531,11 @@ local function mpc_play_track()
     for i = 1,#mpc.playlist_tracks do
         tracks[#tracks + 1] =
             {
-              text = tostring(i)..": "..mpc.playlist_tracks[i],
-              idx  = i
+              text    = tostring(i) .. ": " ..
+                        mpc.playlist_tracks[i].artist .. " - " ..
+                        mpc.playlist_tracks[i].album,
+              subText = mpc.playlist_tracks[i].track,
+              idx     = i
             }
     end
 
@@ -544,6 +547,7 @@ local function mpc_play_track()
     ch:bgDark(true)
     ch:fgColor(x11_clr.orange)
     ch:subTextColor(x11_clr.chocolate)
+    ch:searchSubText(true)
     ch:show()
 end
 
@@ -582,7 +586,7 @@ local function mpc_get_playlist_tracks()
 
             if ((album ~= nil) and (artist ~= nil) and (track ~= nil)) then
                 mpc.playlist_tracks[#mpc.playlist_tracks + 1] =
-                    artist.." - "..album.." - "..track
+                    { artist = artist, album = album, track = track }
                 album  = nil
                 artist = nil
                 track  = nil
@@ -590,7 +594,7 @@ local function mpc_get_playlist_tracks()
 
             ::continue::
         end
-        mpc_notify("Retrieved tracks for \""..mpc.playlist_name.."\"")
+        mpc_notify("Retrieved tracks for \"" .. mpc.playlist_name .. "\"")
     end
 
     mpc_schedule_work(cbk, nil, cbk_done)
@@ -623,7 +627,7 @@ local function mpc_load_playlist()
 
     local chooser_cbk = function(selection)
         local cbk = function(args)
-            return "command_list_begin\nclear\nload \""..args.idx.."\"\ncommand_list_end\n"
+            return "command_list_begin\nclear\nload \"" .. args.idx .. "\"\ncommand_list_end\n"
         end
 
         local cbk_done = function(data)
@@ -631,7 +635,7 @@ local function mpc_load_playlist()
             mpc_notify("Playlist cleared")
 
             mpc.playlist_name = mpc.playlists[selection.idx]
-            mpc_notify("Loaded playlist \""..mpc.playlist_name.."\"")
+            mpc_notify("Loaded playlist \"" .. mpc.playlist_name .. "\"")
 
             if last_win ~= nil then
                 last_win:focus() -- focus last window
@@ -658,7 +662,7 @@ local function mpc_load_playlist()
     for i = 1,#mpc.playlists do
         playlists[#playlists + 1] =
             {
-              text = tostring(i)..": "..mpc.playlists[i],
+              text = tostring(i) .. ": " .. mpc.playlists[i],
               idx  = i
             }
     end
@@ -711,17 +715,17 @@ local function mpc_set_volume(args)
 
     end
 
-    mpc_alert(st_white("MPD Volume ") .. st_orange(volume.."%"))
-    return "setvol "..volume.."\n"
+    mpc_alert(st_white("MPD Volume ") .. st_orange(volume .. "%"))
+    return "setvol " .. volume .. "\n"
 end
 
 local function mpc_volume_down()
-    mpc_schedule_work(mpc_set_volume, { delta = -10 })
+    mpc_schedule_work(mpc_set_volume, { delta = -5 })
     mpc_get_status()
 end
 
 local function mpc_volume_up()
-    mpc_schedule_work(mpc_set_volume, { delta = 10 })
+    mpc_schedule_work(mpc_set_volume, { delta = 5 })
     mpc_get_status()
 end
 
@@ -737,7 +741,7 @@ mpc_get_status = function()
             -- Note the '-' is the non-greedy '*' for lua regex
             local key, value = data[i]:match("^(.-):%s+(.+)\n$")
             if (key == "changed") then
-                cprint(st_orange("MPD IDLE: "..value, mpc.fsize_console))
+                cprint(st_orange("MPD IDLE: " .. value, mpc.fsize_console))
                 if (value == "stored_playlist") then
                     -- get a list of the available playlists
                     mpc_get_playlists()
@@ -830,7 +834,7 @@ mpc_get_status = function()
             if (mpc.status.Title ~= nil) then
                 title = mpc.status.Title
             end
-            tooltip = artist.." - "..title
+            tooltip = artist .. " - " .. title
         end
         mpc.menu:setTooltip(tooltip)
     end
@@ -861,7 +865,7 @@ local function mpc_sock_connect()
         mpc.sock:disconnect()
 
         if ((mpc.sock_attempts % 10) == 0) then
-            print("MPD: Failed to connect (attempt="..mpc.sock_attempts..")")
+            print("MPD: Failed to connect (attempt=" .. mpc.sock_attempts .. ")")
         end
     end
 
@@ -871,7 +875,7 @@ local function mpc_sock_connect()
 
         -- read the MPD welcome message and get things going
         mpc.sock:setCallback(function(data)
-            print("MPD: "..data:match("^(.*)\n$"))
+            print("MPD: " .. data:match("^(.*)\n$"))
             mpc.work_ok = true
 
             -- get a list of the available playlists
@@ -890,7 +894,7 @@ local function mpc_sock_connect()
     mpc.work_ok = false
 
     if ((mpc.sock_attempts % 10) == 0) then
-        print("MPD: Attempting to connect (attempt="..mpc.sock_attempts..")")
+        print("MPD: Attempting to connect (attempt=" .. mpc.sock_attempts .. ")")
     end
 
     mpc.sock_attempts = (mpc.sock_attempts + 1)
