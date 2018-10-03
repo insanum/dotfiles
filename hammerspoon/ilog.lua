@@ -90,10 +90,10 @@ local function ilog_reset()
     if (ilog.et == nil) then
         ilog.et = eventtap.new({
                                  et_types["keyDown"],
-                                 et_types["scrollWheel"],
-                                 et_types["leftMouseDown"],
-                                 et_types["rightMouseDown"],
-                                 et_types["otherMouseDown"],
+                                 --et_types["scrollWheel"],
+                                 --et_types["leftMouseDown"],
+                                 --et_types["rightMouseDown"],
+                                 --et_types["otherMouseDown"],
                                  --et_types["mouseMoved"]
                                },
                                ilog_count)
