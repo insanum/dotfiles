@@ -201,8 +201,7 @@ fi
 
 #alias vi=/usr/local/bin/vim
 #alias vim=/usr/local/bin/vim
-alias vi=vim
-alias vit="vi -c ':CommandT'"
+alias vi=nvim
 alias bashrc="source $HOME/.bashrc"
 alias h="history"
 alias where="type -a"
