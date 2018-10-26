@@ -168,6 +168,10 @@ set breakindent
 set breakindentopt=sbr
 set linebreak
 
+if has('nvim')
+    set inccommand=nosplit
+endif
+
 " truecolor support
 set termguicolors
 let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
@@ -1222,7 +1226,7 @@ autocmd insanum InsertEnter,InsertLeave * redraws!
 "    hi IncSearchMatch        ctermfg=0 ctermbg=1
 "    hi IncSearchOnCursor     ctermfg=0 ctermbg=3
 "    hi IncSearchCursor       ctermfg=0 ctermbg=7
-"    hi Search                ctermfg=0 ctermbg=1 cterm=NONE
+"    hi Search                ctermfg=0 ctermbg=1 cterm=none
 "
 "    hi GitGutterAdd          ctermfg=34  cterm=bold
 "    hi GitGutterDelete       ctermfg=196 cterm=bold
@@ -1303,6 +1307,9 @@ autocmd insanum InsertEnter,InsertLeave * redraws!
 
 function! s:base16_customize() abort
     "Base16hi(group, guifg, guibg, ctermfg, ctermbg, <attr>, <guisp>);
+    call Base16hi("NonText", "9400D3", "none", "129", "238")
+    call Base16hi("VertSplit", "", "none", "", "none")
+    call Base16hi("Comment", "", "", "", "", "italic")
     if g:colors_name == 'base16-nord'
         call Base16hi("Comment", "BF616A", "", "1", "")
     endif

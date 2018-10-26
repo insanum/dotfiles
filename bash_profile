@@ -89,6 +89,7 @@ fi
 exists pyenv && eval "$(pyenv init -)"
 
 exists vim && export EDITOR=vim
+exists nvim && export EDITOR=nvim
 exists chromium && export BROWSER=chromium
 
 umask 022

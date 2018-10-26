@@ -5,7 +5,7 @@
 	user         = edavis
 	port         = pf-irva-ecs.broadcom.com:1666
 [core]
-	editor       = vim
+	editor       = nvim
 	pager        = diff-so-fancy | less -RFX
 [color]
 	#diff        = always
