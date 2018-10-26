@@ -45,16 +45,7 @@ silent! if plug#begin('~/.vim/plugged')
 
 "Plug 'https://github.com/scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle' ] }
 
-Plug 'https://github.com/arcticicestudio/nord-vim'
-Plug 'https://github.com/morhetz/gruvbox'
-Plug 'https://github.com/junegunn/seoul256.vim'
-Plug 'https://github.com/tomasr/molokai.git'
-Plug 'https://github.com/nanotech/jellybeans.vim'
-Plug 'https://github.com/dracula/vim'
-Plug 'https://github.com/romainl/Apprentice'
-Plug 'https://github.com/reedes/vim-colors-pencil'
-Plug 'https://github.com/chriskempson/vim-tomorrow-theme'
-Plug 'https://github.com/altercation/vim-colors-solarized.git'
+Plug 'https://github.com/chriskempson/base16-vim'
 
 Plug 'https://github.com/ap/vim-css-color'
 
@@ -98,11 +89,7 @@ Plug 'https://github.com/dkarter/bullets.vim',
 
 Plug 'https://github.com/gabrielelana/vim-markdown'
 "Plug 'https://github.com/dhruvasagar/vim-table-mode'
-Plug 'https://github.com/insanum/iwgsd.vim'
 Plug 'https://github.com/tpope/vim-speeddating'
-
-Plug 'https://github.com/junegunn/goyo.vim', { 'on': [ 'Goyo' ] }
-Plug 'https://github.com/junegunn/limelight.vim'
 
 Plug 'https://github.com/xolox/vim-misc'
 Plug 'https://github.com/xolox/vim-session'
@@ -131,7 +118,7 @@ set fileformat=unix
 set nobackup
 set backspace=2
 set dictionary=/usr/share/dict/words
-set thesaurus=$HOME/.vim/thesaurus/mthesaur.txt
+set thesaurus=~/.vim/thesaurus/mthesaur.txt
 set complete=.,w,b,u,t,i,k
 set noinsertmode
 set joinspaces
@@ -156,7 +143,7 @@ set winminwidth=5
 set noequalalways
 set pumheight=20
 set hidden
-set verbosefile=$HOME/vim_verbose.txt
+set verbosefile=~/vim_verbose.txt
 set nostartofline
 set nofixeol
 set ignorecase smartcase
@@ -178,6 +165,11 @@ set breakindent
 set breakindentopt=sbr
 set linebreak
 
+" truecolor support
+set termguicolors
+let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
+let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
+
 autocmd insanum BufNewFile,BufRead
     \ *.h,*.c,*.cc,*.cpp,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua
     \ set nobreakindent |
@@ -185,10 +177,10 @@ autocmd insanum BufNewFile,BufRead
 
 " Home direcotry for swapfiles
 set swapfile
-if !isdirectory(expand('$HOME/.vim_swap'))
-    call mkdir(expand('$HOME/.vim_swap'))
+if !isdirectory(expand("~/.vim_swap"))
+    call mkdir(expand("~/.vim_swap"))
 endif
-set directory^=$HOME/.vim_swap//
+set directory^=~/.vim_swap//
 
 " Try to stay off the Escape key!
 " My name is Eric and I have a 2016 MacBook Pro w/ Touch Bar ... /facepalm
@@ -233,8 +225,8 @@ set nolist
 nmap <Leader>l :set list!<CR>:set list?<CR>
 
 " Edit and/or (re)Source this .vimrc file
-nmap <Leader>rce :tabnew $HOME/.vimrc<CR>
-nmap <Leader>rcs :source $HOME/.vimrc<CR>
+nmap <Leader>rce :tabnew ~/.vimrc<CR>
+nmap <Leader>rcs :source ~/.vimrc<CR>
 
 " (re)Write the file as root
 cmap w!! w !sudo tee % > /dev/null
@@ -316,6 +308,9 @@ autocmd insanum FileType
     \ call <SID>t4e()
 autocmd insanum BufRead,BufNewFile
     \ */main/Cumulus/firmware/*
+    \ call <SID>t4e()
+autocmd insanum BufRead,BufNewFile
+    \ */nxt_fw_unit_test/thor_vfio_ut/*
     \ call <SID>t4e()
 
 " Default Tab-2-expand for filetypes...
@@ -855,28 +850,6 @@ omap <Leader><tab> <plug>(fzf-maps-o)
 
 " PLUG FZF (END) --------------------------------------- }}}
 
-" PLUG IWGSD ------------------------------------------- {{{
-
-autocmd insanum FileType markdown IWGSDEnable
-
-" PLUG IWGSD (END) ------------------------------------- }}}
-
-" PLUG GOYO/LIMELIGHT ---------------------------------- {{{
-
-let g:goyo_width  = '90%'
-let g:goyo_height = '85%'
-let g:goyo_linenr = 1
-let g:limelight_conceal_ctermfg = 242
-
-autocmd! User GoyoEnter
-    \ Limelight
-
-autocmd! User GoyoLeave
-    \ Limelight! |
-    \ call <SID>myColorScheme(g:default_theme)
-
-" PLUG GOYO/LIMELIGHT (END) ---------------------------- }}}
-
 " PLUG EASYALIGN --------------------------------------- {{{
 
 xmap ga <Plug>(EasyAlign)
@@ -986,6 +959,7 @@ endif
 set sessionoptions-=buffers,help
 let g:session_autoload = 'no'
 let g:session_autosave = 'no'
+let g:session_persist_colors = 0
 
 " PLUG SESSION (END) ----------------------------------- }}}
 
@@ -1178,7 +1152,7 @@ function! MyStatusGetGit()
 endfunction
 
 function! MyStatusGetTagBuf()
-    if !filereadable(expand("$HOME/.vim/bundle/tagbar/plugin/tagbar.vim"))
+    if !filereadable(expand("~/.vim/bundle/tagbar/plugin/tagbar.vim"))
         return ''
     endif
     return tagbar#currenttag('%s', '')
@@ -1211,120 +1185,137 @@ autocmd insanum InsertEnter,InsertLeave * redraws!
 
 " COLORSCHEMES ----------------------------------------- {{{
 
-function! s:mySwitchTransparency()
-    if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
-        hi Normal ctermbg=None
-    else
-        hi Normal ctermbg=233
+"function! s:mySwitchTransparency()
+"    if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
+"        hi Normal ctermbg=None
+"    else
+"        hi Normal ctermbg=233
+"    endif
+"endfunction
+"
+"function! s:myColorScheme(scheme)
+"    set background=dark
+"
+"    if a:scheme == 'molokai'
+"        let g:molokai_original = 1
+"    endif
+"
+"    execute "colorscheme" a:scheme
+"
+"    "hi link cError Normal
+"    hi Comment cterm=italic
+"    hi MatchParen ctermfg=190 ctermbg=None cterm=bold
+"    hi Constant cterm=bold
+"    hi ColorColumn ctermbg=234
+"    hi CursorLine ctermbg=234
+"    hi CursorLineNr ctermfg=97 ctermbg=None cterm=bold
+"    hi LineNr ctermfg=242 cterm=bold
+"    hi link javaScriptTemplateDelim  Keyword
+"    hi link javaScriptTemplateVar    Identifier
+"    hi link javaScriptTemplateString String
+"
+"    let g:incsearch#separate_highlight = 1
+"    hi IncSearchMatchReverse ctermfg=0 ctermbg=5
+"    hi IncSearchMatch        ctermfg=0 ctermbg=1
+"    hi IncSearchOnCursor     ctermfg=0 ctermbg=3
+"    hi IncSearchCursor       ctermfg=0 ctermbg=7
+"    hi Search                ctermfg=0 ctermbg=1 cterm=NONE
+"
+"    hi GitGutterAdd          ctermfg=34  cterm=bold
+"    hi GitGutterDelete       ctermfg=196 cterm=bold
+"    hi GitGutterChangeDelete ctermfg=208 cterm=bold
+"    hi GitGutterChange       ctermfg=220 cterm=bold
+"
+"    hi SignatureMarkText   ctermfg=201 cterm=bold
+"    hi SignatureMarkerText ctermfg=226 cterm=bold
+"
+"    "hi VertSplit ctermfg=110 ctermbg=16
+"    hi VertSplit ctermfg=none ctermbg=none
+"    hi NonText   ctermfg=129 ctermbg=238
+"
+"    hi Comment cterm=italic
+"
+"    if a:scheme == 'nord'
+"        " comments need to pop more under nord
+"        hi Comment ctermfg=1 guifg=#BF616A
+"
+"        hi Folded ctermfg=39 ctermbg=239 cterm=bold guifg=#2E3440 guibg=#88C0D0
+"
+"        hi markdownXmlElement ctermfg=153
+"        hi markdownItemDelimiter ctermfg=214 cterm=bold
+"
+"        hi markdownHeadingDelimiter ctermfg=214 cterm=bold
+"        hi markdownH1 ctermfg=39 cterm=bold
+"        hi markdownH2 ctermfg=38 cterm=bold
+"        hi markdownH3 ctermfg=37 cterm=bold
+"        hi markdownH4 ctermfg=36 cterm=bold
+"        hi markdownH5 ctermfg=35 cterm=bold
+"        hi markdownH6 ctermfg=34 cterm=bold
+"    endif
+"
+"    hi TabLineSel ctermfg=226 cterm=bold
+"
+"    call <SID>mySwitchTransparency()
+"    call <SID>myStatusColorScheme()
+"endfunction
+"
+"" This really doesn't work as syntax highlights get trashed...
+"function! s:myCycleColorScheme(dir)
+"    let clrs =
+"        \[
+"        \  'nord',
+"        \  'gruvbox',
+"        \  'molokai',
+"        \  'jellybeans',
+"        \  'dracula',
+"        \  'apprentice',
+"        \  'pencil',
+"        \  'solarized8',
+"        \]
+"    let i = 0
+"    while i < len(clrs)
+"        if g:colors_name == clrs[i]
+"            let i += a:dir
+"            break
+"        endif
+"        let i += 1
+"    endwhile
+"    if i == len(clrs) | let i = 0             | endif
+"    if i == -1        | let i = len(clrs) - 1 | endif
+"    let g:default_theme = clrs[i]
+"    call <SID>myColorScheme(g:default_theme)
+"    echom "Changed color scheme to " . clrs[i]
+"endfunction
+"map <Leader>> :call <SID>myCycleColorScheme(1)<CR>
+"map <Leader>< :call <SID>myCycleColorScheme(-1)<CR>
+"
+"let g:default_theme = 'nord'
+"if exists('g:theme')
+"    " Set the colorscheme from the command line:
+"    " vi --cmd 'let g:theme="gruvbox"' ...
+"    let g:default_theme = g:theme
+"endif
+"
+"call <SID>myColorScheme(g:default_theme)
+
+function! s:base16_customize() abort
+    "Base16hi(group, guifg, guibg, ctermfg, ctermbg, <attr>, <guisp>);
+    if g:colors_name == 'base16-nord'
+        call Base16hi("Comment", "BF616A", "", "1", "")
     endif
 endfunction
+autocmd insanum ColorScheme * call s:base16_customize()
 
-function! s:myColorScheme(scheme)
-    set background=dark
+set background=dark
 
-    if a:scheme == 'molokai'
-        let g:rehash256 = 1
-    elseif a:scheme == 'solarized'
-        let g:solarized_termcolors = 256
-    endif
-
-    execute "colorscheme" a:scheme
-
-    "hi link cError Normal
-    hi Comment cterm=italic
-    hi MatchParen ctermfg=190 ctermbg=None cterm=bold
-    hi Constant cterm=bold
-    hi ColorColumn ctermbg=234
-    hi CursorLine ctermbg=234
-    hi CursorLineNr ctermfg=97 ctermbg=None cterm=bold
-    hi LineNr ctermfg=242 cterm=bold
-    hi link javaScriptTemplateDelim  Keyword
-    hi link javaScriptTemplateVar    Identifier
-    hi link javaScriptTemplateString String
-
-    let g:incsearch#separate_highlight = 1
-    hi IncSearchMatchReverse ctermfg=0 ctermbg=5
-    hi IncSearchMatch        ctermfg=0 ctermbg=1
-    hi IncSearchOnCursor     ctermfg=0 ctermbg=3
-    hi IncSearchCursor       ctermfg=0 ctermbg=7
-    hi Search                ctermfg=0 ctermbg=1
-
-    hi GitGutterAdd          ctermfg=34  cterm=bold
-    hi GitGutterDelete       ctermfg=196 cterm=bold
-    hi GitGutterChangeDelete ctermfg=208 cterm=bold
-    hi GitGutterChange       ctermfg=220 cterm=bold
-
-    hi SignatureMarkText   ctermfg=201 cterm=bold
-    hi SignatureMarkerText ctermfg=226 cterm=bold
-
-    "hi VertSplit ctermfg=110 ctermbg=16
-    hi VertSplit ctermfg=none ctermbg=none
-    hi NonText   ctermfg=129 ctermbg=238
-
-    if a:scheme == 'nord'
-        " comments need to pop more under nord
-        hi Comment ctermfg=1 cterm=italic
-
-        hi Folded ctermfg=39 ctermbg=239 cterm=bold
-
-        hi markdownXmlElement ctermfg=153
-        hi markdownItemDelimiter ctermfg=214 cterm=bold
-
-        hi markdownHeadingDelimiter ctermfg=214 cterm=bold
-        hi markdownH1 ctermfg=39 cterm=bold
-        hi markdownH2 ctermfg=38 cterm=bold
-        hi markdownH3 ctermfg=37 cterm=bold
-        hi markdownH4 ctermfg=36 cterm=bold
-        hi markdownH5 ctermfg=35 cterm=bold
-        hi markdownH6 ctermfg=34 cterm=bold
-    endif
-
-    hi TabLineSel ctermfg=226 cterm=bold
-
-    call <SID>mySwitchTransparency()
-    call <SID>myStatusColorScheme()
-endfunction
-
-" This really doesn't work as syntax highlights get trashed...
-function! s:myCycleColorScheme(dir)
-    let clrs =
-        \[
-        \  'nord',
-        \  'gruvbox',
-        \  'seoul256',
-        \  'molokai',
-        \  'jellybeans',
-        \  'dracula',
-        \  'apprentice',
-        \  'pencil',
-        \  'Tomorrow-Night-Bright',
-        \  'solarized',
-        \]
-    let i = 0
-    while i < len(clrs)
-        if g:colors_name == clrs[i]
-            let i += a:dir
-            break
-        endif
-        let i += 1
-    endwhile
-    if i == len(clrs) | let i = 0             | endif
-    if i == -1        | let i = len(clrs) - 1 | endif
-    let g:default_theme = clrs[i]
-    call <SID>myColorScheme(g:default_theme)
-    echom "Changed color scheme to " . clrs[i]
-endfunction
-map <Leader>> :call <SID>myCycleColorScheme(1)<CR>
-map <Leader>< :call <SID>myCycleColorScheme(-1)<CR>
-
-let g:default_theme = 'nord'
-if exists('g:theme')
-    " Set the colorscheme from the command line:
-    " vi --cmd 'let g:theme="jellybeans"' ...
-    let g:default_theme = g:theme
+if filereadable(expand("~/.vimrc_background"))
+    let base16colorspace=256
+    source ~/.vimrc_background
+else
+    colorscheme base16-gruvbox-dark-medium
 endif
 
-call <SID>myColorScheme(g:default_theme)
+map <Leader>< :source ~/.vimrc_background<CR>
 
 set guifont=Hack:h14
 
