@@ -1062,6 +1062,40 @@ function! s:myStatusColorScheme()
     hi ST_TAG_I     ctermfg=244 ctermbg=24  cterm=bold
 endfunction
 
+function! s:myStatusColorSchemeBase16()
+    "Base16hi(group, guifg, guibg, ctermfg, ctermbg, <attr>, <guisp>);
+
+    call Base16hi("ST_M_NORMAL",  "005f00", "afd700", "22",  "148", "bold")
+    call Base16hi("ST_M_INSERT",  "005f5f", "ffffff", "23",  "231", "bold")
+    call Base16hi("ST_M_VISUAL",  "870000", "ff8700", "88",  "208", "bold")
+    call Base16hi("ST_M_REPLACE", "ffffff", "d70000", "231", "160", "bold")
+    call Base16hi("ST_M_SELECT",  "ffffff", "626262", "231", "241", "bold")
+
+    call Base16hi("ST_FILET",     "9e9e9e", "303030", "247", "236", "bold")
+    call Base16hi("ST_FILET_I",   "87d7ff", "005f87", "117", "24",  "bold")
+
+    call Base16hi("ST_FLAGS",     "ffff5f", "5f0000", "227", "52",  "bold")
+    call Base16hi("ST_DOS",       "d7d7ff", "5f00af", "189", "55",  "bold")
+
+    call Base16hi("ST_FILE",      "ffffff", "585858", "231", "240", "bold")
+    call Base16hi("ST_FILE_I",    "ffffff", "0087af", "231", "31",  "bold")
+
+    call Base16hi("ST_CHAR",      "9e9e9e", "303030", "247", "236", "bold")
+    call Base16hi("ST_CHAR_I",    "87d7ff", "005f87", "117", "24",  "bold")
+
+    call Base16hi("ST_SCROLL",    "bcbcbc", "585858", "250", "240", "bold")
+    call Base16hi("ST_SCROLL_I",  "87d7ff", "0087af", "117", "31",  "bold")
+
+    call Base16hi("ST_CURSOR",    "303030", "9e9e9e", "236", "247", "bold")
+    call Base16hi("ST_CURSOR_I",  "87d7ff", "005f87", "117", "24",  "bold")
+
+    call Base16hi("ST_WIDTH",     "8a8a8a", "444444", "245", "238", "bold")
+    call Base16hi("ST_WIDTH_I",   "87d7ff", "0087af", "117", "31",  "bold")
+
+    call Base16hi("ST_TAG",       "808080", "303030", "244", "236", "bold")
+    call Base16hi("ST_TAG_I",     "808080", "005f87", "244", "24",  "bold")
+endfunction
+
 function! MyStatusHL(normal, insert)
     return mode() ==# 'i' ? a:insert : a:normal
 endfunction
@@ -1314,6 +1348,7 @@ function! s:base16_customize() abort
     if g:colors_name == 'base16-nord'
         call Base16hi("Comment", "BF616A", "", "1", "")
     endif
+    call <SID>myStatusColorSchemeBase16()
 endfunction
 autocmd insanum ColorScheme * call s:base16_customize()
 
