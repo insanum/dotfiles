@@ -172,7 +172,7 @@ function git_module {
     if [ -n "$git_branch" ]; then
         local bg_color="$1"
         local fg_color="$2"
-        local content="${PL_SYMBOLS[git_branch]} $git_branch"
+        local content="${PL_SYMBOLS[git_branch]} $(basename $(git rev-parse --show-toplevel))[$git_branch]"
 
         if [ "$PL_GIT_STASH" = true ]; then
             local number_stash="$(git stash list 2>/dev/null | wc -l)"
@@ -417,18 +417,18 @@ declare -a PL_MODULES=(
 
 # Module Options
 PL_ERASE_TO_EOL=true
-PL_PATH_TRIM=2 # 0 Full path, 1, Current, 2+ trim level
+PL_PATH_TRIM=3 # 0 Full path, 1, Current, 2+ trim level
 PL_TIME_SHOW_SECONDS=false
 PL_USER_SHOW_HOST=true
 PL_USER_USE_IP=false
 PL_SSH_SHOW_HOST=true
 PL_SSH_USE_IP=false
+PL_GIT_STASH=false
 PL_GIT_AHEAD=false
-PL_GIT_MODIFIED=false
 PL_GIT_STAGED=false
 PL_GIT_CONFLICTS=false
+PL_GIT_MODIFIED=false
 PL_GIT_UNTRACKED=false
-PL_GIT_STASH=false
 
 PROMPT_COMMAND="bashline_ps1"
 
