@@ -34,6 +34,11 @@ else
     echo "**************************************"
     rsync -avP ${LREPO}/common/include ${RUSER}@${RHOST}:${RREPO}/common/
 
+    #echo "**************************************"
+    #echo "* RSYNC: main/Cumulus/drivers *"
+    #echo "**************************************"
+    #rsync -avP ${LREPO}/drivers ${RUSER}@${RHOST}:${RREPO}/
+
     echo "********************************"
     echo "* RSYNC: main/Cumulus/firmware *"
     echo "********************************"

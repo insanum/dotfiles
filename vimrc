@@ -64,6 +64,7 @@ Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/haya14busa/incsearch.vim'
 
 Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
+Plug 'https://github.com/justinmk/vim-syntax-extra'
 
 "Plug 'https://github.com/Yggdroot/indentLine'
 
@@ -886,7 +887,7 @@ let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
 
 "let g:rainbow#max_level = 32
 let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
-let g:rainbow#blacklist = [15, '#D8DEE9', '#ECEFF4', '#80a0ff']
+let g:rainbow#blacklist = [15, '#fbf1c7', '#665c54']
 
 autocmd insanum Syntax * RainbowParentheses
 

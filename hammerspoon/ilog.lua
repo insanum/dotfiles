@@ -70,10 +70,11 @@ end
 local function ilog_reset()
     if (ilog.menu == nil) then
         ilog.menu = menubar.new()
-        ilog.menu:setTitle(st_white("[", ilog.fsize_menu) ..
-                           st_grey(0, ilog.fsize_menu) ..
-                           st_white("]", ilog.fsize_menu))
     end
+
+    ilog.menu:setTitle(st_white("[", ilog.fsize_menu) ..
+                       st_grey(0, ilog.fsize_menu) ..
+                       st_white("]", ilog.fsize_menu))
 
     ilog.start_date_time = os.date("%x %X")
     ilog.key_count       = 0

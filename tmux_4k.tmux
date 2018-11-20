@@ -1,12 +1,7 @@
-##------------------------------------------------------------------------------
-##
-## Session file created by tmuxomatic flex 2.19-dev
-##
-##------------------------------------------------------------------------------
 
-## Window added by tmuxomatic flex 2.19-dev
+# src/tmuxomatic/tmuxomatic .tmux_4k.tmux
 
-window bash
+window mopidy
 
 0000000000000000000000000000000022222222222222222222222222222222
 0000000000000000000000000000000022222222222222222222222222222222
@@ -29,7 +24,7 @@ window bash
 0 run figlet "mopidy"
 0 foc
 
-## Window added by tmuxomatic flex 2.19-dev
+
 
 window NX-SV
 
@@ -55,7 +50,7 @@ window NX-SV
 1 run figlet "git : nx_sv"
 1 foc
 
-## Window added by tmuxomatic flex 2.19-dev
+
 
 window NX
 
@@ -81,7 +76,7 @@ window NX
 1 run figlet "git : nx"
 1 foc
 
-## Window added by tmuxomatic flex 2.19-dev
+
 
 window git
 
@@ -109,7 +104,7 @@ window git
 1 run figlet "git : nx.orig"
 0 foc
 
-## Window added by tmuxomatic flex 2.19-dev
+
 
 window notes
 
