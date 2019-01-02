@@ -416,7 +416,7 @@ declare -a PL_MODULES=(
 )
 
 # Module Options
-PL_ERASE_TO_EOL=true
+PL_ERASE_TO_EOL=false
 PL_PATH_TRIM=3 # 0 Full path, 1, Current, 2+ trim level
 PL_TIME_SHOW_SECONDS=false
 PL_USER_SHOW_HOST=true

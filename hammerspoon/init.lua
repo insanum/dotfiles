@@ -28,7 +28,8 @@ require("launcher")
 require("mpc")
 
 -- stock quotes
-require("stocks")
+--require("intrinio")
+require("alphaadvantage")
 
 -- pomodoro timer
 require("pomodoro")
