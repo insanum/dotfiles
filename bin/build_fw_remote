@@ -1,8 +1,11 @@
 #!/bin/bash
 
 if [[ -z "$1" ]]; then
+    echo "Usage: <target> = thor_e | thor | creole_e | creole "
     echo "Usage: $0 gitclean"
-    echo "Usage: $0 thor_e|creole_e|<target> [clean|debug] [local_repo]"
+    echo "Usage: $0 <target> clean"
+    echo "Usage: $0 <target> [debug] [coverity]"
+    echo "Usage: $0 <target> [debug] [local_repo]"
     exit
 fi
 
@@ -12,7 +15,8 @@ RHOST=lvnvdb3254.lvn.broadcom.net
 #RHOST=xlinux.irv.broadcom.com
 
 LREPO=${HOME}/work/git/nx/main/Cumulus
-if [[ -n "$3" ]]; then
+# this is broken if [debug] isn't specified
+if [[ -n "$3" && "$3" != coverity ]]; then
     LREPO=${HOME}/work/git/${3}/main/Cumulus
 fi
 
@@ -47,6 +51,6 @@ else
     echo "************"
     echo "* BUILDING *"
     echo "************"
-    ssh ${RUSER}@${RHOST} ./build_fw $1 $2
+    ssh ${RUSER}@${RHOST} ./build_fw $*
 fi
 

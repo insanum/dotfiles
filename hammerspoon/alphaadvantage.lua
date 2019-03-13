@@ -19,7 +19,7 @@ local function fslurp(path)
     return s
 end
 
-local config = hs.json.decode(fslurp("alphaadvantage.json"))
+local config = hs.json.decode(fslurp(os.getenv("HOME").."/.priv/alphaadvantage.json"))
 
 local function stocksUpdate(exitCode, stdOut, stdErr)
     if exitCode ~= 0 then

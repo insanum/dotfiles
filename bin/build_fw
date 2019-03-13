@@ -1,7 +1,15 @@
 #!/bin/bash
 
+# ./build_fw gitclean
+# ./build_fw [ thor | thor_e | creole | creole_e ] clean
+# ./build_fw [ thor | thor_e | creole | creole_e ] [ debug | coverity ]
+
+export CMAKEVER=3.3.2
+export CMAKE_VERSION=3.3.2
 export JAVAVER=jdk1.8.0_92
-export PATH=/tools/bin:$PATH
+export PATH=/projects/ccxsw_tools/coverity/8.5.0/Linux-64/bin:/tools/bin:$PATH
+echo "CMAKEVER=$CMAKEVER"
+echo "CMAKE_VERSION=$CMAKE_VERSION"
 echo "JAVAVER=$JAVAVER"
 echo "PATH=$PATH"
 
@@ -12,6 +20,9 @@ echo "PATH=$PATH"
 #export MGLS_LICENSE_FILE="17444@lic-sj1-345.broadcom.net"
 #export MGC_PATH="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/bin/"
 #export MGC_LIB="/projects/ccxsw_tools/toolchains/mentor_graphics/mgc/arm-none-eabi.2016.11/lib/gcc/arm-none-eabi/6.2.0/"
+
+COVERITY_DIR=/projects/ccx-sw-arch/edavis/coverity
+COVERITY_CFG=/projects/ccxsw_tools/contrib/coverity/config/2017.7/coverity.xml
 
 function log()
 {
@@ -37,19 +48,14 @@ if [[ "$1" = gitclean ]]; then
     exit
 fi
 
+BASE_DIR=/projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware
+
 if [[ $1 = thor || $1 = thor_e ]]; then
-    cd /projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware/THOR
+    cd ${BASE_DIR}/THOR
 elif [[ $1 = creole || $1 = creole_e ]]; then
-    cd /projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware/CREOLE
+    cd ${BASE_DIR}/CREOLE
 else
     log "ERROR: Unknown target directory ($1)"
-    exit
-fi
-
-BFILE="make_${1,,}.sh"
-
-if [[ ! -f "$BFILE" ]]; then
-    log "ERROR: Unknown target script ($BFILE)"
     exit
 fi
 
@@ -61,11 +67,48 @@ if [[ "$2" = clean ]]; then
     exit
 fi
 
+if [[ ! -x ./bnxPkgUtil ]]; then
+    cp -f ~/bnxPkgUtil .
+    chmod 755 bnxPkgUtil
+fi
+
+BFILE="make_${1,,}.sh"
+BFILE_PKG="make_${1,,}_pkg.sh"
+
+if [[ ! -f "$BFILE" ]]; then
+    log "ERROR: Unknown target script ($BFILE)"
+    exit
+fi
+
+if [[ ! -f "$BFILE_PKG" ]]; then
+    log "ERROR: Unknown target script ($BFILE_PKG)"
+    exit
+fi
+
+shift
+
 DEBUG=
-if [[ "$2" = debug ]]; then
+if [[ "$1" = debug ]]; then
+    shift
     DEBUG=debug
 fi
 
-log "Building ${1}..."
-./${BFILE} ${DEBUG}
+COVERITY=
+if [[ "$1" = coverity ]]; then
+    shift
+    COVERITY=coverity
+fi
+
+log "Building..."
+
+if [[ -n "$COVERITY" ]]; then
+    /bin/rm -rf $COVERITY_DIR/*
+    cov-build --dir $COVERITY_DIR --config $COVERITY_CFG ./${BFILE} ${DEBUG}
+    ./${BFILE_PKG} ${DEBUG}
+    cov-analyze --dir $COVERITY_DIR --all --disable-parse-warnings
+    cov-format-errors --config $COVERITY_CFG --dir $COVERITY_DIR -x --filesort --html-output ${COVERITY_DIR}/html
+else
+    ./${BFILE} ${DEBUG} $*
+    ./${BFILE_PKG} ${DEBUG} $*
+fi
 

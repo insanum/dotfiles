@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+    echo "ERROR: $0 <sit_version>"
+    exit
+fi
+
+RELEASE=`echo $1 | sed "s/\([0-9]*\)\.\([0-9]*\)\..*/\1.\2/"`
+echo "--> Fetching from $RELEASE ($1)"
+
+BASE="https://eca-ccxsw.irv.broadcom.com/releases/nxe/SIT/${RELEASE}/${1}"
+
+WGET="wget --no-check-certificate"
+WGET_WILDCARD="wget --no-check-certificate --no-parent -r -l1 -nd"
+
+mkdir $1
+cd $1
+
+$WGET_WILDCARD ${BASE}/bnxtmt/Linux/TH_A -A "bnxtmt-*x86_64.tar.gz"
+$WGET_WILDCARD ${BASE}/Linux_Driver -A "netxtreme-*.tar.gz"
+$WGET_WILDCARD ${BASE}/Linux_Driver/RoCE_Lib -A "libbnxt_re-*.tar.gz"
+
+$WGET ${BASE}/Board_Pkg_files/Unsigned/BCM957508-P2100G.pkg
+$WGET ${BASE}/Board_Pkg_files/NVRAM_Config/BRCM/P2100GV11.CFG
+

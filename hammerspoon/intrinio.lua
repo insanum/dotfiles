@@ -18,7 +18,7 @@ local function fslurp(path)
     return s
 end
 
-local config = hs.json.decode(fslurp("intrinio.json"))
+local config = hs.json.decode(fslurp(os.getenv("HOME").."/.priv/intrinio.json"))
 
 local function stocksUpdate(exitCode, stdOut, stdErr)
     if exitCode ~= 0 then

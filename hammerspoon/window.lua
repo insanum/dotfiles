@@ -163,10 +163,12 @@ function moveWindowSpace(direction)
     hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseDown, clickPoint):post()
     hs.timer.usleep(150000)
 
-    hs.eventtap.event.newKeyEvent({"ctrl"}, direction, true):post()
+-- XXX Hack adding "fn" required for Mojave...
+    hs.eventtap.event.newKeyEvent({"fn", "ctrl"}, direction, true):post()
     hs.timer.usleep(150000)
 
-    hs.eventtap.event.newKeyEvent({"ctrl"}, direction, false):post()
+-- XXX Hack adding "fn" required for Mojave...
+    hs.eventtap.event.newKeyEvent({"fn", "ctrl"}, direction, false):post()
     hs.timer.usleep(150000)
 
     hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseUp, clickPoint):post()
