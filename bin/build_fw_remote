@@ -4,8 +4,8 @@ if [[ -z "$1" ]]; then
     echo "Usage: <target> = thor_e | thor | creole_e | creole "
     echo "Usage: $0 gitclean"
     echo "Usage: $0 <target> clean"
-    echo "Usage: $0 <target> [debug] [coverity]"
-    echo "Usage: $0 <target> [debug] [local_repo]"
+    echo "Usage: $0 <target> [-r local_repo] [debug]"
+    echo "Usage: $0 <target> [-r local_repo] [debug] [coverity]"
     exit
 fi
 
@@ -14,10 +14,16 @@ RUSER=ed927285
 RHOST=lvnvdb3254.lvn.broadcom.net
 #RHOST=xlinux.irv.broadcom.com
 
-LREPO=${HOME}/work/git/nx/main/Cumulus
-# this is broken if [debug] isn't specified
-if [[ -n "$3" && "$3" != coverity ]]; then
-    LREPO=${HOME}/work/git/${3}/main/Cumulus
+DREPO=nx
+LREPO=${HOME}/work/git/${DREPO}/main/Cumulus
+
+if [[ "$1" = "-r" ]]; then
+    echo "--> Building from repo: $2"
+    LREPO=${HOME}/work/git/${2}/main/Cumulus
+    shift
+    shift
+else
+    echo "--> Building from repo: $DREPO"
 fi
 
 RREPO=/projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus

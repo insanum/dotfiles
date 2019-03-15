@@ -13,7 +13,7 @@ fi
 if [ "$1" = rmmod ]; then
     echo "rmmod bnxt_re"
     rmmod bnxt_re
-    echo "rmmod bnxt_re"
+    echo "rmmod bnxt_en"
     rmmod bnxt_en
     exit
 fi
