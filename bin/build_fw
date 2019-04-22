@@ -4,6 +4,10 @@
 # ./build_fw [ thor | thor_e | creole | creole_e ] clean
 # ./build_fw [ thor | thor_e | creole | creole_e ] [ debug | coverity ]
 
+set -x
+
+USE_BSUB=0
+
 export CMAKEVER=3.3.2
 export CMAKE_VERSION=3.3.2
 export JAVAVER=jdk1.8.0_92
@@ -59,6 +63,11 @@ else
     exit
 fi
 
+BUILD_PKG=0
+if [[ $1 != thor_e && $1 != creole_e ]]; then
+    BUILD_PKG=1
+fi
+
 if [[ "$2" = clean ]]; then
     clean "${1^^}"
     clean "${1^^}_DEBUG"
@@ -80,7 +89,7 @@ if [[ ! -f "$BFILE" ]]; then
     exit
 fi
 
-if [[ ! -f "$BFILE_PKG" ]]; then
+if [[ $BUILD_PKG -eq 1 && ! -f "$BFILE_PKG" ]]; then
     log "ERROR: Unknown target script ($BFILE_PKG)"
     exit
 fi
@@ -104,11 +113,16 @@ log "Building..."
 if [[ -n "$COVERITY" ]]; then
     /bin/rm -rf $COVERITY_DIR/*
     cov-build --dir $COVERITY_DIR --config $COVERITY_CFG ./${BFILE} ${DEBUG}
-    ./${BFILE_PKG} ${DEBUG}
+    [[ $BUILD_PKG -eq 1 ]] && ./${BFILE_PKG} ${DEBUG}
     cov-analyze --dir $COVERITY_DIR --all --disable-parse-warnings
     cov-format-errors --config $COVERITY_CFG --dir $COVERITY_DIR -x --filesort --html-output ${COVERITY_DIR}/html
 else
-    ./${BFILE} ${DEBUG} $*
-    ./${BFILE_PKG} ${DEBUG} $*
+    if [[ $USE_BSUB -eq 1 ]]; then
+        bsub -I -q irv-centos7 ./${BFILE} ${DEBUG} $*
+        [[ $BUILD_PKG -eq 1 ]] && bsub -I -q irv-centos7 ./${BFILE_PKG} ${DEBUG} $*
+    else
+        ./${BFILE} ${DEBUG} $*
+        [[ $BUILD_PKG -eq 1 ]] && ./${BFILE_PKG} ${DEBUG} $*
+    fi
 fi
 

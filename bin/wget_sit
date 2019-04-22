@@ -20,12 +20,15 @@ $WGET_WILDCARD ${BASE}/bnxtmt/Linux/TH_A -A "bnxtmt-*x86_64.tar.gz"
 $WGET_WILDCARD ${BASE}/Linux_Driver -A "netxtreme-*.tar.gz"
 $WGET_WILDCARD ${BASE}/Linux_Driver/RoCE_Lib -A "libbnxt_re-*.tar.gz"
 
+$WGET ${BASE}/bnxtnvm/Linux/Debug/bnxtnvm
 $WGET ${BASE}/Board_Pkg_files/Unsigned/BCM957508-P2100G.pkg
-$WGET ${BASE}/Board_Pkg_files/NVRAM_Config/BRCM/P2100GV11.CFG
+$WGET ${BASE}/Board_Pkg_files/NVRAM_Config/thor/BCM957508-P2100G.CFG
 
 if [ -z "$2" ]; then
     exit
 fi
+
+chmod 755 bnxtnvm
 
 tar -zxf bnxtmt-*x86_64.tar.gz
 cd bnxtmt-*x86_64
@@ -48,8 +51,8 @@ ROCELIB_DIR=$PWD
 cd ..
 
 echo ""
-echo "BNXTMT:  ${BNXTMT_DIR}"
-echo "BNXT:    ${BNXT_DIR}"
-echo "ROCELIB: ${ROCELIB_DIR}"
+echo "    BNXTMT=\"${BNXTMT_DIR}\""
+echo "    BNXT=\"${BNXT_DIR}\""
+echo "    ROCELIB=\"${ROCELIB_DIR}\""
 echo ""
 
