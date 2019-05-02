@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# ./build_fw gitclean
-# ./build_fw [ thor | thor_e | creole | creole_e ] clean
-# ./build_fw [ thor | thor_e | creole | creole_e ] [ debug | coverity ]
+# <target> = thor_e | thor | creole_e | creole
+# ./build_fw <repo_path> gitclean
+# ./build_fw <repo_path> <target> clean
+# ./build_fw <repo_path> <target> [ debug ] [ ARGS ]
+# ./build_fw <repo_path> <target> [ debug ] [ coverity ]
 
 set -x
 
@@ -41,8 +43,11 @@ function clean()
     fi
 }
 
+REPO_DIR=$1
+shift
+
 if [[ "$1" = gitclean ]]; then
-    cd /projects/ccx-sw-arch/edavis/git/nx_build
+    cd $REPO_DIR
     log "git checkout -- ."
     git checkout -- .
     log "git clean -xdf"
@@ -52,12 +57,10 @@ if [[ "$1" = gitclean ]]; then
     exit
 fi
 
-BASE_DIR=/projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus/firmware
-
 if [[ $1 = thor || $1 = thor_e ]]; then
-    cd ${BASE_DIR}/THOR
+    cd ${REPO_DIR}/main/Cumulus/firmware/THOR
 elif [[ $1 = creole || $1 = creole_e ]]; then
-    cd ${BASE_DIR}/CREOLE
+    cd ${REPO_DIR}/main/Cumulus/firmware/CREOLE
 else
     log "ERROR: Unknown target directory ($1)"
     exit

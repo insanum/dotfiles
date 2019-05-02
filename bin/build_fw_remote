@@ -2,10 +2,11 @@
 
 if [[ -z "$1" ]]; then
     echo "Usage: <target> = thor_e | thor | creole_e | creole "
-    echo "Usage: $0 gitclean"
-    echo "Usage: $0 <target> clean"
-    echo "Usage: $0 <target> [-r local_repo] [debug]"
-    echo "Usage: $0 <target> [-r local_repo] [debug] [coverity]"
+    echo "Usage: $0 [-r remote_repo] gitclean"
+    echo "Usage: $0 [-r remote_repo] <target> clean"
+    echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug]"
+    echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug] CRID=0001"
+    echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug] [coverity]"
     exit
 fi
 
@@ -14,54 +15,64 @@ RUSER=ed927285
 RHOST=lvnvdb3254.lvn.broadcom.net
 #RHOST=xlinux.irv.broadcom.com
 
-DREPO=nx
-LREPO=${HOME}/work/git/${DREPO}/main/Cumulus
+LREPO_NAME=nx
+LREPO=${HOME}/work/git/${LREPO_NAME}/main/Cumulus
 
-if [[ "$1" = "-r" ]]; then
-    echo "--> Building from repo: $2"
+if [[ "$1" = "-l" ]]; then
+    echo "--> Building from local repo: $2"
     LREPO=${HOME}/work/git/${2}/main/Cumulus
     shift
     shift
 else
-    echo "--> Building from repo: $DREPO"
+    echo "--> Building from local repo: $LREPO_NAME"
 fi
 
-RREPO=/projects/ccx-sw-arch/edavis/git/nx_build/main/Cumulus
+RREPO_NAME=nx_build
+RREPO=/projects/ccx-sw-arch/edavis/git/${RREPO_NAME}
+
+if [[ "$1" = "-r" ]]; then
+    echo "--> Building from remote repo: $2"
+    RREPO=/projects/ccx-sw-arch/edavis/git/${2}
+    shift
+    shift
+else
+    echo "--> Building at remote repo: $RREPO_NAME"
+fi
 
 if [[ "$1" == gitclean ]]; then
     echo "*************"
     echo "* GIT CLEAN *"
     echo "*************"
-    ssh ${RUSER}@${RHOST} .bin/build_fw gitclean
+    ssh ${RUSER}@${RHOST} .bin/build_fw $RREPO gitclean
 elif [[ "$2" == clean ]]; then
     echo "************"
     echo "* CLEANING *"
     echo "************"
-    ssh ${RUSER}@${RHOST} .bin/build_fw $1 clean
+    ssh ${RUSER}@${RHOST} .bin/build_fw $RREPO $1 clean
 else
     echo "**************************************"
     echo "* RSYNC: main/Cumulus/common/include *"
     echo "**************************************"
-    rsync -avP ${LREPO}/common/include ${RUSER}@${RHOST}:${RREPO}/common/
+    rsync -avP ${LREPO}/common/include ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/common/
 
     #echo "**************************************"
     #echo "* RSYNC: main/Cumulus/drivers *"
     #echo "**************************************"
-    #rsync -avP ${LREPO}/drivers ${RUSER}@${RHOST}:${RREPO}/
+    #rsync -avP ${LREPO}/drivers ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/
 
     echo "*********************************************"
     echo "* RSYNC: main/Cumulus/util/corefile_decode *"
     echo "*********************************************"
-    rsync -avP ${LREPO}/util/corefile_decode ${RUSER}@${RHOST}:${RREPO}/util
+    rsync -avP ${LREPO}/util/corefile_decode ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/util/
 
     echo "********************************"
     echo "* RSYNC: main/Cumulus/firmware *"
     echo "********************************"
-    rsync -avP --exclude 'RTOS/*' ${LREPO}/firmware ${RUSER}@${RHOST}:${RREPO}/
+    rsync -avP --exclude 'RTOS/*' ${LREPO}/firmware ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/
 
     echo "************"
     echo "* BUILDING *"
     echo "************"
-    ssh ${RUSER}@${RHOST} .bin/build_fw $*
+    ssh ${RUSER}@${RHOST} .bin/build_fw $RREPO $*
 fi
 
