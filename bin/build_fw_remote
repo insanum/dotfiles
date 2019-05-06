@@ -15,7 +15,7 @@ RUSER=ed927285
 RHOST=lvnvdb3254.lvn.broadcom.net
 #RHOST=xlinux.irv.broadcom.com
 
-LREPO_NAME=nx
+LREPO_NAME=nx_main
 LREPO=${HOME}/work/git/${LREPO_NAME}/main/Cumulus
 
 if [[ "$1" = "-l" ]]; then
@@ -27,11 +27,11 @@ else
     echo "--> Building from local repo: $LREPO_NAME"
 fi
 
-RREPO_NAME=nx_build
+RREPO_NAME=nx_main
 RREPO=/projects/ccx-sw-arch/edavis/git/${RREPO_NAME}
 
 if [[ "$1" = "-r" ]]; then
-    echo "--> Building from remote repo: $2"
+    echo "--> Building at remote repo: $2"
     RREPO=/projects/ccx-sw-arch/edavis/git/${2}
     shift
     shift
