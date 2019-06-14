@@ -5,7 +5,8 @@ if [[ -z "$1" ]]; then
     echo "Usage: $0 [-r remote_repo] gitclean"
     echo "Usage: $0 [-r remote_repo] <target> clean"
     echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug]"
-    echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug] CRID=0001"
+    echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug] [CRID=0001|8001]"
+    echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug] [RV=B]"
     echo "Usage: $0 [-l local_repo] [-r remote_repo] <target> [debug] [coverity]"
     exit
 fi
