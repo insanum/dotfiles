@@ -38,6 +38,7 @@ local gpmdp = {
 }
 
 local gpmdp_get_status, gpmdp_reset
+local menu_play_pause, menu_shuffle, menu_repeat, menu_notification, menu_halt
 
 local function st(txt, color, fsize)
     local font = { font = gpmdp.font, size = gpmdp.fsize_default }
@@ -600,6 +601,22 @@ local function gpmdp_thumbs_down()
     gpmdp_schedule_work(cbk)
 end
 
+local function gpmdp_notifications()
+    local on_off = nil
+    if (gpmdp.notifications == false) then
+        gpmdp.notifications = true
+        on_off = st_green("ON")
+    else
+        gpmdp.notifications = false
+        on_off = st_red("OFF")
+    end
+
+    gpmdp_alert(st_white("GPMDP Notifications ") .. on_off)
+
+    gpmdp.menu_table[menu_notifications].checked = gpmdp.notifications
+    gpmdp.menu:setMenu(gpmdp.menu_table)
+end
+
 local function gpmdp_search()
     local last_win = window.focusedWindow()
 
@@ -710,46 +727,46 @@ gpmdp_get_status = function()
 
         -- update the pause checked state in the menu
         if (gpmdp.status.state ~= nil) then
-            local checked = gpmdp.menu_table[4].checked
+            local checked = gpmdp.menu_table[menu_play_pause].checked
             if (gpmdp.status.state == "paused") then
-                gpmdp.menu_table[4].checked = true
+                gpmdp.menu_table[menu_play_pause].checked = true
             else
-                gpmdp.menu_table[4].checked = false
+                gpmdp.menu_table[menu_play_pause].checked = false
             end
-            if (checked ~= gpmdp.menu_table[4].checked) then
+            if (checked ~= gpmdp.menu_table[menu_play_pause].checked) then
                 update_menu = true
             end
         end
 
         -- update the shuffle checked state in the menu
         if (gpmdp.status.shuffle ~= nil) then
-            local checked = gpmdp.menu_table[5].checked
+            local checked = gpmdp.menu_table[menu_shuffle].checked
             if (gpmdp.status.shuffle == "on") then
-                gpmdp.menu_table[5].checked = true
+                gpmdp.menu_table[menu_shuffle].checked = true
             else
-                gpmdp.menu_table[5].checked = false
+                gpmdp.menu_table[menu_shuffle].checked = false
             end
-            if (checked ~= gpmdp.menu_table[5].checked) then
+            if (checked ~= gpmdp.menu_table[menu_shuffle].checked) then
                 update_menu = true
             end
         end
 
         -- update the repeat checked state in the menu
         if (gpmdp.status["repeat"] ~= nil) then
-            local checked = gpmdp.menu_table[6].checked
-            local title   = gpmdp.menu_table[6].title
+            local checked = gpmdp.menu_table[menu_repeat].checked
+            local title   = gpmdp.menu_table[menu_repeat].title
             if (gpmdp.status["repeat"] == "off") then
-                gpmdp.menu_table[6].checked = false
-                gpmdp.menu_table[6].title = "Repeat"
+                gpmdp.menu_table[menu_repeat].checked = false
+                gpmdp.menu_table[menu_repeat].title = "Repeat"
             elseif (gpmdp.status["repeat"] == "all") then
-                gpmdp.menu_table[6].checked = true
-                gpmdp.menu_table[6].title = "Repeat All"
+                gpmdp.menu_table[menu_repeat].checked = true
+                gpmdp.menu_table[menu_repeat].title = "Repeat All"
             elseif (gpmdp.status["repeat"] == "single") then
-                gpmdp.menu_table[6].checked = true
-                gpmdp.menu_table[6].title = "Repeat Single"
+                gpmdp.menu_table[menu_repeat].checked = true
+                gpmdp.menu_table[menu_repeat].title = "Repeat Single"
             end
-            if ((checked ~= gpmdp.menu_table[6].checked) or
-                (title ~= gpmdp.menu_table[6].title)) then
+            if ((checked ~= gpmdp.menu_table[menu_repeat].checked) or
+                (title ~= gpmdp.menu_table[menu_repeat].title)) then
                 update_menu = true
             end
         end
@@ -795,22 +812,6 @@ gpmdp_get_status = function()
     gpmdp_schedule_work(cbk, nil, cbk_done, cbk_fail)
 end
 
-local function gpmdp_notifications()
-    local on_off = nil
-    if (gpmdp.notifications == false) then
-        gpmdp.notifications = true
-        on_off = st_green("ON")
-    else
-        gpmdp.notifications = false
-        on_off = st_red("OFF")
-    end
-
-    gpmdp_alert(st_white("GPMDP Notifications ") .. on_off)
-
-    gpmdp.menu_table[17].checked = gpmdp.notifications
-    gpmdp.menu:setMenu(gpmdp.menu_table)
-end
-
 local function gpmdp_halt()
     if (gpmdp.halt == false) then
         if (gpmdp.status_worker ~= nil) then
@@ -825,14 +826,14 @@ local function gpmdp_halt()
                             st_red("halted", gpmdp.fsize_menu) ..
                             st_white("]", gpmdp.fsize_menu))
 
-        gpmdp.menu_table[18].checked = gpmdp.halt
+        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
         gpmdp.menu:setMenu(gpmdp.menu_table)
 
         gpmdp_alert(st_white("GPMDP ") .. st_red("HALTED"))
     else
         gpmdp.halt = false
 
-        gpmdp.menu_table[18].checked = gpmdp.halt
+        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
         gpmdp.menu:setMenu(gpmdp.menu_table)
 
         gpmdp_alert(st_white("GPMDP ") .. st_red("RESET"))
@@ -875,22 +876,31 @@ gpmdp_reset = function()
     gpmdp_get_queue()
 end
 
+menu_play_pause    = 4
+menu_shuffle       = 5
+menu_repeat        = 6
+menu_notifications = 20
+menu_halt          = 21
+
 gpmdp.menu_table =
     {
         { title = "GPMDP" },
         { title = "-" },
         { title = "Status",         fn = gpmdp_status },
-        { title = "Play / Pause",   fn = gpmdp_play_pause, check = false },
+        { title = "Play / Pause",   fn = gpmdp_play_pause, checked = false },
         { title = "Shuffle",        fn = gpmdp_shuffle, checked = false },
         { title = "Repeat",         fn = gpmdp_repeat, checked = false },
         { title = "Replay",         fn = gpmdp_replay },
         { title = "Seek -10",       fn = gpmdp_seek_backward },
         { title = "Seek +10",       fn = gpmdp_seek_forward },
+        { title = "Thumbs Up",      fn = gpmdp_thumbs_up },
+        { title = "Thumbs Down",    fn = gpmdp_thumbs_down },
         { title = "Next",           fn = gpmdp_next },
         { title = "Previous",       fn = gpmdp_previous },
         { title = "Play Track",     fn = gpmdp_play_track },
         { title = "Load Playlist",  fn = gpmdp_load_playlist },
         { title = "Clear Playlist", fn = gpmdp_clear },
+        { title = "Search",         fn = gpmdp_search },
         { title = "Volume +10",     fn = gpmdp_volume_up },
         { title = "Volume -10",     fn = gpmdp_volume_down },
         { title = "Notifications",  fn = gpmdp_notifications, checked = true },
