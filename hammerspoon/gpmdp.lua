@@ -95,7 +95,7 @@ local function gpmdp_worker()
     end
 
     if (#gpmdp.work == 0) then
-        print("GPMDP: no more work")
+        --print("GPMDP: no more work")
         gpmdp.working = false
         return
     end
@@ -103,7 +103,7 @@ local function gpmdp_worker()
     local wi = table.remove(gpmdp.work, 1)
 
     if (gpmdp.work_ok == false) then
-        print("GPMDP: dropped command (" .. wi.id .. ")")
+        --print("GPMDP: dropped command (" .. wi.id .. ")")
         if (wi.cbk_fail ~= nil) then
             wi.cbk_fail()
         end
@@ -115,7 +115,7 @@ local function gpmdp_worker()
 
     local cmd = wi.cbk(wi.cbk_args)
     if (cmd == nil) then
-        print("GPMDP: 'nil' command (" .. wi.id .. ")")
+        --print("GPMDP: 'nil' command (" .. wi.id .. ")")
         gpmdp.working = false
         timer.doAfter(0, gpmdp_worker)
         return
@@ -600,6 +600,86 @@ local function gpmdp_thumbs_down()
     gpmdp_schedule_work(cbk)
 end
 
+local function gpmdp_search()
+    local last_win = window.focusedWindow()
+
+    hs.focus() -- make sure hammerspoon dialog is focused
+    local clicked, text = hs.dialog.textPrompt("Search", "", "Search...",
+                                               "Search", "Cancel")
+    if clicked == "Cancel" then
+        if last_win ~= nil then
+            last_win:focus() -- focus last window
+        end
+
+        return
+    end
+
+    local search_cbk = function()
+        return "search \"" .. text .. "\""
+    end
+
+    local search_cbk_done = function(data)
+
+        local results = { }
+
+        for r in data:gmatch("[^\r\n]+") do
+            -- Note the '-' is the non-greedy '*' for lua regex
+            local key, value = r:match("^(.-):%s+(.*)$")
+
+            results[#results + 1] =
+                {
+                    text = key .. ": " .. value,
+                    idx  = key,
+                    i    = i
+                }
+        end
+
+        if (#results == 0) then
+            gpmdp_notify("No search results available")
+            if last_win ~= nil then
+                last_win:focus() -- focus last window
+            end
+
+            return
+        end
+
+        local chooser_cbk = function(selection)
+            local cbk = function(args)
+                return "results " .. args.idx
+            end
+
+            local cbk_done = function(data)
+                if last_win ~= nil then
+                    last_win:focus() -- focus last window
+                end
+            end
+
+            if selection == nil then
+                if last_win ~= nil then
+                    last_win:focus() -- focus last window
+                end
+
+                return
+            end
+
+            gpmdp_schedule_work(cbk, { idx = selection.idx }, cbk_done)
+            gpmdp_get_status()
+        end
+
+        local ch = chooser.new(chooser_cbk)
+        ch:choices(results)
+        --ch:rows(#results)
+        ch:rows(15)
+        ch:width(40)
+        ch:bgDark(true)
+        ch:fgColor(x11_clr.orange)
+        ch:subTextColor(x11_clr.chocolate)
+        ch:show()
+    end
+
+    gpmdp_schedule_work(search_cbk, nil, search_cbk_done)
+end
+
 -- defined as local at top of file
 gpmdp_get_status = function()
     local cbk = function()
@@ -610,7 +690,7 @@ gpmdp_get_status = function()
         local res = { }
         for s in data:gmatch("[^\r\n]+") do
             -- Note the '-' is the non-greedy '*' for lua regex
-            local key, value = s:match("^(.-):%s+(.+)$")
+            local key, value = s:match("^(.-):%s*(.+)$")
             res[key] = value
         end
 
@@ -789,7 +869,7 @@ gpmdp_reset = function()
     gpmdp.work    = { }
 
     gpmdp.status        = { }
-    gpmdp.status_worker = timer.doEvery(10, gpmdp_get_status)
+    gpmdp.status_worker = timer.doEvery(5, gpmdp_get_status)
 
     gpmdp_get_playlists()
     gpmdp_get_queue()
@@ -886,6 +966,11 @@ end)
 --    gpmdp_thumbs_down()
 --end)
 
+hotkey.bind(kb_alt, "s", "GPMDP Search",
+function()
+    gpmdp_search()
+end)
+
 hotkey.bind(kb_alt, "a", "GPMDP Notifications",
 function()
     gpmdp_notifications()
@@ -913,4 +998,27 @@ function()
         hs.execute("open -a \"" .. gpmdp_app_name .. "\"")
     end
 end)
+
+-- hs.http.websocket has some serious bugs and this will crash hammerspoon
+-- when switching tracks. It appears the crash occurs when large sized
+-- messages are received like with the playlist info. Also I don't think
+-- there are websocket APIs to track if the socket is still connected or
+-- handling asynchronous errors/disconnects.
+--[[
+local function callback(msg)
+    local js = hs.json.decode(msg)
+    if (js.channel == "time") then
+        print("--> "..js.channel.." "..js.payload.current.."/"..js.payload.total)
+    else
+        print("--> "..js.channel)
+        --print(hs.inspect(js))
+    end
+end
+
+local url = "ws://127.0.0.1:5672"
+local ws = hs.http.websocket(url, callback)
+
+--ws:send(json_data)
+--ws:close()
+]]--
 
