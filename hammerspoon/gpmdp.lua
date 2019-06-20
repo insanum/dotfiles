@@ -17,6 +17,8 @@ gpmdp_proxy    = "socks5://127.0.0.1:9999"
 gpmdp_rc       = "/Users/edavis/src/gpmdp_rc/target/debug/gpmdp_rc"
 
 local gpmdp = {
+    task_launcher   = nil,
+    task_worker     = nil,
     image           = image.imageFromPath("gmusic.png"),
     work_ok         = false,
     work_id         = 0,
@@ -104,7 +106,7 @@ local function gpmdp_worker()
     local wi = table.remove(gpmdp.work, 1)
 
     if (gpmdp.work_ok == false) then
-        --print("GPMDP: dropped command (" .. wi.id .. ")")
+        print("GPMDP: dropped command (" .. wi.id .. ")")
         if (wi.cbk_fail ~= nil) then
             wi.cbk_fail()
         end
@@ -122,27 +124,29 @@ local function gpmdp_worker()
         return
     end
 
-    cprint(st_grey("GPMDP: executing command (" .. wi.id .. ")\n" .. cmd,
-                   gpmdp.fsize_console))
+    cprint(st_grey("GPMDP: executing command (" .. wi.id .. ")\n" ..
+                   hs.inspect(cmd), gpmdp.fsize_console))
 
-    -- execute the command (synchronously)
-    local output, status, type, rc = hs.execute(gpmdp_rc .. " " .. cmd)
+    local task_worker_done = function(exitCode, stdOut, stdErr)
+        if (exitCode ~= 0) or stdOut:match("^ERROR:%s+.*\n$") then
+            print("GPMDP worker command failed!")
+            if (wi.cbk_fail ~= nil) then
+                wi.cbk_fail()
+            end
+        else
+            if (wi.cbk_done ~= nil) then
+                wi.cbk_done(stdOut)
+            end
+        end
 
-    -- XXX fix gpmdp_rc to set return status code non-zero on error
-    if (status == false) or output:match("^ERROR:%s+.*\n$") then
-        cprint(st_red("ERROR", gpmdp.fsize_console))
-        --gpmdp_notify("execute failed")
-        if (wi.cbk_fail ~= nil) then
-            wi.cbk_fail()
-        end
-    else
-        if (wi.cbk_done ~= nil) then
-            wi.cbk_done(output)
-        end
+        print("GPMDP: finished command (" .. wi.id .. ")")
+        gpmdp.working = false
+        timer.doAfter(0, gpmdp_worker)
     end
 
-    gpmdp.working = false
-    timer.doAfter(0, gpmdp_worker)
+    -- execute the command (asynchronously)
+    gpmdp.task_worker = hs.task.new(gpmdp_rc, task_worker_done, cmd)
+    gpmdp.task_worker:start()
 end
 
 local function gpmdp_schedule_work(cbk, cbk_args, cbk_done, cbk_fail)
@@ -248,7 +252,7 @@ end
 
 local function gpmdp_replay()
     local cbk = function()
-        return "replay"
+        return { "replay" }
     end
     gpmdp_schedule_work(cbk)
     gpmdp_get_status()
@@ -256,7 +260,7 @@ end
 
 local function gpmdp_seek_backward()
     local cbk = function()
-        return "seek backward" -- -10s
+        return { "seek", "backward" } -- -10s
     end
     gpmdp_schedule_work(cbk)
     gpmdp_get_status()
@@ -264,7 +268,7 @@ end
 
 local function gpmdp_seek_forward()
     local cbk = function()
-        return "seek forward" -- +10s
+        return { "seek", "forward" } -- +10s
     end
     gpmdp_schedule_work(cbk)
     gpmdp_get_status()
@@ -279,13 +283,13 @@ local function gpmdp_play_pause()
         local play_pause = nil
         local cmd = nil
         if (gpmdp.status.state == "playing") then
-            cmd = "pause"
+            cmd = { "pause" }
             play_pause = st_orange("Paused")
         elseif (gpmdp.status.state == "paused") then
-            cmd = "play"
+            cmd = { "play" }
             play_pause = st_green("Unpaused")
         elseif (gpmdp.status.state == "stopped") then
-            cmd = "play"
+            cmd = { "play" }
             play_pause = st_green("Play")
         end
 
@@ -306,10 +310,10 @@ local function gpmdp_shuffle()
         local on_off = nil
         local cmd = nil
         if (gpmdp.status.shuffle == "off") then
-            cmd = "shuffle on"
+            cmd = { "shuffle", "on" }
             on_off = st_green("ON")
         else
-            cmd = "shuffle off"
+            cmd = { "shuffle", "off" }
             on_off = st_red("OFF")
         end
 
@@ -333,13 +337,13 @@ local function gpmdp_repeat()
         local cycle = nil
         local cmd = nil
         if (gpmdp.status["repeat"] == "off") then
-            cmd = "repeat all"
+            cmd = { "repeat", "all" }
             cycle = st_green("ALL")
         elseif (gpmdp.status["repeat"] == "all") then
-            cmd = "repeat single"
+            cmd = { "repeat", "single" }
             cycle = st_orange("SINGLE")
         else -- turn it off
-            cmd = "repeat off"
+            cmd = { "repeat", "off" }
             cycle = st_red("OFF")
         end
 
@@ -354,7 +358,7 @@ end
 local function gpmdp_next()
     local cbk = function()
         gpmdp_alert(st_white("GPMDP ") .. st_orange("Next"))
-        return "next"
+        return { "next" }
     end
 
     gpmdp_schedule_work(cbk)
@@ -364,7 +368,7 @@ end
 local function gpmdp_previous()
     local cbk = function()
         gpmdp_alert(st_white("GPMDP ") .. st_orange("Previous"))
-        return "prev"
+        return { "prev" }
     end
 
     -- XXX check the elapsed time for sending double "prev" commands
@@ -378,7 +382,7 @@ local function gpmdp_play_track()
 
     local chooser_cbk = function(selection)
         local cbk = function(args)
-            return "play " .. args.idx
+            return { "play", args.idx }
         end
 
         local cbk_done = function(data)
@@ -432,7 +436,7 @@ end
 
 local function gpmdp_get_queue()
     local cbk = function()
-        return "queue"
+        return { "queue" }
     end
 
     local cbk_done = function(data)
@@ -463,7 +467,7 @@ end
 
 local function gpmdp_get_playlists()
     local cbk = function()
-        return "playlists"
+        return { "playlists" }
     end
 
     local cbk_done = function(data)
@@ -487,7 +491,7 @@ local function gpmdp_load_playlist()
 
     local chooser_cbk = function(selection)
         local cbk = function(args)
-            return "playlist " .. args.idx
+            return { "playlist", args.idx }
         end
 
         local cbk_done = function(data)
@@ -544,7 +548,7 @@ end
 
 local function gpmdp_clear()
     local cbk = function()
-        return "clear"
+        return { "clear" }
     end
 
     local cbk_done = function(data)
@@ -574,7 +578,7 @@ local function gpmdp_set_volume(args)
     end
 
     gpmdp_alert(st_white("GPMDP Volume ") .. st_orange(volume .. "%"))
-    return "volume " .. volume
+    return { "volume", volume }
 end
 
 local function gpmdp_volume_up()
@@ -587,7 +591,7 @@ end
 
 local function gpmdp_thumbs_up()
     local cbk = function()
-        return "thumbs up"
+        return { "thumbs", "up" }
     end
 
     gpmdp_schedule_work(cbk)
@@ -595,7 +599,7 @@ end
 
 local function gpmdp_thumbs_down()
     local cbk = function()
-        return "thumbs down"
+        return { "thumbs", "down" }
     end
 
     gpmdp_schedule_work(cbk)
@@ -632,7 +636,7 @@ local function gpmdp_search()
     end
 
     local search_cbk = function()
-        return "search \"" .. text .. "\""
+        return { "search",  "\"" .. text .. "\"" }
     end
 
     local search_cbk_done = function(data)
@@ -662,7 +666,7 @@ local function gpmdp_search()
 
         local chooser_cbk = function(selection)
             local cbk = function(args)
-                return "results " .. args.idx
+                return { "results", args.idx }
             end
 
             local cbk_done = function(data)
@@ -700,7 +704,7 @@ end
 -- defined as local at top of file
 gpmdp_get_status = function()
     local cbk = function()
-        return "status"
+        return { "status" }
     end
 
     local cbk_done = function(data)
@@ -986,7 +990,7 @@ function()
     gpmdp_notifications()
 end)
 
-hotkey.bind(kb_alt, "h", "MPD Halt",
+hotkey.bind(kb_alt, "h", "GPMDP Halt",
 function()
     gpmdp_halt()
 end)
@@ -1001,11 +1005,22 @@ function()
     end
 
     print("GPMDP: starting application")
-    if (gpmdp_proxe ~= nil) then
-        hs.execute("open -a \"" .. gpmdp_app_name .. "\" " ..
-                   "--args --proxy-server=\"" .. gpmdp_proxy .. "\"")
+    local gpmdp_args = nil
+    if (gpmdp_proxy ~= nil) then
+        gpmdp_args = { "-a", gpmdp_app_name,
+                       "--args",
+                       "--proxy-server=" .. gpmdp_proxy }
     else
-        hs.execute("open -a \"" .. gpmdp_app_name .. "\"")
+        gpmdp_args = { "-a", gpmdp_app_name }
+    end
+    if not gpmdp.task_launcher or not gpmdp.task_launcher:isRunning() then
+        gpmdp_halt()
+        gpmdp.task_launcher = hs.task.new("/usr/bin/open", nil, gpmdp_args)
+        gpmdp.task_launcher:start()
+        local start_worker = function()
+            gpmdp_halt()
+        end
+        timer.doAfter(10, start_worker)
     end
 end)
 
