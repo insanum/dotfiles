@@ -9,6 +9,9 @@ local chooser = require("hs.chooser")
 local hotkey  = require("hs.hotkey")
 local stext   = require("hs.styledtext")
 local app     = require("hs.application")
+local webview = require("hs.webview")
+local geo     = require("hs.geometry")
+local dialog  = require("hs.dialog")
 local x11_clr = require("hs.drawing").color.x11
 local cprint  = require("hs.console").printStyledtext
 
@@ -26,7 +29,7 @@ local gpmdp = {
     work            = { },
     status_worker   = nil,
     status          = { },
-    menu_table      = nil,
+    menu_table      = { { title = "GPMDP" }, { title = "-" } },
     menu            = nil,
     playlist_name   = nil,
     playlist_tracks = { },
@@ -36,11 +39,13 @@ local gpmdp = {
     font            = "Hack",
     fsize_default   = 16,
     fsize_menu      = 12,
-    fsize_console   = 12
+    fsize_console   = 12,
+    lyrics_win_w    = 500,
+    lyrics_win_h    = 800
 }
 
-local gpmdp_get_status, gpmdp_reset
-local menu_play_pause, menu_shuffle, menu_repeat, menu_notification, menu_halt
+local gpmdp_get_status
+local menu_play_pause, menu_shuffle, menu_repeat, menu_notifications, menu_halt
 
 local function st(txt, color, fsize)
     local font = { font = gpmdp.font, size = gpmdp.fsize_default }
@@ -88,6 +93,33 @@ local function gpmdp_alert(msg)
     print("GPMDP alert: " .. msg:getString())
     cprint(msg)
 end
+
+local function gpmdp_hotkey_str(txt)
+    local keys = hs.hotkey.getHotkeys()
+
+    for i = 1,#keys do
+        if keys[i].msg:find(txt, 1, true) then
+            return keys[i].idx .. "  "
+        end
+    end
+
+    return ""
+end
+
+local function gpmdp_bind_cmd(txt, prefix, shortcut, cbk, menu_checked)
+    local bind_txt = "GPMDP " .. txt
+
+    hotkey.bind(prefix, shortcut, bind_txt, cbk)
+
+    gpmdp.menu_table[#gpmdp.menu_table + 1] =
+        {
+            title = gpmdp_hotkey_str(bind_txt) .. txt,
+            fn = cbk,
+            checked = menu_checked
+        }
+end
+
+---------------------------------------------------------------------
 
 local function gpmdp_worker()
     if (gpmdp.working == true) then
@@ -169,7 +201,683 @@ local function gpmdp_schedule_work(cbk, cbk_args, cbk_done, cbk_fail)
     timer.doAfter(0, gpmdp_worker)
 end
 
-local function gpmdp_status()
+---------------------------------------------------------------------
+
+local function gpmdp_play_pause()
+    local cbk = function()
+        if (gpmdp.status.state == nil) then
+            return nil
+        end
+
+        local play_pause = nil
+        local cmd = nil
+        if (gpmdp.status.state == "playing") then
+            cmd = { "pause" }
+            play_pause = st_orange("Paused")
+        elseif (gpmdp.status.state == "paused") then
+            cmd = { "play" }
+            play_pause = st_green("Unpaused")
+        elseif (gpmdp.status.state == "stopped") then
+            cmd = { "play" }
+            play_pause = st_green("Play")
+        end
+
+        gpmdp_alert(st_white("GPMDP ") .. play_pause)
+        return cmd
+    end
+
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Play / Pause", kb_alt, "p", gpmdp_play_pause, false)
+menu_play_pause = #gpmdp.menu_table
+
+---------------------------------------------------------------------
+
+local function gpmdp_replay()
+    local cbk = function()
+        return { "replay" }
+    end
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Replay", kb_alt, "b", gpmdp_replay, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_seek_backward()
+    local cbk = function()
+        return { "seek", "backward" } -- -10s
+    end
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Seek -10", kb_alt, "Left", gpmdp_seek_backward, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_seek_forward()
+    local cbk = function()
+        return { "seek", "forward" } -- +10s
+    end
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Seek +10", kb_alt, "Right", gpmdp_seek_forward, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_lyrics()
+    local cbk = function()
+        return { "lyrics" }
+    end
+
+    local cbk_done = function(data)
+        local wm = webview.windowMasks
+        local screen_full = hs.screen.mainScreen():fullFrame()
+        local lyrics_win =
+            webview.new(geo.rect(((screen_full.w - gpmdp.lyrics_win_w) / 2),
+                                 ((screen_full.h - gpmdp.lyrics_win_h) / 2),
+                                 gpmdp.lyrics_win_w, gpmdp.lyrics_win_h))
+        lyrics_win:html("<pre>"..data.."</pre>")
+        lyrics_win:windowTitle("GPMDP Lyrics")
+        lyrics_win:windowStyle(wm.titled | wm.closable |
+                               wm.miniaturizable | wm.resizable |
+                               wm.nonactivating)
+        lyrics_win:bringToFront()
+        lyrics_win:show()
+    end
+
+    gpmdp_schedule_work(cbk, nil, cbk_done)
+end
+
+gpmdp_bind_cmd("Lyrics", kb_alt, "y", gpmdp_lyrics, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_thumbs_up()
+    local cbk = function()
+        return { "thumbs", "up" }
+    end
+
+    gpmdp_schedule_work(cbk)
+end
+
+gpmdp_bind_cmd("Thumbs Up", kb_alt, "Up", gpmdp_thumbs_up, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_thumbs_down()
+    local cbk = function()
+        return { "thumbs", "down" }
+    end
+
+    gpmdp_schedule_work(cbk)
+end
+
+gpmdp_bind_cmd("Thumbs Down", kb_alt, "Down", gpmdp_thumbs_down, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_next()
+    local cbk = function()
+        gpmdp_alert(st_white("GPMDP ") .. st_orange("Next"))
+        return { "next" }
+    end
+
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Next", kb_alt, ".", gpmdp_next, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_previous()
+    local cbk = function()
+        gpmdp_alert(st_white("GPMDP ") .. st_orange("Previous"))
+        return { "prev" }
+    end
+
+    -- XXX check the elapsed time for sending double "prev" commands
+
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Previous", kb_alt, ",", gpmdp_previous, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_shuffle()
+    local cbk = function()
+        if (gpmdp.status.shuffle == nil) then
+            return nil
+        end
+
+        local on_off = nil
+        local cmd = nil
+        if (gpmdp.status.shuffle == "off") then
+            cmd = { "shuffle", "on" }
+            on_off = st_green("ON")
+        else
+            cmd = { "shuffle", "off" }
+            on_off = st_red("OFF")
+        end
+
+        gpmdp_alert(st_white("GPMDP Shuffle ") .. on_off)
+        return cmd
+    end
+
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Shuffle", kb_alt, "f", gpmdp_shuffle, false)
+menu_shuffle = #gpmdp.menu_table
+
+---------------------------------------------------------------------
+
+local function gpmdp_repeat()
+    local cbk = function()
+        if (gpmdp.status["repeat"] == nil) then
+            return
+        end
+
+        local r = tonumber(gpmdp.status["repeat"])
+        local s = tonumber(gpmdp.status.single)
+
+        local cycle = nil
+        local cmd = nil
+        if (gpmdp.status["repeat"] == "off") then
+            cmd = { "repeat", "all" }
+            cycle = st_green("ALL")
+        elseif (gpmdp.status["repeat"] == "all") then
+            cmd = { "repeat", "single" }
+            cycle = st_orange("SINGLE")
+        else -- turn it off
+            cmd = { "repeat", "off" }
+            cycle = st_red("OFF")
+        end
+
+        gpmdp_alert(st_white("GPMDP Repeat ") .. cycle)
+        return cmd
+    end
+
+    gpmdp_schedule_work(cbk)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Repeat", kb_alt, "r", gpmdp_repeat, false)
+menu_repeat = #gpmdp.menu_table
+
+---------------------------------------------------------------------
+
+local function gpmdp_clear_queue()
+    local cbk = function()
+        return { "clear" }
+    end
+
+    local cbk_done = function(data)
+        gpmdp.playlist_tracks = { }
+        gpmdp_notify("Queue cleared")
+    end
+
+    gpmdp_schedule_work(cbk, nil, cbk_done)
+    gpmdp_get_status()
+end
+
+gpmdp_bind_cmd("Clear Queue", kb_alt, "c", gpmdp_clear_queue, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_get_queue()
+    local cbk = function()
+        return { "queue" }
+    end
+
+    local cbk_done = function(data)
+        local album  = nil
+        local artist = nil
+        local track  = nil
+
+        gpmdp.playlist_tracks = { }
+
+        for t in data:gmatch("[^\r\n]+") do
+            -- Note the '-' is the non-greedy '*' for lua regex
+            local key, value = t:match("^(.-):%s+(.*)$")
+
+            local artist, album, track = value:match("^(.-)%s|%s(.*)%s|%s(.*)$")
+
+            if ((album ~= nil) and (artist ~= nil) and (track ~= nil)) then
+                gpmdp.playlist_tracks[#gpmdp.playlist_tracks + 1] =
+                    { artist = artist, album = album, track = track, idx = key }
+                album  = nil
+                artist = nil
+                track  = nil
+            end
+        end
+
+        if (#gpmdp.playlist_tracks == 0) then
+            gpmdp_notify("Playlist queue is empty")
+        else
+            gpmdp_notify("Retrieved " .. #gpmdp.playlist_tracks .. " tracks in queue")
+        end
+    end
+
+    gpmdp_schedule_work(cbk, nil, cbk_done)
+end
+
+gpmdp_bind_cmd("Get Queue", kb_alt, "q", gpmdp_get_queue, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_get_playlists()
+    local cbk = function()
+        return { "playlists" }
+    end
+
+    local cbk_done = function(data)
+        gpmdp.playlists = { }
+
+        for p in data:gmatch("[^\r\n]+") do
+            -- Note the '-' is the non-greedy '*' for lua regex
+            local key, value = p:match("^(.-):%s+(.+)$")
+            gpmdp.playlists[#gpmdp.playlists + 1] =
+                { name = value, idx = key }
+        end
+
+        if (#gpmdp.playlists == 0) then
+            gpmdp_notify("No playlists available")
+        else
+            gpmdp_notify("Retrieved " .. #gpmdp.playlists .. " playlists")
+        end
+    end
+
+    gpmdp_schedule_work(cbk, nil, cbk_done)
+end
+
+gpmdp_bind_cmd("Get Playlists", kb_alt_shift, "l", gpmdp_get_playlists, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_select_track()
+    local last_win = window.focusedWindow()
+
+    local chooser_cbk = function(selection)
+        local cbk = function(args)
+            return { "play", args.idx }
+        end
+
+        local cbk_done = function(data)
+            if last_win ~= nil then
+                last_win:focus() -- focus last window
+            end
+        end
+
+        if selection == nil then
+            if last_win ~= nil then
+                last_win:focus() -- focus last window
+            end
+
+            return
+        end
+
+        gpmdp_schedule_work(cbk, { idx = selection.idx }, cbk_done)
+        gpmdp_get_status()
+    end
+
+    if (#gpmdp.playlist_tracks == 0) then
+        gpmdp_notify("Playlist queue is empty")
+        return
+    end
+
+    local tracks = { }
+
+    for i = 1,#gpmdp.playlist_tracks do
+        tracks[#tracks + 1] =
+            {
+              text    = tostring(i) .. ": " ..
+                        gpmdp.playlist_tracks[i].artist .. " - " ..
+                        gpmdp.playlist_tracks[i].track,
+              subText = gpmdp.playlist_tracks[i].album,
+              idx     = gpmdp.playlist_tracks[i].idx,
+              i       = i
+            }
+    end
+
+    local ch = chooser.new(chooser_cbk)
+    ch:choices(tracks)
+    --ch:rows(#tracks)
+    ch:rows(15)
+    ch:width(40)
+    ch:bgDark(true)
+    ch:fgColor(x11_clr.orange)
+    ch:subTextColor(x11_clr.chocolate)
+    ch:searchSubText(true)
+    ch:show()
+end
+
+gpmdp_bind_cmd("Select Track", kb_alt, "t", gpmdp_select_track, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_select_playlist()
+    local last_win = window.focusedWindow()
+
+    local chooser_cbk = function(selection)
+        local cbk = function(args)
+            return { "playlist", args.idx }
+        end
+
+        local cbk_done = function(data)
+            gpmdp.playlist_tracks = { }
+            gpmdp.playlist_name = gpmdp.playlists[selection.i].name
+            gpmdp_notify("Loaded playlist \"" .. gpmdp.playlist_name .. "\"")
+
+            if last_win ~= nil then
+                last_win:focus() -- focus last window
+            end
+
+            -- get a list of the tracks in the current playlist
+            gpmdp_get_queue()
+        end
+
+        if selection == nil then
+            if last_win ~= nil then
+                last_win:focus() -- focus last window
+            end
+
+            return
+        end
+
+        gpmdp_schedule_work(cbk, { idx = selection.idx }, cbk_done)
+        gpmdp_get_status()
+    end
+
+    local playlists = { }
+
+    for i = 1,#gpmdp.playlists do
+        playlists[#playlists + 1] =
+            {
+              text = tostring(i) .. ": " .. gpmdp.playlists[i].name,
+              idx  = gpmdp.playlists[i].idx,
+              i    = i
+            }
+    end
+
+    if (#playlists == 0) then
+        gpmdp_notify("No playlists available")
+        return
+    end
+
+    local ch = chooser.new(chooser_cbk)
+    ch:choices(playlists)
+    --ch:rows(#playlists)
+    ch:rows(15)
+    ch:width(40)
+    ch:bgDark(true)
+    ch:fgColor(x11_clr.orange)
+    ch:subTextColor(x11_clr.chocolate)
+    ch:show()
+end
+
+gpmdp_bind_cmd("Select Playlist", kb_alt, "l", gpmdp_select_playlist, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_search()
+    local last_win = window.focusedWindow()
+
+    hs.focus() -- make sure hammerspoon dialog is focused
+    local clicked, text = dialog.textPrompt("Search", "", "Search...",
+                                            "Search", "Cancel")
+    if clicked == "Cancel" then
+        if last_win ~= nil then
+            last_win:focus() -- focus last window
+        end
+
+        return
+    end
+
+    local search_cbk = function()
+        return { "search", text }
+    end
+
+    local search_cbk_done = function(data)
+
+        local results = { }
+
+        for r in data:gmatch("[^\r\n]+") do
+            -- Note the '-' is the non-greedy '*' for lua regex
+            local key, value = r:match("^(.-):%s+(.*)$")
+
+            results[#results + 1] =
+                {
+                    text = key .. ": " .. value,
+                    idx  = key,
+                    i    = i
+                }
+        end
+
+        if (#results == 0) then
+            gpmdp_notify("No search results available")
+            if last_win ~= nil then
+                last_win:focus() -- focus last window
+            end
+
+            return
+        end
+
+        local chooser_cbk = function(selection)
+            local cbk = function(args)
+                return { "results", args.idx }
+            end
+
+            local cbk_done = function(data)
+                if last_win ~= nil then
+                    last_win:focus() -- focus last window
+                end
+            end
+
+            if selection == nil then
+                if last_win ~= nil then
+                    last_win:focus() -- focus last window
+                end
+
+                return
+            end
+
+            gpmdp_schedule_work(cbk, { idx = selection.idx }, cbk_done)
+            gpmdp_get_status()
+        end
+
+        local ch = chooser.new(chooser_cbk)
+        ch:choices(results)
+        --ch:rows(#results)
+        ch:rows(15)
+        ch:width(40)
+        ch:bgDark(true)
+        ch:fgColor(x11_clr.orange)
+        ch:subTextColor(x11_clr.chocolate)
+        ch:show()
+    end
+
+    gpmdp_schedule_work(search_cbk, nil, search_cbk_done)
+end
+
+gpmdp_bind_cmd("Search", kb_alt, "s", gpmdp_search, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_set_volume(args)
+    if (gpmdp.status.volume == nil) then
+        return nil
+    end
+
+    local volume = nil
+    if (args.delta == nil) then
+        volume = args.volume
+    else
+        volume = (tonumber(gpmdp.status.volume) + args.delta)
+        if (volume < 0) then
+            volume = 0
+        elseif (volume > 100) then
+            volume = 100
+        end
+    end
+
+    gpmdp_alert(st_white("GPMDP Volume ") .. st_orange(volume .. "%"))
+    return { "volume", tostring(volume) }
+end
+
+local function gpmdp_volume_up()
+    gpmdp_schedule_work(gpmdp_set_volume, { delta = 10 })
+end
+
+local function gpmdp_volume_down()
+    gpmdp_schedule_work(gpmdp_set_volume, { delta = -10 })
+end
+
+gpmdp_bind_cmd("Volume +10", kb_alt, "]", gpmdp_volume_up, false)
+gpmdp_bind_cmd("Volume -10", kb_alt, "[", gpmdp_volume_down, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_notifications()
+    local on_off = nil
+    if (gpmdp.notifications == false) then
+        gpmdp.notifications = true
+        on_off = st_green("ON")
+    else
+        gpmdp.notifications = false
+        on_off = st_red("OFF")
+    end
+
+    gpmdp_alert(st_white("GPMDP Notifications ") .. on_off)
+
+    gpmdp.menu_table[menu_notifications].checked = gpmdp.notifications
+    gpmdp.menu:setMenu(gpmdp.menu_table)
+end
+
+gpmdp_bind_cmd("Notifications", kb_alt, "n", gpmdp_notifications, true)
+menu_notifications = #gpmdp.menu_table
+
+---------------------------------------------------------------------
+
+local function gpmdp_reset()
+    if (gpmdp.menu == nil) then
+        gpmdp.menu = menubar.new()
+        gpmdp.menu:setIcon(gpmdp.image, false)
+        gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
+                            st_grey("GPMDP", gpmdp.fsize_menu) ..
+                            st_white("]", gpmdp.fsize_menu))
+    end
+
+    if (gpmdp.status_worker ~= nil) then
+        gpmdp.status_worker:stop()
+    end
+
+    gpmdp.halt = false
+
+    gpmdp.playlist_name   = "GPMDP"
+    gpmdp.playlist_tracks = { }
+    gpmdp.playlists       = { }
+    gpmdp.alerts          = true
+
+    gpmdp.menu_table[menu_halt].checked = gpmdp.halt
+    gpmdp.menu:setMenu(gpmdp.menu_table)
+
+    gpmdp.work_ok = true
+    gpmdp.work_id = 0
+    gpmdp.work    = { }
+
+    gpmdp.status        = { }
+    gpmdp.status_worker = timer.doEvery(5, gpmdp_get_status)
+
+    gpmdp_get_playlists()
+    gpmdp_get_queue()
+end
+
+gpmdp_bind_cmd("Reset", kb_alt_shift, "r", gpmdp_reset, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_halt()
+    if (gpmdp.halt == false) then
+        if (gpmdp.status_worker ~= nil) then
+            gpmdp.status_worker:stop()
+            gpmdp.status_worker = nil
+        end
+
+        gpmdp.halt = true
+
+        gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
+                            st_grey("GPMDP: ", gpmdp.fsize_menu) ..
+                            st_red("halted", gpmdp.fsize_menu) ..
+                            st_white("]", gpmdp.fsize_menu))
+
+        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
+        gpmdp.menu:setMenu(gpmdp.menu_table)
+
+        gpmdp_alert(st_white("GPMDP ") .. st_red("HALTED"))
+    else
+        gpmdp.halt = false
+
+        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
+        gpmdp.menu:setMenu(gpmdp.menu_table)
+
+        gpmdp_alert(st_white("GPMDP ") .. st_red("RESET"))
+
+        gpmdp_reset()
+    end
+end
+
+gpmdp_bind_cmd("Halt", kb_alt, "h", gpmdp_halt, false)
+
+menu_halt = #gpmdp.menu_table
+
+---------------------------------------------------------------------
+
+local function gpmdp_launch()
+    local gpmdp_app = app.get(gpmdp_app_name)
+
+    if gpmdp_app ~= nil then
+        gpmdp_notify("GPMDP: already running")
+        return
+    end
+
+    gpmdp_notify("GPMDP: launching application")
+    local gpmdp_args = nil
+
+    if (gpmdp_proxy ~= nil) then
+        gpmdp_args = { "-a", gpmdp_app_name,
+                       "--args",
+                       "--proxy-server=" .. gpmdp_proxy }
+    else
+        gpmdp_args = { "-a", gpmdp_app_name }
+    end
+
+    if not gpmdp.task_launcher or not gpmdp.task_launcher:isRunning() then
+        gpmdp_halt()
+        gpmdp.task_launcher = hs.task.new("/usr/bin/open", nil, gpmdp_args)
+        gpmdp.task_launcher:start()
+
+        timer.doAfter(20, function()
+            gpmdp_reset()
+        end)
+    end
+end
+
+gpmdp_bind_cmd("Launch", kb_alt_shift, "g", gpmdp_launch, false)
+
+---------------------------------------------------------------------
+
+local function gpmdp_status_notify()
     if (next(gpmdp.status) == nil) then
         gpmdp_notify("GPMDP: status is not available")
         gpmdp.status_worker:fire()
@@ -250,457 +958,6 @@ local function gpmdp_status_menu()
     end
 end
 
-local function gpmdp_replay()
-    local cbk = function()
-        return { "replay" }
-    end
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_seek_backward()
-    local cbk = function()
-        return { "seek", "backward" } -- -10s
-    end
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_seek_forward()
-    local cbk = function()
-        return { "seek", "forward" } -- +10s
-    end
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_play_pause()
-    local cbk = function()
-        if (gpmdp.status.state == nil) then
-            return nil
-        end
-
-        local play_pause = nil
-        local cmd = nil
-        if (gpmdp.status.state == "playing") then
-            cmd = { "pause" }
-            play_pause = st_orange("Paused")
-        elseif (gpmdp.status.state == "paused") then
-            cmd = { "play" }
-            play_pause = st_green("Unpaused")
-        elseif (gpmdp.status.state == "stopped") then
-            cmd = { "play" }
-            play_pause = st_green("Play")
-        end
-
-        gpmdp_alert(st_white("GPMDP ") .. play_pause)
-        return cmd
-    end
-
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_shuffle()
-    local cbk = function()
-        if (gpmdp.status.shuffle == nil) then
-            return nil
-        end
-
-        local on_off = nil
-        local cmd = nil
-        if (gpmdp.status.shuffle == "off") then
-            cmd = { "shuffle", "on" }
-            on_off = st_green("ON")
-        else
-            cmd = { "shuffle", "off" }
-            on_off = st_red("OFF")
-        end
-
-        gpmdp_alert(st_white("GPMDP Shuffle ") .. on_off)
-        return cmd
-    end
-
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_repeat()
-    local cbk = function()
-        if (gpmdp.status["repeat"] == nil) then
-            return
-        end
-
-        local r = tonumber(gpmdp.status["repeat"])
-        local s = tonumber(gpmdp.status.single)
-
-        local cycle = nil
-        local cmd = nil
-        if (gpmdp.status["repeat"] == "off") then
-            cmd = { "repeat", "all" }
-            cycle = st_green("ALL")
-        elseif (gpmdp.status["repeat"] == "all") then
-            cmd = { "repeat", "single" }
-            cycle = st_orange("SINGLE")
-        else -- turn it off
-            cmd = { "repeat", "off" }
-            cycle = st_red("OFF")
-        end
-
-        gpmdp_alert(st_white("GPMDP Repeat ") .. cycle)
-        return cmd
-    end
-
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_next()
-    local cbk = function()
-        gpmdp_alert(st_white("GPMDP ") .. st_orange("Next"))
-        return { "next" }
-    end
-
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_previous()
-    local cbk = function()
-        gpmdp_alert(st_white("GPMDP ") .. st_orange("Previous"))
-        return { "prev" }
-    end
-
-    -- XXX check the elapsed time for sending double "prev" commands
-
-    gpmdp_schedule_work(cbk)
-    gpmdp_get_status()
-end
-
-local function gpmdp_play_track()
-    local last_win = window.focusedWindow()
-
-    local chooser_cbk = function(selection)
-        local cbk = function(args)
-            return { "play", args.idx }
-        end
-
-        local cbk_done = function(data)
-            if last_win ~= nil then
-                last_win:focus() -- focus last window
-            end
-        end
-
-        if selection == nil then
-            if last_win ~= nil then
-                last_win:focus() -- focus last window
-            end
-
-            return
-        end
-
-        gpmdp_schedule_work(cbk, { idx = selection.idx }, cbk_done)
-        gpmdp_get_status()
-    end
-
-    if (#gpmdp.playlist_tracks == 0) then
-        gpmdp_notify("Playlist is empty")
-        return
-    end
-
-    local tracks = { }
-
-    for i = 1,#gpmdp.playlist_tracks do
-        tracks[#tracks + 1] =
-            {
-              text    = tostring(i) .. ": " ..
-                        gpmdp.playlist_tracks[i].artist .. " - " ..
-                        gpmdp.playlist_tracks[i].track,
-              subText = gpmdp.playlist_tracks[i].album,
-              idx     = gpmdp.playlist_tracks[i].idx,
-              i       = i
-            }
-    end
-
-    local ch = chooser.new(chooser_cbk)
-    ch:choices(tracks)
-    --ch:rows(#tracks)
-    ch:rows(15)
-    ch:width(40)
-    ch:bgDark(true)
-    ch:fgColor(x11_clr.orange)
-    ch:subTextColor(x11_clr.chocolate)
-    ch:searchSubText(true)
-    ch:show()
-end
-
-local function gpmdp_get_queue()
-    local cbk = function()
-        return { "queue" }
-    end
-
-    local cbk_done = function(data)
-        local album  = nil
-        local artist = nil
-        local track  = nil
-
-        for t in data:gmatch("[^\r\n]+") do
-            -- Note the '-' is the non-greedy '*' for lua regex
-            local key, value = t:match("^(.-):%s+(.*)$")
-
-            local artist, album, track = value:match("^(.-)%s|%s(.*)%s|%s(.*)$")
-
-            if ((album ~= nil) and (artist ~= nil) and (track ~= nil)) then
-                gpmdp.playlist_tracks[#gpmdp.playlist_tracks + 1] =
-                    { artist = artist, album = album, track = track, idx = key }
-                album  = nil
-                artist = nil
-                track  = nil
-            end
-        end
-
-        gpmdp_notify("Retrieved tracks in queue")
-    end
-
-    gpmdp_schedule_work(cbk, nil, cbk_done)
-end
-
-local function gpmdp_get_playlists()
-    local cbk = function()
-        return { "playlists" }
-    end
-
-    local cbk_done = function(data)
-        gpmdp.playlists = { }
-
-        for p in data:gmatch("[^\r\n]+") do
-            -- Note the '-' is the non-greedy '*' for lua regex
-            local key, value = p:match("^(.-):%s+(.+)$")
-            gpmdp.playlists[#gpmdp.playlists + 1] =
-                { name = value, idx = key }
-        end
-
-        gpmdp_notify("Retrieved playlists")
-    end
-
-    gpmdp_schedule_work(cbk, nil, cbk_done)
-end
-
-local function gpmdp_load_playlist()
-    local last_win = window.focusedWindow()
-
-    local chooser_cbk = function(selection)
-        local cbk = function(args)
-            return { "playlist", args.idx }
-        end
-
-        local cbk_done = function(data)
-            gpmdp.playlist_tracks = { }
-            gpmdp.playlist_name = gpmdp.playlists[selection.i].name
-            gpmdp_notify("Loaded playlist \"" .. gpmdp.playlist_name .. "\"")
-
-            if last_win ~= nil then
-                last_win:focus() -- focus last window
-            end
-
-            -- get a list of the tracks in the current playlist
-            gpmdp_get_queue()
-        end
-
-        if selection == nil then
-            if last_win ~= nil then
-                last_win:focus() -- focus last window
-            end
-
-            return
-        end
-
-        gpmdp_schedule_work(cbk, { idx = selection.idx }, cbk_done)
-        gpmdp_get_status()
-    end
-
-    local playlists = { }
-
-    for i = 1,#gpmdp.playlists do
-        playlists[#playlists + 1] =
-            {
-              text = tostring(i) .. ": " .. gpmdp.playlists[i].name,
-              idx  = gpmdp.playlists[i].idx,
-              i    = i
-            }
-    end
-
-    if (#playlists == 0) then
-        gpmdp_notify("No playlists available")
-        return
-    end
-
-    local ch = chooser.new(chooser_cbk)
-    ch:choices(playlists)
-    --ch:rows(#playlists)
-    ch:rows(15)
-    ch:width(40)
-    ch:bgDark(true)
-    ch:fgColor(x11_clr.orange)
-    ch:subTextColor(x11_clr.chocolate)
-    ch:show()
-end
-
-local function gpmdp_clear()
-    local cbk = function()
-        return { "clear" }
-    end
-
-    local cbk_done = function(data)
-        gpmdp.playlist_tracks = { }
-        gpmdp_notify("Playlist cleared")
-    end
-
-    gpmdp_schedule_work(cbk, nil, cbk_done)
-    gpmdp_get_status()
-end
-
-local function gpmdp_set_volume(args)
-    if (gpmdp.status.volume == nil) then
-        return nil
-    end
-
-    local volume = nil
-    if (args.delta == nil) then
-        volume = args.volume
-    else
-        volume = (tonumber(gpmdp.status.volume) + args.delta)
-        if (volume < 0) then
-            volume = 0
-        elseif (volume > 100) then
-            volume = 100
-        end
-    end
-
-    gpmdp_alert(st_white("GPMDP Volume ") .. st_orange(volume .. "%"))
-    return { "volume", volume }
-end
-
-local function gpmdp_volume_up()
-    gpmdp_schedule_work(gpmdp_set_volume, { delta = 10 })
-end
-
-local function gpmdp_volume_down()
-    gpmdp_schedule_work(gpmdp_set_volume, { delta = -10 })
-end
-
-local function gpmdp_thumbs_up()
-    local cbk = function()
-        return { "thumbs", "up" }
-    end
-
-    gpmdp_schedule_work(cbk)
-end
-
-local function gpmdp_thumbs_down()
-    local cbk = function()
-        return { "thumbs", "down" }
-    end
-
-    gpmdp_schedule_work(cbk)
-end
-
-local function gpmdp_notifications()
-    local on_off = nil
-    if (gpmdp.notifications == false) then
-        gpmdp.notifications = true
-        on_off = st_green("ON")
-    else
-        gpmdp.notifications = false
-        on_off = st_red("OFF")
-    end
-
-    gpmdp_alert(st_white("GPMDP Notifications ") .. on_off)
-
-    gpmdp.menu_table[menu_notifications].checked = gpmdp.notifications
-    gpmdp.menu:setMenu(gpmdp.menu_table)
-end
-
-local function gpmdp_search()
-    local last_win = window.focusedWindow()
-
-    hs.focus() -- make sure hammerspoon dialog is focused
-    local clicked, text = hs.dialog.textPrompt("Search", "", "Search...",
-                                               "Search", "Cancel")
-    if clicked == "Cancel" then
-        if last_win ~= nil then
-            last_win:focus() -- focus last window
-        end
-
-        return
-    end
-
-    local search_cbk = function()
-        return { "search",  "\"" .. text .. "\"" }
-    end
-
-    local search_cbk_done = function(data)
-
-        local results = { }
-
-        for r in data:gmatch("[^\r\n]+") do
-            -- Note the '-' is the non-greedy '*' for lua regex
-            local key, value = r:match("^(.-):%s+(.*)$")
-
-            results[#results + 1] =
-                {
-                    text = key .. ": " .. value,
-                    idx  = key,
-                    i    = i
-                }
-        end
-
-        if (#results == 0) then
-            gpmdp_notify("No search results available")
-            if last_win ~= nil then
-                last_win:focus() -- focus last window
-            end
-
-            return
-        end
-
-        local chooser_cbk = function(selection)
-            local cbk = function(args)
-                return { "results", args.idx }
-            end
-
-            local cbk_done = function(data)
-                if last_win ~= nil then
-                    last_win:focus() -- focus last window
-                end
-            end
-
-            if selection == nil then
-                if last_win ~= nil then
-                    last_win:focus() -- focus last window
-                end
-
-                return
-            end
-
-            gpmdp_schedule_work(cbk, { idx = selection.idx }, cbk_done)
-            gpmdp_get_status()
-        end
-
-        local ch = chooser.new(chooser_cbk)
-        ch:choices(results)
-        --ch:rows(#results)
-        ch:rows(15)
-        ch:width(40)
-        ch:bgDark(true)
-        ch:fgColor(x11_clr.orange)
-        ch:subTextColor(x11_clr.chocolate)
-        ch:show()
-    end
-
-    gpmdp_schedule_work(search_cbk, nil, search_cbk_done)
-end
-
 -- defined as local at top of file
 gpmdp_get_status = function()
     local cbk = function()
@@ -716,18 +973,18 @@ gpmdp_get_status = function()
         end
 
         -- check if the track changed
-        local do_gpmdp_status = false
+        local do_status_notify = false
         if ((next(gpmdp.status) ~= nil) and (gpmdp.status.title ~= res.title)) then
-            do_gpmdp_status = true
+            do_status_notify = true
         end
 
         gpmdp.status = res
 
-        if (do_gpmdp_status == true) then
-            gpmdp_status()
+        if (do_status_notify == true) then
+            gpmdp_status_notify()
         end
 
-        local update_menu = false
+        local do_status_menu = false
 
         -- update the pause checked state in the menu
         if (gpmdp.status.state ~= nil) then
@@ -738,7 +995,7 @@ gpmdp_get_status = function()
                 gpmdp.menu_table[menu_play_pause].checked = false
             end
             if (checked ~= gpmdp.menu_table[menu_play_pause].checked) then
-                update_menu = true
+                do_status_menu = true
             end
         end
 
@@ -751,7 +1008,7 @@ gpmdp_get_status = function()
                 gpmdp.menu_table[menu_shuffle].checked = false
             end
             if (checked ~= gpmdp.menu_table[menu_shuffle].checked) then
-                update_menu = true
+                do_status_menu = true
             end
         end
 
@@ -761,21 +1018,24 @@ gpmdp_get_status = function()
             local title   = gpmdp.menu_table[menu_repeat].title
             if (gpmdp.status["repeat"] == "off") then
                 gpmdp.menu_table[menu_repeat].checked = false
-                gpmdp.menu_table[menu_repeat].title = "Repeat"
+                gpmdp.menu_table[menu_repeat].title =
+                    gpmdp_hotkey_str("Repeat") .. "Repeat"
             elseif (gpmdp.status["repeat"] == "all") then
                 gpmdp.menu_table[menu_repeat].checked = true
-                gpmdp.menu_table[menu_repeat].title = "Repeat All"
+                gpmdp.menu_table[menu_repeat].title =
+                    gpmdp_hotkey_str("Repeat") .. "Repeat All"
             elseif (gpmdp.status["repeat"] == "single") then
                 gpmdp.menu_table[menu_repeat].checked = true
-                gpmdp.menu_table[menu_repeat].title = "Repeat Single"
+                gpmdp.menu_table[menu_repeat].title =
+                    gpmdp_hotkey_str("Repeat") .. "Repeat Single"
             end
             if ((checked ~= gpmdp.menu_table[menu_repeat].checked) or
                 (title ~= gpmdp.menu_table[menu_repeat].title)) then
-                update_menu = true
+                do_status_menu = true
             end
         end
 
-        if (update_menu == true) then
+        if (do_status_menu == true) then
             gpmdp.menu:setMenu(gpmdp.menu_table)
         end
 
@@ -816,213 +1076,11 @@ gpmdp_get_status = function()
     gpmdp_schedule_work(cbk, nil, cbk_done, cbk_fail)
 end
 
-local function gpmdp_halt()
-    if (gpmdp.halt == false) then
-        if (gpmdp.status_worker ~= nil) then
-            gpmdp.status_worker:stop()
-            gpmdp.status_worker = nil
-        end
-
-        gpmdp.halt = true
-
-        gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
-                            st_grey("GPMDP: ", gpmdp.fsize_menu) ..
-                            st_red("halted", gpmdp.fsize_menu) ..
-                            st_white("]", gpmdp.fsize_menu))
-
-        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
-        gpmdp.menu:setMenu(gpmdp.menu_table)
-
-        gpmdp_alert(st_white("GPMDP ") .. st_red("HALTED"))
-    else
-        gpmdp.halt = false
-
-        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
-        gpmdp.menu:setMenu(gpmdp.menu_table)
-
-        gpmdp_alert(st_white("GPMDP ") .. st_red("RESET"))
-
-        gpmdp_reset()
-    end
-end
-
--- defined as local at top of file
-gpmdp_reset = function()
-    if (gpmdp.menu == nil) then
-        gpmdp.menu = menubar.new()
-        gpmdp.menu:setIcon(gpmdp.image, false)
-        gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
-                            st_grey("GPMDP", gpmdp.fsize_menu) ..
-                            st_white("]", gpmdp.fsize_menu))
-    end
-
-    if (gpmdp.status_worker ~= nil) then
-        gpmdp.status_worker:stop()
-    end
-
-    gpmdp.halt = false
-
-    gpmdp.playlist_name   = "GPMDP"
-    gpmdp.playlist_tracks = { }
-    gpmdp.playlists       = { }
-    gpmdp.alerts          = true
-
-    gpmdp.menu:setMenu(gpmdp.menu_table)
-
-    gpmdp.work_ok = true
-    gpmdp.work_id = 0
-    gpmdp.work    = { }
-
-    gpmdp.status        = { }
-    gpmdp.status_worker = timer.doEvery(5, gpmdp_get_status)
-
-    gpmdp_get_playlists()
-    gpmdp_get_queue()
-end
-
-menu_play_pause    = 4
-menu_shuffle       = 5
-menu_repeat        = 6
-menu_notifications = 20
-menu_halt          = 21
-
-gpmdp.menu_table =
-    {
-        { title = "GPMDP" },
-        { title = "-" },
-        { title = "Status",         fn = gpmdp_status },
-        { title = "Play / Pause",   fn = gpmdp_play_pause, checked = false },
-        { title = "Shuffle",        fn = gpmdp_shuffle, checked = false },
-        { title = "Repeat",         fn = gpmdp_repeat, checked = false },
-        { title = "Replay",         fn = gpmdp_replay },
-        { title = "Seek -10",       fn = gpmdp_seek_backward },
-        { title = "Seek +10",       fn = gpmdp_seek_forward },
-        { title = "Thumbs Up",      fn = gpmdp_thumbs_up },
-        { title = "Thumbs Down",    fn = gpmdp_thumbs_down },
-        { title = "Next",           fn = gpmdp_next },
-        { title = "Previous",       fn = gpmdp_previous },
-        { title = "Play Track",     fn = gpmdp_play_track },
-        { title = "Load Playlist",  fn = gpmdp_load_playlist },
-        { title = "Clear Playlist", fn = gpmdp_clear },
-        { title = "Search",         fn = gpmdp_search },
-        { title = "Volume +10",     fn = gpmdp_volume_up },
-        { title = "Volume -10",     fn = gpmdp_volume_down },
-        { title = "Notifications",  fn = gpmdp_notifications, checked = true },
-        { title = "Halt",           fn = gpmdp_halt, checked = false },
-        { title = "Reset",          fn = gpmdp_reset }
-    }
+---------------------------------------------------------------------
 
 -- initialize the gpmdp state and display
 gpmdp_reset()
 
-hotkey.bind(kb_alt, "p", "GPMDP Play/Pause",
-function()
-    gpmdp_play_pause()
-end)
-
-hotkey.bind(kb_alt, ".", "GPMDP Next",
-function()
-    gpmdp_next()
-end)
-
-hotkey.bind(kb_alt, ",", "GPMDP Previous",
-function()
-    gpmdp_previous()
-end)
-
-hotkey.bind(kb_alt, "r", "GPMDP Repeat",
-function()
-    gpmdp_repeat()
-end)
-
-hotkey.bind(kb_alt, "]", "GPMDP Volume +10",
-function()
-    gpmdp_volume_up()
-end)
-
-hotkey.bind(kb_alt, "[", "GPMDP Volume -10",
-function()
-    gpmdp_volume_down()
-end)
-
-hotkey.bind(kb_alt, "b", "GPMDP Replay",
-function()
-    gpmdp_replay()
-end)
-
-hotkey.bind(kb_alt, "Left", "GPMDP Seek -10",
-function()
-    gpmdp_seek_backward()
-end)
-
-hotkey.bind(kb_alt, "Right", "GPMDP Seek +10",
-function()
-    gpmdp_seek_forward()
-end)
-
-hotkey.bind(kb_alt, "l", "GPMDP Load Playlist",
-function()
-    gpmdp_load_playlist()
-end)
-
-hotkey.bind(kb_alt, "t", "GPMDP Play Track",
-function()
-    gpmdp_play_track()
-end)
-
-hs.hotkey.bind(kb_alt, "Up", "GPMDP Thumbs Up",
-function()
-    gpmdp_thumbs_up()
-end)
-
---hs.hotkey.bind(kb_alt, "Down", "GPMDP Thumbs Down",
---function()
---    gpmdp_thumbs_down()
---end)
-
-hotkey.bind(kb_alt, "s", "GPMDP Search",
-function()
-    gpmdp_search()
-end)
-
-hotkey.bind(kb_alt, "a", "GPMDP Notifications",
-function()
-    gpmdp_notifications()
-end)
-
-hotkey.bind(kb_alt, "h", "GPMDP Halt",
-function()
-    gpmdp_halt()
-end)
-
-hs.hotkey.bind(kb_alt_shift, "l", "GPMDP Launch",
-function()
-    local gpmdp_app = app.get(gpmdp_app_name)
-
-    if gpmdp_app ~= nil then
-        print("GPMDP: already running")
-        return
-    end
-
-    print("GPMDP: starting application")
-    local gpmdp_args = nil
-    if (gpmdp_proxy ~= nil) then
-        gpmdp_args = { "-a", gpmdp_app_name,
-                       "--args",
-                       "--proxy-server=" .. gpmdp_proxy }
-    else
-        gpmdp_args = { "-a", gpmdp_app_name }
-    end
-    if not gpmdp.task_launcher or not gpmdp.task_launcher:isRunning() then
-        gpmdp_halt()
-        gpmdp.task_launcher = hs.task.new("/usr/bin/open", nil, gpmdp_args)
-        gpmdp.task_launcher:start()
-        local start_worker = function()
-            gpmdp_halt()
-        end
-        timer.doAfter(10, start_worker)
-    end
-end)
 
 -- hs.http.websocket has some serious bugs and this will crash hammerspoon
 -- when switching tracks. It appears the crash occurs when large sized

@@ -52,12 +52,12 @@ elif [[ "$2" == clean ]]; then
     ssh ${RUSER}@${RHOST} .bin/build_fw $RREPO $1 clean
 else
     echo "**************************************"
-    echo "* RSYNC: main/Cumulus/common/include *"
+    echo "* RSYNC: main/Cumulus/common         *"
     echo "**************************************"
-    rsync -avP ${LREPO}/common/include ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/common/
+    rsync -avP ${LREPO}/common ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/
 
     #echo "**************************************"
-    #echo "* RSYNC: main/Cumulus/drivers *"
+    #echo "* RSYNC: main/Cumulus/drivers        *"
     #echo "**************************************"
     #rsync -avP ${LREPO}/drivers ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/
 
