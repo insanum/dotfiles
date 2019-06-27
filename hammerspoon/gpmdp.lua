@@ -12,6 +12,7 @@ local app     = require("hs.application")
 local webview = require("hs.webview")
 local geo     = require("hs.geometry")
 local dialog  = require("hs.dialog")
+local task    = require("hs.task")
 local x11_clr = require("hs.drawing").color.x11
 local cprint  = require("hs.console").printStyledtext
 
@@ -19,15 +20,20 @@ gpmdp_app_name = "Google Play Music Desktop Player"
 gpmdp_proxy    = "socks5://127.0.0.1:9999"
 gpmdp_rc       = "/Users/edavis/src/gpmdp_rc/target/debug/gpmdp_rc"
 
+SHORT_TIMEOUT = 5
+LONG_TIMEOUT  = 15
+MAX_FAILURES  = 10
+
 local gpmdp = {
     task_launcher   = nil,
     task_worker     = nil,
     image           = image.imageFromPath("gmusic.png"),
-    work_ok         = false,
     work_id         = 0,
     working         = false,
     work            = { },
     status_worker   = nil,
+    status_freq     = SHORT_TIMEOUT,
+    status_failures = 0,
     status          = { },
     menu_table      = { { title = "GPMDP" }, { title = "-" } },
     menu            = nil,
@@ -44,7 +50,7 @@ local gpmdp = {
     lyrics_win_h    = 800
 }
 
-local gpmdp_get_status
+local gpmdp_get_status, gpmdp_halt
 local menu_play_pause, menu_shuffle, menu_repeat, menu_notifications, menu_halt
 
 local function st(txt, color, fsize)
@@ -121,6 +127,28 @@ end
 
 ---------------------------------------------------------------------
 
+local function gpmdp_start_worker()
+    gpmdp.halt    = false
+    gpmdp.work_id = 0
+    gpmdp.work    = { }
+
+    gpmdp.status = { }
+    gpmdp.status_freq = SHORT_TIMEOUT
+    gpmdp.status_failures = 0
+    gpmdp.status_worker = timer.doEvery(gpmdp.status_freq, gpmdp_get_status)
+end
+
+local function gpmdp_stop_worker()
+    if (gpmdp.status_worker ~= nil) then
+        gpmdp.status_worker:stop()
+        gpmdp.status_worker = nil
+    end
+
+    gpmdp.halt    = true
+    gpmdp.working = false
+    gpmdp.work    = { }
+end
+
 local function gpmdp_worker()
     if (gpmdp.working == true) then
         --print("GPMDP: already working")
@@ -137,7 +165,7 @@ local function gpmdp_worker()
 
     local wi = table.remove(gpmdp.work, 1)
 
-    if (gpmdp.work_ok == false) then
+    if (gpmdp.halt == true) then
         print("GPMDP: dropped command (" .. wi.id .. ")")
         if (wi.cbk_fail ~= nil) then
             wi.cbk_fail()
@@ -159,15 +187,65 @@ local function gpmdp_worker()
     cprint(st_grey("GPMDP: executing command (" .. wi.id .. ")\n" ..
                    hs.inspect(cmd), gpmdp.fsize_console))
 
+    if cmd[1] == "halt" then
+        gpmdp_stop_worker()
+
+        gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
+                            st_grey("GPMDP: ", gpmdp.fsize_menu) ..
+                            st_red("halted", gpmdp.fsize_menu) ..
+                            st_white("]", gpmdp.fsize_menu))
+
+        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
+        gpmdp.menu:setMenu(gpmdp.menu_table)
+
+        gpmdp_alert(st_white("GPMDP ") .. st_red("HALTED"))
+        return
+    end
+
     local task_worker_done = function(exitCode, stdOut, stdErr)
         if (exitCode ~= 0) or stdOut:match("^ERROR:%s+.*\n$") then
             print("GPMDP worker command failed!")
+
             if (wi.cbk_fail ~= nil) then
                 wi.cbk_fail()
             end
-        else
+
+            if cmd[1] == "status" then
+                -- if there have been max failures in a row then slow down
+                -- if we've already slowed down then just halt
+                gpmdp.status_failures = gpmdp.status_failures + 1
+                print("GPMDP status failures " ..
+                      gpmdp.status_failures .. " @ " ..
+                      gpmdp.status_freq)
+                if gpmdp.status_failures == MAX_FAILURES then
+                    if gpmdp.status_freq == LONG_TIMEOUT then
+                        gpmdp_halt()
+                    else
+                        gpmdp.status_freq = LONG_TIMEOUT
+                        gpmdp.status_failures = 0
+                        if (gpmdp.status_worker ~= nil) then
+                            gpmdp.status_worker:stop()
+                            gpmdp.status_worker = timer.doEvery(gpmdp.status_freq, gpmdp_get_status)
+                        end
+                    end
+                end
+            end
+        else -- not an error
             if (wi.cbk_done ~= nil) then
                 wi.cbk_done(stdOut)
+            end
+
+            if cmd[1] == "status" then
+                -- we had a good status update so go back to normal freq
+                gpmdp.status_failures = 0
+                if gpmdp.status_freq ~= SHORT_TIMEOUT then
+                    print("GPMDP status frequency reset")
+                    gpmdp.status_freq = SHORT_TIMEOUT
+                    if (gpmdp.status_worker ~= nil) then
+                        gpmdp.status_worker:stop()
+                        gpmdp.status_worker = timer.doEvery(gpmdp.status_freq, gpmdp_get_status)
+                    end
+                end
             end
         end
 
@@ -177,7 +255,7 @@ local function gpmdp_worker()
     end
 
     -- execute the command (asynchronously)
-    gpmdp.task_worker = hs.task.new(gpmdp_rc, task_worker_done, cmd)
+    gpmdp.task_worker = task.new(gpmdp_rc, task_worker_done, cmd)
     gpmdp.task_worker:start()
 end
 
@@ -770,34 +848,28 @@ menu_notifications = #gpmdp.menu_table
 ---------------------------------------------------------------------
 
 local function gpmdp_reset()
+    gpmdp_alert(st_white("GPMDP ") .. st_red("RESET"))
+
     if (gpmdp.menu == nil) then
         gpmdp.menu = menubar.new()
         gpmdp.menu:setIcon(gpmdp.image, false)
-        gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
-                            st_grey("GPMDP", gpmdp.fsize_menu) ..
-                            st_white("]", gpmdp.fsize_menu))
     end
 
-    if (gpmdp.status_worker ~= nil) then
-        gpmdp.status_worker:stop()
-    end
+    gpmdp_stop_worker()
 
-    gpmdp.halt = false
+    gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
+                        st_grey("GPMDP", gpmdp.fsize_menu) ..
+                        st_white("]", gpmdp.fsize_menu))
 
     gpmdp.playlist_name   = "GPMDP"
     gpmdp.playlist_tracks = { }
     gpmdp.playlists       = { }
     gpmdp.alerts          = true
 
+    gpmdp_start_worker()
+
     gpmdp.menu_table[menu_halt].checked = gpmdp.halt
     gpmdp.menu:setMenu(gpmdp.menu_table)
-
-    gpmdp.work_ok = true
-    gpmdp.work_id = 0
-    gpmdp.work    = { }
-
-    gpmdp.status        = { }
-    gpmdp.status_worker = timer.doEvery(5, gpmdp_get_status)
 
     gpmdp_get_playlists()
     gpmdp_get_queue()
@@ -807,32 +879,14 @@ gpmdp_bind_cmd("Reset", kb_alt_shift, "r", gpmdp_reset, false)
 
 ---------------------------------------------------------------------
 
-local function gpmdp_halt()
+-- defined as local at top of file
+gpmdp_halt = function()
     if (gpmdp.halt == false) then
-        if (gpmdp.status_worker ~= nil) then
-            gpmdp.status_worker:stop()
-            gpmdp.status_worker = nil
+        local cbk = function()
+            return { "halt" }
         end
-
-        gpmdp.halt = true
-
-        gpmdp.menu:setTitle(st_white("[", gpmdp.fsize_menu) ..
-                            st_grey("GPMDP: ", gpmdp.fsize_menu) ..
-                            st_red("halted", gpmdp.fsize_menu) ..
-                            st_white("]", gpmdp.fsize_menu))
-
-        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
-        gpmdp.menu:setMenu(gpmdp.menu_table)
-
-        gpmdp_alert(st_white("GPMDP ") .. st_red("HALTED"))
+        gpmdp_schedule_work(cbk)
     else
-        gpmdp.halt = false
-
-        gpmdp.menu_table[menu_halt].checked = gpmdp.halt
-        gpmdp.menu:setMenu(gpmdp.menu_table)
-
-        gpmdp_alert(st_white("GPMDP ") .. st_red("RESET"))
-
         gpmdp_reset()
     end
 end
@@ -864,7 +918,7 @@ local function gpmdp_launch()
 
     if not gpmdp.task_launcher or not gpmdp.task_launcher:isRunning() then
         gpmdp_halt()
-        gpmdp.task_launcher = hs.task.new("/usr/bin/open", nil, gpmdp_args)
+        gpmdp.task_launcher = task.new("/usr/bin/open", nil, gpmdp_args)
         gpmdp.task_launcher:start()
 
         timer.doAfter(20, function()
@@ -880,7 +934,9 @@ gpmdp_bind_cmd("Launch", kb_alt_shift, "g", gpmdp_launch, false)
 local function gpmdp_status_notify()
     if (next(gpmdp.status) == nil) then
         gpmdp_notify("GPMDP: status is not available")
-        gpmdp.status_worker:fire()
+        if gpmdp.status_work ~= nil then
+            gpmdp.status_worker:fire()
+        end
         return
     end
 
