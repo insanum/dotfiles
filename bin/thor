@@ -20,56 +20,59 @@ fi
 
 if [ "$1" -eq 215 ]; then
     echo "--> Loading 215.x"
-    BNXT="/root/215.0.204.0/netxtreme-bnxt_en-1.10.0-215.0.202.0"
-    ROCELIB="/root/215.0.204.0/libbnxt_re-215.0.163.0"
+    BNXTMT="/root/215.0.250.0/bnxtmt-215.0.242.0-x86_64"
+    BNXT_EN="/root/215.0.250.0/netxtreme-bnxt_en-1.10.0-215.0.237.0/bnxt_en"
+    BNXT_RE="/root/215.0.250.0/netxtreme-bnxt_en-1.10.0-215.0.237.0/bnxt_re"
+    ROCELIB="/root/215.0.250.0/libbnxt_re-215.0.244.0"
 elif [ "$1" -eq 216 ]; then
     echo "--> Loading 216.x"
-    BNXT="/root/216.0.29.0/netxtreme-bnxt_en-1.10.0-216.0.29.0"
-    ROCELIB="/root/216.0.29.0/libbnxt_re-216.0.23.0"
+    BNXTMT="/root/216.0.101.0/bnxtmt-216.0.92.0-x86_64"
+    BNXT_EN="/root/216.0.101.0/netxtreme-bnxt_en-1.10.0-216.0.82.0/bnxt_en"
+    BNXT_RE="/root/216.0.101.0/netxtreme-bnxt_en-1.10.0-216.0.82.0/bnxt_re"
+    ROCELIB="/root/216.0.101.0/libbnxt_re-216.0.75.0"
+elif [ "$1" -eq git ]; then
+    echo "--> Loading git"
+    BNXT_EN="$HOME/bnxt_git/v3"
+    BNXT_RE="$HOME/bnxt_git/roce"
+    ROCELIB="$HOME/bnxt_git/rocelib"
 else
     echo "ERROR: invalid version"
     exit
 fi
 
 echo "Loading bnxt_en..."
-insmod ${BNXT}/bnxt_en/bnxt_en.ko
+insmod ${BNXT_EN}/bnxt_en.ko
 #modprobe bnxt_en
 sleep 3
+
+if [ -n "$2" ]; then
+    echo "Loading rdma_ucm..."
+    modprobe rdma_ucm
+
+    echo "Installing RoCE Library..."
+    cd $ROCELIB
+    make install
+    cd -
+
+    echo "Loading bnxt_re..."
+    insmod ${BNXT_RE}/bnxt_re.ko
+    #modprobe bnxt_re
+    sleep 3
+fi
 
 ## THOR
 
 echo "Bringing up p2p1..."
-#ethtool -A p2p1 autoneg off rx off tx off
-#ethtool -A p2p1 autoneg off rx on tx on
 ifconfig p2p1 192.168.1.1 up
 sleep 3
 ethtool -s p2p1 speed 100000 autoneg off
+#ethtool -A p2p1 autoneg off rx off tx off
+#ethtool -A p2p1 autoneg off rx on tx on
 
 echo "Bringing up p2p2..."
-#ethtool -A p2p2 autoneg off rx off tx off
-#ethtool -A p2p2 autoneg off rx on tx on
-#ethtool -s p2p2 speed 50000 autoneg off
 ifconfig p2p2 192.168.2.1 up
 sleep 3
 ethtool -s p2p2 speed 100000 autoneg off
+#ethtool -A p2p2 autoneg off rx off tx off
+#ethtool -A p2p2 autoneg off rx on tx on
 
-if [ -z "$2" ]; then
-    exit
-fi
-
-echo "Loading rdma_ucm..."
-modprobe rdma_ucm
-
-echo "Installing RoCE Library..."
-cd $ROCELIB
-make install
-cd -
-
-echo "Loading bnxt_re..."
-insmod ${BNXT}/bnxt_re/bnxt_re.ko
-#modprobe bnxt_re
-
-#dmesg -c
-#clear
-#rmmod bnxt_re
- 

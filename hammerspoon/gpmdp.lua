@@ -16,9 +16,10 @@ local task    = require("hs.task")
 local x11_clr = require("hs.drawing").color.x11
 local cprint  = require("hs.console").printStyledtext
 
-gpmdp_app_name = "Google Play Music Desktop Player"
-gpmdp_proxy    = "socks5://127.0.0.1:9999"
-gpmdp_rc       = "/Users/edavis/src/gpmdp_rc/target/debug/gpmdp_rc"
+gpmdp_app_name  = "Google Play Music Desktop Player"
+gpmdp_proxy     = "socks5://127.0.0.1:9999"
+gpmdp_rc        = "/Users/edavis/src/gpmdp_rc/target/debug/gpmdp_rc"
+gpmdp_rc_config = "/Users/edavis/.priv/gpmdp_rc.yaml"
 
 SHORT_TIMEOUT = 5
 LONG_TIMEOUT  = 15
@@ -255,7 +256,11 @@ local function gpmdp_worker()
     end
 
     -- execute the command (asynchronously)
-    gpmdp.task_worker = task.new(gpmdp_rc, task_worker_done, cmd)
+    local tmp = { "-c", gpmdp_rc_config }
+    for k,v in ipairs(cmd) do
+        table.insert(tmp, v)
+    end
+    gpmdp.task_worker = task.new(gpmdp_rc, task_worker_done, tmp)
     gpmdp.task_worker:start()
 end
 

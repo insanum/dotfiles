@@ -326,6 +326,11 @@ autocmd insanum FileType
     \ yaml
     \ call <SID>t2e()
 
+" Default Tab-8-noexpand for Linux development...
+autocmd insanum BufRead,BufNewFile
+    \ */work/git/linux/*
+    \ call <SID>t8t()
+
 " TABS-v-SPACES (END) ---------------------------------- }}}
 
 " Insert the current date/time at the cursor

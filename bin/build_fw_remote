@@ -54,7 +54,7 @@ else
     echo "**************************************"
     echo "* RSYNC: main/Cumulus/common         *"
     echo "**************************************"
-    rsync -avP ${LREPO}/common ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/
+    rsync -avP --exclude 'tools/*' ${LREPO}/common ${RUSER}@${RHOST}:${RREPO}/main/Cumulus/
 
     #echo "**************************************"
     #echo "* RSYNC: main/Cumulus/drivers        *"
