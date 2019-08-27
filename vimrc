@@ -330,6 +330,9 @@ autocmd insanum FileType
 autocmd insanum BufRead,BufNewFile
     \ */work/git/linux/*
     \ call <SID>t8t()
+autocmd insanum BufRead,BufNewFile
+    \ */work/git/nxt-linux-drivers/*
+    \ call <SID>t8t()
 
 " TABS-v-SPACES (END) ---------------------------------- }}}
 

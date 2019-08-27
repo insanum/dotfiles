@@ -205,7 +205,8 @@ screenWatch:start()
 
 -- grid stuff
 
-hs.grid.setGrid("4x4")
+hs.grid.setGrid("8x8")
+hs.grid.ui.textSize = 60
 
 hs.hotkey.bind(kb_ctrl, "g", "Show window grid",
 function()

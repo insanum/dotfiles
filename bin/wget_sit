@@ -17,6 +17,7 @@ mkdir $1
 cd $1
 
 $WGET_WILDCARD ${BASE}/bnxtmt/Linux/TH_A -A "bnxtmt-*x86_64.tar.gz"
+$WGET_WILDCARD ${BASE}/bnxtmt/Linux/TH_A -A "bnxtmt-*x86_64.k406.tar.gz"
 $WGET_WILDCARD ${BASE}/Linux_Driver -A "netxtreme-*.tar.gz"
 $WGET_WILDCARD ${BASE}/Linux_Driver/RoCE_Lib -A "libbnxt_re-*.tar.gz"
 
@@ -50,20 +51,28 @@ fi
 
 chmod 755 bnxtnvm
 
-tar -zxf bnxtmt-*x86_64.tar.gz
-cd bnxtmt-*x86_64
-make
-BNXTMT_DIR=$PWD
-cd ..
+if [[ `uname -r` =~ ^3.* ]]; then
+    tar -zxf bnxtmt-*x86_64.tar.gz
+    cd bnxtmt-*x86_64
+    make
+    BNXTMT_DIR=$PWD
+    cd ..
+else
+    tar -zxf bnxtmt-*x86_64.k406.tar.gz
+    cd bnxtmt-*x86_64.k406
+    make
+    BNXTMT_DIR=$PWD
+    cd ..
+fi
 
 tar -zxf netxtreme-*.tar.gz
-cd netxtreme-*
+cd netxtreme-*.0
 make
 BNXT_DIR=$PWD
 cd ..
 
 tar -zxf libbnxt_re-*.tar.gz
-cd libbnxt_re-*
+cd libbnxt_re-*.0
 sh ./autogen.sh
 ./configure --sysconfdir=/etc
 make
