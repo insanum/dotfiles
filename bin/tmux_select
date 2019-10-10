@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ -z "$1" ]]; then
+    exit
+fi
+
+if [[ $1 = tl ]]; then
+    PANE=$(tmux list-panes -F "#{?#{&&:#{pane_at_top},#{pane_at_left}},#{pane_id},}")
+elif [[ $1 = bl ]]; then
+    PANE=$(tmux list-panes -F "#{?#{&&:#{pane_at_bottom},#{pane_at_left}},#{pane_id},}")
+elif [[ $1 = tr ]]; then
+    PANE=$(tmux list-panes -F "#{?#{&&:#{pane_at_top},#{pane_at_right}},#{pane_id},}")
+elif [[ $1 = br ]]; then
+    PANE=$(tmux list-panes -F "#{?#{&&:#{pane_at_bottom},#{pane_at_right}},#{pane_id},}")
+else
+    exit
+fi
+
+tmux select-pane -t $PANE
+

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+TOP_PANES=$(tmux list-panes -F "#{?pane_at_top,#{pane_id},}")
+NUM_PANES=$(echo $TOP_PANES | wc -w)
+
+WIDTH=$(tmux display-message -p "#{window_width}")
+
+PANE_WIDTH=$(($WIDTH / $NUM_PANES))
+
+i=1
+for p in $TOP_PANES; do
+    if [[ $i -ge $NUM_PANES ]]; then
+        tmux_resize_v $p
+        break
+    fi
+
+    tmux resize-pane -t $p -x $PANE_WIDTH
+    tmux_resize_v $p
+    i=$((i + 1))
+done
+

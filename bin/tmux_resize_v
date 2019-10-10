@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [[ -n "$1" ]]; then
+    PANE_LEFT=$(tmux display-message -t $1 -p "#{pane_left}")
+else
+    PANE_LEFT=$(tmux display-message -p "#{pane_left}")
+fi
+
+PANES=$(tmux list-panes -F "#{?#{==:#{pane_left},${PANE_LEFT}},#{pane_id},}")
+NUM_PANES=$(echo $PANES | wc -w)
+
+HEIGHT=$(tmux display-message -p "#{window_height}")
+
+PANE_HEIGHT=$(($HEIGHT / $NUM_PANES))
+
+i=1
+for p in $PANES; do
+    if [[ $i -ge $NUM_PANES ]]; then
+        break
+    fi
+
+    tmux resize-pane -t $p -y $PANE_HEIGHT
+    i=$((i + 1))
+done
+
