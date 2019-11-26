@@ -87,15 +87,6 @@ scrolling:
   # scrollback is enabled (history > 0).
   #multiplier: 3
 
-  # Faux Scrolling
-  #
-  # The `faux_multiplier` setting controls the number of lines the terminal
-  # should scroll when the alternate screen buffer is active. This is used
-  # to allow mouse scrolling for applications like `man`.
-  #
-  # Specifying `0` will disable faux scrolling.
-  #faux_multiplier: 3
-
   # Scroll to the bottom when new text is written to the terminal.
   #auto_scroll: false
 
@@ -108,7 +99,7 @@ scrolling:
 # change the `it` value in terminfo when altering this setting.
 #tabspaces: 8
 
-# Font configuration (changes require restart)
+# Font configuration
 font:
   # Normal (roman) font face
   normal:
@@ -267,7 +258,7 @@ font:
   # Example:
   #   `- { index: 16, color: '0xff00ff' }`
   #
-  indexed_colors: []
+  #indexed_colors: []
 
 # Colors (Gruvbox dark)
 colors:
@@ -621,7 +612,7 @@ key_bindings:
 
   #- { key: Paste,                    action: Paste                            }
   #- { key: Copy,                     action: Copy                             }
-  #- { key: L,         mods: Control, action: ClearLogNotice                   }
+  - { key: L,         mods: Control, action: ReceiveChar                      }
   #- { key: L,         mods: Control, chars: "\x0c"                            }
   #- { key: PageUp,    mods: Shift,   action: ScrollPageUp,   mode: ~Alt       }
   #- { key: PageDown,  mods: Shift,   action: ScrollPageDown, mode: ~Alt       }

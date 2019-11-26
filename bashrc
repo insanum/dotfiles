@@ -644,6 +644,11 @@ function hgdiff()
     hg cat $1 | vim - -c ":vert diffsplit $1" -c "map q :qa!<CR>"
 }
 
+function fdiff()
+{
+    diff -U10 $1 $2 | diff-so-fancy | less
+}
+
 function reportimgs()
 {
     mv ${1} dvt_overall.png
