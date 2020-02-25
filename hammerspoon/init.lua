@@ -6,7 +6,7 @@ kb_alt_shift  = { "cmd", "alt", "shift" }
 
 hs.hotkey.alertDuration = 0
 
-hs.console.consoleFont({ name = "Hack", size = 14 })
+hs.console.consoleFont({ name = "Hack Nerd Font", size = 14 })
 hs.console.darkMode(true)
 hs.console.outputBackgroundColor({ white = 0 })
 hs.console.consolePrintColor({ white = 1 })
@@ -22,23 +22,26 @@ require("volume")
 require("window")
 
 -- application launcher (like spotlight)
-require("launcher")
+--require("launcher")
 
 -- mpd client
 --require("mpc")
 
 -- gpmdp client
-require("gpmdp")
+--require("gpmdp")
 
 -- stock quotes
 --require("intrinio")
 require("alphaadvantage")
 
 -- pomodoro timer
-require("pomodoro")
+--require("pomodoro")
 
 -- input logger
-require("ilog")
+--require("ilog")
+
+-- send pushover messages
+require("pushover")
 
 -- reload config
 hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",

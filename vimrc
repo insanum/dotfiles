@@ -98,6 +98,8 @@ Plug 'https://github.com/tpope/vim-speeddating'
 Plug 'https://github.com/xolox/vim-misc'
 Plug 'https://github.com/xolox/vim-session'
 
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+
 call plug#end()
 endif
 
@@ -332,6 +334,9 @@ autocmd insanum BufRead,BufNewFile
     \ call <SID>t8t()
 autocmd insanum BufRead,BufNewFile
     \ */work/git/nxt-linux-drivers/*
+    \ call <SID>t8t()
+autocmd insanum BufRead,BufNewFile
+    \ */nxt_fw_unit_test/ktls_test/*
     \ call <SID>t8t()
 
 " TABS-v-SPACES (END) ---------------------------------- }}}

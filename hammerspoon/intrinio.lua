@@ -30,7 +30,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
 
     local data = hs.json.decode(stdOut)
 
-    local font = { name = "Hack", size = 12 }
+    local font = { name = "Hack Nerd Font", size = 12 }
 
     local ticker_value = function(ticker, item)
         for i = 1, #data.data, 1 do
@@ -123,7 +123,7 @@ local function doUpdate()
 
     local curl_args = { "-s", intrinio, "-u", config.user .. ":" .. config.pass }
     if not stocks or not stocks:isRunning() then
-        stocks = hs.task.new(curl, stocksUpdate, curl_args )
+        stocks = hs.task.new(curl, stocksUpdate, curl_args)
         stocks:start()
     end
 end
