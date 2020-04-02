@@ -32,7 +32,8 @@ require("window")
 
 -- stock quotes
 --require("intrinio")
-require("alphaadvantage")
+--require("alphavantage")
+require("finnhub")
 
 -- pomodoro timer
 --require("pomodoro")

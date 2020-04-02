@@ -56,6 +56,8 @@ exists vim && export P4EDITOR=vim
 
 exists pacaur && alias pacman="pacaur"
 
+exists prettyping && alias ping="prettyping --nolegend"
+
 alias ipv6="sudo tcpdump -i eth1 -s 0 -XX -vvv ip6"
 #alias xrootevo="qiv -o black -x $HOME/pics/evo_chevy.jpg"
 #alias xrootarch="qiv -o black -m -z /usr/share/archlinux/wallpaper/archlinux-simplyblack.png"
@@ -159,6 +161,8 @@ else
   LSC="--color=auto"
 fi
 
+exists lsd && LS=lsd && LSC=
+
 alias dir="$LS -F $LSC"
 alias ls="$LS -F $LSC"
 alias ll="$LS -lF $LSC"
@@ -198,6 +202,8 @@ else
   alias vmore="/usr/share/vim/vim73/macros/less.sh"
   alias grep="grep --color=always"
 fi
+
+exists bat && alias cat="bat" && alias more="bat"
 
 #alias vi=/usr/local/bin/vim
 #alias vim=/usr/local/bin/vim
@@ -721,4 +727,6 @@ bind -r "\C-t"
 
 eval $(thefuck --alias)
 alias fk=fuck
+
+source /Users/edavis/Library/Preferences/org.dystroy.broot/launcher/bash/br
 

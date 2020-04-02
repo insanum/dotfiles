@@ -1,8 +1,8 @@
 
 -- local tickers  = { "AVGO", "QCOM", "NXP", "NVDA", "MLNX", "CAVM", "GOOG", "GOOGL", "AMZN", "AAPL", "MSFT", "FB", "CSCO", "JNPR", "INTC" }
--- Alpha Advantage APIs do not support multi-stock queries...
+-- Alpha Vantage APIs do not support multi-stock queries...
 local tickers  = { "AVGO" }
-local alphaadvantage = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" .. table.concat(tickers,",")
+local alphavantage = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" .. table.concat(tickers,",")
 
 local curl    = "/usr/bin/curl"
 local menubar = hs.menubar.new()
@@ -19,7 +19,7 @@ local function fslurp(path)
     return s
 end
 
-local config = hs.json.decode(fslurp(os.getenv("HOME").."/.priv/alphaadvantage.json"))
+local config = hs.json.decode(fslurp(os.getenv("HOME").."/.priv/alphavantage.json"))
 
 local function stocksUpdate(exitCode, stdOut, stdErr)
     if exitCode ~= 0 then
@@ -130,7 +130,7 @@ local function doUpdate()
         end
     end
 
-    local curl_args = { "-s", alphaadvantage .. "&apikey=" .. config.key }
+    local curl_args = { "-s", alphavantage .. "&apikey=" .. config.key }
     if not stocks or not stocks:isRunning() then
         stocks = hs.task.new(curl, stocksUpdate, curl_args )
         stocks:start()
