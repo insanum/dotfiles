@@ -40,12 +40,12 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
         local color = hs.drawing.color.x11.green
         local prfx = "+"
         local change = 0
-        if tonumber(data["c"]) >= tonumber(data["o"]) then
-            change = (tonumber(data["c"]) - tonumber(data["o"]))
-        elseif tonumber(data["c"]) < tonumber(data["o"]) then
+        if tonumber(data["c"]) >= tonumber(data["pc"]) then
+            change = (tonumber(data["c"]) - tonumber(data["pc"]))
+        else -- tonumber(data["c"]) < tonumber(data["pc"])
             color = hs.drawing.color.x11.red
             prfx  = "-"
-            change = (tonumber(data["o"]) - tonumber(data["c"]))
+            change = (tonumber(data["pc"]) - tonumber(data["c"]))
         end
 
         return

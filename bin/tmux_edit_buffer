@@ -1,0 +1,6 @@
+#!/bin/bash
+
+TFILE=`mktemp /tmp/tmux_edit.XXXXXX`.sh
+tmux capture-pane -pS - > $TFILE
+tmux new-window -n ebuf "nvim '+ normal G $' $TFILE"
+
