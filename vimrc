@@ -21,8 +21,6 @@ augroup END
 
 silent! if plug#begin('~/.vim/plugged')
 
-"Plug 'https://github.com/mhinz/vim-startify'
-
 " https://github.com/adragomir/javacomplete
 "autocmd insanum FileType java setlocal omnifunc=javacomplete#Complete
 
@@ -52,10 +50,6 @@ Plug 'https://github.com/chriskempson/base16-vim'
 
 Plug 'https://github.com/ap/vim-css-color'
 
-"Plug 'https://github.com/flowtype/vim-flow'
-Plug 'https://github.com/jelera/vim-javascript-syntax'
-Plug 'https://github.com/jason0x43/vim-js-indent'
-
 Plug 'https://github.com/junegunn/vim-easy-align'
 
 Plug 'https://github.com/scrooloose/nerdcommenter'
@@ -84,21 +78,22 @@ Plug 'https://github.com/airblade/vim-gitgutter'
 "Plug 'https://github.com/honza/vim-snippets.git'
 "Plug 'https://github.com/SirVer/ultisnips.git'
 
-"Plug 'https://github.com/vim-scripts/calendar.vim--Matsumoto'
-"Plug 'https://github.com/insanum/vim-rst-tables.git'
+Plug 'https://github.com/dhruvasagar/vim-table-mode'
+
+"Plug 'https://github.com/plasticboy/vim-markdown'
 Plug 'https://github.com/insanum/votl.git', { 'for': [ 'votl' ] }
 
 Plug 'https://github.com/dkarter/bullets.vim',
          \ { 'for': [ 'markdown', 'text' ] }
 
-Plug 'https://github.com/gabrielelana/vim-markdown'
-"Plug 'https://github.com/dhruvasagar/vim-table-mode'
 Plug 'https://github.com/tpope/vim-speeddating'
 
 Plug 'https://github.com/xolox/vim-misc'
 Plug 'https://github.com/xolox/vim-session'
 
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+
+Plug 'https://github.com/sheerun/vim-polyglot'
 
 call plug#end()
 endif
@@ -386,7 +381,7 @@ map <F10> :call <SID>hlGroup()<CR>
 " AUTOCOMMAND
 
 autocmd insanum Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
-autocmd insanum Syntax c,cc,cpp syn keyword cType S8 U8 S16 U16 S32 U32 S64 U64
+autocmd insanum Syntax c,cc,cpp syn keyword cType S8 s8 U8 u8 S16 s16 U16 u16 S32 s32 U32 u32 S64 s64 U64 u64
 autocmd insanum Syntax c,cc,cpp syn keyword cType u_int8_t u_int16_t u_int32_t u_int64_t u_char u_short u_int
 autocmd insanum Syntax c,cc,cpp syn keyword cConstant TRUE FALSE B_TRUE B_FALSE
 
@@ -848,7 +843,8 @@ nmap <Leader>` :Marks<CR>
 nmap <Leader>H :History<CR>
 
 " 'locate' with fzf (note trailing space)
-nmap <Leader>L :Locate 
+nmap <Leader>L :Lines<CR>
+nmap <Leader>B :BLines<CR>
 
 " replace i_CTRL-X_CTRL-K dictionary lookup with fzf
 imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
@@ -974,6 +970,12 @@ if exists('g:loaded_nerd_tree')
 endif
 
 " PLUG NERDTREE (END) ---------------------------------- }}}
+
+" PLUG TABLE MODE -------------------------------------- {{{
+
+let g:table_mode_corner='|'
+
+" PLUG TABLE MODE (END) -------------------------------- }}}
 
 " PLUG SESSION ----------------------------------------- {{{
 

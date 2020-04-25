@@ -729,4 +729,8 @@ eval $(thefuck --alias)
 alias fk=fuck
 
 source /Users/edavis/Library/Preferences/org.dystroy.broot/launcher/bash/br
+source /usr/local/Cellar/z/1.11/etc/profile.d/z.sh
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
 

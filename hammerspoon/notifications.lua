@@ -24,7 +24,7 @@ function clearNotification()
 end
 
 --hs.hotkey.bind(kb_ctrl, "o", "Clear the top notification",
-hs.hotkey.bind({ "cmd" }, "o", "Clear the top notification",
+hs.hotkey.bind({ "cmd", "ctrl" }, "o", "Clear the top notification",
 function()
     clearNotification()
 end)

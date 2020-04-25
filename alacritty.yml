@@ -341,7 +341,7 @@ colors_no:
 #
 # Window opacity as a floating point number from `0.0` to `1.0`.
 # The value `0.0` is completely transparent and `1.0` is opaque.
-#background_opacity: 1.0
+background_opacity: 0.8
 
 selection:
   #semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
@@ -372,6 +372,10 @@ selection:
   # If this is `true`, the cursor will be rendered as a hollow box when the
   # window is not focused.
   #unfocused_hollow: true
+
+  # Thickness of the cursor relative to the cell width as floating point number
+  # from `0.0` to `1.0`.
+  #thickness: 0.15
 
 # Live config reload (changes require restart)
 #live_config_reload: true
@@ -559,6 +563,9 @@ shell:
 #   (macOS only):
 #   - ToggleSimpleFullscreen: Enters fullscreen without occupying another space
 #
+#   (Linux/BSD only):
+#   - CopySelection: Copies into selection buffer
+#
 # - `command`: Fork and execute a specified command plus arguments
 #
 #    The `command` field must be a map containing a `program` string and an
@@ -624,6 +631,8 @@ key_bindings:
   #- { key: U,      mods: Control,       mode: Vi, action: ScrollHalfPageUp        }
   #- { key: D,      mods: Control,       mode: Vi, action: ScrollHalfPageDown      }
   #- { key: Y,                           mode: Vi, action: Copy                    }
+  #- { key: Y,                           mode: Vi, action: ClearSelection          }
+  #- { key: Copy,                        mode: Vi, action: ClearSelection          }
   #- { key: V,                           mode: Vi, action: ToggleNormalSelection   }
   #- { key: V,      mods: Shift,         mode: Vi, action: ToggleLineSelection     }
   #- { key: V,      mods: Control,       mode: Vi, action: ToggleBlockSelection    }
@@ -652,14 +661,15 @@ key_bindings:
   #- { key: Key5,   mods: Shift,         mode: Vi, action: Bracket                 }
 
   # (Windows, Linux, and BSD only)
-  #- { key: V,        mods: Control|Shift, action: Paste            }
-  #- { key: C,        mods: Control|Shift, action: Copy             }
-  #- { key: Insert,   mods: Shift,         action: PasteSelection   }
-  #- { key: Key0,     mods: Control,       action: ResetFontSize    }
-  #- { key: Equals,   mods: Control,       action: IncreaseFontSize }
-  #- { key: Add,      mods: Control,       action: IncreaseFontSize }
-  #- { key: Subtract, mods: Control,       action: DecreaseFontSize }
-  #- { key: Minus,    mods: Control,       action: DecreaseFontSize }
+  #- { key: V,        mods: Control|Shift,           action: Paste            }
+  #- { key: C,        mods: Control|Shift,           action: Copy             }
+  #- { key: C,        mods: Control|Shift, mode: Vi, action: ClearSelection   }
+  #- { key: Insert,   mods: Shift,                   action: PasteSelection   }
+  #- { key: Key0,     mods: Control,                 action: ResetFontSize    }
+  #- { key: Equals,   mods: Control,                 action: IncreaseFontSize }
+  #- { key: Add,      mods: Control,                 action: IncreaseFontSize }
+  #- { key: Subtract, mods: Control,                 action: DecreaseFontSize }
+  #- { key: Minus,    mods: Control,                 action: DecreaseFontSize }
 
   # (Windows only)
   #- { key: Return,   mods: Alt,           action: ToggleFullscreen }
@@ -673,6 +683,7 @@ key_bindings:
   #- { key: K,      mods: Command,            action: ClearHistory     }
   #- { key: V,      mods: Command,            action: Paste            }
   #- { key: C,      mods: Command,            action: Copy             }
+  #- { key: C,      mods: Command, mode: Vi,  action: ClearSelection   }
   #- { key: H,      mods: Command,            action: Hide             }
   #- { key: M,      mods: Command,            action: Minimize         }
   - { key: Q,      mods: Command,            action: None             }
