@@ -7,6 +7,8 @@
 [core]
 	editor       = nvim
 	pager        = diff-so-fancy | less -RFX
+[tig "color"]
+	cursor       = red color239
 [color]
 	#diff        = always
 	grep         = always

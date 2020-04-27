@@ -78,6 +78,9 @@ Plug 'https://github.com/airblade/vim-gitgutter'
 "Plug 'https://github.com/honza/vim-snippets.git'
 "Plug 'https://github.com/SirVer/ultisnips.git'
 
+Plug 'https://github.com/junegunn/goyo.vim'
+Plug 'https://github.com/junegunn/limelight.vim'
+
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
 
 "Plug 'https://github.com/plasticboy/vim-markdown'
@@ -975,7 +978,29 @@ endif
 
 let g:table_mode_corner='|'
 
-" PLUG TABLE MODE (END) -------------------------------- }}}
+" PLUG GOYO/LIMELIGHT (END) ---------------------------- }}}
+
+" PLUG SESSION ----------------------------------------- {{{
+
+let g:limelight_default_coefficient = 0.8
+
+function! s:goyo_enter()
+    set colorcolumn=80
+    call Base16hi("ColorColumn", "none", "3c3836", "none", "18")
+    call Base16hi("NonText", "9400D3", "none", "129", "238")
+    Limelight
+endfunction
+
+function! s:goyo_leave()
+    Limelight!
+endfunction
+
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
+nmap <Leader>y :Goyo 90<CR>
+
+" PLUG GOYO/LIMELIGHT (END) ---------------------------- }}}
 
 " PLUG SESSION ----------------------------------------- {{{
 
