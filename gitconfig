@@ -64,3 +64,5 @@
 	bv           = branch -vv
 	ba           = branch -a
 	####################
+[include]
+	path = ~/.priv/gitconfig
