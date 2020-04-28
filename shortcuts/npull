@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ ! -d notes ]]; then
+    exit
+fi
+
 cd notes
-bash ./_git.sh pull
+bash ./g pull
 

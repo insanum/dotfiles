@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PUSH_CREDS=~/.priv/pushover.sh
+
+if [[ ! -f ${PUSH_CREDS} ]]; then
+    echo "ERROR: unknown credentials"
+    exit
+fi
+
+source ${PUSH_CREDS}
+
+function usage()
+{
+    cat <<USAGE
+`basename $0` [ -h | '<message>' ]
+USAGE
+    exit 1
+}
+
+if [[ "$1" = "-h" || -z "$1" ]]; then
+    usage
+fi
+
+curl -s                                          \
+     --form-string "token=${PUSHOVER_APP_TOKEN}" \
+     --form-string "user=${PUSHOVER_USER_KEY}"   \
+     --form-string "message=${1}"                \
+     ${PUSHOVER_URL}
+
+echo ""
+
