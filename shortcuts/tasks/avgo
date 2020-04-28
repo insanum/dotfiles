@@ -1,0 +1,6 @@
+#!/bin/bash
+
+bash .bin/avgo ~/storage/downloads/avgo.json
+
+exit 0
+
