@@ -1,13 +1,11 @@
 #!/bin/bash
 
-PUSH_CREDS=~/.priv/pushover.sh
+PUSH_CREDS=~/.priv/pushover.json
 
 if [[ ! -f ${PUSH_CREDS} ]]; then
     echo "ERROR: unknown credentials"
     exit
 fi
-
-source ${PUSH_CREDS}
 
 function usage()
 {
@@ -20,6 +18,10 @@ USAGE
 if [[ "$1" = "-h" || -z "$1" ]]; then
     usage
 fi
+
+PUSHOVER_APP_TOKEN=`jq -r '.app_token' ${PUSH_CREDS}`
+PUSHOVER_USER_KEY=`jq -r '.user_key' ${PUSH_CREDS}`
+PUSHOVER_URL=`jq -r '.url' ${PUSH_CREDS}`
 
 curl -s                                          \
      --form-string "token=${PUSHOVER_APP_TOKEN}" \
