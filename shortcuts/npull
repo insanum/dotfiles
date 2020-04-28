@@ -4,6 +4,8 @@ if [[ ! -d notes ]]; then
     exit
 fi
 
+echo -e "\n\n\n"
+
 cd notes
 bash ./g pull
 
