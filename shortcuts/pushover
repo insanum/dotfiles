@@ -1,5 +1,7 @@
 #!/bin/bash
 
 read -p "Message: " msg
-.bin/pushover "${msg}"
+bash .bin/pushover "${msg}"
+
+exit 0
 

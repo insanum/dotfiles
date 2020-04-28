@@ -7,3 +7,5 @@ fi
 cd notes
 bash ./g status
 
+exit 0
+
