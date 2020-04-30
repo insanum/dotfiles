@@ -3,7 +3,7 @@
 echo -e "\n\n\n"
 
 read -p "Message: " msg
-bash .bin/pushover "${msg}"
+bash .bin/pushover task "${msg}"
 
 exit 0
 
