@@ -3,30 +3,37 @@
 PUSH_CREDS=~/.priv/pushover.json
 
 if [[ ! -f ${PUSH_CREDS} ]]; then
-    echo "ERROR: unknown credentials"
+    echo "ERROR: unknown credentials file"
     exit
 fi
 
 function usage()
 {
     cat <<USAGE
-`basename $0` [ -h | '<message>' ]
+`basename $0` [ -h | <app> '<message>' ]
 USAGE
     exit 1
 }
 
-if [[ "$1" = "-h" || -z "$1" ]]; then
+if [[ "$1" = "-h" || -z "$1" || -z "$2" ]]; then
     usage
 fi
 
-PUSHOVER_APP_TOKEN=`jq -r '.app_token' ${PUSH_CREDS}`
-PUSHOVER_USER_KEY=`jq -r '.user_key' ${PUSH_CREDS}`
-PUSHOVER_URL=`jq -r '.url' ${PUSH_CREDS}`
+PUSHOVER_URL=`jq -r ".url" ${PUSH_CREDS}`
+PUSHOVER_USER_KEY=`jq -r ".user_key" ${PUSH_CREDS}`
+PUSHOVER_APP_TOKEN=`jq -r ".${1}.token" ${PUSH_CREDS}`
+
+if [[ -z "$PUSHOVER_URL" ||
+      -z "$PUSHOVER_USER_KEY" ||
+      -z "$PUSHOVER_APP_TOKEN" ]]; then
+    echo "ERROR: unknown credentials"
+    exit
+fi
 
 curl -s                                          \
      --form-string "token=${PUSHOVER_APP_TOKEN}" \
      --form-string "user=${PUSHOVER_USER_KEY}"   \
-     --form-string "message=${1}"                \
+     --form-string "message=${2}"                \
      ${PUSHOVER_URL}
 
 echo ""
