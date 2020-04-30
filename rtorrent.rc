@@ -1,0 +1,11 @@
+directory.default.set = ./
+session.path.set = ./session
+throttle.global_up.max_rate.set = 10
+protocol.encryption.set = allow_incoming,try_outgoing,enable_retry
+dht.mode.set = auto
+
+schedule2 = watch_directory,5,5,load.start=./watch/*
+
+# First and only argument to rtorrent_mail.sh is completed file's name (d.get_name)
+method.set_key = event.download.finished,notify_me,"execute=/scratch/home/edavis/.rtorrent_done.sh,$d.name="
+
