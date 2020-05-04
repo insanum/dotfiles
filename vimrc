@@ -339,6 +339,12 @@ autocmd insanum BufRead,BufNewFile
 
 " TABS-v-SPACES (END) ---------------------------------- }}}
 
+if getcwd() =~ '\v.*/notes'
+  nmap <Leader>jd :tabnew <C-R>=strftime('Journal/%Y-%m-%d.md')<CR><CR>
+  nmap <Leader>jm :tabnew <C-R>=strftime('Journal/%Y-%m.md')<CR><CR>
+  iab jdate # <C-R>=strftime("%a %m/%d/%Y")<CR><CR>
+endif
+
 " Insert the current date/time at the cursor
 "iab idate <C-R>=strftime("%a %b %d %T %Z %Y")<CR>
 "iab idate <C-R>=strftime("{%F %R}")<CR>
