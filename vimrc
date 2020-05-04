@@ -179,7 +179,7 @@ let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
 let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
 
 autocmd insanum BufNewFile,BufRead
-    \ *.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua
+    \ *.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua,*.rs
     \ set nobreakindent |
     \ set nolinebreak
 
@@ -407,8 +407,8 @@ endfunction
 nmap ,M :call <SID>quickfixOpen(0)<CR>
 nmap ,m :call <SID>quickfixOpen(1)<CR>
 
-autocmd insanum BufNewFile,BufRead *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua set textwidth=80
-autocmd insanum BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua
+autocmd insanum BufNewFile,BufRead *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs set textwidth=80
+autocmd insanum BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs
     \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
 
 autocmd insanum Syntax javascript
@@ -444,7 +444,7 @@ autocmd insanum FileType mail
 
 "autocmd insanum BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%>' . &textwidth . 'v.\+/' | endif
 "autocmd insanum BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
-autocmd insanum BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua
+autocmd insanum BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua,*.rs
     \ if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
 
 " search for all lines longer than textwidth
