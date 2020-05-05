@@ -27,8 +27,6 @@ Plug 'https://github.com/junegunn/vim-easy-align'
 Plug 'https://github.com/scrooloose/nerdcommenter'
 Plug 'https://github.com/tpope/vim-surround'
 
-Plug 'https://github.com/haya14busa/incsearch.vim'
-
 Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
 Plug 'https://github.com/justinmk/vim-syntax-extra'
 
@@ -220,6 +218,8 @@ autocmd insanum BufRead,BufNewFile
 inoremap jk <Esc>
 xnoremap jk <Esc>
 
+nmap ,. :nohlsearch<CR>
+
 " Uh, NOPE! I hate getting stuck in Ex mode...
 map Q <Nop>
 map gQ <Nop>
@@ -333,6 +333,7 @@ autocmd insanum BufNewFile,BufRead
 
 "if getcwd() =~ '\v.*/notes'
   nmap <Leader>jm :tabnew <C-R>=strftime('$HOME/notes/Journal/%Y-%m.md')<CR><CR>
+  nmap <Leader>jj /<C-R>=substitute(strftime('%a %e'), '\v\s+', ' ', '')<CR><CR>
   nmap <Leader>jd :tabnew <C-R>=strftime('$HOME/notes/Journal/%Y-%m-%d.md')<CR><CR>
   nmap <Leader>jn :e
       \ <C-R>=systemlist('date -j -v+1d -f "%Y-%m-%d" "'.expand("%:t:r").'" +"$HOME/notes/Journal/%Y-%m-%d.md"')[0]<CR><CR>
@@ -782,26 +783,6 @@ if exists('g:indentLine_loaded')
 endif
 
 " PLUG INDENTLINE (END) -------------------------------- }}}
-
-" PLUG INCSEARCH --------------------------------------- {{{
-
-set hlsearch
-"set incsearch
-"let g:incsearch#auto_nohlsearch = 1
-nmap ,. :nohlsearch<CR>
-
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-
-map n  <Plug>(incsearch-nohl-n)
-map N  <Plug>(incsearch-nohl-N)
-map *  <Plug>(incsearch-nohl-*)
-map #  <Plug>(incsearch-nohl-#)
-map g* <Plug>(incsearch-nohl-g*)
-map g# <Plug>(incsearch-nohl-g#)
-
-" PLUG INCSEARCH (END) --------------------------------- }}}
 
 " PLUG TABLE MODE -------------------------------------- {{{
 
