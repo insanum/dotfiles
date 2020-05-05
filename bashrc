@@ -71,7 +71,8 @@ alias brcm_tun='ssh -N -D 9999 -L 7777:edavis-win-kvm:3389 -L 7778:edavis-win7-k
 alias brcm_skylark='ssh -t edavis@insanum.com ssh edavis@192.168.168.3'
 alias hgs='hg status | grep -v "? "'
 alias httpdir='python -m SimpleHTTPServer'
-alias gn='tsocks geeknote'
+alias jm='vi ~/notes/Journal/$(date +"%Y-%m").md'
+alias jd='vi ~/notes/Journal/$(date +"%Y-%m-%d").md'
 alias vdi_git='bsub -I -q irv-rhel69 git'
 function sn() { vim -c ":Simplenote -l $1"; }
 
@@ -730,7 +731,4 @@ alias fk=fuck
 
 source /Users/edavis/Library/Preferences/org.dystroy.broot/launcher/bash/br
 source /usr/local/Cellar/z/1.11/etc/profile.d/z.sh
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
 

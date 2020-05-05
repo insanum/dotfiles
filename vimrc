@@ -1,10 +1,7 @@
-" vim:foldmethod=marker
-
 " VIM config file - Eric Davis
 " ------------------------------------------------
-" Plugins managed via vim-plug: https://github.com/junegunn/vim-plug
-" curl -L -o ~/.vim/autoload/plug.vim --create-dirs https://goo.gl/a0PUdV
-" -> https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" curl -L -o ~/.vim/autoload/plug.vim --create-dirs \
+"    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 if !has('nvim')
     unlet! skip_defaults_vim
@@ -20,31 +17,6 @@ augroup END
 " VIM-PLUG --------------------------------------------- {{{
 
 silent! if plug#begin('~/.vim/plugged')
-
-" https://github.com/adragomir/javacomplete
-"autocmd insanum FileType java setlocal omnifunc=javacomplete#Complete
-
-" https://github.com/rdnetto/YCM-Generator
-" https://github.com/Valloric/YouCompleteMe.git
-"    "YouCompleteMe completion engine setup:
-"    "  cd ~/.vim/bundle/YouCompleteMe
-"    "  ./install.sh --clang-completer --gocode-completer
-"    "Generate .ycm_extra_conf.py for C projects:
-"    "  cd ~/.vim/bundle/YCM-Generator
-"    "  ./config_gen.py <path_to_c_project>
-"    let g:ycm_confirm_extra_conf=0
-"    let g:ycm_extra_conf_globlist=['*']
-"    let g:ycm_show_diagnostics_ui=0
-"    let g:ycm_collect_identifiers_from_tags_files=1
-"    set completeopt=menuone
-" https://github.com/lifepillar/vim-mucomplete
-"    let g:mucomplete#enable_auto_at_startup = 1
-
-""https://github.com/maralla/validator.vim
-"Plug 'https://github.com/maralla/completor.vim'
-"let g:completor_clang_binary = '/usr/bin/clang'
-
-"Plug 'https://github.com/scrooloose/nerdtree', { 'on': [ 'NERDTreeToggle' ] }
 
 Plug 'https://github.com/chriskempson/base16-vim'
 
@@ -62,8 +34,6 @@ Plug 'https://github.com/justinmk/vim-syntax-extra'
 
 "Plug 'https://github.com/Yggdroot/indentLine'
 
-"Plug 'https://github.com/majutsushi/tagbar.git', { 'on': [ 'TagbarToggle' ] }
-
 Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -74,9 +44,6 @@ Plug 'https://github.com/junegunn/gv.vim'
 
 Plug 'https://github.com/kshenoy/vim-signature'
 Plug 'https://github.com/airblade/vim-gitgutter'
-
-"Plug 'https://github.com/honza/vim-snippets.git'
-"Plug 'https://github.com/SirVer/ultisnips.git'
 
 Plug 'https://github.com/junegunn/goyo.vim'
 Plug 'https://github.com/junegunn/limelight.vim'
@@ -103,141 +70,49 @@ endif
 
 " VIM-PLUG (END) --------------------------------------- }}}
 
+" OPTIONS ---------------------------------------------- {{{
+
 let mapleader      = ','
 let maplocalleader = ','
 
-"filetype plugin indent on
-
-" I like everything unfolded by default...
-set foldlevelstart=99
-
 set showmatch
-set ruler
 set autowrite
-set showmode
 set shiftround
-set showcmd
-set laststatus=2
 set fileformat=unix
-set nobackup
-set backspace=2
 set dictionary=/usr/share/dict/words
 set thesaurus=~/.vim/thesaurus/mthesaur.txt
-set complete=.,w,b,u,t,i,k
-set noinsertmode
-set joinspaces
-set magic
-set scrolloff=1
-set shell=bash
+set complete=.,w,b,u,t,i,k,s
+set nojoinspaces
 set mouse-=a
-set updatecount=200
-set updatetime=1000
-set ttyfast
 set lazyredraw
-set nocompatible
-set notitle
-"set whichwrap=h,l
 set listchars=tab:>-,eol:$,trail:-
-set keywordprg=""
-set wildignore=*.o,*.obj,*.bak,*.exe,*.rom,*.bin
-set matchpairs=(:),{:},[:],<:>
+set matchpairs+=<:>
 set winheight=11
 set winminheight=8
 set winminwidth=5
 set noequalalways
 set pumheight=20
 set hidden
-set verbosefile=~/vim_verbose.txt
-set nostartofline
-set nofixeol
-set ignorecase smartcase
+set ignorecase
+set smartcase
 set timeoutlen=500
-set fillchars=vert:\ ,fold:/
-
-set textwidth=0
 set colorcolumn=80
 set cursorline
-
-" No bells or screen flashes!
-set novisualbell
-set vb t_vb=
-
-" Format options and wrapping
 set formatoptions+=1j
-let &showbreak = '↳'
-set breakindent
-set breakindentopt=sbr
-set linebreak
-
-if has('nvim')
-    set inccommand=nosplit
-endif
+set showbreak='↳'
+set number
+set relativenumber
 
 " truecolor support
 set termguicolors
 let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
 let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
 
-autocmd insanum BufNewFile,BufRead
-    \ *.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua,*.rs
-    \ set nobreakindent |
-    \ set nolinebreak
-
-" Home direcotry for swapfiles
-set swapfile
-if !isdirectory(expand("~/.vim_swap"))
-    call mkdir(expand("~/.vim_swap"))
+if has('nvim')
+    set inccommand=nosplit
 endif
-set directory^=~/.vim_swap//
 
-" Try to stay off the Escape key!
-" My name is Eric and I have a 2016 MacBook Pro w/ Touch Bar ... /facepalm
-inoremap jk <Esc>
-xnoremap jk <Esc>
-
-" Uh, NOPE! I hate getting stuck in Ex mode...
-map Q <Nop>
-map gQ <Nop>
-
-" Macro record with 'qq' and replay with 'Q'
-nnoremap Q @q
-
-" Quickly jump between windows
-noremap <C-j> <C-w>j
-noremap <C-k> <C-w>k
-noremap <C-h> <C-w>h
-noremap <C-l> <C-w>l
-
-" Force a redraw of the screen
-nmap <Leader><C-l> :redraw!<CR>
-
-" I'm a compulsive <C-s> masher...
-nnoremap <C-s> :update<CR>
-inoremap <C-s> <C-o>:update<CR>
-
-" Toggle paste
-set nopaste
-nmap <Leader>v :set paste!<CR>:set paste?<CR>
-
-" Toggle line numbers
-set number
-set relativenumber
-nmap <Leader>n :set number!<CR>:set number?<CR>
-nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
-
-autocmd insanum WinEnter * set relativenumber
-autocmd insanum WinLeave * set norelativenumber
-
-" Toggle list chars
-set nolist
-nmap <Leader>l :set list!<CR>:set list?<CR>
-
-" Edit and/or (re)Source this .vimrc file
-nmap <Leader>rce :tabnew ~/.vimrc<CR>
-nmap <Leader>rcs :source ~/.vimrc<CR>
-
-" (re)Write the file as root
-cmap w!! w !sudo tee % > /dev/null
+" OPTIONS (END) ---------------------------------------- }}}
 
 " TABS-v-SPACES ---------------------------------------- {{{
 
@@ -339,27 +214,40 @@ autocmd insanum BufRead,BufNewFile
 
 " TABS-v-SPACES (END) ---------------------------------- }}}
 
-if getcwd() =~ '\v.*/notes'
-  nmap <Leader>jd :tabnew <C-R>=strftime('Journal/%Y-%m-%d.md')<CR><CR>
-  nmap <Leader>jm :tabnew <C-R>=strftime('Journal/%Y-%m.md')<CR><CR>
-  iab jdate # <C-R>=strftime("%a %m/%d/%Y")<CR><CR>
-endif
+" MAPS/AUTOCMD ----------------------------------------- {{{
 
-" Insert the current date/time at the cursor
-"iab idate <C-R>=strftime("%a %b %d %T %Z %Y")<CR>
-"iab idate <C-R>=strftime("{%F %R}")<CR>
-"iab inxt <C-R>=systemlist('date -v+1d "+{+ at'.input('Time:').' of %-e of %b}"')[0]<CR>
-"iab inxw <C-R>=systemlist('date -v+1w "+{+ at'.input('Time:').' of %-e of %b}"')[0]<CR>
+" Try to stay off the Escape key!
+inoremap jk <Esc>
+xnoremap jk <Esc>
 
-" grep all files in the current directory for the word under the cursor
-"if s:ostype == "solaris2.10" || s:ostype == "solaris2.11"
-"    nmap <Leader>gr :!ggrep -n --color=always <cword> *<CR>
-"else
-"    nmap <Leader>gr :!grep -r -n --color=always <cword> *<CR>
-"endif
-"nmap <Leader>gr :grep --color=always <cword> *.[^o]<CR>
-"nmap <Leader>gr :grep <cword> *.[^o]<CR>
-"nmap <Leader>gr :exec('vimgrep /' . expand('<cword>') . '/j *[^.o$]')<CR>,m
+" Uh, NOPE! I hate getting stuck in Ex mode...
+map Q <Nop>
+map gQ <Nop>
+
+" Quickly jump between windows
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-h> <C-w>h
+noremap <C-l> <C-w>l
+
+" I'm a compulsive <C-s> masher...
+nnoremap <C-s> :update<CR>
+inoremap <C-s> <C-o>:update<CR><CR>
+
+" Toggle paste
+nmap <Leader>v :set paste!<CR>:set paste?<CR>
+
+" Toggle line numbers
+nmap <Leader>n :set number!<CR>:set number?<CR>
+nmap <Leader>nr :set relativenumber!<CR>:set relativenumber?<CR>
+autocmd insanum WinEnter * set relativenumber
+autocmd insanum WinLeave * set norelativenumber
+
+" Toggle list chars
+nmap <Leader>l :set list!<CR>:set list?<CR>
+
+" (re)Write the file as root
+cmap w!! w !sudo tee % > /dev/null
 
 " Delete all line trailing white space
 " XXX Don't allow this for Markdown!
@@ -370,13 +258,6 @@ nmap <Leader>pe :exec('!e4 edit ' . expand("%"))<CR>:w!<CR>
 
 " Perforce diff current file (vs previous)
 nmap <Leader>pd :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-
-" Git diff current file (unstaged or staged vs previous)
-"nmap <Leader>gdu :exec('!git diff --no-color ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-"nmap <Leader>gds :exec('!git diff --no-color --staged ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
-
-" Turn diff off for all windows in current tab
-nmap <Leader>do :diffoff!<CR>:call <SID>myColorScheme(g:default_theme)<CR>
 
 " Print the highlight group stack for the current cursor location
 function! s:hlGroup()
@@ -389,14 +270,16 @@ map <F10> :call <SID>hlGroup()<CR>
 
 " AUTOCOMMAND
 
-autocmd insanum Syntax c,cc,cpp syn keyword cType s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
-autocmd insanum Syntax c,cc,cpp syn keyword cType S8 s8 U8 u8 S16 s16 U16 u16 S32 s32 U32 u32 S64 s64 U64 u64
-autocmd insanum Syntax c,cc,cpp syn keyword cType u_int8_t u_int16_t u_int32_t u_int64_t u_char u_short u_int
-autocmd insanum Syntax c,cc,cpp syn keyword cConstant TRUE FALSE B_TRUE B_FALSE
+autocmd insanum Syntax c,cc,cpp
+    \ syn keyword cType
+    \     s8_t u8_t s16_t u16_t s32_t u32_t s64_t u64_t
+    \     S8 s8 U8 u8 S16 s16 U16 u16 S32 s32 U32 u32 S64 s64 U64 u64
+    \     u_int8_t u_int16_t u_int32_t u_int64_t u_char u_short u_int
+autocmd insanum Syntax c,cc,cpp
+    \ syn keyword cConstant TRUE FALSE B_TRUE B_FALSE
 
 autocmd insanum BufNewFile,BufReadPost *.c@@/*,*.h@@/*,%@@/* setf c
 autocmd insanum BufNewFile,BufRead .tmux.conf*,tmux.conf* setf tmux
-autocmd insanum BufNewFile,BufRead /tmp/alot.\w\+ setf mail
 
 " macros to put the quickfix window in proper place
 function! s:quickfixOpen(bottom)
@@ -413,8 +296,11 @@ endfunction
 nmap ,M :call <SID>quickfixOpen(0)<CR>
 nmap ,m :call <SID>quickfixOpen(1)<CR>
 
-autocmd insanum BufNewFile,BufRead *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs set textwidth=80
-autocmd insanum BufNewFile,BufReadPost *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs
+autocmd insanum BufNewFile,BufRead
+    \ *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs
+    \ set textwidth=80
+autocmd insanum BufNewFile,BufReadPost
+    \ *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs
     \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
 
 autocmd insanum Syntax javascript
@@ -437,46 +323,25 @@ autocmd insanum Syntax qf set textwidth=0
 autocmd insanum Syntax help setlocal nospell
 nmap <Leader>s :set spell!<CR>:set spell?<CR>
 
-" spell check the current buffer
-"nmap <Leader>s :w!<CR>:!aspell -c %:p<CR>:e!<CR><CR>
-
-"map ,kqs :/^[ ]*> -- *$/;?^[ >][ >]*$?;.,/^[ ]*$/-1d<CR>
-autocmd insanum FileType mail
-    \ setlocal textwidth=78
-    \          spell
-    \          spelllang=en_us
-    \          formatoptions=tcqnl
-    \          comments=n:>,n::,n:#,n:%,n:\|
-
-"autocmd insanum BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%>' . &textwidth . 'v.\+/' | endif
-"autocmd insanum BufNewFile,BufRead * if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
-autocmd insanum BufNewFile,BufRead *.txt,*.TXT,*.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua,*.rs
+autocmd insanum BufNewFile,BufRead
+    \ *.txt,*.TXT,*.md,*.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua,*.rs
     \ if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
 
-" search for all lines longer than textwidth
-"if &textwidth > 0
-"    execute "nmap <Leader>L /\%" . &textwidth . "v.\+<CR>"
+" MAPS/AUTOCMD (END) ----------------------------------- }}}
+
+" JOURNALING ------------------------------------------- {{{
+
+"if getcwd() =~ '\v.*/notes'
+  nmap <Leader>jm :tabnew <C-R>=strftime('$HOME/notes/Journal/%Y-%m.md')<CR><CR>
+  nmap <Leader>jd :tabnew <C-R>=strftime('$HOME/notes/Journal/%Y-%m-%d.md')<CR><CR>
+  nmap <Leader>jn :e
+      \ <C-R>=systemlist('date -j -v+1d -f "%Y-%m-%d" "'.expand("%:t:r").'" +"$HOME/notes/Journal/%Y-%m-%d.md"')[0]<CR><CR>
+  nmap <Leader>jN :e
+      \ <C-R>=systemlist('date -j -v-1d -f "%Y-%m-%d" "'.expand("%:t:r").'" +"$HOME/notes/Journal/%Y-%m-%d.md"')[0]<CR><CR>
+  iab jdate # <C-R>=strftime("%a %m/%d/%Y")<CR><CR>
 "endif
 
-function! s:check_pager_mode()
-    if exists("g:loaded_less") && g:loaded_less
-        " we're in vimpager / less.sh / man mode
-        set laststatus=0
-        set showtabline=0
-        set foldmethod=manual
-        set foldlevel=99
-        set nolist
-        go
-    elseif &diff
-        set nospell
-    elseif !&diff
-        "wincmd l
-        "Hexplore
-        "execute "normal! zt"
-        "wincmd h
-    endif
-endfunction
-autocmd insanum VimEnter * call <SID>check_pager_mode()
+" JOURNALING (END) ------------------------------------- }}}
 
 " WINDOW TABS ------------------------------------------ {{{
 
@@ -815,15 +680,18 @@ nmap <Leader>f :Files<CR>
 nmap <Leader>F :Files 
 
 " git file (git ls-files) selection with fzf
-nmap <Leader>g :GFiles<CR>
+"nmap <Leader>g :GFiles<CR>
 
 " git file (git status) selection with fzf
-nmap <Leader>G :GFiles?<CR>
+"nmap <Leader>G :GFiles?<CR>
 
 " ag selection (word under cursor, current directory) with fzf
-nmap <Leader>ag :Ag <C-r><C-w><CR>
-nmap <Leader>Ag :Ag <C-r><C-a><CR>
-nmap <Leader>T  :call fzf#vim#ag('\s<C-r><C-w>', {'options': '--preview-window=right:0'})<CR>
+"nmap <Leader>ag :Ag <C-r><C-w><CR>
+"nmap <Leader>Ag :Ag <C-r><C-a><CR>
+"nmap <Leader>T  :call fzf#vim#ag('\s<C-r><C-w>', {'options': '--preview-window=right:0'})<CR>
+
+" ag selection (word under cursor, choose/complete directory) with fzf
+"nmap <Leader>Ag :call fzf#vim#ag(expand('<cword>'))<CR>
 
 " ripgrep selection (word under cursor, current directory) with fzf
 command! -bang -nargs=* Rg
@@ -832,9 +700,6 @@ command! -bang -nargs=* Rg
   \ 1, {}, 0)
 nmap <Leader>rg :Rg <C-r><C-w><CR>
 nmap <Leader>Rg :Rg <C-r><C-a><CR>
-
-" ag selection (word under cursor, choose/complete directory) with fzf
-"nmap <Leader>Ag :call fzf#vim#ag(expand('<cword>'))<CR>
 
 " tags selection (word under cursor) with fzf
 "nmap <Leader>ta :call fzf#vim#tags(expand('<cword>'), { 'options': '--exact' })<CR>
@@ -859,7 +724,7 @@ nmap <Leader>B :BLines<CR>
 imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
 
 " XXX replace i_CTRL-X_CTRL-T thesaurus lookup with fzf
-"imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
+"imap <expr> <C-x><C-t> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
 
 " replace i_CTRL-X_CTRL-F filename lookup with fzf
 imap <C-x><C-f> <plug>(fzf-complete-path)
@@ -868,7 +733,7 @@ imap <C-x><C-j> <plug>(fzf-complete-file-ag)
 " replace i_CTRL-X_CTRL-L whole line lookup with fzf
 imap <C-x><C-l> <plug>(fzf-complete-line)
 
-" mappings selection with fzf
+" vim mappings selection with fzf
 nmap <Leader><tab> <plug>(fzf-maps-n)
 xmap <Leader><tab> <plug>(fzf-maps-x)
 omap <Leader><tab> <plug>(fzf-maps-o)
@@ -892,15 +757,6 @@ let g:gitgutter_sign_modified_removed = '>'
 
 " PLUG GITGUTTER (END) --------------------------------- }}}
 
-" PLUG ULTISNIPS --------------------------------------- {{{
-
-let g:UltiSnipsExpandTrigger       = '<c-h>'
-let g:UltiSnipsListSnippets        = '<c-l>'
-let g:UltiSnipsJumpForwardTrigger  = '<c-j>'
-let g:UltiSnipsJumpBackwardTrigger = '<c-k>'
-
-" PLUG ULTISNIPS (END) --------------------------------- }}}
-
 " PLUG RAINBOW PARENS ---------------------------------- {{{
 
 "let g:rainbow#max_level = 32
@@ -910,12 +766,6 @@ let g:rainbow#blacklist = [15, '#fbf1c7', '#665c54']
 autocmd insanum Syntax * RainbowParentheses
 
 " PLUG RAINBOW PARENS (END) ---------------------------- }}}
-
-" PLUG JS-INDENT --------------------------------------- {{{
-
-let g:js_indent_flat_switch = 1
-
-" PLUG JS-INDENT (END) --------------------------------- }}}
 
 " PLUG INDENTLINE -------------------------------------- {{{
 
@@ -932,25 +782,6 @@ if exists('g:indentLine_loaded')
 endif
 
 " PLUG INDENTLINE (END) -------------------------------- }}}
-
-" PLUG TAGBAR ------------------------------------------ {{{
-
-if exists('g:loaded_tagbar')
-    if s:ostype == "solaris2.10"
-        let g:tagbar_ctags_bin = '/opt/csw/bin/ectags'
-    elseif s:ostype == "solaris2.11"
-        let g:tagbar_ctags_bin = '/usr/bin/exctags'
-    elseif s:ostype =~ "darwin"
-        let g:tagbar_ctags_bin = '/usr/local/bin/ctags'
-    else
-        let g:tagbar_ctags_bin = '/usr/bin/ctags'
-    endif
-    let g:tagbar_autoclose = 1
-    let g:tagbar_width = 30
-    nmap <F8> :TagbarToggle<CR>
-endif
-
-" PLUG TAGBAR (END) ------------------------------------ }}}
 
 " PLUG INCSEARCH --------------------------------------- {{{
 
@@ -972,21 +803,13 @@ map g# <Plug>(incsearch-nohl-g#)
 
 " PLUG INCSEARCH (END) --------------------------------- }}}
 
-" PLUG NERDTREE ---------------------------------------- {{{
-
-if exists('g:loaded_nerd_tree')
-    nmap <F9> :NERDTreeToggle<CR>
-endif
-
-" PLUG NERDTREE (END) ---------------------------------- }}}
-
 " PLUG TABLE MODE -------------------------------------- {{{
 
 let g:table_mode_corner='|'
 
-" PLUG GOYO/LIMELIGHT (END) ---------------------------- }}}
+" PLUG TABLE MODE (END) -------------------------------- }}}
 
-" PLUG SESSION ----------------------------------------- {{{
+" PLUG GOYO/LIMELIGHT ---------------------------------- {{{
 
 let g:limelight_default_coefficient = 0.8
 
@@ -1273,119 +1096,6 @@ autocmd insanum InsertEnter,InsertLeave * redraws!
 
 " COLORSCHEMES ----------------------------------------- {{{
 
-"function! s:mySwitchTransparency()
-"    if synIDattr(synIDtrans(hlID("Normal")), "bg") != -1
-"        hi Normal ctermbg=None
-"    else
-"        hi Normal ctermbg=233
-"    endif
-"endfunction
-"
-"function! s:myColorScheme(scheme)
-"    set background=dark
-"
-"    if a:scheme == 'molokai'
-"        let g:molokai_original = 1
-"    endif
-"
-"    execute "colorscheme" a:scheme
-"
-"    "hi link cError Normal
-"    hi Comment cterm=italic
-"    hi MatchParen ctermfg=190 ctermbg=None cterm=bold
-"    hi Constant cterm=bold
-"    hi ColorColumn ctermbg=234
-"    hi CursorLine ctermbg=234
-"    hi CursorLineNr ctermfg=97 ctermbg=None cterm=bold
-"    hi LineNr ctermfg=242 cterm=bold
-"    hi link javaScriptTemplateDelim  Keyword
-"    hi link javaScriptTemplateVar    Identifier
-"    hi link javaScriptTemplateString String
-"
-"    let g:incsearch#separate_highlight = 1
-"    hi IncSearchMatchReverse ctermfg=0 ctermbg=5
-"    hi IncSearchMatch        ctermfg=0 ctermbg=1
-"    hi IncSearchOnCursor     ctermfg=0 ctermbg=3
-"    hi IncSearchCursor       ctermfg=0 ctermbg=7
-"    hi Search                ctermfg=0 ctermbg=1 cterm=none
-"
-"    hi GitGutterAdd          ctermfg=34  cterm=bold
-"    hi GitGutterDelete       ctermfg=196 cterm=bold
-"    hi GitGutterChangeDelete ctermfg=208 cterm=bold
-"    hi GitGutterChange       ctermfg=220 cterm=bold
-"
-"    hi SignatureMarkText   ctermfg=201 cterm=bold
-"    hi SignatureMarkerText ctermfg=226 cterm=bold
-"
-"    "hi VertSplit ctermfg=110 ctermbg=16
-"    hi VertSplit ctermfg=none ctermbg=none
-"    hi NonText   ctermfg=129 ctermbg=238
-"
-"    hi Comment cterm=italic
-"
-"    if a:scheme == 'nord'
-"        " comments need to pop more under nord
-"        hi Comment ctermfg=1 guifg=#BF616A
-"
-"        hi Folded ctermfg=39 ctermbg=239 cterm=bold guifg=#2E3440 guibg=#88C0D0
-"
-"        hi markdownXmlElement ctermfg=153
-"        hi markdownItemDelimiter ctermfg=214 cterm=bold
-"
-"        hi markdownHeadingDelimiter ctermfg=214 cterm=bold
-"        hi markdownH1 ctermfg=39 cterm=bold
-"        hi markdownH2 ctermfg=38 cterm=bold
-"        hi markdownH3 ctermfg=37 cterm=bold
-"        hi markdownH4 ctermfg=36 cterm=bold
-"        hi markdownH5 ctermfg=35 cterm=bold
-"        hi markdownH6 ctermfg=34 cterm=bold
-"    endif
-"
-"    hi TabLineSel ctermfg=226 cterm=bold
-"
-"    call <SID>mySwitchTransparency()
-"    call <SID>myStatusColorScheme()
-"endfunction
-"
-"" This really doesn't work as syntax highlights get trashed...
-"function! s:myCycleColorScheme(dir)
-"    let clrs =
-"        \[
-"        \  'nord',
-"        \  'gruvbox',
-"        \  'molokai',
-"        \  'jellybeans',
-"        \  'dracula',
-"        \  'apprentice',
-"        \  'pencil',
-"        \  'solarized8',
-"        \]
-"    let i = 0
-"    while i < len(clrs)
-"        if g:colors_name == clrs[i]
-"            let i += a:dir
-"            break
-"        endif
-"        let i += 1
-"    endwhile
-"    if i == len(clrs) | let i = 0             | endif
-"    if i == -1        | let i = len(clrs) - 1 | endif
-"    let g:default_theme = clrs[i]
-"    call <SID>myColorScheme(g:default_theme)
-"    echom "Changed color scheme to " . clrs[i]
-"endfunction
-"map <Leader>> :call <SID>myCycleColorScheme(1)<CR>
-"map <Leader>< :call <SID>myCycleColorScheme(-1)<CR>
-"
-"let g:default_theme = 'nord'
-"if exists('g:theme')
-"    " Set the colorscheme from the command line:
-"    " vi --cmd 'let g:theme="gruvbox"' ...
-"    let g:default_theme = g:theme
-"endif
-"
-"call <SID>myColorScheme(g:default_theme)
-
 function! s:base16_customize() abort
     "Base16hi(group, guifg, guibg, ctermfg, ctermbg, <attr>, <guisp>);
     call Base16hi("NonText", "9400D3", "none", "129", "238")
@@ -1413,3 +1123,4 @@ set guifont=Hack:h14
 
 " COLORSCHEMES (END) ----------------------------------- }}}
 
+" vim:foldmethod=marker:foldlevel=0
