@@ -2,6 +2,10 @@
 " ------------------------------------------------
 " curl -L -o ~/.vim/autoload/plug.vim --create-dirs \
 "    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" cat > .config/nvim/init.vim
+"   set runtimepath^=~/.vim runtimepath+=~/.vim/after
+"   let &packpath = &runtimepath
+"   source ~/.vimrc
 
 if !has('nvim')
     unlet! skip_defaults_vim
@@ -17,6 +21,8 @@ augroup END
 " VIM-PLUG --------------------------------------------- {{{
 
 silent! if plug#begin('~/.vim/plugged')
+
+Plug 'https://github.com/junegunn/vim-plug'
 
 Plug 'https://github.com/chriskempson/base16-vim'
 
@@ -35,6 +41,8 @@ Plug 'https://github.com/justinmk/vim-syntax-extra'
 Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+Plug 'vimwiki/vimwiki'
+
 Plug 'https://github.com/easymotion/vim-easymotion'
 
 Plug 'https://github.com/tpope/vim-fugitive'
@@ -43,13 +51,17 @@ Plug 'https://github.com/junegunn/gv.vim'
 Plug 'https://github.com/kshenoy/vim-signature'
 Plug 'https://github.com/airblade/vim-gitgutter'
 
-Plug 'https://github.com/junegunn/goyo.vim'
-Plug 'https://github.com/junegunn/limelight.vim'
+Plug 'https://github.com/junegunn/goyo.vim',
+         \ { 'for': [ 'markdown', 'text' ] }
+Plug 'https://github.com/junegunn/limelight.vim',
+         \ { 'for': [ 'markdown', 'text' ] }
 
-Plug 'https://github.com/dhruvasagar/vim-table-mode'
+Plug 'https://github.com/dhruvasagar/vim-table-mode',
+         \ { 'for': [ 'markdown', 'text', 'vimwiki' ] }
 
 "Plug 'https://github.com/plasticboy/vim-markdown'
-Plug 'https://github.com/insanum/votl.git', { 'for': [ 'votl' ] }
+Plug 'https://github.com/insanum/votl.git',
+         \ { 'for': [ 'votl' ] }
 
 Plug 'https://github.com/dkarter/bullets.vim',
          \ { 'for': [ 'markdown', 'text' ] }
@@ -62,6 +74,10 @@ Plug 'https://github.com/xolox/vim-session'
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
 Plug 'https://github.com/sheerun/vim-polyglot'
+"let g:polyglot_disabled = [ 'markdown' ]
+let g:vim_markdown_auto_insert_bullets = 0
+
+Plug 'https://github.com/Asheq/close-buffers.vim'
 
 call plug#end()
 endif
@@ -100,6 +116,7 @@ set formatoptions+=1j
 set showbreak='↳'
 set number
 set relativenumber
+set updatetime=100
 
 " truecolor support
 set termguicolors
@@ -308,12 +325,12 @@ autocmd insanum Syntax javascript
     \ hi LodashLazy ctermfg=1 cterm=bold
 
 autocmd insanum FileType yaml,txt
-    \ setlocal textwidth=80
+    \ setlocal textwidth=78
     \          spell
     \          spelllang=en_us
 
 autocmd insanum FileType markdown
-    \ setlocal textwidth=80
+    \ setlocal textwidth=78
     \          spell
     \          spelllang=en_us
 
@@ -323,9 +340,11 @@ autocmd insanum Syntax qf set textwidth=0
 autocmd insanum Syntax help setlocal nospell
 nmap <Leader>s :set spell!<CR>:set spell?<CR>
 
-autocmd insanum BufNewFile,BufRead
-    \ *.txt,*.TXT,*.md,*.h,*.c,*.cc,*.cpp,*.ino,*.vim,*.py,*.pl,*.php,*.java,*.js,*.lua,*.rs
-    \ if &textwidth > 0 | exec 'match StatusLine /\%' . &textwidth . 'v/' | endif
+" this sets the syntax highlight for all text at the textwidth and beyond
+autocmd insanum BufNewFile,BufRead *
+    \ if &textwidth > 0 | exec 'match WideText /\%>' . (&textwidth - 1) . 'v/' | endif
+
+nmap <Leader>t :call system('$HOME/src/bitter/bitter '.expand('<cword>'))<CR>
 
 " MAPS/AUTOCMD (END) ----------------------------------- }}}
 
@@ -339,7 +358,8 @@ autocmd insanum BufNewFile,BufRead
       \ <C-R>=systemlist('date -j -v+1d -f "%Y-%m-%d" "'.expand("%:t:r").'" +"$HOME/notes/Journal/%Y-%m-%d.md"')[0]<CR><CR>
   nmap <Leader>jN :e
       \ <C-R>=systemlist('date -j -v-1d -f "%Y-%m-%d" "'.expand("%:t:r").'" +"$HOME/notes/Journal/%Y-%m-%d.md"')[0]<CR><CR>
-  iab jdate # <C-R>=strftime("%a %m/%d/%Y")<CR><CR>
+  iab jd # <C-R>=strftime("%a %m/%d/%Y")<CR><CR>
+  iab jh - B:<CR>S1:<CR>L:<CR>S2:<CR>D:<CR>S3:<CR><Esc>xx6kA
 "endif
 
 " JOURNALING (END) ------------------------------------- }}}
@@ -725,7 +745,10 @@ nmap <Leader>B :BLines<CR>
 imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
 
 " XXX replace i_CTRL-X_CTRL-T thesaurus lookup with fzf
-"imap <expr> <C-x><C-t> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
+imap <expr> <C-x><C-t> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
+
+" dictionary lookup of the word under the cursor
+nmap <Leader>D :call system('open dict://'.expand('<cword>'))<CR>
 
 " replace i_CTRL-X_CTRL-F filename lookup with fzf
 imap <C-x><C-f> <plug>(fzf-complete-path)
@@ -741,6 +764,19 @@ omap <Leader><tab> <plug>(fzf-maps-o)
 "imap <Leader><tab> <plug>(fzf-maps-i)
 
 " PLUG FZF (END) --------------------------------------- }}}
+
+" PLUG VIMWIKI ----------------------------------------- {{{
+
+let g:vimwiki_list = [{'path': '~/notes/', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_conceallevel = 0
+let g:vimwiki_listsyms = ' x'
+let g:vimwiki_markdown_link_ext = 1
+let g:vimwiki_auto_chdir = 1
+let g:vimwiki_table_mappings=0
+let g:vimwiki_table_auto_fmt=0
+autocmd insanum FileType vimwiki set commentstring=>\ %s
+
+" PLUG VIMWIKI (END) ----------------------------------- }}}
 
 " PLUG EASYALIGN --------------------------------------- {{{
 
@@ -761,7 +797,7 @@ let g:gitgutter_sign_modified_removed = '>'
 " PLUG RAINBOW PARENS ---------------------------------- {{{
 
 "let g:rainbow#max_level = 32
-let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
+let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}'], ['<', '>']]
 let g:rainbow#blacklist = [15, '#fbf1c7', '#665c54']
 
 autocmd insanum Syntax * RainbowParentheses
@@ -787,6 +823,8 @@ endif
 " PLUG TABLE MODE -------------------------------------- {{{
 
 let g:table_mode_corner='|'
+let g:table_mode_corner_corner='|'
+let g:table_mode_header_fillchar="-"
 
 " PLUG TABLE MODE (END) -------------------------------- }}}
 
@@ -1082,6 +1120,7 @@ function! s:base16_customize() abort
     call Base16hi("NonText", "9400D3", "none", "129", "238")
     call Base16hi("VertSplit", "", "none", "", "none")
     call Base16hi("Comment", "", "", "", "", "italic")
+    call Base16hi("WideText", "CC241D", "", "160", "", "italic")
     if g:colors_name == 'base16-nord'
         call Base16hi("Comment", "BF616A", "", "1", "")
     endif

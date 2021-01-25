@@ -41,7 +41,7 @@ local function pushoverSend()
 
     local curl_args = {
                         "-s", config.url,
-                        "--form-string", "token=" .. config.app_token,
+                        "--form-string", "token=" .. config.task.token,
                         "--form-string", "user=" .. config.user_key,
                         "--form-string", "message=" .. message,
                       }

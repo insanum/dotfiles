@@ -49,7 +49,7 @@ if [[ $OSTYPE == linux-gnu ]]; then
     export VDPAU_NVIDIA_NO_OVERLAY=1
 fi
 
-export FZF_DEFAULT_OPTS="--no-mouse --bind ctrl-p:toggle-preview,ctrl-d:page-down,ctrl-u:page-up --preview='(~/.vim/plugged/fzf.vim/bin/preview.rb {} || cat {} || tree -C {})'"
+export FZF_DEFAULT_OPTS="--no-mouse --bind ctrl-p:toggle-preview,ctrl-d:page-down,ctrl-u:page-up --preview='(~/.vim/plugged/fzf.vim/bin/preview.sh {} || cat {} || tree -C {})'"
 export FZF_TMUX=0
 
 exists vim && export P4EDITOR=vim
@@ -726,9 +726,6 @@ BASE16_SHELL="$HOME/src/base16-shell/"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 bind -r "\C-t"
 
-eval $(thefuck --alias)
-alias fk=fuck
-
 source /Users/edavis/Library/Preferences/org.dystroy.broot/launcher/bash/br
-source /usr/local/Cellar/z/1.11/etc/profile.d/z.sh
+source /usr/local/Cellar/z/1.9/etc/profile.d/z.sh
 

@@ -115,6 +115,7 @@ local function pomo_disable()
 
     if (pomo.disable_count == 1) then
         -- reset the pomodoro state
+        pomo.work_count   = 0;
         pomo.time_left    = pomo.def_work_secs
         pomo.max_time_sec = pomo.def_work_secs
         pomo.cur_state    = "work"
