@@ -102,7 +102,7 @@ local function doUpdate()
 
     local curl_args = { "-s", finnhub .. "&token=" .. config.key }
     if not stocks or not stocks:isRunning() then
-        stocks = hs.task.new(curl, stocksUpdate, curl_args )
+        stocks = hs.task.new(curl, stocksUpdate, curl_args)
         stocks:start()
     end
 end

@@ -79,6 +79,8 @@ let g:vim_markdown_auto_insert_bullets = 0
 
 Plug 'https://github.com/Asheq/close-buffers.vim'
 
+Plug 'https://github.com/nathanalderson/yang.vim'
+
 call plug#end()
 endif
 
