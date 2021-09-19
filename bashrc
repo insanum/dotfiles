@@ -205,6 +205,11 @@ else
 fi
 
 exists bat && alias cat="bat" && alias more="bat"
+exists dust && alias du="dust"
+exists duf && alias df="duf"
+#exists find && alias find="fd"
+#exists grep && alias grep="rg"
+exists glances && alias top="glances" && alias gtop="glances"
 
 #alias vi=/usr/local/bin/vim
 #alias vim=/usr/local/bin/vim

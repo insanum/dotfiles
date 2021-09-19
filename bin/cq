@@ -15,10 +15,22 @@ if [[ -z "$1" || "$1" == "-h" ]]; then
     usage
 fi
 
-GIT_DIR=`basename $(git rev-parse --show-toplevel 2> /dev/null)`
-GIT_BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
+if [[ `git rev-parse --show-toplevel 2> /dev/null` ]]; then
+    RURL=`git config --get remote.origin.url`
+    if [[ "$RURL" =~ ^(http|git|ssh) ]]; then
+        GIT_REPO=`basename "$RURL"`
+    else
+        GIT_REPO=`echo "$RURL" | sed 's/^.*://'`
+    fi
+    GIT_WORKTREE=`basename $(git rev-parse --show-toplevel 2> /dev/null)`
+    GIT_BRANCH=`git rev-parse --abbrev-ref HEAD 2> /dev/null`
+    DB_DIR=${HOME}/codequery/${HOSTNAME}/${GIT_REPO}/${GIT_WORKTREE}/${GIT_BRANCH}
+else
+    DIR=`basename $PWD`
+    DB_DIR=${HOME}/codequery/${HOSTNAME}/${DIR}
+fi
 
-DB_DIR=${HOME}/codequery/${HOSTNAME}/${GIT_DIR}/${GIT_BRANCH}
+echo $DB_DIR
 mkdir -p $DB_DIR
 
 CQ_DB=${DB_DIR}/codequery.db

@@ -36,7 +36,7 @@ require("window")
 require("finnhub")
 
 -- pomodoro timer
---require("pomodoro")
+require("pomodoro")
 
 -- input logger
 --require("ilog")
@@ -76,5 +76,15 @@ function()
     chooser:fgColor(hs.drawing.color.x11.orange)
     chooser:subTextColor(hs.drawing.color.x11.chocolate)
     chooser:show()
+end)
+
+hs.hotkey.bind(kb_ctrl, "e", "Launch Finder",
+function()
+    local finder = hs.application.open("Finder")
+    local wins = finder:allWindows()
+    if #wins == 1 and wins[1]:isStandard() == false then
+        finder:selectMenuItem({ "File", "New Finder Window" })
+    end
+    finder:activate()
 end)
 

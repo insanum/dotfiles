@@ -6,6 +6,26 @@
 "   set runtimepath^=~/.vim runtimepath+=~/.vim/after
 "   let &packpath = &runtimepath
 "   source ~/.vimrc
+" cat > .config/nvim/coc-settings.json
+"   {
+"       "clangd.path": "/usr/local/Cellar/llvm/12.0.1/bin/clangd",
+"       "languageserver": {
+"           "bash": {
+"               "command": "bash-language-server",
+"               "args": ["start"],
+"               "filetypes": ["sh"]
+"           },
+"           "flow": {
+"               "command": "flow",
+"               "args": ["lsp"],
+"               "filetypes": ["javascript", "javascriptreact"],
+"               "initializationOptions": {},
+"               "requireRootPattern": true,
+"               "settings": {},
+"               "rootPatterns": [".flowconfig"]
+"           }
+"       }
+"   }
 
 if !has('nvim')
     unlet! skip_defaults_vim
@@ -41,6 +61,10 @@ Plug 'https://github.com/justinmk/vim-syntax-extra'
 Plug 'junegunn/fzf', { 'dir': '~/.vim/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+"Plug 'nvim-lua/popup.nvim'
+"Plug 'nvim-lua/plenary.nvim'
+"Plug 'nvim-telescope/telescope.nvim'
+
 Plug 'vimwiki/vimwiki'
 
 Plug 'https://github.com/easymotion/vim-easymotion'
@@ -50,6 +74,7 @@ Plug 'https://github.com/junegunn/gv.vim'
 
 Plug 'https://github.com/kshenoy/vim-signature'
 Plug 'https://github.com/airblade/vim-gitgutter'
+let g:gitgutter_enabled = 0
 
 Plug 'https://github.com/junegunn/goyo.vim',
          \ { 'for': [ 'markdown', 'text' ] }
@@ -72,6 +97,8 @@ Plug 'https://github.com/xolox/vim-misc'
 Plug 'https://github.com/xolox/vim-session'
 
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+
+"Plug 'https://github.com/tpope/vim-sleuth'
 
 Plug 'https://github.com/sheerun/vim-polyglot'
 "let g:polyglot_disabled = [ 'markdown' ]
@@ -115,6 +142,7 @@ set timeoutlen=500
 set colorcolumn=80
 set cursorline
 set formatoptions+=1j
+set formatoptions-=t
 set showbreak='↳'
 set number
 set relativenumber
@@ -204,7 +232,7 @@ nmap <Leader>t8t :call <SID>t8t()<CR>
 
 " Default Tab-4-expand for filetypes...
 autocmd insanum FileType
-    \ sh,json,javascript,lua,vim,text,markdown,css,less,org,cpp,arduino
+    \ sh,json,javascript,lua,vim,text,markdown,css,less,org,arduino
     \ call <SID>t4e()
 autocmd insanum BufRead,BufNewFile
     \ */main/Cumulus/firmware/*
@@ -221,6 +249,9 @@ autocmd insanum FileType
 " Default Tab-8-noexpand for Linux development...
 autocmd insanum BufRead,BufNewFile
     \ */work/git/linux/*
+    \ call <SID>t8t()
+autocmd insanum BufRead,BufNewFile
+    \ */work/git/kernel/*
     \ call <SID>t8t()
 autocmd insanum BufRead,BufNewFile
     \ */work/git/nxt-linux-drivers/*
@@ -766,6 +797,18 @@ omap <Leader><tab> <plug>(fzf-maps-o)
 "imap <Leader><tab> <plug>(fzf-maps-i)
 
 " PLUG FZF (END) --------------------------------------- }}}
+
+" PLUG COC --------------------------------------------- {{{
+
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" PLUG COC (END) --------------------------------------- }}}
 
 " PLUG VIMWIKI ----------------------------------------- {{{
 

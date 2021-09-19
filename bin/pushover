@@ -34,6 +34,9 @@ curl -s                                          \
      --form-string "token=${PUSHOVER_APP_TOKEN}" \
      --form-string "user=${PUSHOVER_USER_KEY}"   \
      --form-string "message=${2}"                \
+     --form-string "priority=2"                  \
+     --form-string "retry=300"                   \
+     --form-string "expire=605"                 \
      ${PUSHOVER_URL}
 
 echo ""
