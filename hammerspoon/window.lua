@@ -148,7 +148,7 @@ end)
 -- hack to move a window left/right between spaces
 
 function moveWindowSpace(direction)
-    local mouseOrigin = hs.mouse.getAbsolutePosition()
+    local mouseOrigin = hs.mouse.absolutePosition()
     local win = hs.window.frontmostWindow()
     local clickPoint = win:zoomButtonRect()
 
@@ -174,7 +174,7 @@ function moveWindowSpace(direction)
     hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseUp, clickPoint):post()
     hs.timer.usleep(150000)
 
-    hs.mouse.setAbsolutePosition(mouseOrigin)
+    hs.mouse.absolutePosition(mouseOrigin)
 end
 
 hs.hotkey.bind(kb_ctrl, "n", "Move window one space to the left",

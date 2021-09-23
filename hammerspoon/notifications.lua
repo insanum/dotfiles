@@ -1,23 +1,37 @@
 
 -- hack to clear the top showing notification
 
-function clearNotification()
-    local mouseOrigin = hs.mouse.getAbsolutePosition()
+function clearNotification(doubleClick)
+    local mouseOrigin = hs.mouse.absolutePosition()
     local win = hs.window.focusedWindow()
 
-    local max = hs.screen.primaryScreen():frame()
+    local pmon = hs.screen.primaryScreen():frame()
+    local clickPoint = { x=0, y=0 }
 
-    -- this works for a 1920x1080 monitor
-    --local clickPoint = { x=(max.w - (max.w * .03)), y=(max.h * .05) }
-    -- this works for a 3840x2160 monitor
-    local clickPoint = { x=(max.w - (max.w * .015)), y=(max.h * .035) }
+    -- DELL U3818DW 3840x1600
+    if (pmon.w == 3840) and (pmon.h == 1575) then
+        clickPoint = { x=3485, y=47 }
+    else
+        print("Unknown monitor (size w="..pmon.w.." h="..pmon.h..")")
+        return
+    end
+
+    hs.mouse.absolutePosition(clickPoint)
+    hs.timer.usleep(500000) -- .5s
 
     -- click the "close" button on the notification
     hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseDown, clickPoint):post()
     hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseUp, clickPoint):post()
 
+    -- the double click is for clearing a group of similar notifications
+    if (doubleClick) then
+        hs.timer.usleep(1000) -- 1ms
+        hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseDown, clickPoint):post()
+        hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseUp, clickPoint):post()
+    end
+
     -- move the mouse pointer back to the original location
-    hs.mouse.setAbsolutePosition(mouseOrigin)
+    hs.mouse.absolutePosition(mouseOrigin)
 
     -- (re)focus the original window the pointer was over
     win:focus()
@@ -26,6 +40,11 @@ end
 --hs.hotkey.bind(kb_ctrl, "o", "Clear the top notification",
 hs.hotkey.bind({ "cmd", "ctrl" }, "o", "Clear the top notification",
 function()
-    clearNotification()
+    clearNotification(false)
+end)
+
+hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "o", "Clear the top notification group",
+function()
+    clearNotification(true)
 end)
 
