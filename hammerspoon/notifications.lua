@@ -8,9 +8,15 @@ function clearNotification(doubleClick)
     local pmon = hs.screen.primaryScreen():frame()
     local clickPoint = { x=0, y=0 }
 
-    -- DELL U3818DW 3840x1600
-    if (pmon.w == 3840) and (pmon.h == 1575) then
+    -- MacBook 16"
+    if (pmon.w == 1792) and (pmon.h == 1095) then
+        clickPoint = { x=1440, y=47 }
+    -- Dell U3818DW 3840x1600
+    elseif (pmon.w == 3840) and (pmon.h == 1575) then
         clickPoint = { x=3485, y=47 }
+    -- Samsung S34J55x 3440x1440
+    elseif (pmon.w == 3440) and (pmon.h == 1415) then
+        clickPoint = { x=3085, y=47 }
     else
         print("Unknown monitor (size w="..pmon.w.." h="..pmon.h..")")
         return

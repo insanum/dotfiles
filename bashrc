@@ -1,4 +1,10 @@
 
+if [[ $(type -t exists) != function ]]; then
+  exists() {
+      test -x "$(command -v "$1")"
+  }
+fi
+
 if [[ $OSTYPE =~ darwin ]]; then
   export SHELL=/usr/local/bin/bash
 else

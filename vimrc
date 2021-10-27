@@ -65,7 +65,7 @@ Plug 'junegunn/fzf.vim'
 "Plug 'nvim-lua/plenary.nvim'
 "Plug 'nvim-telescope/telescope.nvim'
 
-Plug 'vimwiki/vimwiki'
+"Plug 'vimwiki/vimwiki'
 
 Plug 'https://github.com/easymotion/vim-easymotion'
 
@@ -73,8 +73,8 @@ Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/junegunn/gv.vim'
 
 Plug 'https://github.com/kshenoy/vim-signature'
+
 Plug 'https://github.com/airblade/vim-gitgutter'
-let g:gitgutter_enabled = 0
 
 Plug 'https://github.com/junegunn/goyo.vim',
          \ { 'for': [ 'markdown', 'text' ] }
@@ -84,7 +84,6 @@ Plug 'https://github.com/junegunn/limelight.vim',
 Plug 'https://github.com/dhruvasagar/vim-table-mode',
          \ { 'for': [ 'markdown', 'text', 'vimwiki' ] }
 
-"Plug 'https://github.com/plasticboy/vim-markdown'
 Plug 'https://github.com/insanum/votl.git',
          \ { 'for': [ 'votl' ] }
 
@@ -100,9 +99,14 @@ Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
 "Plug 'https://github.com/tpope/vim-sleuth'
 
+let g:polyglot_disabled = [ 'markdown' ]
 Plug 'https://github.com/sheerun/vim-polyglot'
-"let g:polyglot_disabled = [ 'markdown' ]
+
+Plug 'https://github.com/plasticboy/vim-markdown'
 let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_folding_level = 6
+let g:vim_markdown_folding_style_pythonic = 1
+map <Plug> <Plug>Markdown_MoveToCurHeader
 
 Plug 'https://github.com/Asheq/close-buffers.vim'
 
@@ -299,6 +303,10 @@ nmap <Leader>l :set list!<CR>:set list?<CR>
 " (re)Write the file as root
 cmap w!! w !sudo tee % > /dev/null
 
+" zoom the current window
+noremap Zi <C-W>_ \| <C-W>\|
+noremap Zo <C-W>=
+
 " Delete all line trailing white space
 " XXX Don't allow this for Markdown!
 nmap <Leader>des mz:%s/\s\+$//e<CR>,.'z:delm z<CR>
@@ -366,6 +374,7 @@ autocmd insanum FileType markdown
     \ setlocal textwidth=78
     \          spell
     \          spelllang=en_us
+    \          foldlevel=0
 
 autocmd insanum Syntax python,perl,php setlocal textwidth=80
 autocmd insanum Syntax qf set textwidth=0
@@ -832,10 +841,13 @@ nmap ga <Plug>(EasyAlign)
 
 " PLUG GITGUTTER --------------------------------------- {{{
 
+let g:gitgutter_enabled               = 0
 let g:gitgutter_sign_added            = '+'
 let g:gitgutter_sign_modified         = '~'
 let g:gitgutter_sign_removed          = '-'
 let g:gitgutter_sign_modified_removed = '>'
+
+nmap <Leader>gg :GitGutterToggle<CR>
 
 " PLUG GITGUTTER (END) --------------------------------- }}}
 
@@ -891,7 +903,7 @@ endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
 
-nmap <Leader>y :Goyo 90<CR>
+nmap <Leader>y :Goyo 120<CR>
 
 " PLUG GOYO/LIMELIGHT (END) ---------------------------- }}}
 
@@ -907,49 +919,85 @@ let g:session_persist_colors = 0
 " PLUG VOTL -------------------------------------------- {{{
 
 function! s:votlColors()
+    "Base16hi(group, guifg, guibg, ctermfg, ctermbg, <attr>, <guisp>);
 
-	hi OL1 ctermfg=39 cterm=bold
-	hi OL2 ctermfg=38
-	hi OL3 ctermfg=37
-	hi OL4 ctermfg=36
-	hi OL5 ctermfg=35
-	hi OL6 ctermfg=34
-	hi OL7 ctermfg=28
-	hi OL8 ctermfg=22
-	hi OL9 ctermfg=242
+    call Base16hi("OL1", "0066ff", "", "39",  "", "bold")
+	"hi OL1 ctermfg=39 cterm=bold
+
+    call Base16hi("OL2", "0099ff", "", "38",  "", "")
+	"hi OL2 ctermfg=38
+
+    call Base16hi("OL3", "33ccff", "", "37",  "", "")
+	"hi OL3 ctermfg=37
+
+    call Base16hi("OL4", "66ffff", "", "36",  "", "")
+	"hi OL4 ctermfg=36
+
+    call Base16hi("OL5", "99ffcc", "", "35",  "", "")
+	"hi OL5 ctermfg=35
+
+    call Base16hi("OL6", "99ff99", "", "34",  "", "")
+	"hi OL6 ctermfg=34
+
+    call Base16hi("OL7", "0099cc", "", "28",  "", "")
+	"hi OL7 ctermfg=28
+
+    call Base16hi("OL8", "339933", "", "22",  "", "")
+	"hi OL8 ctermfg=22
+
+    call Base16hi("OL9", "666666", "", "242",  "", "")
+	"hi OL9 ctermfg=242
 
     " color for body text
     for i in range(1, 9)
-        execute "hi BT" . i . " ctermfg=216"
+        call Base16hi("BT".i, "ff9966", "", "216",  "", "")
+        "execute "hi BT" . i . " ctermfg=216"
     endfor
 
     " color for pre-formatted body text
     for i in range(1, 9)
-        execute "hi BP" . i . " ctermfg=215"
+        call Base16hi("BP".i, "ff9933", "", "215",  "", "")
+        "execute "hi BP" . i . " ctermfg=215"
     endfor
 
     " color for tables
     for i in range(1, 9)
-        execute "hi TA" . i . " ctermfg=136"
+        call Base16hi("TA".i, "ff5050", "", "136",  "", "")
+        "execute "hi TA" . i . " ctermfg=136"
     endfor
 
     " color for user text
     "for i in range(1, 9)
+    "    call Base16hi("UT".i, "33cc33", "", "41",  "", "")
     "    execute "hi UT" . i . " ctermfg=41"
     "endfor
 
     " color for pre-formatted user text
     "for i in range(1, 9)
+    "    call Base16hi("UP".i, "00ccff", "", "51",  "", "")
     "    execute "hi UP" . i . " ctermfg=51"
     "endfor
 
-    hi VotlTags       ctermfg=45 ctermbg=21 cterm=bold
-    hi VotlDate       ctermfg=141
-    hi VotlTime       ctermfg=141
-    hi VotlChecked    ctermfg=160 cterm=bold
-    hi VotlCheckbox   ctermfg=242
-    hi VotlPercentage ctermfg=149
-    hi VotlTableLines ctermfg=242
+    call Base16hi("VotlTags", "0000ff", "cccccc", "45", "21", "bold")
+    "hi VotlTags ctermfg=45 ctermbg=21 cterm=bold
+
+    call Base16hi("VotlDate", "cc66ff", "", "141",  "", "")
+    "hi VotlDate ctermfg=141
+
+    call Base16hi("VotlTime", "cc00ff", "", "141", "", "")
+    "hi VotlTime ctermfg=141
+
+    call Base16hi("VotlChecked", "cc0000", "", "160", "", "bold")
+    "hi VotlChecked ctermfg=160 cterm=bold
+
+    call Base16hi("VotlCheckbox", "666666", "", "242", "", "")
+    "hi VotlCheckbox ctermfg=242
+
+    call Base16hi("VotlPercentage", "99cc00", "", "149", "", "")
+    "hi VotlPercentage ctermfg=149
+
+    call Base16hi("VotlTableLines", "666666", "", "242",  "", "")
+    "hi VotlTableLines ctermfg=242
 endfunction
 
 autocmd insanum FileType votl
