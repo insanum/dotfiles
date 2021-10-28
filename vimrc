@@ -51,7 +51,6 @@ Plug 'https://github.com/ap/vim-css-color'
 Plug 'https://github.com/junegunn/vim-easy-align'
 
 Plug 'https://github.com/scrooloose/nerdcommenter'
-Plug 'https://github.com/tpope/vim-surround'
 
 Plug 'https://github.com/junegunn/rainbow_parentheses.vim'
 Plug 'https://github.com/justinmk/vim-syntax-extra'
@@ -71,15 +70,14 @@ Plug 'https://github.com/easymotion/vim-easymotion'
 
 Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/junegunn/gv.vim'
+Plug 'https://github.com/airblade/vim-gitgutter'
 
 Plug 'https://github.com/kshenoy/vim-signature'
 
-Plug 'https://github.com/airblade/vim-gitgutter'
-
 Plug 'https://github.com/junegunn/goyo.vim',
          \ { 'for': [ 'markdown', 'text' ] }
-Plug 'https://github.com/junegunn/limelight.vim',
-         \ { 'for': [ 'markdown', 'text' ] }
+"Plug 'https://github.com/junegunn/limelight.vim',
+"         \ { 'for': [ 'markdown', 'text' ] }
 
 Plug 'https://github.com/dhruvasagar/vim-table-mode',
          \ { 'for': [ 'markdown', 'text', 'vimwiki' ] }
@@ -89,8 +87,6 @@ Plug 'https://github.com/insanum/votl.git',
 
 Plug 'https://github.com/dkarter/bullets.vim',
          \ { 'for': [ 'markdown', 'text' ] }
-
-Plug 'https://github.com/tpope/vim-speeddating'
 
 Plug 'https://github.com/xolox/vim-misc'
 Plug 'https://github.com/xolox/vim-session'
@@ -102,7 +98,9 @@ Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 let g:polyglot_disabled = [ 'markdown' ]
 Plug 'https://github.com/sheerun/vim-polyglot'
 
-Plug 'https://github.com/plasticboy/vim-markdown'
+"Plug 'https://github.com/plasticboy/vim-markdown'
+" my fork has extra syntax highlighting...
+Plug 'https://github.com/insanum/vim-markdown'
 let g:vim_markdown_auto_insert_bullets = 0
 let g:vim_markdown_folding_level = 6
 let g:vim_markdown_folding_style_pythonic = 1
@@ -374,7 +372,7 @@ autocmd insanum FileType markdown
     \ setlocal textwidth=78
     \          spell
     \          spelllang=en_us
-    \          foldlevel=0
+    \          foldlevel=6
 
 autocmd insanum Syntax python,perl,php setlocal textwidth=80
 autocmd insanum Syntax qf set textwidth=0
@@ -759,10 +757,20 @@ nmap <Leader>F :Files
 " ripgrep selection (word under cursor, current directory) with fzf
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
-  \ 'rg --column --line-number --no-heading --color=always ' . shellescape(<q-args>),
+  \ 'rg --line-number --column --no-heading --color=always ' . shellescape(<q-args>),
   \ 1, {}, 0)
 nmap <Leader>rg :Rg <C-r><C-w><CR>
-nmap <Leader>Rg :Rg <C-r><C-a><CR>
+nmap <Leader>rr :Rg<CR>
+"
+" ripgrep markdown headers in current file selection with fzf
+command! -bang -nargs=* MkdHdrRg
+  \ call fzf#vim#grep(
+  \   'rg --with-filename --line-number --column --no-heading --color=always "^#+ .*$" ' . expand("%"),
+  \   1,
+  \   fzf#vim#with_preview({'options': '--delimiter=: --nth=4.. --no-sort'}),
+  \   0)
+nmap <Leader>i :MkdHdrRg<CR>
+nmap <Leader>I :Toch<CR>
 
 " tags selection (word under cursor) with fzf
 "nmap <Leader>ta :call fzf#vim#tags(expand('<cword>'), { 'options': '--exact' })<CR>
@@ -781,7 +789,15 @@ nmap <Leader>H :History<CR>
 
 " 'locate' with fzf (note trailing space)
 nmap <Leader>L :Lines<CR>
-nmap <Leader>B :BLines<CR>
+
+command! -bang -nargs=* BLinesWithPreview
+    \ call fzf#vim#grep(
+    \   'rg --with-filename --line-number --column --no-heading --color=always "" ' . expand('%'), 
+    \   1,
+    \   fzf#vim#with_preview({'options': '--delimiter=: --nth=4.. --no-sort --color="hl:39"'}),
+    \   0)
+nmap <Leader>B :BLinesWithPreview<CR>
+"nmap <Leader>B :BLines<CR>
 
 " replace i_CTRL-X_CTRL-K dictionary lookup with fzf
 imap <expr> <C-x><C-k> fzf#vim#complete#word({'right': '15%', 'options': '--preview-window=right:0'})
@@ -893,11 +909,11 @@ function! s:goyo_enter()
     set colorcolumn=80
     call Base16hi("ColorColumn", "none", "3c3836", "none", "18")
     call Base16hi("NonText", "9400D3", "none", "129", "238")
-    Limelight
+    "Limelight
 endfunction
 
 function! s:goyo_leave()
-    Limelight!
+    "Limelight!
 endfunction
 
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
@@ -1214,6 +1230,10 @@ function! s:base16_customize() abort
     call Base16hi("VertSplit", "", "none", "", "none")
     call Base16hi("Comment", "", "", "", "", "italic")
     call Base16hi("WideText", "CC241D", "", "160", "", "italic")
+    call Base16hi("mkdHashTag", "cccccc", "1f4060", "21", "45", "")
+    call Base16hi("mkdDate", "cc99ff", "", "141",  "", "")
+    call Base16hi("mkdChecked", "cc0000", "", "160", "", "bold")
+    call Base16hi("mkdCheckbox", "666666", "", "242", "", "")
     if g:colors_name == 'base16-nord'
         call Base16hi("Comment", "BF616A", "", "1", "")
     endif
