@@ -37,6 +37,7 @@ CQ_DB=${DB_DIR}/codequery.db
 CS_FILES=${DB_DIR}/cscope.files
 CS_OUT=${DB_DIR}/cscope.out
 TAGS=${DB_DIR}/tags
+CFLOW=${DB_DIR}/cflow.txt
 
 function cscope_search() {
     if [[ ! -f $CS_FILES || ! -f $CS_OUT ]]; then
@@ -83,6 +84,7 @@ elif [[ $1 == build ]]; then
     /bin/rm -f $CS_FILES
     /bin/rm -f $CS_OUT
     /bin/rm -f $TAGS
+    /bin/rm -f $CFLOW
 
     if [[ $2 == cscope ]]; then
 
@@ -101,6 +103,9 @@ elif [[ $1 == build ]]; then
         mv -f ${CS_FILES}.new $CS_FILES
 
         cscope -k -b -q -i $CS_FILES -f $CS_OUT
+        #ctags -L $CS_FILES -f $TAGS
+        #ctags --fields=+i -n -R -L $CS_FILES -f $TAGS
+        #cat $CS_FILES | xargs cflow -Tb --omit-symbol-names --level-indent=4 -o $CFLOW
 
     elif [[ $2 == codequery ]]; then
 

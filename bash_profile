@@ -14,15 +14,6 @@ exists() {
     test -x "$(command -v "$1")"
 }
 
-# Cygwin specific stuff
-if [[ $OSTYPE == cygwin ]]; then
-  export HOME=/cygdrive/c/edavis
-  export HOMEPATH=/cygdrive/c/edavis
-  export USERPROFILE=/cygdrive/c/edavis
-  export APPDATA=/cygdrive/c/edavis
-  export ALLUSERSPROFILE=/cygdrive/c/edavis
-fi
-
 if [[ $OSTYPE =~ freebsd || $OSTYPE == linux-gnu ]]; then
     source /etc/profile
 fi
@@ -43,9 +34,6 @@ fi
 [[ -d "$HOME/.priv/bin" ]] && PATH="$PATH:$HOME/.priv/bin"
 [[ -d "$HOME/.local/bin" ]] && PATH="$PATH:$HOME/.local/bin"
 [[ -d "$HOME/.cargo/bin" ]] && PATH="$PATH:$HOME/.cargo/bin"
-
-[[ -d "/cygdrive/c/edavis/usr/bin" ]]   && PATH="$PATH:/cygdrive/c/edavis/usr/bin"
-[[ -d "/cygdrive/c/WINDOWS/system32" ]] && PATH="$PATH:/cygdrive/c/WINDOWS/system32"
 
 [[ -d "/sbin" ]] && PATH="$PATH:/sbin"
 
@@ -70,8 +58,6 @@ fi
 
 [[ -d "$HOME/linaro/gcc-linaro-aarch64" ]] && PATH="$PATH:/$HOME/linaro/gcc-linaro-aarch64"
 
-[[ -d "/cygdrive/c/edavis/usr/man" ]] && MANPATH="$MANPATH:/cygdrive/c/edavis/usr/man"
-
 [[ -d "/usr/man" ]]             && MANPATH="$MANPATH:/usr/man"
 [[ -d "/usr/share/man" ]]       && MANPATH="$MANPATH:/usr/share/man"
 [[ -d "/usr/local/man" ]]       && MANPATH="$MANPATH:/usr/local/man"
@@ -89,10 +75,6 @@ fi
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 exists pyenv && eval "$(pyenv init --path)"
-
-exists vim && export EDITOR=vim
-exists nvim && export EDITOR=nvim
-exists chromium && export BROWSER=chromium
 
 umask 022
 
