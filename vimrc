@@ -1287,11 +1287,16 @@ function! s:base16_customize() abort
     call Base16hi("VertSplit", "", "none", "", "none")
     call Base16hi("Comment", "", "", "", "", "italic")
     call Base16hi("WideText", "CC241D", "", "160", "", "italic")
-    call Base16hi("mkdHashTag", "cccccc", "1f4060", "21", "45", "")
-    call Base16hi("mkdDate", "cc99ff", "", "141",  "", "")
+    call Base16hi("mkdHashTag", "6699ff", "404040", "21", "45", "")
+    call Base16hi("mkdHashTagHigh", "ff0000", "404040", "196", "238", "")
+    call Base16hi("mkdHashTagMedium", "ffaa00", "404040", "214", "238", "")
+    call Base16hi("mkdHashTagLow", "00cc00", "404040", "70", "238", "")
+    call Base16hi("mkdDate", "8c8c8c", "", "141",  "", "italic")
     call Base16hi("mkdChecked", "cc0000", "", "160", "", "bold")
     call Base16hi("mkdCheckbox", "666666", "", "242", "", "")
+    call Base16hi("mkdTextCompleted", "666666", "", "242", "", "italic")
     if g:colors_name == 'base16-nord'
+        echo "foo"
         call Base16hi("Comment", "BF616A", "", "1", "")
     endif
     call <SID>myStatusColorSchemeBase16()

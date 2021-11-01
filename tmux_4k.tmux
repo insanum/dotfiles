@@ -54,7 +54,7 @@ window quic
 
 
 
-window nx-test
+window misc
 
 1111111111111111111111111111111111111111111111111111111111111111
 1111111111111111111111111111111111111111111111111111111111111111
@@ -74,14 +74,12 @@ window nx-test
 1111111111111111111111111111111111111111111111111111111111111111
 
   dir ~
-1 dir ~/work/git/nxt_fw_unit_test
-1 run figlet "git : nxt_fw_unit_test"
-1 run git status
+1 run figlet "misc"
 1 foc
 
 
 
-window nx-main
+window nx_fw
 
 1111111111111111111111111111111111111111111111111111111111111111
 1111111111111111111111111111111111111111111111111111111111111111
@@ -102,7 +100,7 @@ window nx-main
 
   dir ~
 1 dir ~/work/git/nx_main/main/Cumulus/firmware
-1 run figlet "git : nx_main"
+1 run figlet "git : nx_fw"
 1 foc
 
 
@@ -156,26 +154,26 @@ window git
 0 dir ~/work/git/nx_main/main/Cumulus/firmware
 0 run figlet "git : nx_main"
 0 run git status
-1 dir ~/work/git/nx_rel/main/Cumulus/firmware
-1 run figlet "git : nx_rel"
+1 dir ~/work/git/h
+1 run figlet "git : nitro-headers"
 1 run git status
 2 dir ~/work/git/nxt-linux-drivers
 2 run figlet "git : nxt-linux-drivers"
 2 run git status
-3 dir ~/work/git/h
-3 run figlet "git : nitro-headers"
+3 dir ~/work/git/nxt-tls-crypto
+3 run figlet "git : nxt-tls-crypto"
 3 run git status
 4 dir ~/work/git/nxt_fw_unit_test
 4 run figlet "git : nxt_fw_unit_test"
 4 run git status
-5 dir ~/work/git/nxt-co
-5 run figlet "git : nxt-co"
+5 dir ~/work/git/kernel
+5 run figlet "git : kernel"
 5 run git status
 0 foc
 
 
 
-#window nx-sv
+#window nx_sv
 #
 #1111111111111111111111111111111111111111111111111111111111111111
 #1111111111111111111111111111111111111111111111111111111111111111
@@ -227,7 +225,7 @@ window test1
 
 
 
-#window test
+#window test1
 #
 #0000000000000000333333333333333355555555555555557777777777777777
 #0000000000000000333333333333333355555555555555557777777777777777
@@ -247,11 +245,8 @@ window test1
 #2222222222222222444444444444444466666666666666667777777777777777
 #
 #  dir ~
-#6 run calc
-#7 dir ~/notes
-#7 run figlet "notes"
-#7 run ls
-#1 foc
+#0 run figlet "test1"
+#0 foc
 
 window test2
 
@@ -274,7 +269,7 @@ window test2
 
   dir ~
 2 run calc
-3 run figlet "test2"
+0 run figlet "test2"
 0 foc
 
 
