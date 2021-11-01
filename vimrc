@@ -315,6 +315,8 @@ nmap <Leader>pe :exec('!e4 edit ' . expand("%"))<CR>:w!<CR>
 " Perforce diff current file (vs previous)
 nmap <Leader>pd :exec('!e4 -q diff -du ' . expand("%") . ' > /tmp/vdiff')<CR>:vert diffpatch /tmp/vdiff<CR><C-W>j<C-W>=
 
+"nmap <Leader>bt :call system('$HOME/src/bitter/bitter '.expand('<cword>'))<CR>
+
 " Print the highlight group stack for the current cursor location
 function! s:hlGroup()
     echo  'hi: ' .
@@ -384,9 +386,64 @@ nmap <Leader>s :set spell!<CR>:set spell?<CR>
 autocmd insanum BufNewFile,BufRead *
     \ if &textwidth > 0 | exec 'match WideText /\%>' . (&textwidth - 1) . 'v/' | endif
 
-nmap <Leader>t :call system('$HOME/src/bitter/bitter '.expand('<cword>'))<CR>
-
 " MAPS/AUTOCMD (END) ----------------------------------- }}}
+
+" MARKDOWN --------------------------------------------- {{{
+
+function! s:MkdToggleTask()
+    let l:line = getline('.')
+    let l:cp = getcurpos()
+    if match(l:line, '\v^\s*- \[ \] ') != -1
+        execute 'normal! ^3lrxWi'.strftime("(%m/%d/%y)").' '
+    elseif match(l:line, '\v^\s*- \[x\] ') != -1
+        execute 'normal! ^3lr '
+        let l:line = getline('.')
+        if match(l:line, '\v^\s*- \[ \] \(\d\d/\d\d/\d\d\)') != -1
+            execute 'normal! ^3WdW'
+        endif
+    endif
+    call setpos('.', l:cp)
+endfunction
+nmap <C-Space> :call <SID>MkdToggleTask()<CR>
+
+function! s:MkdRemoveTag(tag)
+    let l:line = getline('.')
+    let l:cp = getcurpos()
+    if match(l:line, '\v\s#'.a:tag.'$') != -1
+        execute 'normal! ^/ #'.a:tag.'xdW'
+    elseif match(l:line, '\v\s#'.a:tag.'\s') != -1
+        execute 'normal! ^/ #'.a:tag.'ldW'
+    endif
+    call setpos('.', l:cp)
+endfunction
+nmap <Leader>rh :call <SID>MkdRemoveTag('high')<CR>
+nmap <Leader>rm :call <SID>MkdRemoveTag('medium')<CR>
+nmap <Leader>rl :call <SID>MkdRemoveTag('low')<CR>
+
+function! s:MkdAddTag(tag)
+    let l:line = getline('.')
+    let l:cp = getcurpos()
+    if match(l:line, '\v\s#'.a:tag.'(\s|$)') != -1
+        return
+    endif
+    if a:tag == 'high'
+        call <SID>MkdRemoveTag('medium')
+        call <SID>MkdRemoveTag('low')
+    elseif a:tag == 'medium'
+        call <SID>MkdRemoveTag('high')
+        call <SID>MkdRemoveTag('low')
+    elseif a:tag == 'low'
+        call <SID>MkdRemoveTag('high')
+        call <SID>MkdRemoveTag('medium')
+    endif
+    execute "normal! A #".a:tag
+    call setpos('.', l:cp)
+endfunction
+nmap <Leader>th :call <SID>MkdAddTag('high')<CR>
+nmap <Leader>tm :call <SID>MkdAddTag('medium')<CR>
+nmap <Leader>tl :call <SID>MkdAddTag('low')<CR>
+
+" MARKDOWN (END) --------------------------------------- }}}
 
 " JOURNALING ------------------------------------------- {{{
 
@@ -765,7 +822,7 @@ nmap <Leader>rr :Rg<CR>
 " ripgrep markdown headers in current file selection with fzf
 command! -bang -nargs=* MkdHdrRg
   \ call fzf#vim#grep(
-  \   'rg --with-filename --line-number --column --no-heading --color=always "^#+ .*$" ' . expand("%"),
+  \   'rg --with-filename --line-number --column --no-heading --color=always "^#+ .*\$" ' . expand("%"),
   \   1,
   \   fzf#vim#with_preview({'options': '--delimiter=: --nth=4.. --no-sort'}),
   \   0)
