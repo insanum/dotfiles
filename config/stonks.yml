@@ -1,0 +1,7 @@
+config:
+  default_theme: 0
+  favourites_height: 12
+  standalone_height: 12
+favourites:
+  avgo: AVGO
+  nvda: NVDA
