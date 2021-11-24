@@ -54,10 +54,10 @@ function !!;     eval $history[1];      end
 function sudo!!; eval sudo $history[1]; end
 
 set -gx TODO_FILE $HOME/notes/TODO.md
-function mdt;  mdtodo;           end
-function mdth; mdtodo -t high;   end
-function mdtm; mdtodo -t medium; end
-function mdtl; mdtodo -t low;    end
+abbr --add mdt mdtodo
+abbr --add mdth "mdtodo -t high"
+abbr --add mdtm "mdtodo -t medium"
+abbr --add mdtl "mdtodo -t low"
 
 function bitter;    eval $HOME/src/bitter/bitter $argv;       end
 function nostalgic; eval $HOME/src/nostalgic/nostalgic $argv; end
@@ -74,7 +74,7 @@ end
 function fishrc; source $HOME/.config/fish/config.fish; end
 function fished; nvim $HOME/.config/fish/config.fish;   end
 
-set -g fzf_history_opts --height 40%
+set -g fzf_history_opts --height 40% --reverse
 
 starship init fish | source
 zoxide init fish | source
