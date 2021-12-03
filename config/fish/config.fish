@@ -20,6 +20,9 @@ function fish_my_keybinds
     # set 'jk' as escape
     bind --mode insert --sets-mode default jk backward-char repaint
 
+    # fish 'D' in vi mode is broken
+    bind -s --preset D kill-line backward-char
+
     # both 'ctrl-f', 'ctrl-g', and 'ctrl-space' complete suggestions
     # 'forward-word' could be used to short fill words instead of whole line
     # use both 'ctrl-f' and 'ctrl-g' cuz I smash one and often miss :-)
