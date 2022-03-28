@@ -25,7 +25,7 @@ require("window")
 --require("launcher")
 
 -- mpd client
---require("mpc")
+require("mpc")
 
 -- gpmdp client
 --require("gpmdp")

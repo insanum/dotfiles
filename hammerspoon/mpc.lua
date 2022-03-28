@@ -1038,6 +1038,11 @@ function()
     mpc_next()
 end)
 
+hotkey.bind(kb_alt_shift, "n", "MPD Previous",
+function()
+    mpc_previous()
+end)
+
 hotkey.bind(kb_alt, "r", "MPD Repeat",
 function()
     mpc_repeat()

@@ -36,7 +36,7 @@ curl -s                                          \
      --form-string "message=${2}"                \
      --form-string "priority=2"                  \
      --form-string "retry=300"                   \
-     --form-string "expire=605"                 \
+     --form-string "expire=1205"                 \
      ${PUSHOVER_URL}
 
 echo ""

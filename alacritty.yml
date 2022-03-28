@@ -182,6 +182,13 @@ font:
   # it is recommended to set `use_thin_strokes` to `false`.
   use_thin_strokes: false
 
+  # Use built-in font for box drawing characters.
+  #
+  # If `true`, Alacritty will use a custom built-in font for box drawing
+  # characters (Unicode points 2500 - 259f).
+  #
+  #builtin_box_drawing: true
+
 # If `true`, bold text is drawn using the bright color variants.
 #draw_bold_text_with_bright_colors: false
 
@@ -586,8 +593,9 @@ shell:
 #
 # - `mods` (see key bindings)
 #mouse_bindings:
-#  - { mouse: Right,             action: ExpandSelection }
-#  - { mouse: Middle, mode: ~Vi, action: PasteSelection  }
+#  - { mouse: Right,                 action: ExpandSelection }
+#  - { mouse: Right,  mods: Control, action: ExpandSelection }
+#  - { mouse: Middle, mode: ~Vi,     action: PasteSelection  }
 
 # Key bindings
 #
@@ -927,3 +935,6 @@ key_bindings:
 
   # Print all received window events.
   #print_events: false
+
+  # Highlight window damage information.
+  #highlight_damage: false
