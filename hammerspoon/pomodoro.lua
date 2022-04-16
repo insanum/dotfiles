@@ -8,11 +8,14 @@ local pomo = {
     bar_future     = nil,
 
     -- 52x17
-    def_work_secs = 52 * 60,
-    def_rest_secs = 17 * 60,
+    --def_work_secs = 52 * 60,
+    --def_rest_secs = 17 * 60,
     -- 25x5
     --def_work_secs = 25 * 60,
     --def_rest_secs = 5 * 60,
+    -- 30x5
+    def_work_secs = 30 * 60,
+    def_rest_secs = 5 * 60,
 
     is_active     = false,
     disable_count = 0,

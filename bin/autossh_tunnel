@@ -1,35 +1,43 @@
 #!/bin/bash
 
-autossh                              \
-    -M 10000 -N                      \
-    -D 9999                          \
-    -L 127.0.0.1:8118:127.0.0.1:8118 \
-    -o TCPKeepAlive=yes              \
-    edavis@insanum.com
+# when using sslh we need '-p 443'
+# if direct connection or ProxyCommand/websocat then don't need '-p 443'
+
+SHELL=/bin/bash         \
+/usr/local/bin/autossh  \
+    -M 10000 -N         \
+    -D 9999             \
+    -o TCPKeepAlive=yes \
+    edavis@insanum.com > /Users/edavis/foo.txt 2>&1
+
+# add '> /tmp/foo.txt 2>&1` for launchctl debug
 
 #
 # autossh (the networking swiss arm knife for bypassing corporate firewalls)
 # Make sure GatewayPorts=no in /etc/ssh/sshd_config!
 #
-# 1. SOCKS5 Proxy <- browswer proxy over ssh
+# 1. SOCKS5 Proxy <- browser proxy over ssh
 #    -D 9999
 #
-# 2. HTTP Proxy <- browser proxy over ssh to privoxy
+# 2. sslh protocol demux on server
+#    -p 443
+#
+# 3. HTTP Proxy <- browser proxy over ssh to privoxy
 #    -L 127.0.0.1:8118:127.0.0.1:8118
 #
-# 3. Local port 127.0.0.1:443 forwarded to insanum.com/127.0.0.1:443 <- tinc over ssh
+# 4. Local port 127.0.0.1:443 forwarded to insanum.com/127.0.0.1:443 <- tinc over ssh
 #    -L 127.0.0.1:9998:127.0.0.1:443
 #
-# 4. Local port 127.0.0.1:993 forwarded to imap.gmail.com:993 <- mbsync imap over ssh
+# 5. Local port 127.0.0.1:993 forwarded to imap.gmail.com:993 <- mbsync imap over ssh
 #    -L 127.0.0.1:9993:imap.gmail.com:993
 #
-# 5. Remote port 127.0.0.1:6668 forwarded to owa.broadcom.com:443 <- remote exchange
+# 6. Remote port 127.0.0.1:6668 forwarded to owa.broadcom.com:443 <- remote exchange
 #    -R 127.0.0.1:6668:owa.broadcom.com:443
 #
-# 6. Remote port 127.0.0.1:7777 forwarded to ltirv-edavis1:3389 <- laptop remote desktop
+# 7. Remote port 127.0.0.1:7777 forwarded to ltirv-edavis1:3389 <- laptop remote desktop
 #    -R 127.0.0.1:7777:ltirv-edavis1:3389
 #
-# 7. Remote port 127.0.0.1:7778 forwarded to edavis-win7-kvm:3389 <- win7 kvm remote desktop
+# 8. Remote port 127.0.0.1:7778 forwarded to edavis-win7-kvm:3389 <- win7 kvm remote desktop
 #    -R 127.0.0.1:7778:edavis-win7-kvm:3398
 #
 

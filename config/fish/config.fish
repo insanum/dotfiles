@@ -4,7 +4,14 @@
 # fisher install PatrickF1/fzf.fish
 
 set -g fish_greeting
-set -g SHELL fish
+
+#set -g SHELL fish
+switch (uname)
+case 'Darwin'
+    set -g SHELL /usr/local/bin/fish
+case '*'
+    set -g SHELL /usr/bin/fish
+end
 
 function fish_my_keybinds
     fish_vi_key_bindings
