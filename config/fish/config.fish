@@ -63,7 +63,7 @@ function where;  type -a $argv;         end
 function !!;     eval $history[1];      end
 function sudo!!; eval sudo $history[1]; end
 
-set -gx TODO_FILE $HOME/notes/TODO.md
+set -gx TODO_FILE $HOME/notes/INBOX.md
 abbr --add mdt mdtodo
 abbr --add mdth "mdtodo -t high"
 abbr --add mdtm "mdtodo -t medium"
@@ -86,6 +86,15 @@ function fished; nvim $HOME/.config/fish/config.fish;   end
 
 set -g fzf_history_opts --height 40% --reverse
 
+# Base16 Shell
+if status --is-interactive
+    set BASE16_SHELL "$HOME/src/base16-shell/"
+    source "$BASE16_SHELL/profile_helper.fish"
+end
+
 starship init fish | source
 zoxide init fish | source
+pyenv init - | source
+
+set -gx HOMEBREW_GITHUB_API_TOKEN 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
 

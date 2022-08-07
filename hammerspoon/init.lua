@@ -25,7 +25,7 @@ require("window")
 --require("launcher")
 
 -- mpd client
-require("mpc")
+--require("mpc")
 
 -- gpmdp client
 --require("gpmdp")
@@ -36,13 +36,16 @@ require("mpc")
 require("finnhub")
 
 -- pomodoro timer
-require("pomodoro")
+--require("pomodoro")
 
 -- input logger
 --require("ilog")
 
 -- send pushover messages
 require("pushover")
+
+-- Save a new task
+require("mdtodo")
 
 -- reload config
 hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",

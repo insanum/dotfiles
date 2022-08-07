@@ -81,4 +81,4 @@
 [include]
 	path = ~/.priv/gitconfig
 [pull]
-	rebase = true
+	rebase = false

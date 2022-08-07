@@ -1236,7 +1236,7 @@ function! MyStatusGetGitBuf()
     if !exists('g:loaded_fugitive')
         return ''
     endif
-    if empty(fugitive#head())
+    if empty(FugitiveHead())
         return ''
     endif
     return fugitive#statusline() . ' '
@@ -1296,7 +1296,6 @@ function! s:base16_customize() abort
     call Base16hi("mkdCheckbox", "666666", "", "242", "", "")
     call Base16hi("mkdTextCompleted", "666666", "", "242", "", "italic")
     if g:colors_name == 'base16-nord'
-        echo "foo"
         call Base16hi("Comment", "BF616A", "", "1", "")
     endif
     call <SID>myStatusColorSchemeBase16()
