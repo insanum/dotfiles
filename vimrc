@@ -44,6 +44,9 @@ silent! if plug#begin('~/.vim/plugged')
 
 Plug 'https://github.com/junegunn/vim-plug'
 
+Plug 'https://github.com/vim-airline/vim-airline'
+Plug 'https://github.com/vim-airline/vim-airline-themes'
+
 Plug 'https://github.com/chriskempson/base16-vim'
 
 Plug 'https://github.com/ap/vim-css-color'
@@ -110,8 +113,28 @@ Plug 'https://github.com/Asheq/close-buffers.vim'
 
 Plug 'https://github.com/nathanalderson/yang.vim'
 
+Plug 'https://github.com/MattesGroeger/vim-bookmarks'
+
+"Plug 'https://github.com/nvim-treesitter/nvim-treesitter'
+"Plug 'https://github.com/danymat/neogen'
+
 call plug#end()
 endif
+
+"lua <<EOF
+"require('neogen').setup({})
+"
+"require'nvim-treesitter.configs'.setup {
+"  highlight = {
+"    enable = true,
+"    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+"    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+"    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+"    -- Instead of true it can also be a list of languages
+"    additional_vim_regex_highlighting = false,
+"  },
+"}
+"EOF
 
 " VIM-PLUG (END) --------------------------------------- }}}
 
@@ -794,7 +817,7 @@ nmap <C-p> :echo 'cwd: ' . getcwd()<CR>
 " file selection (current directory) with fzf
 nmap <Leader>f :Files<CR>
 
-" file selection (choose/complete directory) with fzf (note trailing space)
+" file selection (choose/complete directory) with fzf (note trailing space!)
 nmap <Leader>F :Files 
 
 " git file (git ls-files) selection with fzf
@@ -815,10 +838,12 @@ nmap <Leader>F :Files
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \ 'rg --line-number --column --no-heading --color=always ' . shellescape(<q-args>),
-  \ 1, {}, 0)
+  \ 1,
+  \ fzf#vim#with_preview({'options': '--delimiter=: --nth=4.. --no-sort'}),
+  \ 0)
 nmap <Leader>rg :Rg <C-r><C-w><CR>
 nmap <Leader>rr :Rg<CR>
-"
+
 " ripgrep markdown headers in current file selection with fzf
 command! -bang -nargs=* MkdHdrRg
   \ call fzf#vim#grep(
@@ -849,7 +874,7 @@ nmap <Leader>L :Lines<CR>
 
 command! -bang -nargs=* BLinesWithPreview
     \ call fzf#vim#grep(
-    \   'rg --with-filename --line-number --column --no-heading --color=always "" ' . expand('%'), 
+    \   'rg --with-filename --line-number --column --no-heading --color=always "" ' . expand('%'),
     \   1,
     \   fzf#vim#with_preview({'options': '--delimiter=: --nth=4.. --no-sort --color="hl:39"'}),
     \   0)
@@ -980,6 +1005,27 @@ nmap <Leader>y :Goyo 120<CR>
 
 " PLUG GOYO/LIMELIGHT (END) ---------------------------- }}}
 
+" PLUG BOOKMARKS -------------------------------------- {{{
+
+let g:bookmark_no_default_key_mappings = 1
+let g:bookmark_auto_save = 1
+let g:bookmark_manage_per_buffer = 1
+
+nmap <Leader><Leader>a <Plug>BookmarkAnnotate
+nmap <Leader><Leader>b <Plug>BookmarkToggle
+nmap <Leader><Leader>j <Plug>BookmarkNext
+nmap <Leader><Leader>k <Plug>BookmarkPrev
+nmap <Leader><Leader>s <Plug>BookmarkShowAll
+
+function! g:BMBufferFileLocation(file)
+    let dir = $HOME.'/.vim-bookmarks'.fnamemodify(a:file, ":p:h")
+    let file = $HOME.'/.vim-bookmarks'.fnamemodify(a:file, ":p")
+    call mkdir(dir, 'p', 0o755)
+    return file
+endfunction
+
+" PLUG BOOKMARKS (END) -------------------------------- }}}
+
 " PLUG SESSION ----------------------------------------- {{{
 
 set sessionoptions-=buffers,help
@@ -995,31 +1041,31 @@ function! s:votlColors()
     "Base16hi(group, guifg, guibg, ctermfg, ctermbg, <attr>, <guisp>);
 
     call Base16hi("OL1", "0066ff", "", "39",  "", "bold")
-	"hi OL1 ctermfg=39 cterm=bold
+    "hi OL1 ctermfg=39 cterm=bold
 
     call Base16hi("OL2", "0099ff", "", "38",  "", "")
-	"hi OL2 ctermfg=38
+    "hi OL2 ctermfg=38
 
     call Base16hi("OL3", "33ccff", "", "37",  "", "")
-	"hi OL3 ctermfg=37
+    "hi OL3 ctermfg=37
 
     call Base16hi("OL4", "66ffff", "", "36",  "", "")
-	"hi OL4 ctermfg=36
+    "hi OL4 ctermfg=36
 
     call Base16hi("OL5", "99ffcc", "", "35",  "", "")
-	"hi OL5 ctermfg=35
+    "hi OL5 ctermfg=35
 
     call Base16hi("OL6", "99ff99", "", "34",  "", "")
-	"hi OL6 ctermfg=34
+    "hi OL6 ctermfg=34
 
     call Base16hi("OL7", "0099cc", "", "28",  "", "")
-	"hi OL7 ctermfg=28
+    "hi OL7 ctermfg=28
 
     call Base16hi("OL8", "339933", "", "22",  "", "")
-	"hi OL8 ctermfg=22
+    "hi OL8 ctermfg=22
 
     call Base16hi("OL9", "666666", "", "242",  "", "")
-	"hi OL9 ctermfg=242
+    "hi OL9 ctermfg=242
 
     " color for body text
     for i in range(1, 9)
@@ -1151,20 +1197,20 @@ function! s:myStatusColorSchemeBase16()
 endfunction
 
 function! MyStatusHL(normal, insert)
-    return mode() ==# 'i' ? a:insert : a:normal
+    return mode(1) ==# 'i' ? a:insert : a:normal
 endfunction
 
 function! MyStatusGetMode()
-    let mode = mode()
-    if     mode ==# 'v'        | return "%#ST_M_VISUAL# VISUAL %*"
-    elseif mode ==# 'V'        | return "%#ST_M_VISUAL# V.LINE %*"
-    elseif mode ==# ''       | return "%#ST_M_VISUAL# V.BLOCK %*"
-    elseif mode ==# 's'        | return "%#ST_M_SELECT# SELECT %*"
-    elseif mode ==# 'S'        | return "%#ST_M_SELECT# S.LINE %*"
-    elseif mode ==# ''       | return "%#ST_M_SELECT# S.BLOCK %*"
-    elseif mode =~# '\vi'      | return "%#ST_M_INSERT# INSERT %*"
-    elseif mode =~# '\v(R|Rv)' | return "%#ST_M_REPLACE# REPLACE %*"
-    else                       | return "%#ST_M_NORMAL# NORMAL %*"
+    let mode = mode(1)
+    if     mode ==# 'v'  | return "%#ST_M_VISUAL# VISUAL %*"
+    elseif mode ==# 'V'  | return "%#ST_M_VISUAL# V.LINE %*"
+    elseif mode ==# '' | return "%#ST_M_VISUAL# V.BLOCK %*"
+    elseif mode ==# 's'  | return "%#ST_M_SELECT# SELECT %*"
+    elseif mode ==# 'S'  | return "%#ST_M_SELECT# S.LINE %*"
+    elseif mode ==# '' | return "%#ST_M_SELECT# S.BLOCK %*"
+    elseif mode ==# 'i'  | return "%#ST_M_INSERT# INSERT %*"
+    elseif mode ==# 'R'  | return "%#ST_M_REPLACE# REPLACE %*"
+    else                 | return "%#ST_M_NORMAL# NORMAL %*"
     endif
 endfunction
 
@@ -1274,8 +1320,23 @@ function! MyStatus()
         \ MyStatusGetWidth()
 endfunction
 
-set statusline=%!MyStatus()
-autocmd insanum InsertEnter,InsertLeave * redraws!
+" uncomment to NOT use airline
+"set statusline=%!MyStatus()
+"autocmd insanum InsertEnter,InsertLeave * redraws!
+
+let g:airline_theme='badwolf'
+let g:airline_powerline_fonts = 1
+
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+let g:airline_symbols.linenr = ' ln:'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.colnr = ' c:'
+let g:airline_symbols.whitespace = ''
+
+let g:airline#extensions#whitespace#checks =
+    \  [ 'indent', 'trailing', 'long', 'mixed-indent-file', 'conflicts' ]
 
 " STATUSLINE (END) ------------------------------------- }}}
 
@@ -1286,6 +1347,8 @@ function! s:base16_customize() abort
     call Base16hi("NonText", "9400D3", "none", "129", "238")
     call Base16hi("VertSplit", "", "none", "", "none")
     call Base16hi("Comment", "", "", "", "", "italic")
+    call Base16hi("TabLine", "8c8c8c", "", "141", "", "none")
+    call Base16hi("TabLineSel", "6699ff", "", "21", "", "none")
     call Base16hi("WideText", "CC241D", "", "160", "", "italic")
     call Base16hi("mkdHashTag", "6699ff", "404040", "21", "45", "")
     call Base16hi("mkdHashTagHigh", "ff0000", "404040", "196", "238", "")

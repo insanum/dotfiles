@@ -49,6 +49,10 @@ local function pushoverSend()
         pushover = hs.task.new(curl, pushoverDone, curl_args)
         pushover:start()
     end
+
+    if last_win ~= nil then
+        last_win:focus() -- focus last window
+    end
 end
 
 hs.hotkey.bind(kb_ctrl, "p", "Send message to Pushover",

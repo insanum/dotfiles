@@ -92,9 +92,21 @@ if status --is-interactive
     source "$BASE16_SHELL/profile_helper.fish"
 end
 
-starship init fish | source
-zoxide init fish | source
-pyenv init - | source
+if type -q starship
+    starship init fish | source
+end
 
-set -gx HOMEBREW_GITHUB_API_TOKEN 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
+if type -q zoxide
+    zoxide init fish | source
+end
+
+if type -q pyenv
+    pyenv init - | source
+end
+
+if type -q prettyping
+    abbr --add ping "prettyping --nolegend"
+end
+
+set -gx HOMEBREW_GITHUB_API_TOKEN foobar
 

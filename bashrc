@@ -163,7 +163,7 @@ if [[ -z "${BASH_EXECUTION_STRING}" ]]; then
     else
         cmd=`ps --no-header --pid=$PPID --format=cmd`
     fi
-    if [[ $cmd =~ "Python" ]]; then
+    if [[ $cmd =~ "python" ]]; then
         unset PROMPT_COMMAND
         PS1='[\h]$ '
     elif [[ $cmd != "fish" && $cmd != "-fish" ]]; then

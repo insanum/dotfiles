@@ -91,3 +91,20 @@ function()
     finder:activate()
 end)
 
+-- media controls (play/pause, next, previous)
+
+hs.hotkey.bind(kb_ctrl, "\\", function()
+  hs.eventtap.event.newSystemKeyEvent('PLAY', true):post()
+  hs.eventtap.event.newSystemKeyEvent('PLAY', false):post()
+end)
+
+hs.hotkey.bind(kb_ctrl, "]", function()
+  hs.eventtap.event.newSystemKeyEvent('NEXT', true):post()
+  hs.eventtap.event.newSystemKeyEvent('NEXT', false):post()
+end)
+
+hs.hotkey.bind(kb_ctrl, "[", function()
+  hs.eventtap.event.newSystemKeyEvent('PREVIOUS', true):post()
+  hs.eventtap.event.newSystemKeyEvent('PREVIOUS', false):post()
+end)
+

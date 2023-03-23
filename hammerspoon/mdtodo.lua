@@ -20,6 +20,10 @@ local function mdtodoNewTask()
     end
 
     os.execute(mdtodo .. " -f " .. file .. " -n \"" .. message .. "\"")
+
+    if last_win ~= nil then
+        last_win:focus() -- focus last window
+    end
 end
 
 hs.hotkey.bind(kb_ctrl, "0", "New task via mdtodo",

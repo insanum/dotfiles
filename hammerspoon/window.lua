@@ -1,4 +1,17 @@
 
+-- maximize window
+hs.hotkey.bind(kb_ctrl, "f", "Maximize window",
+function()
+    local ad = hs.window.animationDuration
+    hs.window.animationDuration = 0
+
+    local win = hs.window.frontmostWindow()
+    win:maximize()
+
+    hs.window.animationDuration = ad
+end)
+
+--[[
 local function winMove(win, x, y, w, h)
     local ad = hs.window.animationDuration
     hs.window.animationDuration = 0
@@ -12,18 +25,6 @@ local function winMove(win, x, y, w, h)
 
     hs.window.animationDuration = ad
 end
-
--- maximize window
-hs.hotkey.bind(kb_ctrl, "f", "Maximize window",
-function()
-    local ad = hs.window.animationDuration
-    hs.window.animationDuration = 0
-
-    local win = hs.window.frontmostWindow()
-    win:maximize()
-
-    hs.window.animationDuration = ad
-end)
 
 -- center window
 hs.hotkey.bind(kb_ctrl, "c", "Center window",
@@ -144,6 +145,7 @@ hs.hotkey.bind(kb_ctrl_shift, "m", "Move window to the left monitor",
 function()
     moveWindowMonitor("east")
 end)
+--]]
 
 -- hack to move a window left/right between spaces
 
@@ -213,6 +215,7 @@ function()
     hs.grid.toggleShow()
 end)
 
+--[[
 hs.hotkey.bind(kb_ctrl, "w", "Move window up on grid",
 function()
     hs.grid.pushWindowUp(hs.window.focusedWindow())
@@ -232,4 +235,5 @@ hs.hotkey.bind(kb_ctrl, "d", "Move window right on grid",
 function()
     hs.grid.pushWindowRight(hs.window.focusedWindow())
 end)
+--]]
 

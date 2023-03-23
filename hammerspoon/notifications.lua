@@ -46,7 +46,13 @@ end
 --hs.hotkey.bind(kb_ctrl, "o", "Clear the top notification",
 hs.hotkey.bind({ "cmd", "ctrl" }, "o", "Clear the top notification",
 function()
-    clearNotification(false)
+    -- Uncomment the following to print current mouse location to console.
+    if (false) then
+        print("Mouse location: x=" .. hs.mouse.absolutePosition().x ..
+                             " y=" .. hs.mouse.absolutePosition().y)
+    else
+        clearNotification(false)
+    end
 end)
 
 hs.hotkey.bind({ "cmd", "ctrl", "shift" }, "o", "Clear the top notification group",

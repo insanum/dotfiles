@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# new-window
+#   -d = don't switch to the new window
+#   -a -b = after or before target window (-t) 
+
+# split-window
+#   -d = don't switch to the new pane
+#   -b = new pane to the LEFT or ABOVE the target pane
+#   -h = horizontal split, new pane full height
+#   -v = vertical split, new pane full width
+#   -l = size of the pane in #lines or #cols
+
+tmux new-session -d -s work1 -c "$HOME"
+
+tmux split-window -d -h -b -t work1:1.0 -c "$HOME"
+tmux split-window -d -v -t work1:1.0 -l 20 -c "$HOME"
+
+tmux new-window -t work1:7 -n test1
+tmux send-keys -t work1:7.0 'figlet "test1"' Enter
+
+tmux new-window -t work1:8 -n test2
+tmux split-window -d -h -b -t work1:8.0 -l 80 -c "$HOME"
+tmux split-window -d -v -t work1:8.0 -l 20 -c "$HOME"
+tmux split-window -d -v -t work1:8.0 -c "$HOME"
+tmux send-keys -t work1:8.0 'figlet "test2"' Enter
+
+tmux new-window -t work1:9 -n notes -c ~/notes
+tmux send-keys -t work1:9.0 'figlet "notes"' Enter
+tmux send-keys -t work1:9.0 'git status' Enter
+
+tmux switch-client -t work1
+
