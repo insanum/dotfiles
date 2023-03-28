@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "ERROR: missing reminder text"
+    exit 1
+fi
+
+R=/usr/local/bin/reminders
+$R add Tasks -d today -p medium $1
+

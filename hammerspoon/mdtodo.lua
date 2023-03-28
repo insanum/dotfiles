@@ -19,7 +19,13 @@ local function mdtodoNewTask()
         return
     end
 
-    os.execute(mdtodo .. " -f " .. file .. " -n \"" .. message .. "\"")
+    out, status = hs.execute(mdtodo .. " -f " .. file .. " -n \"" .. message .. "\"")
+
+    if status ~= true then
+        hs.alert("Failed to create Task!", { radius = 0, atScreenEdge = 2 }, 4)
+    else
+        hs.alert("Task created!", { radius = 0, atScreenEdge = 2 }, 4)
+    end
 
     if last_win ~= nil then
         last_win:focus() -- focus last window

@@ -515,6 +515,11 @@ vim.o.showtabline    = 2
 vim.o.mouse          = ''
 vim.o.clipboard      = ''
 
+vim.o.winheight      = 10
+vim.o.winminheight   = 10
+vim.o.winwidth       = 10
+vim.o.winminwidth    = 10
+
 -- remapping Y was a stupid change by neovim
 vim.keymap.set('n', 'Y', 'yy')
 
@@ -539,6 +544,14 @@ vim.keymap.set('n', 'Zo', '<C-w>=', { silent = true, noremap = true })
 
 -- toggle spelling
 vim.keymap.set('n', ',s', '<cmd>set spell!<CR><cmd>set spell?<CR>', { silent = true })
+
+-- cut/paste to/from system clipboard
+vim.keymap.set('v', ',y', '"+y',  { silent = true }) -- yank multiple lines
+vim.keymap.set('n', ',y', '"+y',  { silent = true }) -- yank motion
+vim.keymap.set('n', ',Y', '"+yy', { silent = true }) -- yank single line
+vim.keymap.set('v', ',p', '"+p',  { silent = true }) -- overwrite multiple lines
+vim.keymap.set('n', ',P', '"+P',  { silent = true }) -- paste before cursor
+vim.keymap.set('n', ',p', '"+p',  { silent = true }) -- paste after cursor
 
 -- tab stuff
 vim.keymap.set('n', 'tn', '<cmd>tabnew<CR>', { silent = true })

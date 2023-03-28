@@ -44,8 +44,11 @@ require("finnhub")
 -- send pushover messages
 require("pushover")
 
--- Save a new task
+-- Create a new task to INBOX
 require("mdtodo")
+
+-- Create a new Reminder
+require("reminders")
 
 -- reload config
 hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",
