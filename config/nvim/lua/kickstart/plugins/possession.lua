@@ -3,13 +3,13 @@ return {
   config = function()
     require('possession').setup {
       commands = {
-        save = 'Psave',
-        load = 'Pload',
-        close = 'Pclose',
-        delete = 'Pdelete',
-        show = 'Pshow',
-        list = 'Plist',
-        migrate = 'Pmigrate',
+        save = 'PoSave',
+        load = 'PoLoad',
+        close = 'PoClose',
+        delete = 'PoDelete',
+        show = 'PoShow',
+        list = 'PoList',
+        migrate = 'PoMigrate',
       },
     }
     require('telescope').load_extension('possession')

@@ -40,9 +40,12 @@ function fish_my_keybinds
     bind --mode insert  --sets-mode insert \n execute
     bind --mode default --sets-mode insert \n execute
 
-    bind --mode default --sets-mode insert \cc kill-whole-line repaint
-    bind --mode visual  --sets-mode insert \cc kill-whole-line repaint
-    bind --mode insert  --sets-mode insert \cc kill-whole-line repaint
+    #bind --mode default --sets-mode insert \cc kill-whole-line repaint
+    #bind --mode visual  --sets-mode insert \cc kill-whole-line repaint
+    #bind --mode insert  --sets-mode insert \cc kill-whole-line repaint
+    bind --mode default --sets-mode insert \cc cancel-commandline
+    bind --mode visual  --sets-mode insert \cc cancel-commandline
+    bind --mode insert  --sets-mode insert \cc cancel-commandline
 end
 set -g fish_key_bindings fish_my_keybinds
 
@@ -108,5 +111,5 @@ if type -q prettyping
     abbr --add ping "prettyping --nolegend"
 end
 
-set -gx HOMEBREW_GITHUB_API_TOKEN foobar
+set -gx HOMEBREW_GITHUB_API_TOKEN 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
 

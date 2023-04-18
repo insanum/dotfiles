@@ -178,6 +178,8 @@ require('lazy').setup({
   -- require 'kickstart.plugins.autoformat',
   -- require 'kickstart.plugins.debug',
 
+  ----------------------------------------------------------------------
+
   require 'kickstart.plugins.possession',
 
   require 'kickstart.plugins.marks',
@@ -189,6 +191,11 @@ require('lazy').setup({
   --require 'kickstart.plugins.bufferline',
   --require 'kickstart.plugins.luatab',
   --require 'kickstart.plugins.tabline',
+
+  'MattesGroeger/vim-bookmarks',
+  require 'kickstart.plugins.telescope-vim-bookmarks',
+
+  ----------------------------------------------------------------------
 
   -- NOTE: The import below automatically adds your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -306,7 +313,8 @@ require('nvim-treesitter.configs').setup {
   auto_install = false,
 
   highlight = { enable = true },
-  indent = { enable = true, disable = { 'python' } },
+  --indent = { enable = true, disable = { 'python' } },
+  indent = { enable = false },
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -520,8 +528,19 @@ vim.o.winminheight   = 10
 vim.o.winwidth       = 10
 vim.o.winminwidth    = 10
 
+vim.o.listchars      = 'tab:<->,eol:$,trail:-'
+
 -- remapping Y was a stupid change by neovim
 vim.keymap.set('n', 'Y', 'yy')
+
+vim.cmd([[
+augroup insanum
+    autocmd!
+augroup END
+autocmd insanum BufNewFile,BufReadPost
+    \ *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs
+    \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
+]])
 
 -- jump/edit previous buffer
 vim.keymap.set('n', '<C-b>', '<cmd>e #<CR>')
@@ -532,11 +551,15 @@ vim.keymap.set('n', '<C-k>', '<C-w>k', { silent = true, noremap = true })
 vim.keymap.set('n', '<C-h>', '<C-w>h', { silent = true, noremap = true })
 vim.keymap.set('n', '<C-l>', '<C-w>l', { silent = true, noremap = true })
 
+-- remove highlighted search results
 vim.keymap.set('n', ',.', '<cmd>nohlsearch<CR>', { silent = true, noremap = true })
 
 -- I smash <C-s> all the time!
 vim.keymap.set('n', '<C-s>', '<cmd>update<CR>', { silent = true, noremap = true })
 vim.keymap.set('i', '<C-s>', '<C-o><cmd>update<CR>', { silent = true, noremap = true })
+
+-- toggle list chars
+vim.keymap.set('n', ',l', ':set list!<CR>:set list?<CR>', { silent = true, noremap = true })
 
 -- zoom the current window in/out
 vim.keymap.set('n', 'Zi', '<C-w>_ | <C-w>|', { silent = true, noremap = true })
@@ -544,6 +567,9 @@ vim.keymap.set('n', 'Zo', '<C-w>=', { silent = true, noremap = true })
 
 -- toggle spelling
 vim.keymap.set('n', ',s', '<cmd>set spell!<CR><cmd>set spell?<CR>', { silent = true })
+
+-- toggle paste
+vim.keymap.set('n', ',v', '<cmd>set paste!<CR><cmd>set paste?<CR>', { silent = true })
 
 -- cut/paste to/from system clipboard
 vim.keymap.set('v', ',y', '"+y',  { silent = true }) -- yank multiple lines
@@ -569,6 +595,23 @@ end
 --vim.api.nvim_set_keymap('n', ',,b', '<cmd>HopWordBC<CR>', { noremap = true })
 --vim.api.nvim_set_keymap('n', ',,f', '<cmd>HopChar1AC<CR>', { noremap = true })
 --vim.api.nvim_set_keymap('n', ',,F', '<cmd>HopChar1BC<CR>', { noremap = true })
+
+vim.cmd([[
+let g:bookmark_no_default_key_mappings = 1
+let g:bookmark_auto_save = 1
+]])
+vim.keymap.set('n', ',,a', '<Plug>BookmarkAnnotate', { silent = true })
+vim.keymap.set('n', ',,b', '<Plug>BookmarkToggle', { silent = true })
+vim.keymap.set('n', ',,j', '<Plug>BookmarkNext', { silent = true })
+vim.keymap.set('n', ',,k', '<Plug>BookmarkPrev', { silent = true })
+--vim.keymap.set('n', ',,s', '<Plug>BookmarkShowAll', { silent = true })
+vim.keymap.set('n', ',,s', ':Telescope vim_bookmarks all<CR>', { silent = true })
+vim.keymap.del('n', 'ma', { silent = true }) -- was BookmarkShowAll
+
+-- open an existing session
+vim.keymap.set('n', ',o', ':Telescope possession list<CR>', { silent = true })
+
+--vim.diagnostic.config({virtual_text = false})
 
 ----------------------------------------------------------------------
 

@@ -3,6 +3,7 @@ local window = require("hs.window")
 local dialog = require("hs.dialog")
 
 -- XXX Change this to native hs.osascript and get rid of the wrapper...
+-- https://gist.github.com/n8henrie/c3a5bf270b8200e33591
 
 -- brew install keith/formulae/reminders-cli
 local reminders = os.getenv("HOME").."/.hammerspoon/reminders_wrap"
