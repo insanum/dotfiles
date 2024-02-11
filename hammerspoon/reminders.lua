@@ -12,7 +12,7 @@ local function createReminder()
     local last_win = window.focusedWindow()
 
     hs.focus() -- make sure hammerspoon dialog is focused
-    local clicked, message = dialog.textPrompt("Reminder", "", "",
+    local clicked, message = dialog.textPrompt("New Apple Reminder", "", "",
                                                "Create", "Cancel")
     if clicked == "Cancel" then
         if last_win ~= nil then
@@ -32,9 +32,9 @@ local function createReminder()
     out, status = hs.execute(cmd)
 
     if status ~= true then
-        hs.alert("Failed to create Reminder!", { radius = 0, atScreenEdge = 2 }, 4)
+        hs.alert("Failed to create Apple Reminder!", { radius = 0, atScreenEdge = 2 }, 4)
     else
-        hs.alert("Reminder created!", { radius = 0, atScreenEdge = 2 }, 4)
+        hs.alert("Apple Reminder created!", { radius = 0, atScreenEdge = 2 }, 4)
     end
 
     print("Reminder out: " .. out)
@@ -44,7 +44,7 @@ local function createReminder()
     end
 end
 
-hs.hotkey.bind(kb_ctrl, "9", "Create a new Reminder",
+hs.hotkey.bind(kb_ctrl, "9", "Create a new Apple Reminder",
 function()
     createReminder()
 end)

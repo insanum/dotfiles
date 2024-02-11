@@ -5,6 +5,8 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
+-- brew info reminders-cli
 R=/usr/local/bin/reminders
+
 $R add Tasks -d today -p medium $1
 

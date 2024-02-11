@@ -1,0 +1,151 @@
+[[colors.indexed_colors]]
+color = "#d08770"
+index = 16
+
+[[colors.indexed_colors]]
+color = "#5e81ac"
+index = 17
+
+[[colors.indexed_colors]]
+color = "#3b4252"
+index = 18
+
+[[colors.indexed_colors]]
+color = "#434c5e"
+index = 19
+
+[[colors.indexed_colors]]
+color = "#d8dee9"
+index = 20
+
+[[colors.indexed_colors]]
+color = "#eceff4"
+index = 21
+
+[colors.bright]
+black = "#4c566a"
+blue = "#81a1c1"
+cyan = "#88c0d0"
+green = "#a3be8c"
+magenta = "#b48ead"
+red = "#bf616a"
+white = "#8fbcbb"
+yellow = "#ebcb8b"
+
+[colors.cursor]
+cursor = "#e5e9f0"
+text = "#2e3440"
+
+[colors.normal]
+black = "#2e3440"
+blue = "#81a1c1"
+cyan = "#88c0d0"
+green = "#a3be8c"
+magenta = "#b48ead"
+red = "#bf616a"
+white = "#e5e9f0"
+yellow = "#ebcb8b"
+
+[colors.primary]
+background = "#2e3440"
+foreground = "#e5e9f0"
+
+[[colors_no.indexed_colors]]
+color = "#fe8019"
+index = 16
+
+[[colors_no.indexed_colors]]
+color = "#d65d0e"
+index = 17
+
+[[colors_no.indexed_colors]]
+color = "#3c3836"
+index = 18
+
+[[colors_no.indexed_colors]]
+color = "#504945"
+index = 19
+
+[[colors_no.indexed_colors]]
+color = "#bdae93"
+index = 20
+
+[[colors_no.indexed_colors]]
+color = "#ebdbb2"
+index = 21
+
+[colors_no.bright]
+black = "#665c54"
+blue = "#83a598"
+cyan = "#8ec07c"
+green = "#b8bb26"
+magenta = "#d3869b"
+red = "#fb4934"
+white = "#fbf1c7"
+yellow = "#fabd2f"
+
+[colors_no.cursor]
+cursor = "#d5c4a1"
+text = "#282828"
+
+[colors_no.normal]
+black = "#282828"
+blue = "#83a598"
+cyan = "#8ec07c"
+green = "#b8bb26"
+magenta = "#d3869b"
+red = "#fb4934"
+white = "#d5c4a1"
+yellow = "#fabd2f"
+
+[colors_no.primary]
+background = "#282828"
+foreground = "#d5c4a1"
+
+[font]
+size = 16.0
+
+[font.bold]
+family = "Hack Nerd Font"
+style = "Bold"
+
+[font.bold_italic]
+family = "Hack Nerd Font"
+style = "Bold Italic"
+
+[font.italic]
+family = "Hack Nerd Font"
+style = "Italic"
+
+[font.normal]
+family = "Hack Nerd Font"
+style = "Regular"
+
+[[keyboard.bindings]]
+action = "None"
+key = "Q"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "None"
+key = "W"
+mods = "Command"
+
+[scrolling]
+history = 0
+
+[selection]
+save_to_clipboard = true
+
+[shell]
+args = ["--login"]
+program = "/usr/local/bin/bash"
+
+[window]
+decorations = "transparent"
+opacity = 0.9
+startup_mode = "Maximized"
+
+[window.padding]
+x = 6
+y = 2
