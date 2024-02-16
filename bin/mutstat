@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mutagen sync list | egrep "Name:|Last error:|Status:"
+

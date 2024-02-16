@@ -113,6 +113,7 @@ require('lazy').setup({
 
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
+
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -448,7 +449,7 @@ vim.defer_fn(function()
     auto_install = false,
 
     highlight = { enable = true },
-    indent = { enable = true },
+    indent = { enable = false }, -- this completely f's cinoptions
     incremental_selection = {
       enable = true,
       keymaps = {
@@ -704,7 +705,7 @@ augroup insanum
 augroup END
 autocmd insanum BufNewFile,BufReadPost
     \ *.c,*.h,*.cc,*.cpp,*.ino,*.cs,*.java,*.js,*.lua,*.rs
-    \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30
+    \ set cindent cinoptions=>s,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30,Ws
 ]])
 
 -- jump/edit previous buffer
