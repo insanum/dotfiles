@@ -277,6 +277,8 @@ require('lazy').setup({
   'MattesGroeger/vim-bookmarks',
   require 'kickstart.plugins.telescope-vim-bookmarks',
 
+  'junegunn/vim-easy-align',
+
   ----------------------------------------------------------------------
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -779,6 +781,9 @@ vim.keymap.del('n', 'ma', { silent = true }) -- was BookmarkShowAll
 vim.keymap.set('n', ',o', ':Telescope possession list<CR>', { silent = true })
 
 --vim.diagnostic.config({virtual_text = false})
+
+vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
+vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
 
 ----------------------------------------------------------------------
 

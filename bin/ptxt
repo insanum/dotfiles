@@ -31,7 +31,9 @@ done
 
 shift $((OPTIND - 1))
 
-enscript $LAYOUT --mark-wrapped-lines=box $NOHDR $LINES -E --color=1 -M Letter -p - $1 | pstopdf -i -o ~/out.pdf
+#enscript $LAYOUT --mark-wrapped-lines=box $NOHDR $LINES -E --color=1 -M Letter -p - $1 | pstopdf -i -o ~/out.pdf
+enscript $LAYOUT --mark-wrapped-lines=box $NOHDR $LINES -E --color=1 -M Letter -p - $1 | ps2pdf - ~/out.pdf
+#enscript $LAYOUT --mark-wrapped-lines=box $NOHDR $LINES -E --color=1 -M Letter -p - $1 | gs -o ~/out.pdf -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -dHaveTrueTypes=true -dEmbedAllFonts=true -dSubsetFonts=false -f -
 
 if [[ $OSTYPE =~ darwin ]]; then
     open ~/out.pdf
