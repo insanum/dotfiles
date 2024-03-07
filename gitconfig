@@ -16,6 +16,7 @@
 [delta]
 	features = side-by-side line-numbers decorations
 	whitespace-error-style = 22 reverse
+	tabs = 8
 [delta "decorations"]
 	commit-decoration-style = bold yellow box ul
 	file-style = bold yellow ul
@@ -60,7 +61,7 @@
 	patch        = !git --no-pager diff --no-color
 	####################
 	# LOG...
-	tree         = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"
+	t            = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"
 	####################
 	# STATUS...
 	s            = status

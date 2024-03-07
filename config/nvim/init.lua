@@ -202,14 +202,26 @@ require('lazy').setup({
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'onedark',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
+    config = function()
+      local function show_codeium_status()
+        return "{…}" .. vim.fn["codeium#GetStatusString"]()
+      end
+
+      require("lualine").setup({
+        options = {
+          icons_enabled = false,
+          theme = 'onedark',
+          component_separators = '|',
+          section_separators = '',
+        },
+        sections = {
+          lualine_b = {
+            { show_codeium_status },
+            { 'branch', 'diff', 'diagnostics' },
+          },
+        },
+      })
+    end
   },
 
   {
@@ -278,6 +290,15 @@ require('lazy').setup({
   require 'kickstart.plugins.telescope-vim-bookmarks',
 
   'junegunn/vim-easy-align',
+
+  {
+    'Exafunction/codeium.vim',
+    event = 'BufEnter',
+    config = function()
+      --vim.g.codeium_enabled = false;
+      vim.g.codeium_idle_delay = 75;
+    end
+  }
 
   ----------------------------------------------------------------------
 
@@ -784,6 +805,10 @@ vim.keymap.set('n', ',o', ':Telescope possession list<CR>', { silent = true })
 
 vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
 vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
+
+vim.keymap.set('i', '<C-f>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true, silent = true })
+vim.keymap.set('i', '<C-g>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true, silent = true })
+vim.keymap.set('i', '<C-h>', function() return vim.fn['codeium#Complete']() end, { expr = true, silent = true })
 
 ----------------------------------------------------------------------
 
