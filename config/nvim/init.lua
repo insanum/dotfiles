@@ -172,7 +172,7 @@ vim.keymap.set('n', 'tl', '<cmd>tabnext<CR>', { silent = true })
 vim.keymap.set('n', 'tH', '<cmd>tabmove -1<CR>', { silent = true })
 vim.keymap.set('n', 'tL', '<cmd>tabmove +1<CR>', { silent = true })
 for i = 1, 9, 1 do
-	vim.keymap.set('n', ',' .. i, i .. 'gt', { silent = true })
+  vim.keymap.set('n', ',' .. i, i .. 'gt', { silent = true })
 end
 
 ------------------------------------------------------------------------------
@@ -259,20 +259,20 @@ require('lazy').setup({
         end, { expr = true, desc = 'Jump to previous hunk' })
 
         -- Actions
-				-- visual mode
-				map('v', '<leader>hs', function()
-					gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-				end, { desc = 'stage git hunk' })
-				map('v', '<leader>hr', function()
-					gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-				end, { desc = 'reset git hunk' })
-				-- normal mode
-				map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-				map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
-				map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-				map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
-				map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-				map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+        -- visual mode
+        map('v', '<leader>hs', function()
+          gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+        end, { desc = 'stage git hunk' })
+        map('v', '<leader>hr', function()
+          gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+        end, { desc = 'reset git hunk' })
+        -- normal mode
+        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+        map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+        map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
         map('n', '<leader>hb', function()
           gs.blame_line({ full = false })
         end, { desc = 'git blame line' })
@@ -285,8 +285,8 @@ require('lazy').setup({
         map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
         map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
-				-- Text object
-				map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+        -- Text object
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
       end,
     },
   },
@@ -811,6 +811,17 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+
+      require('mini.align').setup()
+      require('mini.trailspace').setup()
+      local indentscope = require('mini.indentscope')
+      indentscope.setup({
+        symbol='│',
+        draw = {
+          animation = indentscope.gen_animation.none(),
+          --animation = indentscope.gen_animation.quadratic({ easing = 'out', duration = 10, unit = 'total' }),
+        },
+      })
     end,
   },
 
@@ -862,7 +873,7 @@ require('lazy').setup({
   'tpope/vim-fugitive',
 
   {
-    'https://github.com/jedrzejboczar/possession.nvim',
+    'jedrzejboczar/possession.nvim',
     config = function()
       require('possession').setup {
         commands = {
@@ -880,40 +891,40 @@ require('lazy').setup({
     end,
   },
 
-	{
-		'nvim-lualine/lualine.nvim',
+  {
+    'nvim-lualine/lualine.nvim',
     enabled = false,
-		config = function()
-			local function show_codeium_status()
-				return '{…}' .. vim.fn['codeium#GetStatusString']()
-			end
+    config = function()
+      local function show_codeium_status()
+        return '{…}' .. vim.fn['codeium#GetStatusString']()
+      end
 
-			require('lualine').setup({
-				options = {
-					icons_enabled = false,
-					--theme = 'onedark',
-					component_separators = '|',
-					section_separators = '',
-				},
-				sections = {
-					lualine_b = {
-						{ show_codeium_status },
-						{ 'branch', 'diff', 'diagnostics' },
-					},
-				},
-			})
-		end,
-	},
+      require('lualine').setup({
+        options = {
+          icons_enabled = false,
+          --theme = 'onedark',
+          component_separators = '|',
+          section_separators = '',
+        },
+        sections = {
+          lualine_b = {
+            { show_codeium_status },
+            { 'branch', 'diff', 'diagnostics' },
+          },
+        },
+      })
+    end,
+  },
 
   {
-    'https://github.com/nanozuki/tabby.nvim',
+    'nanozuki/tabby.nvim',
     config = function()
       require('tabby').setup { }
     end,
   },
 
   {
-    'https://github.com/chentoast/marks.nvim',
+    'chentoast/marks.nvim',
     config = function()
       require('marks').setup {
         --builtin_marks = { '.', '<', '>', '^' },
@@ -923,10 +934,10 @@ require('lazy').setup({
   },
 
   {
-    'https://github.com/ggandor/lightspeed.nvim',
-    -- [s|S]<char1>[<char2>]<space|tab|<signature>>
+    'ggandor/leap.nvim',
     config = function()
-      require('lightspeed').setup { }
+      vim.keymap.set({'n', 'x', 'o'}, 's', '<Plug>(leap-forward)')
+      vim.keymap.set({'n', 'x', 'o'}, 'S', '<Plug>(leap-backward)')
     end,
   },
 
@@ -949,7 +960,7 @@ require('lazy').setup({
   },
 
   {
-    'https://github.com/tom-anders/telescope-vim-bookmarks.nvim',
+    'tom-anders/telescope-vim-bookmarks.nvim',
     dependencies = {
       'MattesGroeger/vim-bookmarks',
     },
@@ -967,36 +978,26 @@ require('lazy').setup({
     end,
   },
 
-	{
-		'lukas-reineke/indent-blankline.nvim',
-		-- See `:help ibl`
-    main = 'ibl',
-		opts = {},
-	},
-
   {
-    'navarasu/onedark.nvim',
+    'lukas-reineke/indent-blankline.nvim',
     enabled = false,
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
-
+    -- See `:help ibl`
+    main = 'ibl',
+    opts = {},
+    },
   {
     'junegunn/vim-easy-align',
     enabled = false,
-    vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)'),
-    vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)'),
+    config = function()
+      vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
+      vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
+    end,
   },
 
   {
     'folke/noice.nvim',
     event = 'VeryLazy',
-    opts = {
-      -- add any options here
-    },
+    opts = {},
     dependencies = {
       -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
       'MunifTanjim/nui.nvim',
@@ -1005,6 +1006,55 @@ require('lazy').setup({
       --   If not available, we use `mini` as the fallback
       --'rcarriga/nvim-notify',
     },
+  },
+
+  {
+    'nvim-tree/nvim-tree.lua',
+    opts = {
+      view = {
+        float = {
+          enable = true,
+          open_win_config = {
+            width = 50,
+            height = 40,
+            row = 4,
+            col = 12,
+          },
+        },
+      },
+      vim.keymap.set('n', '<F12>', '<cmd>NvimTreeToggle<CR>', { silent = true }),
+    },
+  },
+
+  {
+    'navarasu/onedark.nvim',
+    enabled = false,
+    lazy = false,
+    priority = 999,
+    config = function()
+      vim.cmd.colorscheme 'onedark'
+    end,
+  },
+
+  {
+    'rmehri01/onenord.nvim',
+    enabled = false,
+    lazy = false,
+    priority = 999,
+    config = function()
+      vim.cmd.colorscheme 'onenord'
+    end,
+  },
+
+  {
+    'ellisonleao/gruvbox.nvim',
+    enabled = false,
+    lazy = false,
+    priority = 999,
+    config = function()
+      vim.opt.background = 'dark'
+      vim.cmd.colorscheme 'gruvbox'
+    end,
   },
 
 ------------------------------------------------------------------------------
@@ -1030,6 +1080,8 @@ require('lazy').setup({
     },
   },
 })
+
+vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
