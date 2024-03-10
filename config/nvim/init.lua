@@ -17,10 +17,10 @@ vim.g.have_nerd_font = true
 vim.opt.number = true
 -- You can also add relative line numbers, for help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = true
+-- vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
-vim.opt.mouse = ''
+vim.opt.mouse = 'a'
 
 -- Don't show the mode, since it's already in status line
 vim.opt.showmode = false
@@ -28,7 +28,7 @@ vim.opt.showmode = false
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.opt.clipboard = ''
+vim.opt.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -54,10 +54,8 @@ vim.opt.splitbelow = true
 -- Sets how neovim will display certain whitespace in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
-vim.opt.list = false
---vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
-vim.opt.listchars = { tab = '«·»', trail = '·', nbsp = '␣' }
-vim.keymap.set('n', ',l', ':set list!<CR>:set list?<CR>')
+vim.opt.list = true
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -73,7 +71,7 @@ vim.opt.scrolloff = 10
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
-vim.keymap.set('n', ',.', '<cmd>nohlsearch<CR>')
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
@@ -117,65 +115,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
-
-------------------------------------------------------------------------------
-
-vim.opt.colorcolumn = '80'
-vim.opt.showtabline = 2
-
-vim.opt.winheight = 10
-vim.opt.winminheight = 10
-vim.opt.winwidth = 10
-vim.opt.winminwidth = 10
-
--- remapping Y was a stupid change by neovim
-vim.keymap.set('n', 'Y', 'yy')
-
--- I like cinoptions! (vs an annoying autoformatter plugin)...
-vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
-  pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino', '*.cs', '*.java', '*.js', '*.lua', '*.rs' },
-  callback = function()
-    vim.opt.cindent = true
-    vim.opt.cinoptions = 's,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30,Ws'
-  end
-})
-
--- jump/edit the previous buffer
-vim.keymap.set('n', '<C-b>', '<cmd>e #<CR>')
-
--- I smash <C-s> all the time!
-vim.keymap.set('n', '<C-s>', '<cmd>update<CR>', { silent = true, noremap = true })
-vim.keymap.set('i', '<C-s>', '<C-o><cmd>update<CR>', { silent = true, noremap = true })
-
--- zoom the current window in/out
-vim.keymap.set('n', 'Zi', '<C-w>_ | <C-w>|', { silent = true, noremap = true })
-vim.keymap.set('n', 'Zo', '<C-w>=', { silent = true, noremap = true })
-
--- toggle spelling
-vim.keymap.set('n', ',s', '<cmd>set spell!<CR><cmd>set spell?<CR>', { silent = true })
-
--- toggle paste
-vim.keymap.set('n', ',v', '<cmd>set paste!<CR><cmd>set paste?<CR>', { silent = true })
-
--- cut/paste to/from system clipboard
-vim.keymap.set('v', ',y', '+y',  { silent = true }) -- yank multiple lines
-vim.keymap.set('n', ',y', '+y',  { silent = true }) -- yank motion
-vim.keymap.set('n', ',Y', '+yy', { silent = true }) -- yank single line
-vim.keymap.set('v', ',p', '+p',  { silent = true }) -- overwrite multiple lines
-vim.keymap.set('n', ',P', '+P',  { silent = true }) -- paste before cursor
-vim.keymap.set('n', ',p', '+p',  { silent = true }) -- paste after cursor
-
--- tab stuff
-vim.keymap.set('n', 'tn', '<cmd>tabnew<CR>', { silent = true })
-vim.keymap.set('n', 'th', '<cmd>tabprevious<CR>', { silent = true })
-vim.keymap.set('n', 'tl', '<cmd>tabnext<CR>', { silent = true })
-vim.keymap.set('n', 'tH', '<cmd>tabmove -1<CR>', { silent = true })
-vim.keymap.set('n', 'tL', '<cmd>tabmove +1<CR>', { silent = true })
-for i = 1, 9, 1 do
-  vim.keymap.set('n', ',' .. i, i .. 'gt', { silent = true })
-end
-
-------------------------------------------------------------------------------
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -228,66 +167,6 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
-      on_attach = function(bufnr)
-        local gs = package.loaded.gitsigns
-
-        local function map(mode, l, r, opts)
-          opts = opts or {}
-          opts.buffer = bufnr
-          vim.keymap.set(mode, l, r, opts)
-        end
-
-        -- Navigation
-        map({ 'n', 'v' }, ']c', function()
-          if vim.wo.diff then
-            return ']c'
-          end
-          vim.schedule(function()
-            gs.next_hunk()
-          end)
-          return '<Ignore>'
-        end, { expr = true, desc = 'Jump to next hunk' })
-
-        map({ 'n', 'v' }, '[c', function()
-          if vim.wo.diff then
-            return '[c'
-          end
-          vim.schedule(function()
-            gs.prev_hunk()
-          end)
-          return '<Ignore>'
-        end, { expr = true, desc = 'Jump to previous hunk' })
-
-        -- Actions
-        -- visual mode
-        map('v', '<leader>hs', function()
-          gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-        end, { desc = 'stage git hunk' })
-        map('v', '<leader>hr', function()
-          gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-        end, { desc = 'reset git hunk' })
-        -- normal mode
-        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
-        map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
-        map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
-        map('n', '<leader>hb', function()
-          gs.blame_line({ full = false })
-        end, { desc = 'git blame line' })
-        map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
-        map('n', '<leader>hD', function()
-          gs.diffthis('~')
-        end, { desc = 'git diff against last commit' })
-
-        -- Toggles
-        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
-        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
-
-        -- Text object
-        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
-      end,
     },
   },
 
@@ -621,7 +500,7 @@ require('lazy').setup({
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        --'stylua', -- Used to format lua code
+        'stylua', -- Used to format lua code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -642,7 +521,6 @@ require('lazy').setup({
 
   { -- Autoformat
     'stevearc/conform.nvim',
-    enabled = false, -- I HATE THIS PLUGIN!!!
     opts = {
       notify_on_error = false,
       format_on_save = {
@@ -811,17 +689,6 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
-
-      require('mini.align').setup()
-      require('mini.trailspace').setup()
-      local indentscope = require('mini.indentscope')
-      indentscope.setup({
-        symbol='│',
-        draw = {
-          animation = indentscope.gen_animation.none(),
-          --animation = indentscope.gen_animation.quadratic({ easing = 'out', duration = 10, unit = 'total' }),
-        },
-      })
     end,
   },
 
@@ -837,7 +704,7 @@ require('lazy').setup({
         -- Autoinstall languages that are not installed
         auto_install = true,
         highlight = { enable = true },
-        indent = { enable = false }, -- This completely F's cinoptions...
+        indent = { enable = true },
       }
 
       -- There are additional nvim-treesitter modules that you can use to interact
@@ -868,196 +735,7 @@ require('lazy').setup({
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
 
-------------------------------------------------------------------------------
-
-  'tpope/vim-fugitive',
-
-  {
-    'jedrzejboczar/possession.nvim',
-    config = function()
-      require('possession').setup {
-        commands = {
-          save = 'PoSave',
-          load = 'PoLoad',
-          close = 'PoClose',
-          delete = 'PoDelete',
-          show = 'PoShow',
-          list = 'PoList',
-          migrate = 'PoMigrate',
-        },
-      }
-      require('telescope').load_extension('possession')
-      vim.keymap.set('n', ',o', ':Telescope possession list<CR>', { silent = true })
-    end,
-  },
-
-  {
-    'nvim-lualine/lualine.nvim',
-    enabled = false,
-    config = function()
-      local function show_codeium_status()
-        return '{…}' .. vim.fn['codeium#GetStatusString']()
-      end
-
-      require('lualine').setup({
-        options = {
-          icons_enabled = false,
-          --theme = 'onedark',
-          component_separators = '|',
-          section_separators = '',
-        },
-        sections = {
-          lualine_b = {
-            { show_codeium_status },
-            { 'branch', 'diff', 'diagnostics' },
-          },
-        },
-      })
-    end,
-  },
-
-  {
-    'nanozuki/tabby.nvim',
-    config = function()
-      require('tabby').setup { }
-    end,
-  },
-
-  {
-    'chentoast/marks.nvim',
-    config = function()
-      require('marks').setup {
-        --builtin_marks = { '.', '<', '>', '^' },
-        --sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
-      }
-    end,
-  },
-
-  {
-    'ggandor/leap.nvim',
-    config = function()
-      vim.keymap.set({'n', 'x', 'o'}, 's', '<Plug>(leap-forward)')
-      vim.keymap.set({'n', 'x', 'o'}, 'S', '<Plug>(leap-backward)')
-    end,
-  },
-
-  {
-    'Exafunction/codeium.vim',
-    event = 'BufEnter',
-    config = function()
-      --vim.g.codeium_enabled = false
-      vim.g.codeium_idle_delay = 75
-      vim.keymap.set('i', '<C-f>', function()
-        return vim.fn['codeium#CycleCompletions'](1)
-      end, { expr = true, silent = true })
-      vim.keymap.set('i', '<C-g>', function()
-        return vim.fn['codeium#CycleCompletions'](-1)
-      end, { expr = true, silent = true })
-      vim.keymap.set('i', '<C-h>', function()
-        return vim.fn['codeium#Complete']()
-      end, { expr = true, silent = true })
-    end,
-  },
-
-  {
-    'tom-anders/telescope-vim-bookmarks.nvim',
-    dependencies = {
-      'MattesGroeger/vim-bookmarks',
-    },
-    config = function()
-      require('telescope').load_extension('vim_bookmarks')
-      vim.g.bookmark_no_default_key_mappings = 1
-      vim.g.bookmark_auto_save = 1
-      vim.keymap.set('n', ',,a', '<Plug>BookmarkAnnotate', { silent = true })
-      vim.keymap.set('n', ',,b', '<Plug>BookmarkToggle', { silent = true })
-      vim.keymap.set('n', ',,j', '<Plug>BookmarkNext', { silent = true })
-      vim.keymap.set('n', ',,k', '<Plug>BookmarkPrev', { silent = true })
-      --vim.keymap.set('n', ',,s', '<Plug>BookmarkShowAll', { silent = true })
-      vim.keymap.set('n', ',,s', ':Telescope vim_bookmarks all<CR>', { silent = true })
-      vim.keymap.del('n', 'ma', { silent = true }) -- was BookmarkShowAll
-    end,
-  },
-
-  {
-    'lukas-reineke/indent-blankline.nvim',
-    enabled = false,
-    -- See `:help ibl`
-    main = 'ibl',
-    opts = {},
-    },
-  {
-    'junegunn/vim-easy-align',
-    enabled = false,
-    config = function()
-      vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
-      vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
-    end,
-  },
-
-  {
-    'folke/noice.nvim',
-    event = 'VeryLazy',
-    opts = {},
-    dependencies = {
-      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-      'MunifTanjim/nui.nvim',
-      -- OPTIONAL:
-      --   `nvim-notify` is only needed, if you want to use the notification view.
-      --   If not available, we use `mini` as the fallback
-      --'rcarriga/nvim-notify',
-    },
-  },
-
-  {
-    'nvim-tree/nvim-tree.lua',
-    opts = {
-      view = {
-        float = {
-          enable = true,
-          open_win_config = {
-            width = 50,
-            height = 40,
-            row = 4,
-            col = 12,
-          },
-        },
-      },
-      vim.keymap.set('n', '<F12>', '<cmd>NvimTreeToggle<CR>', { silent = true }),
-    },
-  },
-
-  {
-    'navarasu/onedark.nvim',
-    enabled = false,
-    lazy = false,
-    priority = 999,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
-
-  {
-    'rmehri01/onenord.nvim',
-    enabled = false,
-    lazy = false,
-    priority = 999,
-    config = function()
-      vim.cmd.colorscheme 'onenord'
-    end,
-  },
-
-  {
-    'ellisonleao/gruvbox.nvim',
-    enabled = false,
-    lazy = false,
-    priority = 999,
-    config = function()
-      vim.opt.background = 'dark'
-      vim.cmd.colorscheme 'gruvbox'
-    end,
-  },
-
-------------------------------------------------------------------------------
+  { import = 'lazy_overrides' },
 
 }, {
   ui = {
@@ -1081,7 +759,7 @@ require('lazy').setup({
   },
 })
 
-vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
+require('overrides')
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

@@ -1,0 +1,352 @@
+
+-- Return a table that gets merged into the plugin config spec table...
+
+return {
+
+  { -- override conform.nvim
+    'stevearc/conform.nvim',
+    enabled = false, -- I HATE THIS PLUGIN!!!
+  },
+
+  { -- override nvim-treesitter
+    -- I added this override just to be able to get to 'indent'. I don't
+    -- think the plugin spec by kickstart is implemented correctly. Funny,
+    -- I came up with the same exact solution as this dude...
+    -- https://github.com/nvim-lua/kickstart.nvim/pull/732
+    'nvim-treesitter/nvim-treesitter',
+    opts = {
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'javascript', 'rust', 'python' },
+      auto_install = true,
+      highlight = { enable = true },
+      indent = { enable = false }, -- This completely F's cinoptions...
+    },
+    config = function(_, opts)
+      require('nvim-treesitter.configs').setup(opts)
+    end,
+  },
+
+  { -- override mini.nvim
+    'echasnovski/mini.nvim',
+    config = function()
+      require('mini.ai').setup { n_lines = 500 }
+      --require('mini.surround').setup()
+      require('mini.align').setup()
+      require('mini.trailspace').setup()
+      local indentscope = require('mini.indentscope')
+      indentscope.setup({
+        symbol='│',
+        draw = {
+          animation = indentscope.gen_animation.none(),
+          --animation = indentscope.gen_animation.quadratic({ easing = 'out', duration = 10, unit = 'total' }),
+        },
+      })
+    end,
+  },
+
+  { -- override gitsigns.nvim
+    'lewis6991/gitsigns.nvim',
+    opts = {
+      on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
+
+        local function map(mode, l, r, opts)
+          opts = opts or {}
+          opts.buffer = bufnr
+          vim.keymap.set(mode, l, r, opts)
+        end
+
+        -- Navigation
+        map({ 'n', 'v' }, ']c', function()
+          if vim.wo.diff then
+            return ']c'
+          end
+          vim.schedule(function()
+            gs.next_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to next hunk' })
+
+        map({ 'n', 'v' }, '[c', function()
+          if vim.wo.diff then
+            return '[c'
+          end
+          vim.schedule(function()
+            gs.prev_hunk()
+          end)
+          return '<Ignore>'
+        end, { expr = true, desc = 'Jump to previous hunk' })
+
+        -- Actions
+        -- visual mode
+        map('v', '<leader>hs', function()
+          gs.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+        end, { desc = 'stage git hunk' })
+        map('v', '<leader>hr', function()
+          gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+        end, { desc = 'reset git hunk' })
+        -- normal mode
+        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+        map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+        map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+        map('n', '<leader>hb', function()
+          gs.blame_line({ full = false })
+        end, { desc = 'git blame line' })
+        map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
+        map('n', '<leader>hD', function()
+          gs.diffthis('~')
+        end, { desc = 'git diff against last commit' })
+
+        -- Toggles
+        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+
+        -- Text object
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+      end,
+    },
+  },
+
+  {
+    'tpope/vim-fugitive',
+    event = 'VeryLazy',
+  },
+
+  {
+    'jedrzejboczar/possession.nvim',
+    opts = {
+      commands = {
+        save = 'PoSave',
+        load = 'PoLoad',
+        close = 'PoClose',
+        delete = 'PoDelete',
+        show = 'PoShow',
+        list = 'PoList',
+        migrate = 'PoMigrate',
+      },
+    },
+    keys = {
+      { ',o', '<cmd>Telescope possession list<CR>', desc = 'Possession' },
+    },
+    config = function(_, opts)
+      require('possession').setup(opts)
+      require('telescope').load_extension('possession')
+    end,
+  },
+
+  {
+    'nvim-lualine/lualine.nvim',
+    event = 'VimEnter',
+    config = function()
+      local function show_codeium_status()
+        return '{…}' .. vim.fn['codeium#GetStatusString']()
+      end
+
+      require('lualine').setup({
+        options = {
+          theme = 'tokyonight',
+        },
+        sections = {
+          lualine_b = {
+            { show_codeium_status },
+            { 'branch' },
+            { 'diff', colored = false },
+            { 'diagnostics' },
+          },
+        },
+      })
+    end,
+  },
+
+  {
+    'nanozuki/tabby.nvim',
+    enabled = false,
+    event = 'VimEnter',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = {},
+  },
+
+  {
+    'akinsho/bufferline.nvim',
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    opts = {},
+  },
+
+  {
+    'chentoast/marks.nvim',
+    event = 'VeryLazy',
+    config = function()
+      require('marks').setup {
+        --builtin_marks = { '.', '<', '>', '^' },
+        --sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
+      }
+    end,
+  },
+
+  {
+    'otavioschwanck/arrow.nvim',
+    enabled = false,
+    event = 'VeryLazy',
+    opts = {
+      show_icons = true,
+      leader_key = ';' -- Recommended to be a single key
+    },
+  },
+
+  {
+    'cbochs/grapple.nvim',
+    enabled = false,
+    dependencies = {
+        'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('grapple').setup()
+      vim.keymap.set('n', '<leader>a', require('grapple').toggle)
+      vim.keymap.set('n', '<leader>e', require('grapple').toggle_tags)
+    end,
+  },
+
+  {
+    'fnune/recall.nvim',
+    enabled = false,
+    event = 'VeryLazy',
+  },
+
+  {
+    'ggandor/leap.nvim',
+    keys = {
+      { 's', '<Plug>(leap-forward)', desc = 'Leap forward' },
+      { 'S', '<Plug>(leap-backward)', desc = 'Leap backward' },
+    },
+  },
+
+  {
+    'Exafunction/codeium.vim',
+    event = 'BufEnter',
+    config = function()
+      --vim.g.codeium_enabled = false
+      vim.g.codeium_idle_delay = 75
+      vim.keymap.set('i', '<C-f>', function()
+        return vim.fn['codeium#CycleCompletions'](1)
+      end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-g>', function()
+        return vim.fn['codeium#CycleCompletions'](-1)
+      end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-h>', function()
+        return vim.fn['codeium#Complete']()
+      end, { expr = true, silent = true })
+    end,
+  },
+
+  {
+    'tom-anders/telescope-vim-bookmarks.nvim',
+    enabled = false,
+    dependencies = {
+      'MattesGroeger/vim-bookmarks',
+    },
+    config = function()
+      require('telescope').load_extension('vim_bookmarks')
+      vim.g.bookmark_no_default_key_mappings = 1
+      vim.g.bookmark_auto_save = 1
+      vim.keymap.set('n', ',,a', '<Plug>BookmarkAnnotate', { silent = true })
+      vim.keymap.set('n', ',,b', '<Plug>BookmarkToggle', { silent = true })
+      vim.keymap.set('n', ',,j', '<Plug>BookmarkNext', { silent = true })
+      vim.keymap.set('n', ',,k', '<Plug>BookmarkPrev', { silent = true })
+      --vim.keymap.set('n', ',,s', '<Plug>BookmarkShowAll', { silent = true })
+      vim.keymap.set('n', ',,s', ':Telescope vim_bookmarks all<CR>', { silent = true })
+      vim.keymap.del('n', 'ma') -- was BookmarkShowAll
+    end,
+  },
+
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    enabled = false,
+    main = 'ibl',
+    opts = {},
+  },
+
+  {
+    'junegunn/vim-easy-align',
+    enabled = false,
+    config = function()
+      vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
+      vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
+    end,
+  },
+
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    opts = {},
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      'MunifTanjim/nui.nvim',
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      --'rcarriga/nvim-notify',
+    },
+  },
+
+  {
+    'nvim-tree/nvim-tree.lua',
+    opts = {
+      view = {
+        float = {
+          enable = true,
+          open_win_config = {
+            width = 50,
+            height = 40,
+            row = 4,
+            col = 12,
+          },
+        },
+      },
+    },
+    keys = {
+      { '<F12>', '<cmd>NvimTreeToggle<CR>', desc = 'nvim-tree' },
+    },
+    config = function(_, opts)
+      require('nvim-tree').setup(opts)
+    end,
+  },
+
+  {
+    'navarasu/onedark.nvim',
+    enabled = false,
+    lazy = false,
+    priority = 999,
+    config = function()
+      vim.cmd.colorscheme 'onedark'
+    end,
+  },
+
+  {
+    'rmehri01/onenord.nvim',
+    enabled = false,
+    lazy = false,
+    priority = 999,
+    config = function()
+      vim.cmd.colorscheme 'onenord'
+    end,
+  },
+
+  {
+    'ellisonleao/gruvbox.nvim',
+    enabled = false,
+    lazy = false,
+    priority = 999,
+    config = function()
+      vim.opt.background = 'dark'
+      vim.cmd.colorscheme 'gruvbox'
+    end,
+  },
+
+}
+
