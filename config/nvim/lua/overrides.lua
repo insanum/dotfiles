@@ -24,7 +24,7 @@ vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
 })
 
 -- toggle list chars
-vim.keymap.set('n', ',l', ':set list!<CR>:set list?<CR>', { desc = 'Toggle listchars' })
+vim.keymap.set('n', ',l', '<cmd>set list!<CR><cmd>set list?<CR>', { desc = 'Toggle listchars' })
 
 -- remove highlighted search results
 vim.keymap.del('n', '<Esc>')
@@ -71,6 +71,9 @@ end
 -- telescope for marks
 vim.keymap.set('n', '<leader>sm', require('telescope.builtin').marks, { desc = '[S]earch [M]arks' })
 
+-- telescope for bookmarks
+vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true })
+
 -- all comments rendered in italics
 vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
 
@@ -78,5 +81,15 @@ vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
 -- I haven't found a way to override the setting from my lazy_overrides.lua
 -- config that gets merged into the Lazy config plugin spec table.
 --vim.cmd 'TSDisable indent' -- This completely F's cinoptions...
+
+-- Workaround for bug where Telescope enters Insert mode on selection:
+-- https://github.com/nvim-telescope/telescope.nvim/issues/2027
+vim.api.nvim_create_autocmd("WinLeave", {
+  callback = function()
+    if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
+    end
+  end,
+})
 
 -- vim: ts=2 sts=2 sw=2 et

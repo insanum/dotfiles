@@ -3,11 +3,6 @@
 
 return {
 
-  { -- override conform.nvim
-    'stevearc/conform.nvim',
-    enabled = false, -- I HATE THIS PLUGIN!!!
-  },
-
   { -- override nvim-treesitter
     -- I added this override just to be able to get to 'indent'. I don't
     -- think the plugin spec by kickstart is implemented correctly. Funny,
@@ -104,7 +99,7 @@ return {
         map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
         -- Text object
-        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+        map({ 'o', 'x' }, 'ih', '<cmd><C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
       end,
     },
   },
@@ -162,16 +157,7 @@ return {
 
   {
     'nanozuki/tabby.nvim',
-    enabled = false,
     event = 'VimEnter',
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-    },
-    opts = {},
-  },
-
-  {
-    'akinsho/bufferline.nvim',
     dependencies = {
       'nvim-tree/nvim-web-devicons',
     },
@@ -190,32 +176,16 @@ return {
   },
 
   {
-    'otavioschwanck/arrow.nvim',
-    enabled = false,
+    'j-morano/buffer_manager.nvim',
     event = 'VeryLazy',
-    opts = {
-      show_icons = true,
-      leader_key = ';' -- Recommended to be a single key
-    },
-  },
-
-  {
-    'cbochs/grapple.nvim',
-    enabled = false,
     dependencies = {
-        'nvim-tree/nvim-web-devicons',
+      'nvim-lua/plenary.nvim',
     },
     config = function()
-      require('grapple').setup()
-      vim.keymap.set('n', '<leader>a', require('grapple').toggle)
-      vim.keymap.set('n', '<leader>e', require('grapple').toggle_tags)
+      require('buffer_manager').setup()
+      local bm_ui = require('buffer_manager.ui')
+      vim.keymap.set('n', ';', bm_ui.toggle_quick_menu, { desc = 'Buffer Manager' })
     end,
-  },
-
-  {
-    'fnune/recall.nvim',
-    enabled = false,
-    event = 'VeryLazy',
   },
 
   {
@@ -245,26 +215,6 @@ return {
   },
 
   {
-    'tom-anders/telescope-vim-bookmarks.nvim',
-    enabled = false,
-    dependencies = {
-      'MattesGroeger/vim-bookmarks',
-    },
-    config = function()
-      require('telescope').load_extension('vim_bookmarks')
-      vim.g.bookmark_no_default_key_mappings = 1
-      vim.g.bookmark_auto_save = 1
-      vim.keymap.set('n', ',,a', '<Plug>BookmarkAnnotate', { silent = true })
-      vim.keymap.set('n', ',,b', '<Plug>BookmarkToggle', { silent = true })
-      vim.keymap.set('n', ',,j', '<Plug>BookmarkNext', { silent = true })
-      vim.keymap.set('n', ',,k', '<Plug>BookmarkPrev', { silent = true })
-      --vim.keymap.set('n', ',,s', '<Plug>BookmarkShowAll', { silent = true })
-      vim.keymap.set('n', ',,s', ':Telescope vim_bookmarks all<CR>', { silent = true })
-      vim.keymap.del('n', 'ma') -- was BookmarkShowAll
-    end,
-  },
-
-  {
     'lukas-reineke/indent-blankline.nvim',
     enabled = false,
     main = 'ibl',
@@ -285,12 +235,14 @@ return {
     event = 'VeryLazy',
     opts = {},
     dependencies = {
-      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
       'MunifTanjim/nui.nvim',
-      -- OPTIONAL:
-      --   `nvim-notify` is only needed, if you want to use the notification view.
-      --   If not available, we use `mini` as the fallback
-      --'rcarriga/nvim-notify',
+      {
+        'rcarriga/nvim-notify',
+        opts = {
+          render = "default",
+          stages = "static",
+        },
+      },
     },
   },
 

@@ -255,16 +255,30 @@ require('lazy').setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
+      local actions = require("telescope.actions")
+      local select_map = {
+        i = { ['<C-j>'] = actions.move_selection_next,
+              ['<C-k>'] = actions.move_selection_previous, },
+        n = { ['<C-j>'] = actions.move_selection_next,
+              ['<C-k>'] = actions.move_selection_previous, },
+      }
+      -- local tab_drop_map = {
+      --   i = { ['<CR>'] = actions.select_tab_drop },
+      --   n = { ['<CR>'] = actions.select_tab_drop },
+      -- }
       require('telescope').setup {
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
+        defaults = {
+          mappings = select_map,
+        },
+        -- pickers = {
+        --   buffers    = { mappings = tab_drop_map, },
+        --   quickfix   = { mappings = tab_drop_map, },
+        --   marks      = { mappings = tab_drop_map, },
+        --   find_files = { mappings = tab_drop_map, },
         -- },
-        -- pickers = {}
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -734,6 +748,11 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
   -- { import = 'custom.plugins' },
+
+  { -- override conform.nvim
+    'stevearc/conform.nvim',
+    enabled = false, -- I HATE THIS PLUGIN!!!
+  },
 
   { import = 'lazy_overrides' },
 
