@@ -273,12 +273,16 @@ require('lazy').setup({
         defaults = {
           mappings = select_map,
         },
-        -- pickers = {
-        --   buffers    = { mappings = tab_drop_map, },
-        --   quickfix   = { mappings = tab_drop_map, },
-        --   marks      = { mappings = tab_drop_map, },
-        --   find_files = { mappings = tab_drop_map, },
-        -- },
+        pickers = {
+          buffers = {
+            initial_mode = "normal",
+            sort_mru = true,
+          },
+          -- buffers    = { mappings = tab_drop_map, },
+          -- quickfix   = { mappings = tab_drop_map, },
+          -- marks      = { mappings = tab_drop_map, },
+          -- find_files = { mappings = tab_drop_map, },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),

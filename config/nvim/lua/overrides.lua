@@ -14,6 +14,9 @@ vim.opt.winminheight = 10
 vim.opt.winwidth = 10
 vim.opt.winminwidth = 10
 
+vim.opt.splitright = true
+vim.opt.splitbelow = false
+
 -- I like cinoptions! (vs an annoying autoformatter plugin)...
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
   pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino', '*.cs', '*.java', '*.js', '*.lua', '*.rs' },
@@ -72,22 +75,20 @@ end
 vim.keymap.set('n', '<leader>sm', require('telescope.builtin').marks, { desc = '[S]earch [M]arks' })
 
 -- telescope for bookmarks
-vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true })
+vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[B]ookmarks' })
 
 -- all comments rendered in italics
 vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
 
--- This completely F's cinoptions!
--- I haven't found a way to override the setting from my lazy_overrides.lua
--- config that gets merged into the Lazy config plugin spec table.
---vim.cmd 'TSDisable indent' -- This completely F's cinoptions...
+-- virtual text (for search) needs to stand out a bit more
+vim.cmd.hi 'link NoiceVirtualText DiagnosticVirtualTextError'
 
 -- Workaround for bug where Telescope enters Insert mode on selection:
 -- https://github.com/nvim-telescope/telescope.nvim/issues/2027
-vim.api.nvim_create_autocmd("WinLeave", {
+vim.api.nvim_create_autocmd('WinLeave', {
   callback = function()
-    if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
+    if vim.bo.ft == 'TelescopePrompt' and vim.fn.mode() == 'i' then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'i', false)
     end
   end,
 })
