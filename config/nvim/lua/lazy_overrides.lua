@@ -35,6 +35,16 @@ return {
           --animation = indentscope.gen_animation.quadratic({ easing = 'out', duration = 10, unit = 'total' }),
         },
       })
+      require('mini.files').setup({
+        windows = {
+          -- Whether to show preview of file/directory under cursor
+          preview = true,
+          width_focus = 40,
+          width_nofocus = 40,
+          width_preview = 40,
+        },
+      })
+      vim.keymap.set('n', '<F12>', '<cmd>lua MiniFiles.open()<CR>', { desc = 'Mini Files', })
     end,
   },
 
@@ -105,6 +115,15 @@ return {
   },
 
   {
+    'max397574/better-escape.nvim',
+    config = function()
+      require('better_escape').setup({
+        mapping = { 'jk', 'jj' },
+      })
+    end,
+  },
+
+  {
     'tpope/vim-fugitive',
     event = 'VeryLazy',
   },
@@ -150,6 +169,13 @@ return {
             { 'diff', colored = false },
             { 'diagnostics' },
           },
+          lualine_c = {
+            {
+              'filename',
+              -- with lots of splits, make sure the filenames stand out
+              color = { fg = '#15161e', bg = '#ff9e64' },
+            },
+          },
         },
       })
     end,
@@ -162,6 +188,12 @@ return {
       'nvim-tree/nvim-web-devicons',
     },
     opts = {},
+  },
+
+  {
+    'kevinhwang91/nvim-bqf',
+    event = 'VeryLazy',
+    opts = {}
   },
 
   {
@@ -196,7 +228,7 @@ return {
           command = 'split'
         }
       },
-    };
+    },
     config = function(_, opts)
       require('buffer_manager').setup(opts)
       local bm_ui = require('buffer_manager.ui')
@@ -267,29 +299,6 @@ return {
         },
       },
     },
-  },
-
-  {
-    'nvim-tree/nvim-tree.lua',
-    opts = {
-      view = {
-        float = {
-          enable = true,
-          open_win_config = {
-            width = 50,
-            height = 40,
-            row = 4,
-            col = 12,
-          },
-        },
-      },
-    },
-    keys = {
-      { '<F12>', '<cmd>NvimTreeToggle<CR>', desc = 'nvim-tree' },
-    },
-    config = function(_, opts)
-      require('nvim-tree').setup(opts)
-    end,
   },
 
   {

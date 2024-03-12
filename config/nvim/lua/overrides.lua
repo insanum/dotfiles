@@ -74,14 +74,33 @@ end
 -- telescope for marks
 vim.keymap.set('n', '<leader>sm', require('telescope.builtin').marks, { desc = '[S]earch [M]arks' })
 
--- telescope for bookmarks
-vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[B]ookmarks' })
+-- telescope for marks.nvim marks/bookmarks
+--vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[M]arks [M]arks' })
+--vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[M]arks [B]ookmarks' })
+
+-- marks.nvim keymaps and commands for quickfix split at bottom and full width
+require('which-key').register({ ['<leader>m'] = { name = '[M]arks', _ = 'which_key_ignore' } })
+vim.keymap.set('n', '<leader>mf', '<cmd>MarksListBuf<CR>', { silent = true, desc = '[M]arks Bu[f]fer' })
+vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR>', { silent = true, desc = '[M]arks [M]arks all' })
+vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR>', { silent = true, desc = '[M]arks [B]ookmarks all' })
+vim.cmd([[
+command! MQFListAll  exe "lua require('marks').mark_state:all_to_list('quickfixlist')" | botright copen
+command! BMQFListAll exe "lua require('marks').bookmark_state:all_to_list('quickfixlist')" | botright copen
+]])
+
+-- quickfix/location list window stuff
+vim.keymap.del('n', '<leader>q')
+require('which-key').register({ ['<leader>q'] = { name = '[Q]uickfix', _ = 'which_key_ignore' } })
+vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>', { silent = true, desc = '[Q]uickfix [O]open' })
+--vim.keymap.set('n', '<leader>qc', '<cmd>windo if &buftype == "quickfix" || &buftype == "locationlist" | lclose | endif<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
+vim.keymap.set('n', '<leader>qc', '<cmd>lclose<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
+vim.keymap.set('n', '<leader>qx', '<cmd>lexpr []<CR>', { silent = true, desc = '[Q]uickfix [X]clear' })
 
 -- all comments rendered in italics
 vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
 
 -- virtual text (for search) needs to stand out a bit more
-vim.cmd.hi 'link NoiceVirtualText DiagnosticVirtualTextError'
+vim.cmd.hi 'link NoiceVirtualText Search'
 
 -- Workaround for bug where Telescope enters Insert mode on selection:
 -- https://github.com/nvim-telescope/telescope.nvim/issues/2027
