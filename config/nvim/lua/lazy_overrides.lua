@@ -25,7 +25,7 @@ return {
     config = function()
       require('mini.ai').setup { n_lines = 500 }
       --require('mini.surround').setup()
-      require('mini.align').setup()
+      --require('mini.align').setup()
       require('mini.trailspace').setup()
       local indentscope = require('mini.indentscope')
       indentscope.setup({
@@ -125,7 +125,18 @@ return {
 
   {
     'tpope/vim-fugitive',
+    enabled = false,
     event = 'VeryLazy',
+  },
+
+  {
+    'NeogitOrg/neogit',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+      'nvim-telescope/telescope.nvim',
+    },
+    config = true
   },
 
   {
@@ -171,9 +182,18 @@ return {
           },
           lualine_c = {
             {
-              'filename',
               -- with lots of splits, make sure the filenames stand out
+              'filename',
               color = { fg = '#15161e', bg = '#ff9e64' },
+            },
+          },
+        },
+        inactive_sections = {
+          lualine_c = {
+            {
+              -- with lots of splits, make sure the filenames stand out
+              'filename',
+              color = { fg = '#15161e', bg = '#f7768e' },
             },
           },
         },
@@ -255,6 +275,10 @@ return {
     'Exafunction/codeium.vim',
     event = 'BufEnter',
     config = function()
+      -- force codeium to use socks5 proxy
+      vim.env.HTTP_PROXY = 'socks5://127.0.0.1:9999'
+      vim.env.HTTPS_PROXY = 'socks5://127.0.0.1:9999'
+
       --vim.g.codeium_enabled = false
       vim.g.codeium_idle_delay = 75
       vim.keymap.set('i', '<C-f>', function()
@@ -278,10 +302,9 @@ return {
 
   {
     'junegunn/vim-easy-align',
-    enabled = false,
     config = function()
       vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
-      vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
+      --vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
     end,
   },
 
@@ -296,9 +319,25 @@ return {
         opts = {
           render = 'default',
           stages = 'static',
+          top_down = false;
         },
       },
     },
+  },
+
+  {
+    'numToStr/FTerm.nvim',
+    enabled = false,
+    config = function()
+      require'FTerm'.setup({
+        --env = { TERM = 'tmux-256color' },
+        border = 'double',
+        dimensions  = {
+            height = 0.8,
+            width = 0.8,
+        },
+      })
+    end,
   },
 
   {

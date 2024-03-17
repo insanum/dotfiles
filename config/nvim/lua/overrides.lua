@@ -14,7 +14,7 @@ vim.opt.winminheight = 10
 vim.opt.winwidth = 10
 vim.opt.winminwidth = 10
 
-vim.opt.splitright = true
+vim.opt.splitright = false
 vim.opt.splitbelow = false
 
 -- I like cinoptions! (vs an annoying autoformatter plugin)...

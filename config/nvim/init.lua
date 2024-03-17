@@ -275,7 +275,6 @@ require('lazy').setup({
         },
         pickers = {
           buffers = {
-            initial_mode = "normal",
             sort_mru = true,
           },
           -- buffers    = { mappings = tab_drop_map, },
