@@ -124,6 +124,13 @@ return {
   },
 
   {
+    'NvChad/nvim-colorizer.lua',
+    event = 'VeryLazy',
+    main = 'colorizer',
+    opts = {},
+  },
+
+  {
     'tpope/vim-fugitive',
     enabled = false,
     event = 'VeryLazy',
@@ -137,6 +144,17 @@ return {
       'nvim-telescope/telescope.nvim',
     },
     config = true
+  },
+
+  {
+    'stevearc/aerial.nvim',
+    enabled = false,
+    event = 'VeryLazy',
+    opts = {},
+    dependencies = {
+       "nvim-treesitter/nvim-treesitter",
+       "nvim-tree/nvim-web-devicons"
+    },
   },
 
   {
