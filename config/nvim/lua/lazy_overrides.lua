@@ -90,26 +90,26 @@ return {
           gs.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
         end, { desc = 'reset git hunk' })
         -- normal mode
-        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+        map('n', '<leader>hs', gs.stage_hunk, { desc = 'git Stage hunk' })
+        map('n', '<leader>hr', gs.reset_hunk, { desc = 'git Reset hunk' })
         map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+        map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'git Undo stage hunk' })
         map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-        map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+        map('n', '<leader>hp', gs.preview_hunk, { desc = 'git Preview hunk' })
         map('n', '<leader>hb', function()
           gs.blame_line({ full = false })
-        end, { desc = 'git blame line' })
-        map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
+        end, { desc = 'git Blame line' })
+        map('n', '<leader>hd', gs.diffthis, { desc = 'git Diff against index' })
         map('n', '<leader>hD', function()
           gs.diffthis('~')
-        end, { desc = 'git diff against last commit' })
+        end, { desc = 'git Diff against last commit' })
 
         -- Toggles
         map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
         map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
         -- Text object
-        map({ 'o', 'x' }, 'ih', '<cmd><C-U>Gitsigns select_hunk<CR>', { desc = 'select git hunk' })
+        map({ 'o', 'x' }, 'ih', '<cmd><C-U>Gitsigns select_hunk<CR>', { desc = 'git Select hunk' })
       end,
     },
   },
@@ -147,13 +147,28 @@ return {
   },
 
   {
+    'ThePrimeagen/git-worktree.nvim',
+    config = function()
+      --vim.g.git_worktree_log_level = 'debug'
+      require('git-worktree').setup({
+        change_directory_command = 'tcd',
+        update_on_change_command = 'Telescope find_files',
+        --autopush = true,
+      })
+      require('telescope').load_extension('git_worktree')
+      vim.keymap.set('n', '<leader>hw', '<cmd>Telescope git_worktree<CR>', { desc = 'git Switch worktree' })
+      vim.keymap.set('n', '<leader>hW', require('telescope').extensions.git_worktree.create_git_worktree, { desc = 'git Create worktree' })
+    end,
+  },
+
+  {
     'stevearc/aerial.nvim',
     enabled = false,
     event = 'VeryLazy',
     opts = {},
     dependencies = {
-       "nvim-treesitter/nvim-treesitter",
-       "nvim-tree/nvim-web-devicons"
+       'nvim-treesitter/nvim-treesitter',
+       'nvim-tree/nvim-web-devicons'
     },
   },
 
