@@ -138,7 +138,6 @@ return {
 
   {
     'NeogitOrg/neogit',
-    event = 'VeryLazy',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'sindrets/diffview.nvim',
@@ -152,6 +151,7 @@ return {
 
   {
     'ThePrimeagen/git-worktree.nvim',
+    event = 'VeryLazy',
     config = function()
       --vim.g.git_worktree_log_level = 'debug'
       require('git-worktree').setup({
