@@ -100,16 +100,16 @@ return {
           gs.blame_line({ full = false })
         end, { desc = 'git Blame line' })
         map('n', '<leader>hd', gs.diffthis, { desc = 'git Diff against index' })
-        map('n', '<leader>hD', function()
-          gs.diffthis('~')
-        end, { desc = 'git Diff against last commit' })
+        --map('n', '<leader>hD', function()
+        --  gs.diffthis('~')
+        --end, { desc = 'git Diff against last commit' })
 
         -- Toggles
-        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
-        map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+        --map('n', '<leader>hB', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+        --map('n', '<leader>hL', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
         -- Text object
-        map({ 'o', 'x' }, 'ih', '<cmd><C-U>Gitsigns select_hunk<CR>', { desc = 'git Select hunk' })
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'git Select hunk' })
       end,
     },
   },
@@ -138,12 +138,16 @@ return {
 
   {
     'NeogitOrg/neogit',
+    event = 'VeryLazy',
     dependencies = {
       'nvim-lua/plenary.nvim',
       'sindrets/diffview.nvim',
       'nvim-telescope/telescope.nvim',
     },
-    config = true
+    config = true,
+    keys = {
+      { '<leader>hg', '<cmd>Neogit<CR>', desc = 'git Neogit' },
+    },
   },
 
   {
@@ -156,8 +160,8 @@ return {
         --autopush = true,
       })
       require('telescope').load_extension('git_worktree')
-      vim.keymap.set('n', '<leader>hw', '<cmd>Telescope git_worktree<CR>', { desc = 'git Switch worktree' })
-      vim.keymap.set('n', '<leader>hW', require('telescope').extensions.git_worktree.create_git_worktree, { desc = 'git Create worktree' })
+      vim.keymap.set('n', '<leader>hw', '<cmd>Telescope git_worktree<CR>', { desc = 'git Worktree switch' })
+      vim.keymap.set('n', '<leader>hW', require('telescope').extensions.git_worktree.create_git_worktree, { desc = 'git Worktree create' })
     end,
   },
 
