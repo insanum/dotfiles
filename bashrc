@@ -145,10 +145,10 @@ if [[ -n "$PS1" ]]; then
   source $HOME/.bashline.sh
 fi
 
-BASE16_SHELL="$HOME/src/base16-shell"
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        eval "$("$BASE16_SHELL/profile_helper.sh")"
+#BASE16_SHELL="$HOME/src/base16-shell"
+#[ -n "$PS1" ] && \
+#    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+#        eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 export FZF_DEFAULT_OPTS="--no-mouse --bind ctrl-p:toggle-preview,pgdn:preview-page-down,pgup:preview-page-up,ctrl-d:page-down,ctrl-u:page-up --color='hl:39,hl+:39:bold' --preview='(~/.vim/plugged/fzf.vim/bin/preview.sh {} || cat {} || tree -C {})'"
 export FZF_TMUX=0

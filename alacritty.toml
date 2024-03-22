@@ -1,106 +1,100 @@
-[[colors.indexed_colors]]
-color = "#d08770"
-index = 16
 
-[[colors.indexed_colors]]
-color = "#5e81ac"
-index = 17
+# Colors: https://github.com/aaron-williamson/base16-alacritty
 
-[[colors.indexed_colors]]
-color = "#3b4252"
-index = 18
+[colors]
+draw_bold_text_with_bright_colors = false
 
-[[colors.indexed_colors]]
-color = "#434c5e"
-index = 19
-
-[[colors.indexed_colors]]
-color = "#d8dee9"
-index = 20
-
-[[colors.indexed_colors]]
-color = "#eceff4"
-index = 21
-
-[colors.bright]
-black = "#4c566a"
-blue = "#81a1c1"
-cyan = "#88c0d0"
-green = "#a3be8c"
-magenta = "#b48ead"
-red = "#bf616a"
-white = "#8fbcbb"
-yellow = "#ebcb8b"
-
-[colors.cursor]
-cursor = "#e5e9f0"
-text = "#2e3440"
-
-[colors.normal]
-black = "#2e3440"
-blue = "#81a1c1"
-cyan = "#88c0d0"
-green = "#a3be8c"
-magenta = "#b48ead"
-red = "#bf616a"
-white = "#e5e9f0"
-yellow = "#ebcb8b"
+# TOKYONIGHT ########################################################
 
 [colors.primary]
-background = "#2e3440"
-foreground = "#e5e9f0"
+background = '0x1a1b26'
+foreground = '0xa9b1d6'
 
-#[[colors_no.indexed_colors]]
-#color = "#fe8019"
-#index = 16
+[colors.cursor]
+text = '0x1a1b26'
+cursor = '0xa9b1d6'
+
+[colors.normal]
+black = '0x1a1b26'
+red = '0xc0caf5'
+green = '0x9ece6a'
+yellow = '0x0db9d7'
+blue = '0x2ac3de'
+magenta = '0xbb9af7'
+cyan = '0xb4f9f8'
+white = '0xa9b1d6'
+
+[colors.bright]
+black = '0x444b6a'
+red = '0xa9b1d6'
+green = '0x16161e'
+yellow = '0x2f3549'
+blue = '0x787c99'
+magenta = '0xcbccd1'
+cyan = '0xf7768e'
+white = '0xd5d6db'
+
+# NORD ##############################################################
+
+#[colors.primary]
+#background = '0x2e3440'
+#foreground = '0xe5e9f0'
 #
-#[[colors_no.indexed_colors]]
-#color = "#d65d0e"
-#index = 17
+#[colors.cursor]
+#text = '0x2e3440'
+#cursor = '0xe5e9f0'
 #
-#[[colors_no.indexed_colors]]
-#color = "#3c3836"
-#index = 18
+#[colors.normal]
+#black = '0x2e3440'
+#red = '0xbf616a'
+#green = '0xa3be8c'
+#yellow = '0xebcb8b'
+#blue = '0x81a1c1'
+#magenta = '0xb48ead'
+#cyan = '0x88c0d0'
+#white = '0xe5e9f0'
 #
-#[[colors_no.indexed_colors]]
-#color = "#504945"
-#index = 19
+#[colors.bright]
+#black = '0x4c566a'
+#red = '0xd08770'
+#green = '0x3b4252'
+#yellow = '0x434c5e'
+#blue = '0xd8dee9'
+#magenta = '0xeceff4'
+#cyan = '0x5e81ac'
+#white = '0x8fbcbb'
+
+# GRUVBOX ###########################################################
+
+#[colors.primary]
+#background = '0x1d2021'
+#foreground = '0xd5c4a1'
 #
-#[[colors_no.indexed_colors]]
-#color = "#bdae93"
-#index = 20
+#[colors.cursor]
+#text = '0x1d2021'
+#cursor = '0xd5c4a1'
 #
-#[[colors_no.indexed_colors]]
-#color = "#ebdbb2"
-#index = 21
+#[colors.normal]
+#black = '0x1d2021'
+#red = '0xfb4934'
+#green = '0xb8bb26'
+#yellow = '0xfabd2f'
+#blue = '0x83a598'
+#magenta = '0xd3869b'
+#cyan = '0x8ec07c'
+#white = '0xd5c4a1'
 #
-#[colors_no.bright]
-#black = "#665c54"
-#blue = "#83a598"
-#cyan = "#8ec07c"
-#green = "#b8bb26"
-#magenta = "#d3869b"
-#red = "#fb4934"
-#white = "#fbf1c7"
-#yellow = "#fabd2f"
-#
-#[colors_no.cursor]
-#cursor = "#d5c4a1"
-#text = "#282828"
-#
-#[colors_no.normal]
-#black = "#282828"
-#blue = "#83a598"
-#cyan = "#8ec07c"
-#green = "#b8bb26"
-#magenta = "#d3869b"
-#red = "#fb4934"
-#white = "#d5c4a1"
-#yellow = "#fabd2f"
-#
-#[colors_no.primary]
-#background = "#282828"
-#foreground = "#d5c4a1"
+#[colors.bright]
+#black = '0x665c54'
+#red = '0xfe8019'
+#green = '0x3c3836'
+#yellow = '0x504945'
+#blue = '0xbdae93'
+#magenta = '0xebdbb2'
+#cyan = '0xd65d0e'
+#white = '0xfbf1c7'
+
+#####################################################################
 
 [font]
 size = 16.0
@@ -149,3 +143,4 @@ startup_mode = "Maximized"
 [window.padding]
 x = 6
 y = 2
+
