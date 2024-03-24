@@ -96,6 +96,15 @@ vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>', { silent = true, desc = '[Q]
 vim.keymap.set('n', '<leader>qc', '<cmd>lclose<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
 vim.keymap.set('n', '<leader>qx', '<cmd>lexpr []<CR>', { silent = true, desc = '[Q]uickfix [X]clear' })
 
+-- obsidian
+require('which-key').register({ ['<leader>o'] = { name = '[O]bsidian', _ = 'which_key_ignore' } })
+vim.keymap.set('n', '<leader>oq', '<cmd>ObsidianQuickSwitch<CR>', { desc = '[O]bsidian [Q]uickSwitch' })
+vim.keymap.set('n', '<leader>os', '<cmd>ObsidianSearch<CR>', { desc = '[O]bsidian [S]earch' })
+vim.keymap.set('n', '<leader>ot', '<cmd>ObsidianToday<CR>', { desc = '[O]bsidian [T]oday' })
+vim.keymap.set('n', '<leader>oj', '<cmd>ObsidianDailies -30 1<CR>', { desc = '[O]bsidian [J]ournal' })
+vim.keymap.set('n', '<leader>ob', '<cmd>ObsidianBacklinks<CR>', { desc = '[O]bsidian [B]acklinks' })
+vim.keymap.set('n', '<leader>of', '<cmd>ObsidianLinks<CR>', { desc = '[O]bsidian [F]orward links' })
+
 -- all comments rendered in italics
 vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
 

@@ -10,7 +10,10 @@ return {
     -- https://github.com/nvim-lua/kickstart.nvim/pull/732
     'nvim-treesitter/nvim-treesitter',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc', 'javascript', 'rust', 'python' },
+      ensure_installed = {
+        'bash', 'c', 'html', 'lua', 'markdown', 'markdown_inline',
+        'vim', 'vimdoc', 'javascript', 'rust', 'python'
+      },
       auto_install = true,
       highlight = { enable = true },
       indent = { enable = false }, -- This completely F's cinoptions...
@@ -408,5 +411,25 @@ return {
     end,
   },
 
+  {
+    'epwalsh/obsidian.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-telescope/telescope.nvim',
+    },
+    opts = {
+      dir = '/Volumes/apfs_case_sensitive/notes',
+      daily_notes = {
+        folder = 'Journal',
+        date_format = '%Y-%m-%d',
+      },
+      disable_frontmatter = true,
+      picker = { name = "telescope.nvim" },
+    },
+    keys = {
+      { '<leader>oo', '<cmd>tabnew<CR><cmd>tcd /Volumes/apfs_case_sensitive/notes<CR><cmd>setlocal conceallevel=1<CR><cmd>ObsidianQuickSwitch<CR>', desc = '[O]bsidian [O]pen' },
+    },
+  },
 }
 
