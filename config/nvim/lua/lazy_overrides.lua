@@ -128,7 +128,6 @@ return {
 
   {
     'NvChad/nvim-colorizer.lua',
-    event = 'VeryLazy',
     main = 'colorizer',
     opts = {},
   },
@@ -425,6 +424,12 @@ return {
         date_format = '%Y-%m-%d',
       },
       disable_frontmatter = true,
+      note_id_func = function(title)
+        if title ~= nil then
+          return title
+        end
+        return tostring(os.time())
+      end,
       picker = { name = "telescope.nvim" },
     },
     keys = {
