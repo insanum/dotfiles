@@ -24,8 +24,9 @@ function fish_my_keybinds
     # don't cancel the line with 'escape' in default mode
     bind --mode default \e repaint
 
-    # set 'jk' as escape
-    bind --mode insert --sets-mode default jk backward-char repaint
+    # set 'jj' and 'jk' as escape
+    bind --mode insert --sets-mode default jj backward-char repaint
+    #bind --mode insert --sets-mode default jk backward-char repaint
 
     # fish 'D' in vi mode is broken
     bind -s --preset D kill-line backward-char

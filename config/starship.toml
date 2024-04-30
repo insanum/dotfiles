@@ -7,6 +7,7 @@ c.disabled = true
 nodejs.disabled = true
 python.disabled = true
 lua.disabled = true
+ocaml.disabled = true
 
 [fill]
 symbol = "."

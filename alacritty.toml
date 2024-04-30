@@ -7,92 +7,92 @@ draw_bold_text_with_bright_colors = false
 # TOKYONIGHT ########################################################
 
 [colors.primary]
-background = '0x1a1b26'
-foreground = '0xa9b1d6'
+background = '#1a1b26'
+foreground = '#a9b1d6'
 
 [colors.cursor]
-text = '0x1a1b26'
-cursor = '0xa9b1d6'
+text   = '#1a1b26'
+cursor = '#a9b1d6'
 
 [colors.normal]
-black = '0x1a1b26'
-red = '0xc0caf5'
-green = '0x9ece6a'
-yellow = '0x0db9d7'
-blue = '0x2ac3de'
-magenta = '0xbb9af7'
-cyan = '0xb4f9f8'
-white = '0xa9b1d6'
+black   = '#1a1b26'
+red     = '#f7768e'
+green   = '#9ece6a'
+yellow  = '#cbccd1'
+blue    = '#0db9d7'
+magenta = '#bb9af7'
+cyan    = '#2ac3de'
+white   = '#a9b1d6'
 
 [colors.bright]
-black = '0x444b6a'
-red = '0xa9b1d6'
-green = '0x16161e'
-yellow = '0x2f3549'
-blue = '0x787c99'
-magenta = '0xcbccd1'
-cyan = '0xf7768e'
-white = '0xd5d6db'
+black   = '#444b6a'
+red     = '#f7768e'
+green   = '#9ece6a'
+yellow  = '#cbccd1'
+blue    = '#0db9d7'
+magenta = '#bb9af7'
+cyan    = '#2ac3de'
+white   = '#d5d6db'
 
 # NORD ##############################################################
 
 #[colors.primary]
-#background = '0x2e3440'
-#foreground = '0xe5e9f0'
+#background = '#2e3440'
+#foreground = '#e5e9f0'
 #
 #[colors.cursor]
-#text = '0x2e3440'
-#cursor = '0xe5e9f0'
+#text   = '#2e3440'
+#cursor = '#e5e9f0'
 #
 #[colors.normal]
-#black = '0x2e3440'
-#red = '0xbf616a'
-#green = '0xa3be8c'
-#yellow = '0xebcb8b'
-#blue = '0x81a1c1'
-#magenta = '0xb48ead'
-#cyan = '0x88c0d0'
-#white = '0xe5e9f0'
+#black   = '#2e3440'
+#red     = '#bf616a'
+#green   = '#a3be8c'
+#yellow  = '#ebcb8b'
+#blue    = '#81a1c1'
+#magenta = '#b48ead'
+#cyan    = '#88c0d0'
+#white   = '#e5e9f0'
 #
 #[colors.bright]
-#black = '0x4c566a'
-#red = '0xd08770'
-#green = '0x3b4252'
-#yellow = '0x434c5e'
-#blue = '0xd8dee9'
-#magenta = '0xeceff4'
-#cyan = '0x5e81ac'
-#white = '0x8fbcbb'
+#black   = '#4c566a'
+#red     = '#d08770'
+#green   = '#3b4252'
+#yellow  = '#434c5e'
+#blue    = '#d8dee9'
+#magenta = '#eceff4'
+#cyan    = '#5e81ac'
+#white   = '#8fbcbb'
 
 # GRUVBOX ###########################################################
 
 #[colors.primary]
-#background = '0x1d2021'
-#foreground = '0xd5c4a1'
+#background = '#1d2021'
+#foreground = '#d5c4a1'
 #
 #[colors.cursor]
-#text = '0x1d2021'
-#cursor = '0xd5c4a1'
+#text   = '#1d2021'
+#cursor = '#d5c4a1'
 #
 #[colors.normal]
-#black = '0x1d2021'
-#red = '0xfb4934'
-#green = '0xb8bb26'
-#yellow = '0xfabd2f'
-#blue = '0x83a598'
-#magenta = '0xd3869b'
-#cyan = '0x8ec07c'
-#white = '0xd5c4a1'
+#black   = '#1d2021'
+#red     = '#fb4934'
+#green   = '#b8bb26'
+#yellow  = '#fabd2f'
+#blue    = '#83a598'
+#magenta = '#d3869b'
+#cyan    = '#8ec07c'
+#white   = '#d5c4a1'
 #
 #[colors.bright]
-#black = '0x665c54'
-#red = '0xfe8019'
-#green = '0x3c3836'
-#yellow = '0x504945'
-#blue = '0xbdae93'
-#magenta = '0xebdbb2'
-#cyan = '0xd65d0e'
-#white = '0xfbf1c7'
+#black   = '#665c54'
+#red     = '#fe8019'
+#green   = '#3c3836'
+#yellow  = '#504945'
+#blue    = '#bdae93'
+#magenta = '#ebdbb2'
+#cyan    = '#d65d0e'
+#white   = '#fbf1c7'
 
 #####################################################################
 

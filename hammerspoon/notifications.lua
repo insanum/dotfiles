@@ -1,6 +1,25 @@
 
 -- hack to clear the top showing notification
 
+function moveMouse(x1, y1, x2, y2, sleep)
+    local xdiff = x2 - x1
+    local ydiff = y2 - y1
+    local loop = math.floor( math.sqrt((xdiff*xdiff)+(ydiff*ydiff)) )
+    local xinc = xdiff / loop
+    local yinc = ydiff / loop
+
+    sleep = math.floor((sleep * 1000000) / loop)
+
+    for i = 1,loop do
+        x1 = x1 + xinc
+        y1 = y1 + yinc
+        hs.mouse.absolutePosition({x = math.floor(x1), y = math.floor(y1)})
+        hs.timer.usleep(sleep)
+    end
+
+    hs.mouse.absolutePosition({x = math.floor(x2), y = math.floor(y2)})
+end
+
 function clearNotification(doubleClick)
     local mouseOrigin = hs.mouse.absolutePosition()
     local win = hs.window.focusedWindow()
@@ -23,6 +42,7 @@ function clearNotification(doubleClick)
     end
 
     hs.mouse.absolutePosition(clickPoint)
+    --moveMouse(mouseOrigin.x, mouseOrigin.y, clickPoint.x, clickPoint.y, 0.1)
     hs.timer.usleep(500000) -- .5s
 
     -- click the "close" button on the notification
