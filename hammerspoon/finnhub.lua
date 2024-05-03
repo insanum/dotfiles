@@ -37,41 +37,53 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
     end
 
     local ticker_text = function(ticker)
-        local color = hs.drawing.color.x11.green
+        --local color = hs.drawing.color.x11.green
+        --local color = hs.drawing.color.x11.white
         local prfx = "+"
         local change = 0
         if tonumber(data["c"]) >= tonumber(data["pc"]) then
             change = (tonumber(data["c"]) - tonumber(data["pc"]))
         else -- tonumber(data["c"]) < tonumber(data["pc"])
-            color = hs.drawing.color.x11.red
+            --color = hs.drawing.color.x11.red
+            --color = hs.drawing.color.x11.white
             prfx  = "-"
             change = (tonumber(data["pc"]) - tonumber(data["c"]))
         end
 
         return
-        hs.styledtext.new(ticker .. ": ",
+        hs.styledtext.new(ticker .. ":",
                           {
                             font  = font,
-                            color = hs.drawing.color.x11.deepskyblue
+                            --color = hs.drawing.color.x11.deepskyblue
+                            --color = hs.drawing.color.x11.white
                           }) ..
-        hs.styledtext.new(round_decimal(data["c"]) .. " " ..
-                          prfx .. round_decimal(change),
+        hs.styledtext.new(round_decimal(data["c"]),
                           {
                             font  = font,
-                            color = color
+                            --color = color
+                          }) ..
+        hs.styledtext.new("/",
+                          {
+                            font  = font,
+                            --color = hs.drawing.color.x11.white
+                          }) ..
+        hs.styledtext.new(prfx .. round_decimal(change),
+                          {
+                            font  = font,
+                            --color = color
                           })
     end
 
     menubar:setTitle(hs.styledtext.new("[",
                                        {
                                          font  = font,
-                                         color = hs.drawing.color.x11.white
+                                         --color = hs.drawing.color.x11.white
                                        }) ..
                      ticker_text(ticker) ..
                      hs.styledtext.new("]",
                                        {
                                          font  = font,
-                                         color = hs.drawing.color.x11.white
+                                         --color = hs.drawing.color.x11.white
                                        })
                     )
     menubar:setTooltip(os.date("%x %X"))

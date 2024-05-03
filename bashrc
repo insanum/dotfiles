@@ -6,7 +6,7 @@ if [[ $(type -t exists) != function ]]; then
 fi
 
 if [[ $OSTYPE =~ darwin ]]; then
-  export SHELL=/usr/local/bin/bash
+  export SHELL=/opt/homebrew/bin/bash
 else
   export SHELL=/bin/bash
 fi
@@ -171,3 +171,4 @@ if [[ -z "${BASH_EXECUTION_STRING}" ]]; then
     fi
 fi
 
+. "$HOME/.cargo/env"

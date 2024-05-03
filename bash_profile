@@ -35,6 +35,8 @@ fi
 [[ -d "$HOME/.local/bin" ]] && PATH="$PATH:$HOME/.local/bin"
 [[ -d "$HOME/.cargo/bin" ]] && PATH="$PATH:$HOME/.cargo/bin"
 
+[[ -d "/opt/homebrew/bin" ]] && PATH="$PATH:/opt/homebrew/bin"
+
 [[ -d "/sbin" ]] && PATH="$PATH:/sbin"
 
 [[ -d "/usr/sbin" ]] && PATH="$PATH:/usr/sbin"
@@ -95,3 +97,4 @@ fi
 # Load RVM into a shell session *as a function*
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
+. "$HOME/.cargo/env"

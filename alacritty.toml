@@ -133,7 +133,7 @@ save_to_clipboard = true
 
 [shell]
 args = ["--login"]
-program = "/usr/local/bin/bash"
+program = "/opt/homebrew/bin/bash"
 
 [window]
 decorations = "transparent"

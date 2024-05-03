@@ -8,7 +8,7 @@ set -g fish_greeting
 #set -g SHELL fish
 switch (uname)
 case 'Darwin'
-    set -g SHELL /usr/local/bin/fish
+    set -g SHELL /opt/homebrew/bin/fish
 case '*'
     set -g SHELL /usr/bin/fish
 end
@@ -91,10 +91,10 @@ function fished; nvim $HOME/.config/fish/config.fish;   end
 set -g fzf_history_opts --height 40% --reverse
 
 # Base16 Shell
-if status --is-interactive
-    set BASE16_SHELL "$HOME/src/base16-shell/"
-    source "$BASE16_SHELL/profile_helper.fish"
-end
+#if status --is-interactive
+#    set BASE16_SHELL "$HOME/src/base16-shell/"
+#    source "$BASE16_SHELL/profile_helper.fish"
+#end
 
 if type -q starship
     starship init fish | source
