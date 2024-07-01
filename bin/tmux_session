@@ -25,7 +25,7 @@ tmux split-window -d -v -t work1:8.0 -l 20 -c "$HOME"
 tmux split-window -d -v -t work1:8.0 -c "$HOME"
 tmux send-keys -t work1:8.0 'figlet "test2"' Enter
 
-tmux new-window -t work1:9 -n notes -c /Volumes/apfs_cs/notes
+tmux new-window -t work1:9 -n notes -c /Volumes/work/notes
 tmux split-window -d -h -t work1:9.0 -c "$HOME"
 tmux send-keys -t work1:9.0 'figlet "notes"' Enter
 tmux send-keys -t work1:9.0 'git status' Enter

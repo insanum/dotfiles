@@ -73,8 +73,8 @@ abbr --add mdth "mdtodo -t high"
 abbr --add mdtm "mdtodo -t medium"
 abbr --add mdtl "mdtodo -t low"
 
-function bitter;    eval $HOME/src/bitter/bitter $argv;       end
-function nostalgic; eval $HOME/src/nostalgic/nostalgic $argv; end
+function bitter;    eval $HOME/work/git/bitter/bitter $argv;       end
+function nostalgic; eval $HOME/work/git/nostalgic/nostalgic $argv; end
 
 function rmrf
     read -p 'set_color red; echo -n "Dude, really? [y|n] "; set_color normal' input

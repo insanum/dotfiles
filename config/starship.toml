@@ -10,7 +10,7 @@ lua.disabled = true
 ocaml.disabled = true
 
 [fill]
-symbol = "."
+symbol = "─"
 style = "239"
 
 [directory]

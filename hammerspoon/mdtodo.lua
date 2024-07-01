@@ -3,7 +3,7 @@ local window = require("hs.window")
 local dialog = require("hs.dialog")
 
 local mdtodo = "/Users/edavis/.cargo/bin/mdtodo"
-local file   = "/Volumes/apfs_case_sensitive/notes/INBOX.md"
+local file   = "/Volumes/work/notes/INBOX.md"
 
 local function file_exists(name)
    local f = io.open(name, "r")
