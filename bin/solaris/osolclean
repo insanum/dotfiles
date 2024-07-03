@@ -1,5 +1,0 @@
-#!/bin/bash
-
-/bin/rm -rf on-* archives closed log packages proto
-hg pull -u
-
