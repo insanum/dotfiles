@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [[ $1 = dump ]]; then
-    sed '/BEGIN:VCALENDAR/,/END:VCALENDAR/!d' | ~/src/gcalcli/gcalcli import -d
-else # [[ $1 = import ]]
-    sed '/BEGIN:VCALENDAR/,/END:VCALENDAR/!d' | ~/src/gcalcli/gcalcli --reminder=10 --detail_url=short --calendar="Eric Davis" import
-fi
-
