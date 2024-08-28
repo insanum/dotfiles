@@ -8,5 +8,5 @@ fi
 # brew info reminders-cli
 R=/opt/homebrew/bin/reminders
 
-$R add Tasks -d today -p medium $1
+$R add Tasks -d "today 3pm" -p medium $1
 

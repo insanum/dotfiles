@@ -79,7 +79,7 @@ vim.keymap.set('n', '<leader>sm', require('telescope.builtin').marks, { desc = '
 --vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[M]arks [B]ookmarks' })
 
 -- marks.nvim keymaps and commands for quickfix split at bottom and full width
-require('which-key').register({ ['<leader>m'] = { name = '[M]arks', _ = 'which_key_ignore' } })
+require('which-key').add({ '<leader>m', group = '[M]arks' })
 vim.keymap.set('n', '<leader>mf', '<cmd>MarksListBuf<CR>', { silent = true, desc = '[M]arks Bu[f]fer' })
 vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR>', { silent = true, desc = '[M]arks [M]arks all' })
 vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR>', { silent = true, desc = '[M]arks [B]ookmarks all' })
@@ -90,14 +90,14 @@ command! BMQFListAll exe "lua require('marks').bookmark_state:all_to_list('quick
 
 -- quickfix/location list window stuff
 vim.keymap.del('n', '<leader>q')
-require('which-key').register({ ['<leader>q'] = { name = '[Q]uickfix', _ = 'which_key_ignore' } })
+require('which-key').add({ '<leader>q', group = '[Q]uickfix' })
 vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>', { silent = true, desc = '[Q]uickfix [O]open' })
 --vim.keymap.set('n', '<leader>qc', '<cmd>windo if &buftype == "quickfix" || &buftype == "locationlist" | lclose | endif<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
 vim.keymap.set('n', '<leader>qc', '<cmd>lclose<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
 vim.keymap.set('n', '<leader>qx', '<cmd>lexpr []<CR>', { silent = true, desc = '[Q]uickfix [X]clear' })
 
 -- obsidian
-require('which-key').register({ ['<leader>o'] = { name = '[O]bsidian', _ = 'which_key_ignore' } })
+require('which-key').add({ '<leader>o', group = '[O]bsidian' })
 vim.keymap.set('n', '<leader>oq', '<cmd>ObsidianQuickSwitch<CR>', { desc = '[O]bsidian [Q]uickSwitch' })
 vim.keymap.set('n', '<leader>os', '<cmd>ObsidianSearch<CR>', { desc = '[O]bsidian [S]earch' })
 vim.keymap.set('n', '<leader>ot', '<cmd>ObsidianToday<CR>', { desc = '[O]bsidian [T]oday' })

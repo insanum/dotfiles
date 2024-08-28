@@ -13,10 +13,15 @@ hs.console.consolePrintColor({ white = 1 })
 hs.console.consoleCommandColor({ green = 1 })
 
 -- notification manager
-require("notifications")
+-- # this is broken as the mouse move doesn't activate the x/close button
+--require("notifications")
 
 -- volume commands
-require("volume")
+-- # with Voyager keyboard layers, no longer need this
+--require("volume")
+
+-- audio device switcher
+require("audiodevice")
 
 -- window management
 require("window")
@@ -42,12 +47,12 @@ require("finnhub")
 --require("ilog")
 
 -- send pushover messages
-require("pushover")
+--require("pushover")
 
--- Create a new task to INBOX
+-- Add a new task to the Obsidian INBOX note
 require("mdtodo")
 
--- Create a new Reminder
+-- Create a new Apple Reminder
 require("reminders")
 
 -- reload config
@@ -96,6 +101,7 @@ end)
 
 -- media controls (play/pause, next, previous)
 
+--[[
 hs.hotkey.bind(kb_ctrl, "\\", function()
   hs.eventtap.event.newSystemKeyEvent('PLAY', true):post()
   hs.eventtap.event.newSystemKeyEvent('PLAY', false):post()
@@ -110,4 +116,5 @@ hs.hotkey.bind(kb_ctrl, "[", function()
   hs.eventtap.event.newSystemKeyEvent('PREVIOUS', true):post()
   hs.eventtap.event.newSystemKeyEvent('PREVIOUS', false):post()
 end)
+--]]
 
