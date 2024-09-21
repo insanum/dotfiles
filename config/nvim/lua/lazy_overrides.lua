@@ -120,9 +120,7 @@ return {
   {
     'max397574/better-escape.nvim',
     config = function()
-      require('better_escape').setup({
-        mapping = { 'jk', 'jj' },
-      })
+      require('better_escape').setup() -- 'jj' or 'jk' = <ESC>
     end,
   },
 
@@ -132,11 +130,13 @@ return {
     opts = {},
   },
 
+  --[[
   {
     'tpope/vim-fugitive',
     enabled = false,
     event = 'VeryLazy',
   },
+  --]]
 
   {
     'NeogitOrg/neogit',
@@ -167,6 +167,7 @@ return {
     end,
   },
 
+  --[[
   {
     'stevearc/aerial.nvim',
     enabled = false,
@@ -177,6 +178,7 @@ return {
        'nvim-tree/nvim-web-devicons'
     },
   },
+  --]]
 
   {
     'jedrzejboczar/possession.nvim',
@@ -311,14 +313,15 @@ return {
   },
 
   {
+    -- Note: 'Exafunction/codeium.nvim' (note n) doesn't support ghost text!
     'Exafunction/codeium.vim',
+    enabled = true,
     event = 'BufEnter',
     config = function()
       -- force codeium to use socks5 proxy
       vim.env.HTTP_PROXY = 'socks5://127.0.0.1:9999'
       vim.env.HTTPS_PROXY = 'socks5://127.0.0.1:9999'
 
-      --vim.g.codeium_enabled = false
       vim.g.codeium_idle_delay = 75
       vim.keymap.set('i', '<C-f>', function()
         return vim.fn['codeium#CycleCompletions'](1)
@@ -326,18 +329,27 @@ return {
       vim.keymap.set('i', '<C-g>', function()
         return vim.fn['codeium#CycleCompletions'](-1)
       end, { expr = true, silent = true })
-      vim.keymap.set('i', '<C-h>', function()
-        return vim.fn['codeium#Complete']()
-      end, { expr = true, silent = true })
     end,
   },
 
+  --[[
+  {
+    'TabbyML/vim-tabby',
+    config = function()
+      vim.g.tabby_node_binary = '/opt/homebrew/bin/node'
+      vim.g.tabby_keybinding_accept = '<C-f>'
+      vim.g.tabby_trigger_mode = 'auto'
+    end,
+  },
+  --]]
+
+  --[[
   {
     'lukas-reineke/indent-blankline.nvim',
-    enabled = false,
     main = 'ibl',
     opts = {},
   },
+  --]]
 
   {
     'junegunn/vim-easy-align',
@@ -364,9 +376,9 @@ return {
     },
   },
 
+  --[[
   {
     'numToStr/FTerm.nvim',
-    enabled = false,
     config = function()
       require'FTerm'.setup({
         --env = { TERM = 'tmux-256color' },
@@ -378,30 +390,33 @@ return {
       })
     end,
   },
+  --]]
 
+  --[[
   {
     'navarasu/onedark.nvim',
-    enabled = false,
     lazy = false,
     priority = 999,
     config = function()
       vim.cmd.colorscheme 'onedark'
     end,
   },
+  --]]
 
+  --[[
   {
     'rmehri01/onenord.nvim',
-    enabled = false,
     lazy = false,
     priority = 999,
     config = function()
       vim.cmd.colorscheme 'onenord'
     end,
   },
+  --]]
 
+  --[[
   {
     'ellisonleao/gruvbox.nvim',
-    enabled = false,
     lazy = false,
     priority = 999,
     config = function()
@@ -409,6 +424,7 @@ return {
       vim.cmd.colorscheme 'gruvbox'
     end,
   },
+  --]]
 
   {
     'epwalsh/obsidian.nvim',
@@ -418,7 +434,7 @@ return {
       'nvim-telescope/telescope.nvim',
     },
     opts = {
-      dir = '/Volumes/apfs_case_sensitive/notes',
+      dir = '/Volumes/work/notes',
       daily_notes = {
         folder = 'Journal',
         date_format = '%Y-%m-%d',
@@ -433,7 +449,7 @@ return {
       picker = { name = "telescope.nvim" },
     },
     keys = {
-      { '<leader>oo', '<cmd>tabnew<CR><cmd>tcd /Volumes/apfs_case_sensitive/notes<CR><cmd>setlocal conceallevel=1<CR><cmd>ObsidianQuickSwitch<CR>', desc = '[O]bsidian [O]pen' },
+      { '<leader>oo', '<cmd>tabnew<CR><cmd>tcd /Volumes/work/notes<CR><cmd>setlocal conceallevel=1<CR><cmd>ObsidianQuickSwitch<CR>', desc = '[O]bsidian [O]pen' },
     },
   },
 }

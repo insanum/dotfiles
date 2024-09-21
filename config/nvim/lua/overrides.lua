@@ -62,11 +62,11 @@ vim.keymap.set('n', ',P', '+P',  { silent = true, desc = 'Paste before cursor (c
 vim.keymap.set('n', ',p', '+p',  { silent = true, desc = 'Paste after cursor (clipboard)' })
 
 -- tab stuff
-vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<CR>',      { desc = 'Tab new' })
-vim.keymap.set('n', '<leader>th', '<cmd>tabprevious<CR>', { desc = 'Tab previous' })
-vim.keymap.set('n', '<leader>tl', '<cmd>tabnext<CR>',     { desc = 'Tab next' })
-vim.keymap.set('n', '<leader>tH', '<cmd>tabmove -1<CR>',  { desc = 'Tab move before' })
-vim.keymap.set('n', '<leader>tL', '<cmd>tabmove +1<CR>',  { desc = 'Tab move after' })
+vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<CR>',      { desc = 'Tab new', noremap = true })
+vim.keymap.set('n', '<leader>th', '<cmd>tabprevious<CR>', { desc = 'Tab previous', noremap = true })
+vim.keymap.set('n', '<leader>tl', '<cmd>tabnext<CR>',     { desc = 'Tab next', noremap = true })
+vim.keymap.set('n', '<leader>tH', '<cmd>tabmove -1<CR>',  { desc = 'Tab move before', noremap = true })
+vim.keymap.set('n', '<leader>tL', '<cmd>tabmove +1<CR>',  { desc = 'Tab move after', noremap = true })
 for i = 1, 9, 1 do
   vim.keymap.set('n', '<leader>t' .. i, i .. 'gt', { desc = 'Tab goto ' .. i })
 end
