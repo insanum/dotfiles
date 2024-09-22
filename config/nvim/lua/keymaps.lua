@@ -1,36 +1,27 @@
 
-vim.opt.relativenumber = true
-vim.opt.mouse = ''
-vim.opt.clipboard = ''
+-- make split navigation easier
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
-vim.opt.list = false
-vim.opt.listchars = { tab = '«·»', trail = '·', nbsp = '␣' }
-
-vim.opt.colorcolumn = '80'
-vim.opt.showtabline = 2
-
-vim.opt.winheight = 10
-vim.opt.winminheight = 10
-vim.opt.winwidth = 10
-vim.opt.winminwidth = 10
-
-vim.opt.splitright = false
-vim.opt.splitbelow = false
+-- diagnostic keymaps
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- I like cinoptions! (vs an annoying autoformatter plugin)...
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
-  pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino', '*.cs', '*.java', '*.js', '*.lua', '*.rs' },
-  callback = function()
-    vim.opt.cindent = true
-    vim.opt.cinoptions = 's,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30,Ws'
-  end
+    pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino', '*.cs', '*.java', '*.js', '*.lua', '*.rs' },
+    callback = function()
+        vim.opt.cindent = true
+        vim.opt.cinoptions = 's,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30,Ws'
+    end
 })
 
 -- toggle list chars
 vim.keymap.set('n', ',l', '<cmd>set list!<CR><cmd>set list?<CR>', { desc = 'Toggle listchars' })
 
 -- remove highlighted search results
-vim.keymap.del('n', '<Esc>')
 vim.keymap.set('n', ',.', '<cmd>nohlsearch<CR>', { desc = 'Remove highlighted search results' })
 
 -- remapping Y was a stupid change by neovim
@@ -117,11 +108,10 @@ vim.cmd.hi 'TabLine guifg=#e0af68'
 -- Workaround for bug where Telescope enters Insert mode on selection:
 -- https://github.com/nvim-telescope/telescope.nvim/issues/2027
 vim.api.nvim_create_autocmd('WinLeave', {
-  callback = function()
-    if vim.bo.ft == 'TelescopePrompt' and vim.fn.mode() == 'i' then
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'i', false)
-    end
-  end,
+    callback = function()
+        if vim.bo.ft == 'TelescopePrompt' and vim.fn.mode() == 'i' then
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'i', false)
+        end
+    end,
 })
 
--- vim: ts=2 sts=2 sw=2 et
