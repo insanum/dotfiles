@@ -29,6 +29,16 @@ return {
           --  All the info you're looking for is in `:help telescope.setup()`
           defaults = {
               mappings = select_map,
+              vimgrep_arguments = {
+                  "rg",
+                  "--color=never",
+                  "--no-heading",
+                  "--with-filename",
+                  "--line-number",
+                  "--column",
+                  "--smart-case",
+                  "--follow",
+              },
           },
           pickers = {
               buffers = {
