@@ -69,17 +69,18 @@ vim.keymap.set('n', '<leader>sm', require('telescope.builtin').marks, { desc = '
 --vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[M]arks [M]arks' })
 --vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[M]arks [B]ookmarks' })
 
--- marks.nvim keymaps and commands for quickfix split at bottom and full width
+-- marks.nvim keymaps and commands for location list split at bottom under buffer window
 require('which-key').add({ '<leader>m', group = '[M]arks' })
 vim.keymap.set('n', '<leader>mf', '<cmd>MarksListBuf<CR>', { silent = true, desc = '[M]arks Bu[f]fer' })
 vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR>', { silent = true, desc = '[M]arks [M]arks all' })
 vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR>', { silent = true, desc = '[M]arks [B]ookmarks all' })
+-- marks.nvim commands for quickfix list split at bottom and full width
 vim.cmd([[
 command! MQFListAll  exe "lua require('marks').mark_state:all_to_list('quickfixlist')" | botright copen
 command! BMQFListAll exe "lua require('marks').bookmark_state:all_to_list('quickfixlist')" | botright copen
 ]])
 
--- quickfix/location list window stuff
+-- location list window management (open/close/clear)
 vim.keymap.del('n', '<leader>q')
 require('which-key').add({ '<leader>q', group = '[Q]uickfix' })
 vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>', { silent = true, desc = '[Q]uickfix [O]open' })
