@@ -2,6 +2,8 @@
 # curl -sL https://git.io/fisher | source
 # fisher install jorgebucaran/fisher
 # fisher install PatrickF1/fzf.fish
+# fisher install ilancosman/tide@v6
+# fisher install vitallium/tokyonight-fish
 
 set -g fish_greeting
 
@@ -35,7 +37,7 @@ function fish_my_keybinds
     # 'forward-word' could be used to short fill words instead of whole line
     # use both 'ctrl-f' and 'ctrl-g' cuz I smash one and often miss :-)
     bind --mode insert \cf forward-char repaint
-    bind --mode insert \cg forward-char repaint
+    #bind --mode insert \cg forward-char repaint
     bind --mode insert -k nul forward-char repaint
 
     bind --mode insert  --sets-mode insert \n execute
@@ -79,9 +81,9 @@ function nostalgic; eval $HOME/work/git/nostalgic/nostalgic $argv; end
 function rmrf
     read -p 'set_color red; echo -n "Dude, really? [y|n] "; set_color normal' input
     if [ $input = 'y' -o $input = 'Y' ]
-	set_color yellow; echo "OK, you asked for it!"; set_color normal
-	set_color green; echo "Blowing away: $argv"; set_color normal
-	/bin/rm -rf $argv
+        set_color yellow; echo "OK, you asked for it!"; set_color normal
+        set_color green; echo "Blowing away: $argv"; set_color normal
+        /bin/rm -rf $argv
     end
 end
 
@@ -89,6 +91,7 @@ function fishrc; source $HOME/.config/fish/config.fish; end
 function fished; nvim $HOME/.config/fish/config.fish;   end
 
 set -g fzf_history_opts --height 40% --reverse
+fzf_configure_bindings --directory=\ck --git_log=\cg --git_status= --history=\cr --processes=\cp --variables=\cv
 
 # Base16 Shell
 #if status --is-interactive
@@ -96,9 +99,9 @@ set -g fzf_history_opts --height 40% --reverse
 #    source "$BASE16_SHELL/profile_helper.fish"
 #end
 
-if type -q starship
-    starship init fish | source
-end
+#if type -q starship
+#    starship init fish | source
+#end
 
 if type -q zoxide
     zoxide init fish | source
