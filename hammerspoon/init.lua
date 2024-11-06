@@ -35,6 +35,9 @@ require("window")
 -- gpmdp client
 --require("gpmdp")
 
+-- music client
+require("music")
+
 -- stock quotes
 --require("intrinio")
 --require("alphavantage")

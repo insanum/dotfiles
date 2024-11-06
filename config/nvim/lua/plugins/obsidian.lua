@@ -10,8 +10,15 @@ return {
         daily_notes = {
             folder = 'Journal',
             date_format = '%Y-%m-%d',
+            default_tags = nil,
+            template = 'new_note.md',
         },
-        --disable_frontmatter = true,
+        templates = {
+            folder = 'templates_nvim',
+            date_format = '%Y-%m-%d',
+            time_format = '%H:%M',
+        },
+        disable_frontmatter = true,
         note_id_func = function(title)
             if title ~= nil then
                 return title

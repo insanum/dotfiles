@@ -3,7 +3,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 
 vim.opt.mouse = ''
-vim.opt.clipboard = ''
+vim.opt.clipboard = 'unnamedplus'
 
 vim.opt.breakindent = true
 

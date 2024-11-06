@@ -11,17 +11,21 @@
 #   -v = vertical split, new pane full width
 #   -l = size of the pane in #lines or #cols
 
+WIDTH=$(tmux display-message -p "#{window_width}")
+PANE_WIDTH=$(($WIDTH / 3))
+
 tmux new-session -d -s work1 -c "$HOME"
 
 tmux split-window -d -h -b -t work1:1.0 -c "$HOME"
 tmux split-window -d -v -t work1:1.0 -l 20 -c "$HOME"
 
 tmux new-window -t work1:7 -n test1
-tmux split-window -d -h -t work1:7.0 -c "$HOME"
+tmux split-window -d -h -t work1:7.0 -l $PANE_WIDTH -c "$HOME"
+tmux split-window -d -h -t work1:7.0 -l $PANE_WIDTH -c "$HOME"
 tmux send-keys -t work1:7.0 'figlet "Cody"' Enter
 
 tmux new-window -t work1:8 -n test2
-tmux split-window -d -h -b -t work1:8.0 -l 80 -c "$HOME"
+tmux split-window -d -h -b -t work1:8.0 -l 90 -c "$HOME"
 tmux split-window -d -h -t work1:8.1 -c "$HOME"
 tmux split-window -d -v -t work1:8.0 -c "$HOME"
 #tmux split-window -d -v -t work1:8.0 -l 20 -c "$HOME"
