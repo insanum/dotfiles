@@ -1,0 +1,547 @@
+#!/opt/homebrew/bin/bash
+
+function status()
+{
+	state=$(osascript -e 'tell application "Music" to get player state')
+	if [ $state = 'stopped' ]; then
+		printf '%s\n' "Music.app is stopped"
+		return
+	fi
+
+	mapfile -t status < \
+		<(osascript -e 'tell application "Music"' \
+		            -e     'set _vol to get sound volume' \
+			    -e     'set _shf to get shuffle enabled' \
+			    -e     'set _rpt to get song repeat' \
+		            -e     'set _nam to get name of current track' \
+			    -e     'set _art to get artist of current track' \
+			    -e     'set _rec to get album of current track' \
+			    -e     'set _pos to get player position' \
+			    -e     'set _dur to get duration of current track' \
+			    -e     'log _vol' \
+			    -e     'log _shf' \
+			    -e     'log _rpt' \
+			    -e     'log _nam' \
+			    -e     'log _art' \
+			    -e     'log _rec' \
+			    -e     'log _pos' \
+			    -e     'log _dur' \
+			    -e 'end tell' 2>&1)
+
+	vol=${status[0]}
+	shf=${status[1]}
+	rpt=${status[2]}
+	nam=${status[3]}
+	art=${status[4]}
+	rec=${status[5]}
+	cur=$(echo ${status[6]} | cut -d '.' -f 1)
+	end=$(echo ${status[7]} | cut -d '.' -f 1)
+
+	cur_min=$(( cur / 60 ))
+	cur_sec=$(( cur % 60 ))
+
+	end_min=$(( end / 60 ))
+	end_sec=$(( end % 60 ))
+
+	if [ ${#cur_min} = 1 ]; then cur_min="0$cur_min"; fi
+	if [ ${#cur_sec} = 1 ]; then cur_sec="0$cur_sec"; fi
+	if [ ${#end_min} = 1 ]; then end_min="0$end_min"; fi
+	if [ ${#end_sec} = 1 ]; then end_sec="0$end_sec"; fi
+
+	if [ $shf = 'false' ]; then
+		shf_status='off'
+	else
+		shf_status='on'
+	fi
+
+	if [ $rpt = 'off' ]; then
+		rpt_status='off'
+	elif [ $rpt = 'one' ]; then
+		rpt_status='one'
+	else
+		rpt_status='all'
+	fi
+
+	if [ "$1" = 'clear' ]; then
+		clear
+	fi
+
+	printf '%s\n' "$nam"
+	printf '%s\n' "$art - $rec"
+	printf '%s\n' "volume:${vol}% shuffle:$shf_status repeat:$rpt_status"
+	printf '%s\n' "$cur_min:$cur_sec/$end_min:$end_sec"
+}
+
+tui() {
+	help='false'
+	while :
+	do
+		state=$(osascript -e 'tell application "Music" to get player state')
+		if [ $state = 'stopped' ]; then
+			printf '%s\n' "Music.app is stopped"
+			break
+		fi
+
+		keybindings="
+Keybindings:
+
+p   Play/Pause
+f   Forward one track
+b   Backward one track
++   Increase Music.app volume 5%
+-   Decrease Music.app volume 5%
+s   Toggle shuffle
+r   Toggle song repeat
+q   Quit TUI
+Q   Quit TUI and Music.app
+h   Show/Hide keybindings"
+
+		status clear
+
+		if [ $help = 'true' ]; then
+			printf '%s\n' "$keybindings"
+		fi
+
+		input=$(/bin/bash -c "read -n 1 -t 1 input; echo \$input | xargs")
+		if [[ "${input}" == *"p"* ]]; then
+			osascript -e 'tell application "Music" to playpause'
+		elif [[ "${input}" == *"f"* ]]; then
+			osascript -e 'tell application "Music" to play next track'
+		elif [[ "${input}" == *"b"* ]]; then
+			osascript -e 'tell application "Music" to back track'
+		elif [[ "${input}" == *"+"* ]]; then
+			osascript -e 'tell application "Music" to set sound volume to sound volume + 5'
+		elif [[ "${input}" == *"-"* ]]; then
+			osascript -e 'tell application "Music" to set sound volume to sound volume - 5'
+		elif [[ "${input}" == *"s"* ]]; then
+			if $shuffle ; then
+				osascript -e 'tell application "Music" to set shuffle enabled to false'
+			else
+				osascript -e 'tell application "Music" to set shuffle enabled to true'
+			fi
+		elif [[ "${input}" == *"r"* ]]; then
+			if [ $repeat = 'off' ]; then
+				osascript -e 'tell application "Music" to set song repeat to all'
+			elif [ $repeat = 'all' ]; then
+				osascript -e 'tell application "Music" to set song repeat to one'
+			else
+				osascript -e 'tell application "Music" to set song repeat to off'
+			fi
+		elif [[ "${input}" == *"q"* ]]; then
+			clear
+			exit
+		elif [[ "${input}" == *"Q" ]]; then
+			osascript -e 'tell application "Music" to quit'
+			clear
+			exit
+		elif [[ "${input}" == *"h"* ]]; then
+			if [ $help = 'false' ]; then
+				help='true'
+			else
+				help='false'
+			fi
+		fi
+
+		read -s -n 1 -t 0.01
+	done
+}
+
+list() {
+	usage="Usage: list [-grouping] [name]
+
+  -s           List all songs.
+  -r           List all records.
+  -r PATTERN   List all songs in the record PATTERN.
+  -a           List all artists.
+  -a PATTERN   List all songs by the artist PATTERN.
+  -p           List all playlists.
+  -p PATTERN   List all songs in the playlist PATTERN.
+  -g           List all genres.
+  -g PATTERN   List all songs in the genre PATTERN."
+	if [ "$#" -eq 0 ]; then
+		printf '%s\n' "$usage";
+	else
+		if [ $1 = "-p" ]; then
+			if [ "$#" -eq 1 ]; then
+				shift
+				osascript -e 'tell application "Music" to get name of playlists' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			else
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track of playlist (item 1 of args)' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			fi
+		elif [ $1 = "-s" ]; then
+			if [ "$#" -eq 1 ]; then
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			else
+				echo $usage
+			fi
+		elif [ $1 = "-r" ]; then
+			if [ "$#" -eq 1 ]; then
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get album of every track' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			else
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track whose album is (item 1 of args)' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			fi
+		elif [ $1 = "-a" ]; then
+			if [ "$#" -eq 1 ]; then
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get artist of every track' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			else
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track whose artist is (item 1 of args)' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			fi
+		elif [ $1 = "-g" ]; then
+			if [ "$#" -eq 1 ]; then
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get genre of every track' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			else
+				shift
+				osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track whose genre is (item 1 of args)' \
+					  -e 'end' \
+					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+			fi
+		else
+			printf '%s\n' "$usage";
+		fi
+	fi
+}
+
+play() {
+	usage="Usage: play [-grouping] [name]
+
+  -s           Fzf for a song and begin playback.
+  -s PATTERN   Play the song PATTERN.
+  -r           Fzf for a record and begin playback.
+  -r PATTERN   Play from the record PATTERN.
+  -a           Fzf for an artist and begin playback.
+  -a PATTERN   Play from the artist PATTERN.
+  -p           Fzf for a playlist and begin playback.
+  -p PATTERN   Play from the playlist PATTERN.
+  -g           Fzf for a genre and begin playback.
+  -g PATTERN   Play from the genre PATTERN.
+  -l           Play from your entire library."
+	if [ "$#" -eq 0 ]; then
+		printf '%s\n' "$usage"
+	else
+		if [ $1 = "-p" ]; then
+			if [ "$#" -eq 1 ]; then
+				playlist=$(osascript -e 'tell application "Music" to get name of playlists' | tr "," "\n" | fzf)
+				set -- ${playlist:1}
+			else
+				shift
+			fi
+			osascript -e 'on run argv' \
+				  -e 'tell application "Music" to play playlist (item 1 of argv)' \
+				  -e 'end' "$*"
+		elif [ $1 = "-s" ]; then
+			if [ "$#" -eq 1 ]; then
+				song=$(osascript -e 'tell application "Music" to get name of every track' | tr "," "\n" | fzf)
+				set -- ${song:1}
+			else
+				shift
+			fi
+			osascript -e 'on run argv' \
+				  -e 'tell application "Music" to play track (item 1 of argv)' \
+				  -e 'end' "$*"
+		elif [ $1 = "-r" ]; then
+			if [ "$#" -eq 1 ]; then
+				record=$(osascript -e 'tell application "Music" to get album of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf)
+				set -- ${record:1}
+			else
+				shift
+			fi
+			osascript -e 'on run argv' \
+				  -e 'tell application "Music"' \
+				  -e     'if (exists playlist "temp_playlist") then' \
+				  -e         'delete playlist "temp_playlist"' \
+				  -e     'end if' \
+				  -e     'set name of (make new playlist) to "temp_playlist"' \
+				  -e     'set theseTracks to every track of playlist "Library" whose album is (item 1 of argv)' \
+				  -e     'repeat with thisTrack in theseTracks' \
+				  -e         'duplicate thisTrack to playlist "temp_playlist"' \
+				  -e     'end repeat' \
+				  -e     'play playlist "temp_playlist"' \
+				  -e 'end tell' \
+				  -e 'end' "$*"
+		elif [ $1 = "-a" ]; then
+			if [ "$#" -eq 1 ]; then
+				artist=$(osascript -e 'tell application "Music" to get artist of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf)
+				set -- ${artist:1}
+			else
+				shift
+			fi
+			osascript -e 'on run argv' \
+				  -e 'tell application "Music"' \
+				  -e     'if (exists playlist "temp_playlist") then' \
+				  -e         'delete playlist "temp_playlist"' \
+				  -e     'end if' \
+				  -e     'set name of (make new playlist) to "temp_playlist"' \
+				  -e     'set theseTracks to every track of playlist "Library" whose artist is (item 1 of argv)' \
+				  -e     'repeat with thisTrack in theseTracks' \
+				  -e         'duplicate thisTrack to playlist "temp_playlist"' \
+				  -e     'end repeat' \
+				  -e     'play playlist "temp_playlist"' \
+				  -e 'end tell' \
+				  -e 'end' "$*"
+		elif [ $1 = "-g" ]; then
+			if [ "$#" -eq 1 ]; then
+				genre=$(osascript -e 'tell application "Music" to get genre of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf)
+				set -- ${genre:1}
+			else
+				shift
+			fi
+			osascript -e 'on run argv' \
+				  -e 'tell application "Music"' \
+				  -e     'if (exists playlist "temp_playlist") then' \
+				  -e         'delete playlist "temp_playlist"' \
+				  -e     'end if' \
+				  -e     'set name of (make new playlist) to "temp_playlist"' \
+				  -e     'set theseTracks to every track of playlist "Library" whose genre is (item 1 of argv)' \
+				  -e     'repeat with thisTrack in theseTracks' \
+				  -e         'duplicate thisTrack to playlist "temp_playlist"' \
+				  -e     'end repeat' \
+				  -e     'play playlist "temp_playlist"' \
+				  -e 'end tell' \
+				  -e 'end' "$*"
+		elif [ $1 = "-l" ]; then
+			osascript -e 'tell application "Music"' \
+				  -e     'play playlist "Library"' \
+				  -e 'end tell'
+		else
+			printf '%s\n' "$usage";
+		fi
+	fi
+}
+
+function lyrics_music_get()
+{
+	osascript -e 'tell application "Music" to get lyrics of current track'
+}
+
+function lyrics_music_scrape()
+{
+	osascript <<'END'
+  tell application "Music"
+      if player state is playing then
+          set currentTrack to current track
+          set trackName to name of currentTrack
+          set artistName to artist of currentTrack
+
+          tell application "System Events"
+              tell process "Music"
+                  click menu item "Show Lyrics" of menu "View" of menu bar 1
+                  delay 2 -- Wait for lyrics view to load
+
+                  set lyricsText to ""
+                  try
+                      set lyricsText to value of text area 1 of scroll area 1 of window 1
+                  on error
+                      set lyricsText to "No lyrics available for this track."
+                  end try
+
+                  -- Close lyrics view
+                  --click menu item "Hide Lyrics" of menu "View" of menu bar 1
+              end tell
+          end tell
+
+          return "Lyrics for " & trackName & " by " & artistName & ":\n\n" & lyricsText
+      else
+          return "No track is currently playing."
+      end if
+  end tell
+END
+}
+
+function lyrics_fetch()
+{
+	mapfile -t status < \
+		<(osascript -e 'tell application "Music"' \
+		            -e     'set _nam to get name of current track' \
+			    -e     'set _art to get artist of current track' \
+			    -e     'log _nam' \
+			    -e     'log _art' \
+			    -e 'end tell' 2>&1)
+
+	nam=$(echo ${status[0]} | sed 's/[[:space:]]/%20/g')
+	art=$(echo ${status[1]} | sed 's/[[:space:]]/%20/g')
+
+	#echo "wget -qO- \"https://makeitpersonal.co/lyrics?artist=${art}&title=${nam}\""
+	wget -qO- "https://makeitpersonal.co/lyrics?artist=${art}&title=${nam}"
+}
+
+usage="Usage: $0 [command] ...
+  run                             Open Music.app (not-visible)
+  quit                            Quit Music.app
+  status                          Status of current track
+  playlists                       List all playlists
+  playlist <name>                 Load and play playlist
+  stop                            Stop playing
+  playpause                       Toggle play/pause of current track
+  play                            Play current track
+  pause                           Pause current track
+  next                            Jump to the next track
+  prev                            Jump to start of current or previous track
+  seek <forward|backward>         Seek the current track +/- 15 seconds
+  shuffle <state|on|off>          Set shuffle mode
+  repeat <state|off|one|all>      Set repeat mode
+  volume <state|up|down|0-100>    Change the volume
+  lyrics                          Show lyrics for the current track
+  tui                             Open TUI with status of current track"
+
+if [ "$#" -eq 0 ]; then
+	printf '%s\n' "$usage";
+else
+	if [ $1 = "run" ]; then
+
+		#osascript -e 'tell application "Music" to set visible of window 1 to false'
+		osascript -e 'tell application "Music" to run'
+
+	elif [ $1 = "quit" ]; then
+
+		osascript -e 'tell application "Music" to quit'
+
+	elif [ $1 = "status" ]; then
+
+		status
+
+	elif [ $1 = "playlists" ]; then
+
+		osascript -e 'tell application "Music" to get name of playlists' | tr ',' '\n' | grep -v Library | sed 's/^ //g' | sort
+
+	elif [ $1 = "playlist" ]; then
+
+		shift
+		osascript -e 'on run argv' \
+			  -e 'tell application "Music" to play playlist (item 1 of argv)' \
+			  -e 'end' "$*"
+
+	elif [ $1 = "stop" ]; then
+
+		osascript -e 'tell application "Music" to stop'
+
+	elif [ $1 = "playpause" ]; then
+
+		osascript -e 'tell application "Music" to playpause'
+
+	elif [ $1 = "play" ]; then
+
+		osascript -e 'tell application "Music" to play'
+
+	elif [ $1 = "pause" ]; then
+
+		osascript -e 'tell application "Music" to pause'
+
+	elif [ $1 = "next" ]; then
+
+		osascript -e 'tell application "Music" to next track'
+
+	elif [ $1 = "prev" ]; then
+
+		osascript -e 'tell application "Music" to back track'
+
+	elif [ $1 = "seek" ]; then
+
+		if [ "$2" = 'forward' ]; then
+			osascript -e 'tell application "Music" to set player position to player position + 15'
+		elif [ "$2" = 'backward' ]; then
+			osascript -e 'tell application "Music" to set player position to player position - 15'
+		else
+			printf "ERROR: Invalid seek command\n"
+		fi
+
+	elif [ $1 = "shuffle" ]; then
+
+		if [ "$2" = 'state' ]; then
+			osascript -e 'tell application "Music" to get shuffle enabled'
+		elif [ "$2" = 'on' ]; then
+			osascript -e 'tell application "Music" to set shuffle enabled to true'
+		elif [ "$2" = 'off' ]; then
+			osascript -e 'tell application "Music" to set shuffle enabled to false'
+		else
+			printf "ERROR: Invalid shuffle command\n"
+		fi
+
+	elif [ $1 = "repeat" ]; then
+
+		if [ "$2" = 'state' ]; then
+			osascript -e 'tell application "Music" to get song repeat'
+		elif [ "$2" = 'off' ]; then
+			osascript -e 'tell application "Music" to set song repeat to off'
+		elif [ "$2" = 'one' ]; then
+			osascript -e 'tell application "Music" to set song repeat to one'
+		elif [ "$2" = 'all' ]; then
+			osascript -e 'tell application "Music" to set song repeat to all'
+		else
+			printf "ERROR: Invalid repeat command\n"
+		fi
+
+	elif [ $1 = "volume" ]; then
+
+		if [ "$2" = 'state' ]; then
+			osascript -e 'tell application "Music" to get sound volume'
+		elif [ "$2" = 'up' ]; then
+			osascript -e 'tell application "Music" to set sound volume to sound volume + 5'
+		elif [ "$2" = 'down' ]; then
+			osascript -e 'tell application "Music" to set sound volume to sound volume - 5'
+		else
+			shift
+			osascript -e 'on run argv' \
+			          -e 'tell application "Music" to set sound volume to (item 1 of argv)' \
+				  -e 'end' "$*"
+			#printf "ERROR: Invalid volume command\n"
+		fi
+
+	elif [ $1 = "lyrics" ]; then
+
+		#lyrics_music_get
+		#lyrics_music_scrape
+		lyrics_fetch
+
+	elif [ $1 = "tui" ]; then
+		#osascript -e 'tell application "Music" to set visible of window 1 to false'
+		osascript -e 'tell application "Music" to run'
+		tui
+
+	# favorited ?
+	# queue ?
+	# clear (queue) ?
+	# search ?
+
+	#elif [ $1 = "list" ]; then
+	#	shift
+	#	list "$@"
+
+	#elif [ $1 = "play" ]; then
+	#	shift
+	#	play "$@"
+
+	else
+		printf '%s\n' "$usage";
+	fi
+fi
+
