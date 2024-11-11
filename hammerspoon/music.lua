@@ -122,7 +122,7 @@ local function amCmd(...)
     end
 end
 
-hs.hotkey.bind(kb_ctrl_shift, "r", "Music run",
+hs.hotkey.bind(kb_ctrl_shift, "m", "Music run",
 function()
     amCmd("run")
 end)
@@ -152,7 +152,7 @@ function()
     amCmd("prev")
 end)
 
-hs.hotkey.bind(kb_ctrl, "f", "Music shuffle toggle",
+hs.hotkey.bind(kb_ctrl_shift, "f", "Music shuffle toggle",
 function()
     amCmd("shuffle", "state")
 end)

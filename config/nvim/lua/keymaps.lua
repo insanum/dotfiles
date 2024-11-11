@@ -101,7 +101,7 @@ vim.keymap.set('n', '<leader>of', '<cmd>ObsidianLinks<CR>', { desc = '[O]bsidian
 vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
 
 -- virtual text (for search) needs to stand out more
-vim.cmd.hi 'link NoiceVirtualText BufferAlternateERROR'
+vim.cmd.hi 'link NoiceVirtualText IncSearch'
 
 -- tabline text needs to stand out more
 vim.cmd.hi 'TabLine guifg=#e0af68'
