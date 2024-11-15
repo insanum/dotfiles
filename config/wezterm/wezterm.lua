@@ -9,11 +9,11 @@ local config = wezterm.config_builder()
 
 config.front_end = 'WebGpu'
 
---config.default_prog = { "/opt/homebrew/bin/fish", "-l" }
+--config.default_prog = { '/opt/homebrew/bin/fish', '-l' }
 config.default_cwd = wezterm.home_dir
 
 config.font = wezterm.font('Hack Nerd Font')
-config.font_size = 16
+config.font_size = 18
 config.cell_width = 0.9
 -- This won't work well on a dual screen setup. This is a temporary
 -- solution to font rendering oddities on an external monitor.
@@ -126,7 +126,7 @@ local function render_tab(fg_clr, bg_clr, text)
     }
 end
 
-wezterm.on("format-tab-title",
+wezterm.on('format-tab-title',
            function(tab, tabs, panes, config, hover, max_width)
   local title = tab.active_pane.title
   if tab.tab_title and #tab.tab_title > 0 then
@@ -227,30 +227,55 @@ for i = 0,9 do
   key_cmd(tostring(i), 'LEADER|CTRL', wa.MoveTab(i))
 end
 
+-- set pane width to 90 for the active pane (furthest left/right panes only)
+key_cmd('T', 'LEADER', wezterm.action_callback(function (window, pane)
+  local tab = pane:tab()
+  local d = pane:get_dimensions()
+  if d.cols > 90 then
+    if tab:get_pane_direction('Left') == nil then
+      window:perform_action(wa.AdjustPaneSize({ 'Left', (d.cols - 90) }), pane)
+    elseif tab:get_pane_direction('Right') == nil then
+      window:perform_action(wa.AdjustPaneSize({ 'Right', (d.cols - 90) }), pane)
+    end
+  elseif d.cols < 90 then
+    if tab:get_pane_direction('Left') == nil then
+      window:perform_action(wa.AdjustPaneSize({ 'Right', (90 - d.cols) }), pane)
+    elseif tab:get_pane_direction('Right') == nil then
+      window:perform_action(wa.AdjustPaneSize({ 'Left', (90 - d.cols) }), pane)
+    end
+  end
+end))
+
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 
 wezterm.on('gui-startup', function()
   local tab1, pane1, window1 = wezterm.mux.spawn_window({})
   window1:gui_window():maximize()
-  wezterm.sleep_ms(2000)
+  wezterm.sleep_ms(1500) -- wait 1.5s for window to maximize
 
+  tab1:set_title('Notes')
   pane1:split({ direction = 'Right', size = 0.5 })
-  pane1:split({ direction = 'Bottom', size = 0.5 })
+  pane1:send_text('clear\n')
+  pane1:send_text('figlet "Notes"\n')
+  pane1:send_text('cd /Volumes/work/notes\n')
+  pane1:send_text('git status\n')
 
   local tab2, pane2, window2 = window1:spawn_tab({})
-  tab2:set_title('Notes')
+  tab2:set_title('Cody')
   pane2:split({ direction = 'Right', size = 0.5 })
-  pane2:send_text('figlet "Notes"\n')
-  pane2:send_text('cd /Volumes/work/notes\n')
-  pane2:send_text('git status\n')
+  pane2:send_text('clear\n')
+  pane2:send_text('figlet "Cody"\n')
+  pane2:activate()
 
   local tab3, pane3, window3 = window1:spawn_tab({})
-  tab3:set_title('Cody')
-  pane3:split({ direction = 'Right', size = 0.5 })
-  pane3:send_text('figlet "Cody"\n')
+  local d = tab3:get_size()
+  local p = pane3:split({ direction = 'Right', size = (d.cols - 91) }) -- +1 for border
+  pane3:split({ direction = 'Bottom', size = 0.5 })
+  p:activate()
+  p:send_text('ls\n')
 
-  pane2:activate()
+  pane1:activate() -- final view of the window
 end)
 
 -----------------------------------------------------------------------------

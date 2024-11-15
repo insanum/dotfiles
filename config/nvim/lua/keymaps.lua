@@ -45,12 +45,12 @@ vim.keymap.set('n', ',s', '<cmd>set spell!<CR><cmd>set spell?<CR>', { silent = t
 vim.keymap.set('n', ',v', '<cmd>set paste!<CR><cmd>set paste?<CR>', { silent = true, desc = 'Toggle paste' })
 
 -- cut/paste to/from system clipboard
-vim.keymap.set('v', ',y', '+y',  { silent = true, desc = 'Yank multiple lines (clipboard)' })
-vim.keymap.set('n', ',y', '+y',  { silent = true, desc = 'Yank motion (clipboard)' })
-vim.keymap.set('n', ',Y', '+yy', { silent = true, desc = 'Yank single line (clipboard)' })
-vim.keymap.set('v', ',p', '+p',  { silent = true, desc = 'Paste overwrite lines (clipboard)' })
-vim.keymap.set('n', ',P', '+P',  { silent = true, desc = 'Paste before cursor (clipboard)' })
-vim.keymap.set('n', ',p', '+p',  { silent = true, desc = 'Paste after cursor (clipboard)' })
+vim.keymap.set('v', ',y', '"+y',  { silent = true, desc = 'Yank multiple lines (clipboard)' })
+vim.keymap.set('n', ',y', '"+y',  { silent = true, desc = 'Yank motion (clipboard)' })
+vim.keymap.set('n', ',Y', '"+yy', { silent = true, desc = 'Yank single line (clipboard)' })
+vim.keymap.set('v', ',p', '"+p',  { silent = true, desc = 'Paste overwrite lines (clipboard)' })
+vim.keymap.set('n', ',P', '"+P',  { silent = true, desc = 'Paste before cursor (clipboard)' })
+vim.keymap.set('n', ',p', '"+p',  { silent = true, desc = 'Paste after cursor (clipboard)' })
 
 -- tab stuff
 vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<CR>',      { desc = 'Tab new', noremap = true })

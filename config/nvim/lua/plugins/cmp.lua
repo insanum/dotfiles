@@ -17,11 +17,23 @@ return {
                 },
             },
         },
+
         'saadparwaiz1/cmp_luasnip',
-        'hrsh7th/cmp-nvim-lsp',
-        'hrsh7th/cmp-buffer',
+
+        --'hrsh7th/cmp-nvim-lsp',
+        { 'iguanacucumber/mag-nvim-lsp', name = 'cmp-nvim-lsp', opts = {} },
+
+        --'hrsh7th/cmp-buffer',
+        { 'iguanacucumber/mag-buffer', name = 'cmp-buffer' },
+
         'hrsh7th/cmp-path',
-        'hrsh7th/cmp-cmdline',
+        --'https://codeberg.org/FelipeLema/cmp-async-path',
+
+        -- 'hrsh7th/cmp-cmdline',
+        { 'iguanacucumber/mag-cmdline', name = 'cmp-cmdline' },
+
+        --{ 'iguanacucumber/mag-nvim-lua', name = 'cmp-nvim-lua' },
+
         'onsails/lspkind.nvim',
     },
 
@@ -52,6 +64,7 @@ return {
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' },
                 { name = 'path' },
+                --{ name = 'async_path' },
             }, {
                 { name = 'buffer' },
             }),
@@ -75,9 +88,17 @@ return {
                 ghost_text = true -- can conflict with AI generated text
             },
 
+            view = {
+                entries = {
+                    name = 'custom',
+                    selection_order = 'near_cursor',
+                    vertical_positioning = 'above',
+                },
+            },
+
             mapping = cmp.mapping.preset.insert({
-                ['<C-j>'] = cmp.mapping.select_next_item(cmp_behavior),
-                ['<C-k>'] = cmp.mapping.select_prev_item(cmp_behavior),
+                ['<C-k>'] = cmp.mapping.select_next_item(cmp_behavior),
+                ['<C-j>'] = cmp.mapping.select_prev_item(cmp_behavior),
                 ['<C-y>'] = cmp.mapping.confirm({ select = true }),
 
                 --['<C-Space>'] = cmp.mapping.complete(),
