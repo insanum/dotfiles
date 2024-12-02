@@ -3,7 +3,8 @@ return {
     dependencies = {
         'nvim-lua/plenary.nvim',
         'nvim-treesitter/nvim-treesitter',
-        'nvim-telescope/telescope.nvim',
+        --'nvim-telescope/telescope.nvim',
+        'echasnovski/mini.pick',
     },
     opts = {
         dir = '/Volumes/work/notes',
@@ -26,7 +27,7 @@ return {
             return tostring(os.time())
         end,
         picker = {
-            name = "telescope.nvim"
+            name = 'mini.pick',
         },
         ui = {
             enable = false,

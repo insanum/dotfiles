@@ -8,6 +8,7 @@ local config = wezterm.config_builder()
 -----------------------------------------------------------------------------
 
 config.front_end = 'WebGpu'
+--config.max_fps = 120
 
 --config.default_prog = { '/opt/homebrew/bin/fish', '-l' }
 config.default_cwd = wezterm.home_dir
@@ -109,6 +110,9 @@ local SOLID_LEFT_ROUND  = wezterm.nerdfonts.ple_left_half_circle_thick
 local SOLID_RIGHT_ROUND = wezterm.nerdfonts.ple_right_half_circle_thick
 local TASK_UNCHECKED    = wezterm.nerdfonts.md_checkbox_blank_outline
 local TASK_CHECKED      = wezterm.nerdfonts.md_checkbox_marked
+local APPLE             = wezterm.nerdfonts.dev_apple
+local Z_CIRCLE          = wezterm.nerdfonts.md_alpha_z_circle
+local Z_CIRCLE_OUTLINE  = wezterm.nerdfonts.md_alpha_z_circle_outline
 
 local function render_tab(fg_clr, bg_clr, text)
     return {
@@ -129,6 +133,10 @@ end
 wezterm.on('format-tab-title',
            function(tab, tabs, panes, config, hover, max_width)
   local title = tab.active_pane.title
+  local in_copy_mode = false
+  if title:sub(1, #'Copy mode:') == 'Copy mode:' then
+    in_copy_mode = true
+  end
   if tab.tab_title and #tab.tab_title > 0 then
     title = tab.tab_title
   else
@@ -138,23 +146,45 @@ wezterm.on('format-tab-title',
     title = basename(tab.active_pane.foreground_process_name)
   end
 
+  local bg_clr = nil
+  local icon = nil
+
   if tab.is_active then
-    return render_tab(clr.black, clr.red,
-      TASK_CHECKED .. ' ' .. (tab.tab_index + 1) .. '.' .. title)
+    bg_clr = clr.red
+    icon = TASK_CHECKED
+    if tab.active_pane.is_zoomed then
+      icon = Z_CIRCLE
+    end
   else
-    return render_tab(clr.black, clr.blue,
-      TASK_UNCHECKED .. ' ' .. (tab.tab_index + 1) .. '.' .. title)
+    bg_clr = clr.blue
+    icon = TASK_UNCHECKED
+    if tab.active_pane.is_zoomed then
+      icon = Z_CIRCLE_OUTLINE
+    end
   end
+
+  if in_copy_mode then
+    bg_clr = clr.yellow
+  end
+
+  return render_tab(clr.black, bg_clr,
+      icon .. ' ' .. (tab.tab_index + 1) .. '.' .. title)
 end)
 
 wezterm.on('update-status', function(window)
   local leader = '-'
+  local bg_clr = clr.white
   if window:leader_is_active() then
     leader = '+'
+    bg_clr = clr.yellow
   end
 
   window:set_right_status(wezterm.format(
-    render_tab(clr.black, clr.white, leader .. ' ' .. wezterm.hostname())
+    render_tab(clr.black, bg_clr, leader .. ' ' .. wezterm.hostname())
+  ))
+
+  window:set_left_status(wezterm.format(
+    render_tab(clr.black, bg_clr, APPLE .. ' foobar')
   ))
 end)
 
@@ -162,7 +192,7 @@ end)
 -----------------------------------------------------------------------------
 
 config.keys = { }
-config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 1000 }
+config.leader = { key = 'a', mods = 'CTRL', timeout_milliseconds = 10000 }
 
 local function key_cmd(key, mods, action)
   table.insert(config.keys, { key = key, mods = mods, action = action })
@@ -228,7 +258,7 @@ for i = 0,9 do
 end
 
 -- set pane width to 90 for the active pane (furthest left/right panes only)
-key_cmd('T', 'LEADER', wezterm.action_callback(function (window, pane)
+key_cmd('t', 'LEADER|CTRL', wezterm.action_callback(function (window, pane)
   local tab = pane:tab()
   local d = pane:get_dimensions()
   if d.cols > 90 then
@@ -245,6 +275,55 @@ key_cmd('T', 'LEADER', wezterm.action_callback(function (window, pane)
     end
   end
 end))
+
+-- equalize each panes' width horizontally across the tab
+key_cmd('=', 'LEADER', wezterm.action_callback(function (window, pane)
+  -- get all panes on the tab
+  local panes = pane:tab():panes_with_info()
+
+  -- filter panes with top_row == 0
+  local horiz_panes = { }
+  for i,p in ipairs(panes) do
+    if panes[i].top == 0 then
+      table.insert(horiz_panes, p)
+    end
+  end
+
+  -- FIXME sort panes from left to right (to be sure)
+
+  -- get total size.cols from these panes
+  local total_width=0
+  for _, p in ipairs(horiz_panes) do
+    total_width = total_width + p.width
+  end
+
+  -- compute new target pane width
+  local target_width = math.floor(total_width / #horiz_panes)
+
+  -- for each pane (except the last!), adjust pane size left or right
+  for i, p in ipairs(horiz_panes) do
+    if i == #horiz_panes then
+      break
+    end
+
+    -- have to activate the pane since 'pane' doesn't work for AdjustPaneSize
+    p.pane:activate()
+    if p.width > target_width then
+      window:perform_action(wa.AdjustPaneSize({ 'Left', (p.width - target_width) }), p.pane)
+    elseif p.width < target_width then
+      window:perform_action(wa.AdjustPaneSize({ 'Right', (target_width - p.width) }), p.pane)
+    end
+  end
+
+  -- activate original pane
+  pane:activate()
+end))
+
+key_cmd('x', 'LEADER', wa.SpawnCommandInNewTab({
+  cwd = wezterm.home_dir,
+  domain = 'CurrentPaneDomain',
+  args = { '/opt/homebrew/bin/cmatrix' },
+}))
 
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
@@ -269,9 +348,16 @@ wezterm.on('gui-startup', function()
   pane2:activate()
 
   local tab3, pane3, window3 = window1:spawn_tab({})
-  local d = tab3:get_size()
-  local p = pane3:split({ direction = 'Right', size = (d.cols - 91) }) -- +1 for border
-  pane3:split({ direction = 'Bottom', size = 0.5 })
+  tab3:set_title('Test')
+  pane3:split({ direction = 'Right', size = 0.5 })
+  pane3:send_text('clear\n')
+  pane3:send_text('figlet "Test"\n')
+  pane3:activate()
+
+  local tab4, pane4, window4 = window1:spawn_tab({})
+  local d = tab4:get_size()
+  local p = pane4:split({ direction = 'Right', size = (d.cols - 91) }) -- +1 for border
+  pane4:split({ direction = 'Bottom', size = 0.5 })
   p:activate()
   p:send_text('ls\n')
 

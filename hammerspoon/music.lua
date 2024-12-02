@@ -18,6 +18,15 @@ local function amCmd(...)
 
     local cmd_args = { }
     local cmd_txt = "Music"
+
+    local volume_up = true
+    if args[1] == "volume" and (args[2] == "up" or args[2] == "down") then
+        if args[2] == "down" then
+            volume_up = false
+        end
+        args[2] = "state"
+    end
+
     for i,v in ipairs(args) do
         table.insert(cmd_args, args[i])
         cmd_txt = cmd_txt .. " " .. v
@@ -101,6 +110,20 @@ local function amCmd(...)
         end
     end
 
+    local function amVolumeDone(exitCode, stdOut, stdErr)
+        if exitCode ~= 0 then
+            print_alert("Music failed to get volume state!")
+            return
+        end
+
+        local state = stdOut:gsub("^%s*(.-)%s*$", "%1")
+        if volume_up then
+            amCmd("volume", tostring(state + 5))
+        else
+            amCmd("volume", tostring(state - 5))
+        end
+    end
+
     local done_func = amDone
     if args[1] == "status" then
         done_func = amStatusDone
@@ -110,6 +133,8 @@ local function amCmd(...)
         done_func = amShuffleDone
     elseif args[1] == "repeat" and args[2] == "state" then
         done_func = amRepeatDone
+    elseif args[1] == "volume" and args[2] == "state" then
+        done_func = amVolumeDone
     end
 
     if not am_proc or not am_proc:isRunning() then

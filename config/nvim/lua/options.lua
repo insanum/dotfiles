@@ -27,7 +27,7 @@ vim.opt.colorcolumn = '80'
 
 vim.opt.scrolloff = 10
 
-vim.opt.showtabline = 2
+-- vim.opt.showtabline = 2
 
 vim.opt.splitright = false
 vim.opt.splitbelow = false
@@ -50,4 +50,6 @@ vim.diagnostic.config({
         prefix = '',
     }
 })
+
+vim.g.zig_fmt_autosave = 0
 

@@ -4,12 +4,12 @@ return {
     dependencies = {
         'MunifTanjim/nui.nvim',
         {
-            'rcarriga/nvim-notify',
-            opts = {
-                render = 'default',
-                stages = 'static',
-                top_down = false,
-            },
+            -- 'rcarriga/nvim-notify',
+            -- opts = {
+            --     render = 'default',
+            --     stages = 'static',
+            --     top_down = false,
+            -- },
         },
     },
     opts = {

@@ -104,6 +104,7 @@ fzf_configure_bindings --directory=\ck --git_log=\cg --git_status= --history=\cr
 #end
 
 if type -q zoxide
+    # stop using cd and use z/zi !!!
     zoxide init fish | source
 end
 

@@ -3,7 +3,9 @@ return {
     dependencies = {
         'nvim-lua/plenary.nvim',
         'sindrets/diffview.nvim',
-        'nvim-telescope/telescope.nvim',
+        'nvim-tree/nvim-web-devicons',
+        --'nvim-telescope/telescope.nvim',
+        'echasnovski/mini.pick',
     },
     config = true,
     keys = {

@@ -40,6 +40,7 @@
 	new          = green bold
 	whitespace   = red reverse
 [diff]
+	external     = difft
 	tool         = p4merge
 [difftool]
 	prompt       = false

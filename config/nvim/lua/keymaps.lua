@@ -5,10 +5,6 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
--- diagnostic keymaps
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-
 -- I like cinoptions! (vs an annoying autoformatter plugin)...
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
     pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino', '*.cs', '*.java', '*.js', '*.lua', '*.rs' },
@@ -62,34 +58,26 @@ for i = 1, 9, 1 do
   vim.keymap.set('n', '<leader>t' .. i, i .. 'gt', { desc = 'Tab goto ' .. i })
 end
 
--- telescope for marks
-vim.keymap.set('n', '<leader>sm', require('telescope.builtin').marks, { desc = '[S]earch [M]arks' })
-
--- telescope for marks.nvim marks/bookmarks
---vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[M]arks [M]arks' })
---vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true, desc = '[M]arks [B]ookmarks' })
-
 -- marks.nvim keymaps and commands for location list split at bottom under buffer window
-require('which-key').add({ '<leader>m', group = '[M]arks' })
-vim.keymap.set('n', '<leader>mf', '<cmd>MarksListBuf<CR>', { silent = true, desc = '[M]arks Bu[f]fer' })
-vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR>', { silent = true, desc = '[M]arks [M]arks all' })
-vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR>', { silent = true, desc = '[M]arks [B]ookmarks all' })
+-- vim.keymap.set('n', '<leader>mf', '<cmd>MarksListBuf<CR>', { silent = true, desc = '[M]arks Bu[f]fer' })
+-- vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR>', { silent = true, desc = '[M]arks [M]arks all' })
+-- vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR>', { silent = true, desc = '[M]arks [B]ookmarks all' })
 -- marks.nvim commands for quickfix list split at bottom and full width
-vim.cmd([[
-command! MQFListAll  exe "lua require('marks').mark_state:all_to_list('quickfixlist')" | botright copen
-command! BMQFListAll exe "lua require('marks').bookmark_state:all_to_list('quickfixlist')" | botright copen
-]])
+-- vim.cmd([[
+-- command! MQFListAll  exe "lua require('marks').mark_state:all_to_list('quickfixlist')" | botright copen
+-- command! BMQFListAll exe "lua require('marks').bookmark_state:all_to_list('quickfixlist')" | botright copen
+-- ]])
 
 -- location list window management (open/close/clear)
-vim.keymap.del('n', '<leader>q')
-require('which-key').add({ '<leader>q', group = '[Q]uickfix' })
-vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>', { silent = true, desc = '[Q]uickfix [O]open' })
+vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>', { silent = true, desc = '[Q]uickfix [O]pen' })
 --vim.keymap.set('n', '<leader>qc', '<cmd>windo if &buftype == "quickfix" || &buftype == "locationlist" | lclose | endif<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
 vim.keymap.set('n', '<leader>qc', '<cmd>lclose<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
 vim.keymap.set('n', '<leader>qx', '<cmd>lexpr []<CR>', { silent = true, desc = '[Q]uickfix [X]clear' })
+vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = '[Q]uickfix [D]iagnostic' })
+-- diagnostic hover
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 
 -- obsidian
-require('which-key').add({ '<leader>o', group = '[O]bsidian' })
 vim.keymap.set('n', '<leader>oq', '<cmd>ObsidianQuickSwitch<CR>', { desc = '[O]bsidian [Q]uickSwitch' })
 vim.keymap.set('n', '<leader>os', '<cmd>ObsidianSearch<CR>', { desc = '[O]bsidian [S]earch' })
 vim.keymap.set('n', '<leader>ot', '<cmd>ObsidianToday<CR>', { desc = '[O]bsidian [T]oday' })
@@ -108,6 +96,7 @@ vim.cmd.hi 'TabLine guifg=#e0af68'
 
 -- Workaround for bug where Telescope enters Insert mode on selection:
 -- https://github.com/nvim-telescope/telescope.nvim/issues/2027
+--[[
 vim.api.nvim_create_autocmd('WinLeave', {
     callback = function()
         if vim.bo.ft == 'TelescopePrompt' and vim.fn.mode() == 'i' then
@@ -115,4 +104,5 @@ vim.api.nvim_create_autocmd('WinLeave', {
         end
     end,
 })
+--]]
 

@@ -124,8 +124,8 @@ if [[ -n "$CHROMEBOOK" ]]; then alias startx="xinit"; fi
 if [[ -n "$PS1" ]]; then
 
   set -o notify
-  set -o ignoreeof 
-  set -o vi 
+  set -o ignoreeof
+  set -o vi
 
   #shopt -s cdspell
   if [[ ! $OSTYPE =~ darwin ]]; then

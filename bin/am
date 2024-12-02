@@ -409,7 +409,7 @@ usage="Usage: $0 [command] ...
   seek <forward|backward>         Seek the current track +/- 15 seconds
   shuffle <state|on|off>          Set shuffle mode
   repeat <state|off|one|all>      Set repeat mode
-  volume <state|up|down|0-100>    Change the volume
+  volume <state|up|down|0-100>    Change the volume +/- 5% or set the level
   lyrics                          Show lyrics for the current track
   tui                             Open TUI with status of current track"
 

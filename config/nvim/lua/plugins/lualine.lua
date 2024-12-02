@@ -19,7 +19,22 @@ return {
                 lualine_b = {
                     --{ show_codeium_status },
                     { 'branch' },
-                    { 'diff', colored = false },
+                    {
+                      'diff',
+                      colored = false,
+                      source = function()
+                          local s = vim.b.minidiff_summary
+                          if s == nil then
+                              return { }
+                          else
+                              return {
+                                  added = s.add,
+                                  modified = s.change,
+                                  removed = s.delete,
+                              }
+                          end
+                      end
+                    },
                     { 'diagnostics' },
                 },
                 lualine_c = {
