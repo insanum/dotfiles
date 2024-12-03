@@ -45,6 +45,9 @@ return {
                 border = {
                     style = 'double',
                 },
+                win_options = {
+                    winblend = 0,
+                },
             },
         },
     },

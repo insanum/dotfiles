@@ -19,6 +19,10 @@ return {
                 command = 'split'
             }
         },
+        win_extra_options = {
+            signcolumn = 'no',
+        },
+        show_indicators = 'before',
     },
     config = function(_, opts)
         require('buffer_manager').setup(opts)
