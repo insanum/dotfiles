@@ -5,7 +5,7 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
--- I like cinoptions! (vs an annoying autoformatter plugin)...
+-- I like cinoptions! (vs an annoying autoformatting plugins)...
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
     pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino', '*.cs', '*.java', '*.js', '*.lua', '*.rs' },
     callback = function()
@@ -58,19 +58,8 @@ for i = 1, 9, 1 do
   vim.keymap.set('n', '<leader>t' .. i, i .. 'gt', { desc = 'Tab goto ' .. i })
 end
 
--- marks.nvim keymaps and commands for location list split at bottom under buffer window
--- vim.keymap.set('n', '<leader>mf', '<cmd>MarksListBuf<CR>', { silent = true, desc = '[M]arks Bu[f]fer' })
--- vim.keymap.set('n', '<leader>mm', '<cmd>MarksListAll<CR>', { silent = true, desc = '[M]arks [M]arks all' })
--- vim.keymap.set('n', '<leader>mb', '<cmd>BookmarksListAll<CR>', { silent = true, desc = '[M]arks [B]ookmarks all' })
--- marks.nvim commands for quickfix list split at bottom and full width
--- vim.cmd([[
--- command! MQFListAll  exe "lua require('marks').mark_state:all_to_list('quickfixlist')" | botright copen
--- command! BMQFListAll exe "lua require('marks').bookmark_state:all_to_list('quickfixlist')" | botright copen
--- ]])
-
 -- location list window management (open/close/clear)
 vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>', { silent = true, desc = '[Q]uickfix [O]pen' })
---vim.keymap.set('n', '<leader>qc', '<cmd>windo if &buftype == "quickfix" || &buftype == "locationlist" | lclose | endif<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
 vim.keymap.set('n', '<leader>qc', '<cmd>lclose<CR>', { silent = true, desc = '[Q]uickfix [C]lose' })
 vim.keymap.set('n', '<leader>qx', '<cmd>lexpr []<CR>', { silent = true, desc = '[Q]uickfix [X]clear' })
 vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist, { desc = '[Q]uickfix [D]iagnostic' })

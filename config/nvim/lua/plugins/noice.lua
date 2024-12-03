@@ -3,14 +3,16 @@ return {
     event = 'VeryLazy',
     dependencies = {
         'MunifTanjim/nui.nvim',
+        --[[
         {
-            -- 'rcarriga/nvim-notify',
-            -- opts = {
-            --     render = 'default',
-            --     stages = 'static',
-            --     top_down = false,
-            -- },
+            'rcarriga/nvim-notify',
+            opts = {
+                render = 'default',
+                stages = 'static',
+                top_down = false,
+            },
         },
+        --]]
     },
     opts = {
         lsp = {
@@ -30,6 +32,20 @@ return {
         },
         messages = {
             view_search = "virtualtext",
+        },
+        views = {
+            mini = {
+                timeout = 5000,
+                position = {
+                    row = -3,
+                },
+                size = {
+                    max_height = 20,
+                },
+                border = {
+                    style = 'double',
+                },
+            },
         },
     },
 }

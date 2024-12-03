@@ -10,7 +10,8 @@ return {
     event = 'VeryLazy',
     config = function()
         require('mark-signs').setup {
-            builtin_marks = { '.', '^', '`', '\'', '"', '<', '>', '[', ']' },
+            --builtin_marks = { '.', '^', '`', '\'', '"', '<', '>', '[', ']' },
+            builtin_marks = { '.', '"', },
             sign_priority = { lower=10, upper=15, builtin=8 },
         }
     end,
