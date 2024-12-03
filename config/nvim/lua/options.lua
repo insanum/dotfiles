@@ -40,7 +40,11 @@ vim.opt.winminwidth = 10
 vim.opt.showmode = false
 
 vim.diagnostic.config({
-    virtual_text = true,
+    virtual_text = {
+        virt_text_pos = 'eol',
+        prefix = ' ',
+        spacing = 0,
+    },
     float = {
         focusable = false,
         style = 'minimal',
@@ -48,7 +52,7 @@ vim.diagnostic.config({
         source = 'always',
         header = '',
         prefix = '',
-    }
+    },
 })
 
 vim.g.zig_fmt_autosave = 0
