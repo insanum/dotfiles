@@ -2,6 +2,14 @@
 return {
 
   {
+    'marcussimonsen/let-it-snow.nvim',
+    cmd = 'LetItSnow', -- Wait with loading until command is run
+    opts = {
+        delay = 175,
+    },
+  },
+
+  {
     'jackMort/ChatGPT.nvim',
     event = 'VeryLazy',
     config = function()
@@ -373,16 +381,6 @@ return {
   {
     'tpope/vim-fugitive',
     event = 'VeryLazy',
-  },
-
-  {
-    'stevearc/aerial.nvim',
-    event = 'VeryLazy',
-    opts = {},
-    dependencies = {
-        'nvim-treesitter/nvim-treesitter',
-        'nvim-tree/nvim-web-devicons'
-    },
   },
 
   {
