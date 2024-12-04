@@ -216,6 +216,15 @@ return {
                 mark              = '<C-r>',
                 choose_marked     = '<C-q>',
                 paste             = '',
+                location_list     = {
+                    char = '<C-o>',
+                    func = function()
+                        local picks = pick.get_picker_matches()
+                        pick.default_choose_marked(picks.all,
+                                                   { list_type = 'location' })
+                        return true
+                    end,
+                },
             },
             source = {
                 choose_marked = function(items)
@@ -226,12 +235,12 @@ return {
         })
 
         -- turn off the signcolumn for the mini.pick floating window
-        vim.api.nvim_create_autocmd('User', {
-            pattern = 'MiniPickStart',
-            callback = function()
-                vim.opt.signcolumn = 'no'
-            end,
-        })
+        -- vim.api.nvim_create_autocmd('User', {
+        --     pattern = 'MiniPickStart',
+        --     callback = function()
+        --         vim.opt.signcolumn = 'no'
+        --     end,
+        -- })
 
         -- Search keymaps
 
@@ -300,8 +309,8 @@ return {
                        { desc = '[ ] Search current buffers' })
 
         -- Add a 'neovim_config' picker to access the Neovim configuration
-        MiniPick.registry.neovim_config = function()
-            return MiniPick.builtin.cli(
+        pick.registry.neovim_config = function()
+            return pick.builtin.cli(
                 {
                     command = {
                         'rg',
@@ -315,8 +324,8 @@ return {
                         name = 'neovim_config',
                         cwd = vim.fn.stdpath 'config',
                         show = function(buf_id, items, query)
-                            return MiniPick.default_show(buf_id, items, query,
-                                                         { show_icons = true })
+                            return pick.default_show(buf_id, items, query,
+                                                     { show_icons = true })
                         end,
                     },
                 })
@@ -328,10 +337,10 @@ return {
                        { desc = '[S]earch [N]eovim files' })
 
         -- Add a 'registry' picker that lists all the available pickers
-        MiniPick.registry.registry = function()
-            local items = vim.tbl_keys(MiniPick.registry)
+        pick.registry.registry = function()
+            local items = vim.tbl_keys(pick.registry)
             table.sort(items)
-            local chosen_picker_name = MiniPick.start({
+            local chosen_picker_name = pick.start({
                 source = {
                     items = items,
                     name = 'Registry',
@@ -339,7 +348,7 @@ return {
                 },
             })
             if chosen_picker_name == nil then return end
-            return MiniPick.registry[chosen_picker_name]()
+            return pick.registry[chosen_picker_name]()
         end
 
         -- Shortcut for searching the Pick registry and execute
@@ -385,7 +394,7 @@ return {
                        vim.lsp.buf.hover,
                        { desc = '[L]SP [H]over documentation' })
 
-        vim.ui.select = MiniPick.ui_select
+        vim.ui.select = pick.ui_select
 
         ---------------------------------------------------------------------
         -- mini.clue --------------------------------------------------------
