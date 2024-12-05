@@ -1,15 +1,15 @@
 
 return {
 
-  {
+{
     'marcussimonsen/let-it-snow.nvim',
     cmd = 'LetItSnow', -- Wait with loading until command is run
     opts = {
         delay = 175,
     },
-  },
+},
 
-  {
+{
     'jackMort/ChatGPT.nvim',
     event = 'VeryLazy',
     config = function()
@@ -21,9 +21,9 @@ return {
       'folke/trouble.nvim',
       'nvim-telescope/telescope.nvim'
     }
-  },
+},
 
-  {
+{
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
     branch = '0.1.x',
@@ -50,83 +50,91 @@ return {
         --  n = { ['<CR>'] = actions.select_tab_drop },
         --}
         require('telescope').setup {
-          -- You can put your default mappings / updates / etc. in here
-          --  All the info you're looking for is in `:help telescope.setup()`
-          defaults = {
-              mappings = select_map,
-              vimgrep_arguments = {
-                  "rg",
-                  "--color=never",
-                  "--no-heading",
-                  "--with-filename",
-                  "--line-number",
-                  "--column",
-                  "--smart-case",
-                  "--follow",
-              },
-          },
-          pickers = {
-              buffers = {
-                  sort_mru = true,
-              },
-              -- buffers    = { mappings = tab_drop_map, },
-              -- quickfix   = { mappings = tab_drop_map, },
-              -- marks      = { mappings = tab_drop_map, },
-              -- find_files = { mappings = tab_drop_map, },
-          },
-          extensions = {
-              ['ui-select'] = {
-                  require('telescope.themes').get_dropdown(),
-              },
-          },
-      }
+            -- You can put your default mappings / updates / etc. in here
+            --  All the info you're looking for is in `:help telescope.setup()`
+            defaults = {
+                mappings = select_map,
+                vimgrep_arguments = {
+                    "rg",
+                    "--color=never",
+                    "--no-heading",
+                    "--with-filename",
+                    "--line-number",
+                    "--column",
+                    "--smart-case",
+                    "--follow",
+                },
+            },
+            pickers = {
+                buffers = {
+                    sort_mru = true,
+                },
+                -- buffers    = { mappings = tab_drop_map, },
+                -- quickfix   = { mappings = tab_drop_map, },
+                -- marks      = { mappings = tab_drop_map, },
+                -- find_files = { mappings = tab_drop_map, },
+            },
+            extensions = {
+                ['ui-select'] = {
+                    require('telescope.themes').get_dropdown(),
+                },
+            },
+        }
 
-      -- enable Telescope extensions which should be installed by default
-      pcall(require('telescope').load_extension, 'fzf')
-      pcall(require('telescope').load_extension, 'ui-select')
+        -- enable Telescope extensions which should be installed by default
+        pcall(require('telescope').load_extension, 'fzf')
+        pcall(require('telescope').load_extension, 'ui-select')
 
-      --[[
-      local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+        local builtin = require 'telescope.builtin'
+        vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+        vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+        vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+        vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+        vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+        vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+        vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+        vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+        vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-      vim.keymap.set('n', '<leader>sf',
-          function()
-              builtin.find_files({ follow = true })
-          end,
-          { desc = '[S]earch [F]iles' })
+        vim.keymap.set('n', '<leader>sf',
+            function()
+                builtin.find_files({ follow = true })
+            end,
+            { desc = '[S]earch [F]iles' })
 
-      vim.keymap.set('n', '<leader>/',
-          function()
-              local drop_theme = require('telescope.themes').get_dropdown({ winblend = 10, previewer = false })
-              builtin.current_buffer_fuzzy_find(drop_theme)
-          end,
-          { desc = '[/] Fuzzily search in current buffer' })
+        vim.keymap.set('n', '<leader>/',
+            function()
+                local drop_theme = require('telescope.themes').get_dropdown({ winblend = 10, previewer = false })
+                builtin.current_buffer_fuzzy_find(drop_theme)
+            end,
+            { desc = '[/] Fuzzily search in current buffer' })
 
-      vim.keymap.set('n', '<leader>s/',
-          function()
-              builtin.live_grep({ grep_open_files = true, prompt_title = 'Live Grep in Open Files' })
-          end,
-          { desc = '[S]earch [/] in Open Files' })
+        vim.keymap.set('n', '<leader>s/',
+            function()
+                builtin.live_grep({ grep_open_files = true, prompt_title = 'Live Grep in Open Files' })
+            end,
+            { desc = '[S]earch [/] in Open Files' })
 
-      -- Shortcut for searching your Neovim configuration files
-      vim.keymap.set('n', '<leader>sn',
-          function()
-              builtin.find_files({ follow = true, cwd = vim.fn.stdpath 'config' })
-          end,
-          { desc = '[S]earch [N]eovim files' })
-      --]]
+        -- Shortcut for searching your Neovim configuration files
+        vim.keymap.set('n', '<leader>sn',
+            function()
+                builtin.find_files({ follow = true, cwd = vim.fn.stdpath 'config' })
+            end,
+            { desc = '[S]earch [N]eovim files' })
+
+        -- Workaround for bug where Telescope enters Insert mode on selection:
+        -- https://github.com/nvim-telescope/telescope.nvim/issues/2027
+        vim.api.nvim_create_autocmd('WinLeave', {
+            callback = function()
+                if vim.bo.ft == 'TelescopePrompt' and vim.fn.mode() == 'i' then
+                    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'i', false)
+                end
+            end,
+        })
     end,
-  },
+},
 
-  {
+{
     'ThePrimeagen/git-worktree.nvim',
     event = 'VeryLazy',
     config = function()
@@ -141,24 +149,24 @@ return {
         vim.keymap.set('n', '<leader>hw', '<cmd>Telescope git_worktree<CR>', { desc = 'git Worktree switch' })
         vim.keymap.set('n', '<leader>hW', require('telescope').extensions.git_worktree.create_git_worktree, { desc = 'git Worktree create' })
     end,
-  },
+},
 
-  {
+{
     'NvChad/nvim-colorizer.lua',
     main = 'colorizer',
     opts = {},
-  },
+},
 
-  {
+{
     'nanozuki/tabby.nvim',
     event = 'VimEnter',
     dependencies = {
         'nvim-tree/nvim-web-devicons',
     },
     opts = {},
-  },
+},
 
-  {
+{
     'folke/todo-comments.nvim',
     event = 'VimEnter',
     dependencies = {
@@ -167,9 +175,9 @@ return {
     opts = {
         signs = false
     },
-  },
+},
 
-  {
+{
     "folke/trouble.nvim",
     opts = {
         focus = true,
@@ -187,18 +195,18 @@ return {
             desc = "Todos (Trouble)",
         },
     },
-  },
+},
 
-  {
+{
     'ggandor/leap.nvim',
     enabled = false,
     keys = {
         { 's', '<Plug>(leap-forward)', desc = 'Leap forward' },
         { 'S', '<Plug>(leap-backward)', desc = 'Leap backward' },
     },
-  },
+},
 
-  {
+{
     'lewis6991/gitsigns.nvim',
     opts = {
         on_attach = function(bufnr)
@@ -282,9 +290,9 @@ return {
             map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'git Select hunk' })
         end,
     },
-  },
+},
 
-  {
+{
     'folke/which-key.nvim',
     event = 'VimEnter',
     opts = {
@@ -304,9 +312,9 @@ return {
             { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         },
     },
-  },
+},
 
-  {
+{
     'jedrzejboczar/possession.nvim',
     opts = {
         commands = {
@@ -326,9 +334,9 @@ return {
         require('possession').setup(opts)
         require('telescope').load_extension('possession')
     end,
-  },
+},
 
-  {
+{
     'chentoast/marks.nvim',
     event = 'VeryLazy',
     config = function()
@@ -337,18 +345,18 @@ return {
             sign_priority = { lower=10, upper=15, builtin=8, bookmark=20 },
         }
     end,
-  },
+},
 
-  {
+{
     "LintaoAmons/bookmarks.nvim",
     enabled = false,
     dependencies = {
         'nvim-telescope/telescope.nvim',
         --'stevearc/dressing.nvim',
     },
-  },
+},
 
-  {
+{
     'debugloop/telescope-undo.nvim',
     dependencies = { -- note how they're inverted to above example
         {
@@ -376,37 +384,37 @@ return {
         require('telescope').setup(opts)
         require('telescope').load_extension('undo')
     end,
-  },
+},
 
-  {
+{
     'tpope/vim-fugitive',
     event = 'VeryLazy',
-  },
+},
 
-  {
+{
     'TabbyML/vim-tabby',
     config = function()
         vim.g.tabby_node_binary = '/opt/homebrew/bin/node'
         vim.g.tabby_keybinding_accept = '<C-f>'
         vim.g.tabby_trigger_mode = 'auto'
     end,
-  },
+},
 
-  {
+{
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',
     opts = {},
-  },
+},
 
-  {
+{
     'junegunn/vim-easy-align',
     config = function()
         vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
         --vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
     end,
-  },
+},
 
-  {
+{
     'numToStr/FTerm.nvim',
     config = function()
         require'FTerm'.setup({
@@ -418,27 +426,27 @@ return {
             },
         })
     end,
-  },
+},
 
-  {
+{
     'navarasu/onedark.nvim',
     lazy = false,
     priority = 999,
     config = function()
         vim.cmd.colorscheme 'onedark'
     end,
-  },
+},
 
-  {
+{
     'rmehri01/onenord.nvim',
     lazy = false,
     priority = 999,
     config = function()
         vim.cmd.colorscheme 'onenord'
     end,
-  },
+},
 
-  {
+{
     'ellisonleao/gruvbox.nvim',
     lazy = false,
     priority = 999,
@@ -446,7 +454,7 @@ return {
         vim.opt.background = 'dark'
         vim.cmd.colorscheme 'gruvbox'
     end,
-  },
+},
 
 }
 

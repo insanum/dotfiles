@@ -84,15 +84,3 @@ vim.cmd.hi 'link NoiceVirtualText IncSearch'
 -- tabline text needs to stand out more
 vim.cmd.hi 'TabLine guifg=#e0af68'
 
--- Workaround for bug where Telescope enters Insert mode on selection:
--- https://github.com/nvim-telescope/telescope.nvim/issues/2027
---[[
-vim.api.nvim_create_autocmd('WinLeave', {
-    callback = function()
-        if vim.bo.ft == 'TelescopePrompt' and vim.fn.mode() == 'i' then
-            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'i', false)
-        end
-    end,
-})
---]]
-
