@@ -1,4 +1,0 @@
-
-. copy rgb.txt to /usr/share/X11/rgb.txt
-. run: `cat ~/.vnc/cmd.txt`
-

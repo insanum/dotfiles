@@ -1,7 +1,0 @@
-#!/bin/bash
-
-pkill -x vnc_bspwm_panel
-
-vncserver -kill :13
-#killall vncconfig
-

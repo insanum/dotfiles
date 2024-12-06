@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd ~
-
-#exec vncserver :13 -PasswordFile ~/.priv/vnc_passwd -bs -ac -nolisten tcp -localhost -dpi 96 -name foobar
-exec vncserver :13 -PasswordFile ~/.priv/vnc_passwd -bs -ac -dpi 96 -geometry 1920x1080 -name foobar
-
