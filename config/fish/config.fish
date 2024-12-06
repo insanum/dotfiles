@@ -52,22 +52,22 @@ function fish_my_keybinds
 end
 set -g fish_key_bindings fish_my_keybinds
 
-function ls;     lsd -F $argv;          end
-function ll;     lsd -lF $argv;         end
-function la;     lsd -aF $argv;         end
-function lal;    lsd -laF $argv;        end
-function rm;     /bin/rm -i $argv;      end
-function mv;     /bin/mv -i $argv;      end
-function cp;     /bin/cp -i $argv;      end
-function vi;     nvim $argv;            end
-function cat;    bat $argv;             end
-function more;   bat $argv;             end
-function du;     dust $argv;            end
-function df;     duf $argv;             end
-function h;      history;               end
-function where;  type -a $argv;         end
-function !!;     eval $history[1];      end
-function sudo!!; eval sudo $history[1]; end
+function ls;     exa --icons -F $argv;   end
+function ll;     exa --icons -lF $argv;  end
+function la;     exa --icons -aF $argv;  end
+function lal;    exa --icons -laF $argv; end
+function rm;     /bin/rm -i $argv;       end
+function mv;     /bin/mv -i $argv;       end
+function cp;     /bin/cp -i $argv;       end
+function vi;     nvim $argv;             end
+function cat;    bat $argv;              end
+function more;   bat $argv;              end
+function du;     dust $argv;             end
+function df;     duf $argv;              end
+function h;      history;                end
+function where;  type -a $argv;          end
+function !!;     eval $history[1];       end
+function sudo!!; eval sudo $history[1];  end
 
 set -gx TODO_FILE $HOME/notes/INBOX.md
 abbr --add mdt mdtodo

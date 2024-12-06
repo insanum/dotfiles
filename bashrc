@@ -44,7 +44,7 @@ else
   LSC="--color=auto"
 fi
 
-exists lsd && LS=lsd && LSC=
+exists exa && LS=exa && LSC="--icons"
 
 alias dir="$LS -F $LSC"
 alias ls="$LS -F $LSC"
