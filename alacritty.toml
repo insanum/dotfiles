@@ -97,7 +97,7 @@ white   = '#d5d6db'
 #####################################################################
 
 [font]
-size = 16.0
+size = 16
 
 [font.bold]
 family = "Hack Nerd Font"
@@ -131,7 +131,7 @@ history = 0
 [selection]
 save_to_clipboard = true
 
-[shell]
+[terminal.shell]
 args = ["--login"]
 program = "/opt/homebrew/bin/bash"
 
@@ -143,4 +143,6 @@ startup_mode = "Maximized"
 [window.padding]
 x = 6
 y = 2
+
+[terminal]
 
