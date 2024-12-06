@@ -69,12 +69,6 @@ function where;  type -a $argv;          end
 function !!;     eval $history[1];       end
 function sudo!!; eval sudo $history[1];  end
 
-set -gx TODO_FILE $HOME/notes/INBOX.md
-abbr --add mdt mdtodo
-abbr --add mdth "mdtodo -t high"
-abbr --add mdtm "mdtodo -t medium"
-abbr --add mdtl "mdtodo -t low"
-
 function bitter;    eval $HOME/work/git/bitter/bitter $argv;       end
 function nostalgic; eval $HOME/work/git/nostalgic/nostalgic $argv; end
 
@@ -92,12 +86,6 @@ function fished; nvim $HOME/.config/fish/config.fish;   end
 
 set -g fzf_history_opts --height 40% --reverse
 fzf_configure_bindings --directory=\ck --git_log=\cg --git_status= --history=\cr --processes=\cp --variables=\cv
-
-# Base16 Shell
-#if status --is-interactive
-#    set BASE16_SHELL "$HOME/src/base16-shell/"
-#    source "$BASE16_SHELL/profile_helper.fish"
-#end
 
 #if type -q starship
 #    starship init fish | source
