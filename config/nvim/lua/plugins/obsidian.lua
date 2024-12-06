@@ -34,6 +34,10 @@ return {
         },
     },
     keys = {
-      { '<leader>oo', '<cmd>tabnew<CR><cmd>tcd /Volumes/work/notes<CR><cmd>setlocal conceallevel=1<CR><cmd>ObsidianQuickSwitch<CR>', desc = '[O]bsidian [O]pen' },
+        {
+            '<leader>oo',
+            '<cmd>tabnew<CR><cmd>tcd /Volumes/work/notes<CR><cmd>setlocal conceallevel=1<CR><cmd>ObsidianQuickSwitch<CR>',
+            desc = '[O]bsidian [O]pen'
+        },
     },
 }

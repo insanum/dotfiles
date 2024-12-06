@@ -1,9 +1,8 @@
-
 return {
 
 {
     'marcussimonsen/let-it-snow.nvim',
-    cmd = 'LetItSnow', -- Wait with loading until command is run
+    cmd = 'LetItSnow',
     opts = {
         delay = 175,
     },
@@ -457,4 +456,3 @@ return {
 },
 
 }
-

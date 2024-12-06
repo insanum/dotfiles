@@ -203,6 +203,18 @@ return {
         -- mini.pick --------------------------------------------------------
         ---------------------------------------------------------------------
 
+        local win_config = function()
+            local height = math.floor(0.6 * vim.o.lines)
+            local width = 82 -- math.floor(0.6 * vim.o.columns)
+            return {
+                anchor = 'NW',
+                height = height,
+                width = width,
+                row = math.floor(0.5 * (vim.o.lines - height)),
+                col = math.floor(0.5 * (vim.o.columns - width)),
+            }
+        end
+
         local pick = require('mini.pick')
         pick.setup({
             mappings = {
@@ -225,6 +237,9 @@ return {
                         return true
                     end,
                 },
+            },
+            window = {
+                config = win_config,
             },
             source = {
                 choose_marked = function(items)

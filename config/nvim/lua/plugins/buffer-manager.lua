@@ -29,7 +29,8 @@ return {
         local bm_ui = require('buffer_manager.ui')
         local keys = '1234567890'
 
-        vim.keymap.set('n', ';', bm_ui.toggle_quick_menu, { desc = 'Buffer Manager' })
+        vim.keymap.set('n', ';', bm_ui.toggle_quick_menu,
+                       { desc = 'Buffer Manager' })
 
         for i = 1, #keys do
             local key = keys:sub(i,i)
