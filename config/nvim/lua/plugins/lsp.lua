@@ -27,6 +27,7 @@ return {
             bashls = {},
             pyright = {},
             ts_ls = {},
+            zls = {},
             lua_ls = {
                 settings = {
                     Lua = {

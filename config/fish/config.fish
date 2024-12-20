@@ -52,18 +52,50 @@ function fish_my_keybinds
 end
 set -g fish_key_bindings fish_my_keybinds
 
-function ls;     exa --icons -F $argv;   end
-function ll;     exa --icons -lF $argv;  end
-function la;     exa --icons -aF $argv;  end
-function lal;    exa --icons -laF $argv; end
-function rm;     /bin/rm -i $argv;       end
-function mv;     /bin/mv -i $argv;       end
-function cp;     /bin/cp -i $argv;       end
-function vi;     nvim $argv;             end
-function cat;    bat $argv;              end
-function more;   bat $argv;              end
-function du;     dust $argv;             end
-function df;     duf $argv;              end
+if type -q exa
+    alias ls="exa --icons -F"
+    alias ll="exa --icons -lF"
+    alias la="exa --icons -aF"
+    alias lal="exa --icons -laF"
+    alias lst="exa --icons -F -s modified -r"
+    alias llt="exa --icons -lF -s modified -r"
+    alias lat="exa --icons -aF -s modified -r"
+    alias lalt="exa --icons -laF -s modified -r"
+else if type -q lsd
+    alias ls="lsd -F"
+    alias ll="lsd -lF"
+    alias la="lsd -aF"
+    alias lal="lsd -laF"
+    alias lst="lsd -Ft"
+    alias llt="lsd -lFt"
+    alias lat="lsd -aFt"
+    alias lalt="lsd -laFt"
+end
+
+if type -q bat
+    alias cat="bat"
+    alias more="bat"
+    alias less="bat"
+end
+
+alias rm="/bin/rm -i"
+alias mv="/bin/mv -i"
+alias cp="/bin/cp -i"
+alias vi="nvim"
+alias zig="$HOME/zig/zig"
+
+if type -q dust
+    alias du="dust"
+end
+
+if type -q duf
+    alias df="duf"
+end
+
+if type -q prettyping
+    alias ping="prettyping --nolegend"
+end
+
 function h;      history;                end
 function where;  type -a $argv;          end
 function !!;     eval $history[1];       end
@@ -98,10 +130,6 @@ end
 
 if type -q pyenv
     pyenv init - | source
-end
-
-if type -q prettyping
-    abbr --add ping "prettyping --nolegend"
 end
 
 set -gx HOMEBREW_GITHUB_API_TOKEN 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
