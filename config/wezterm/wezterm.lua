@@ -14,7 +14,7 @@ config.front_end = 'WebGpu'
 config.default_cwd = wezterm.home_dir
 
 config.font = wezterm.font('Hack Nerd Font')
-config.font_size = 18
+config.font_size = 17
 config.cell_width = 0.9
 -- This won't work well on a dual screen setup. This is a temporary
 -- solution to font rendering oddities on an external monitor.

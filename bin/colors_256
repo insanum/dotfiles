@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """Print a swatch using all 256 colors of 256-color-capable terminals."""
 
 

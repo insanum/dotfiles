@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python
 
 import sys
 
@@ -45,8 +45,8 @@ class CLR_BG_BRWHT(CLR): color = "\033[107m"; name = "brwht"
 class CLR_BG_DEF  (CLR): color = "\033[49m";  name = "def  "
 
 def PrintMsg(fg, bg, idx, width):
-    if not (idx % width): print ''
-    print fg, bg, "**", fg.name, "on", bg.name, "**", CLR_DEF(),
+    if not (idx % width): print('')
+    print(fg, bg, "**", fg.name, "on", bg.name, "**", CLR_DEF())
 
 FGs = [ CLR_FG_BLK(), CLR_FG_BRBLK(), CLR_FG_RED(), CLR_FG_BRRED(),
         CLR_FG_GRN(), CLR_FG_BRGRN(), CLR_FG_YLW(), CLR_FG_BRYLW(),
@@ -60,13 +60,13 @@ BGs = [ CLR_BG_BLK(), CLR_BG_BRBLK(), CLR_BG_RED(), CLR_BG_BRRED(),
 
 WIDTH = 2
 
-for i, fg in zip(xrange(len(FGs)), FGs):
+for i, fg in zip(range(len(FGs)), FGs):
     PrintMsg(fg, CLR_BG_DEF(), i, WIDTH)
 
-for i, bg in zip(xrange(len(BGs)), BGs):
+for i, bg in zip(range(len(BGs)), BGs):
     PrintMsg(CLR_FG_DEF(), bg, i, WIDTH)
 
-for i, fg in zip(xrange(len(FGs)), FGs):
-    for j, bg in zip(xrange(len(BGs)), BGs):
+for i, fg in zip(range(len(FGs)), FGs):
+    for j, bg in zip(range(len(BGs)), BGs):
         PrintMsg(fg, bg, j, WIDTH)
 
