@@ -1,7 +1,6 @@
--- This version of Codeium seems to work well for me. This one is Vim based
--- and shows generations as ghost text. Problem is that the ghost text
--- conflicts with nvim-cmp if the expiremental ghost text feature in nvim-cmp
--- is enabled (w/ behaviour='Select').
+-- This version of Codeium is Vim based and shows generations as ghost text.
+-- Problem is that the ghost text conflicts with nvim-cmp if the expiremental
+-- ghost text feature in nvim-cmp is enabled (w/ behaviour='Select').
 return {
     'Exafunction/codeium.vim',
     enabled = false,

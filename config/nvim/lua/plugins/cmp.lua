@@ -59,7 +59,7 @@ return {
             },
 
             sources = cmp.config.sources({
-                --{ name = 'codeium' }, -- 'codeium.nvim'
+                { name = 'codeium' }, -- 'windsurf.nvim'
                 { name = 'cody' }, -- 'sg.nvim'
                 { name = 'nvim_lsp' },
                 { name = 'luasnip' },

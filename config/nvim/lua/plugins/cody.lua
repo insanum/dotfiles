@@ -1,6 +1,6 @@
 return {
     'sourcegraph/sg.nvim', -- Cody
-    enabled = true,
+    enabled = false,
     dependencies = {
         'nvim-lua/plenary.nvim',
         --'nvim-telescope/telescope.nvim',

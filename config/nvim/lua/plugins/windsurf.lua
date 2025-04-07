@@ -2,8 +2,8 @@
 -- This results in the ghost text not conflicting with nvim-cmp text. This one
 -- does support the ':Codeium Chat' command which opens a browser window.
 return {
-    'Exafunction/codeium.nvim',
-    enabled = false,
+    'Exafunction/windsurf.nvim',
+    enabled = true,
     dependencies = {
         'nvim-lua/plenary.nvim',
         'hrsh7th/nvim-cmp',
