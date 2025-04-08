@@ -1,10 +1,12 @@
 
 theme = tokyonight_night
+split-divider-color = orange
 
 font-family = Hack Nerd Font Mono
 font-size = 17
 #font-style = semi-bold
-#font-thicken = true
+font-thicken = true
+font-thicken-strength = 0
 adjust-cell-width = -2
 adjust-cell-height = -1
 adjust-cursor-thickness = 2

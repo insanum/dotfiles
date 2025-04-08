@@ -1,12 +1,8 @@
--- This version of Codeium is Lua based and sends all generation to nvim-cmp.
--- This results in the ghost text not conflicting with nvim-cmp text. This one
--- does support the ':Codeium Chat' command which opens a browser window.
 return {
     'Exafunction/windsurf.nvim',
-    enabled = true,
+    enabled = false,
     dependencies = {
         'nvim-lua/plenary.nvim',
-        'hrsh7th/nvim-cmp',
     },
     event = 'BufEnter',
     config = function()

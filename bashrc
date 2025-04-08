@@ -172,3 +172,4 @@ if [[ -z "${BASH_EXECUTION_STRING}" ]]; then
 fi
 
 . "$HOME/.cargo/env"
+

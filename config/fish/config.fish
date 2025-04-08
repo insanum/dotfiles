@@ -82,7 +82,10 @@ alias rm="/bin/rm -i"
 alias mv="/bin/mv -i"
 alias cp="/bin/cp -i"
 alias vi="nvim"
-alias zig="$HOME/zig/zig"
+
+if type -q $HOME/zig/zig
+    alias zig="$HOME/zig/zig"
+end
 
 if type -q dust
     alias du="dust"

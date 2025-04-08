@@ -59,7 +59,7 @@
 	dus          = diff --patience --patch-with-stat -U10 --staged
 	dt           = difftool
 	dts          = difftool --staged
-	patch        = !git --no-pager diff --no-color
+	patch        = !git -c pager.diff= diff --no-ext-diff --no-color
 	####################
 	# LOG...
 	t            = log --graph --decorate --date=short --pretty=format:\"%Cgreen%h%Creset %Cblue%ad%Creset %s%d [%Cred%an%Creset]\"

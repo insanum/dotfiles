@@ -1,6 +1,7 @@
 return {
     'iguanacucumber/magazine.nvim',
-    name = "nvim-cmp",
+    enabled = true,
+    name = 'nvim-cmp',
     --'hrsh7th/nvim-cmp',
 
     event = 'InsertEnter',
@@ -59,11 +60,12 @@ return {
             },
 
             sources = cmp.config.sources({
-                { name = 'codeium' }, -- 'windsurf.nvim'
-                { name = 'cody' }, -- 'sg.nvim'
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' },
-                { name = 'path' },
+                { name = 'copilot',  max_item_count = 10 },
+                { name = 'codeium',  max_item_count = 10 },
+                { name = 'cody',     max_item_count = 10 },
+                { name = 'nvim_lsp', max_item_count = 10 },
+                { name = 'luasnip',  max_item_count = 10 },
+                { name = 'path',     max_item_count = 10 },
                 --{ name = 'async_path' },
             }, {
                 { name = 'buffer' },
@@ -78,6 +80,7 @@ return {
                     show_labelDetails = false,
                     menu = {},
                     symbol_map = {
+                        Copilot = '✨',
                         Codeium = '✨',
                         Cody = '✨',
                     },
@@ -97,28 +100,33 @@ return {
             },
 
             mapping = cmp.mapping.preset.insert({
-                ['<C-k>'] = cmp.mapping.select_next_item(cmp_behavior),
-                ['<C-j>'] = cmp.mapping.select_prev_item(cmp_behavior),
-                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+                ['<C-k>'] = cmp.mapping(cmp.mapping.select_next_item(cmp_behavior),
+                                        { 'i', 's', 'c' }),
+                ['<C-j>'] = cmp.mapping(cmp.mapping.select_prev_item(cmp_behavior),
+                                        { 'i', 's', 'c' }),
+                ['<C-l>'] = cmp.mapping(cmp.mapping.confirm({ select = true }),
+                                        { 'i', 's', 'c' }),
 
                 --['<C-Space>'] = cmp.mapping.complete(),
-                ["<C-Space>"] = cmp.mapping.complete({
+                ['<C-Space>'] = cmp.mapping.complete({
                     config = {
                         sources = {
-                            { name = "cody" },
+                            { name = 'copilot' },
+                            { name = 'codeium' },
+                            { name = 'cody' },
                         },
                     },
                 }),
 
                 -- Snippets: jump to next expansion location
-                ['<C-l>'] = cmp.mapping(function()
+                ['<C-n>'] = cmp.mapping(function()
                     if luasnip.expand_or_locally_jumpable() then
                         luasnip.expand_or_jump()
                     end
                 end, { 'i', 's' }),
 
                 -- Snippets: jump to previous expansion location
-                ['<C-h>'] = cmp.mapping(function()
+                ['<C-p>'] = cmp.mapping(function()
                     if luasnip.locally_jumpable(-1) then
                         luasnip.jump(-1)
                     end

@@ -35,6 +35,28 @@ require('lazy').setup({
     },
 })
 
+-- To use blink.cmp...
+--   - uncomment vim.lsp.enable() call below
+--   - disable cmp.lua
+--   - disable lsp.lua
+--   - enable blink-compat.lua
+--   - enable blink.lua
+--   - :Lazy (U|X)
+
+-- Original configs:
+--   https://github.com/neovim/nvim-lspconfig/tree/master/lua/lspconfig/configs
+-- Mason installs: [ vim.fn.stdpath('data') .. '/mason/bin' ]
+-- New LSP configs: lsp/*.lua
+-- vim.lsp.enable({
+--     'bashls',
+--     'clangd',
+--     'lua_ls',
+--     'pyright',
+--     'rust_analyzer',
+--     'ts_ls',
+--     'zls',
+-- })
+
 -- highlight when yanking (copying) text
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking (copying) text',
