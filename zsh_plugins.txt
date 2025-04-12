@@ -1,0 +1,16 @@
+
+jeffreytse/zsh-vi-mode
+
+mattmc3/ez-compinit
+zsh-users/zsh-completions
+aloxaf/fzf-tab
+
+#zsh-users/zsh-syntax-highlighting
+zdharma-continuum/fast-syntax-highlighting
+
+zsh-users/zsh-autosuggestions
+
+joshskidmore/zsh-fzf-history-search
+
+romkatv/powerlevel10k  kind:fpath
+

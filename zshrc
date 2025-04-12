@@ -6,7 +6,10 @@ fi
 
 #-------------------------------------------------------------------------
 
-# brew install antidote
+# clone antidote if necessary
+if [[ ! -d ${ZDOTDIR:-$HOME}/.zsh_antidote ]]; then
+  git clone https://github.com/mattmc3/antidote ${ZDOTDIR:-$HOME}/.zsh_antidote
+fi
 
 function zvm_config() {
     ZVM_INIT_MODE=sourcing
@@ -16,12 +19,11 @@ function zvm_config() {
 
 bindkey '^F' autosuggest-accept
 
-source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
+# source antidote and load plugins
+source ${ZDOTDIR:-$HOME}/.zsh_antidote/antidote.zsh
 antidote load ${ZDOTDIR:-$HOME}/.zsh_plugins.txt
 
 autoload -U promptinit && promptinit
-#zstyle :prompt:pure:git:stash show yes
-#prompt pure
 prompt powerlevel10k
 
 #-------------------------------------------------------------------------
