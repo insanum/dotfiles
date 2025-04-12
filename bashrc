@@ -85,6 +85,7 @@ alias more="less"
 
 exists bat && export PAGER="bat" \
            && export MANPAGER="sh -c 'col -bx | bat -p -l man'" \
+           && export MANROFFOPT="-c" \
            && alias cat="bat" \
            && alias more="bat" \
            && alias less="bat"
@@ -144,6 +145,10 @@ if [[ -n "$PS1" ]]; then
 
   source $HOME/.bashline.sh
 fi
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+exists pyenv && eval "$(pyenv init --path)"
 
 #BASE16_SHELL="$HOME/src/base16-shell"
 #[ -n "$PS1" ] && \

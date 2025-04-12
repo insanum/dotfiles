@@ -74,10 +74,6 @@ fi
 [[ -d "/opt/SUNWspro/man" ]]      && MANPATH="$MANPATH:/opt/SUNWspro/man"
 [[ -d "/opt/sunstudio12.1/man" ]] && MANPATH="$MANPATH:/opt/sunstudio12.1/man"
 
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-exists pyenv && eval "$(pyenv init --path)"
-
 umask 022
 
 # if not running interactively then bail
