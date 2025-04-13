@@ -122,6 +122,7 @@ return {
         -- mini.files -------------------------------------------------------
         ---------------------------------------------------------------------
 
+        --[[
         require('mini.files').setup({
             windows = {
                 preview = true, -- show preview of file/directory under cursor
@@ -134,6 +135,7 @@ return {
         vim.keymap.set('n', '<F12>',
                        '<cmd>lua MiniFiles.open()<CR>',
                        { desc = 'Mini Files', })
+        --]]
 
         ---------------------------------------------------------------------
         -- mini.sessions ----------------------------------------------------
