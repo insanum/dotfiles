@@ -30,6 +30,21 @@ prompt powerlevel10k
 
 alias h="history"
 
+HISTFILE="${HISTFILE:-${ZDOTDIR:-$HOME}/.zsh_history}"
+HISTSIZE=10000
+SAVEHIST=$HISTSIZE
+setopt BANG_HIST              # treat the '!' character specially during expansion
+setopt EXTENDED_HISTORY       # write the history file in the ':start:elapsed;command' format
+setopt SHARE_HISTORY          # share history between all sessions
+setopt HIST_EXPIRE_DUPS_FIRST # expire a duplicate event first when trimming history
+setopt HIST_IGNORE_DUPS       # do not record an event that was just recorded again
+setopt HIST_IGNORE_ALL_DUPS   # delete an old recorded event if a new event is a duplicate
+setopt HIST_FIND_NO_DUPS      # do not display a previously found event
+setopt HIST_IGNORE_SPACE      # do not record an event starting with a space
+setopt HIST_SAVE_NO_DUPS      # do not write a duplicate event to the history file
+setopt HIST_VERIFY            # do not execute immediately upon history expansion
+setopt HIST_BEEP              # beep when accessing non-existent history
+
 alias rm="/bin/rm -i"
 alias mv="/bin/mv -i"
 alias cp="/bin/cp -i"
