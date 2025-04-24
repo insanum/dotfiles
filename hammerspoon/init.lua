@@ -1,4 +1,5 @@
 
+kb_shift      = { "cmd", "shift" }
 kb_ctrl       = { "cmd", "ctrl" }
 kb_ctrl_shift = { "cmd", "ctrl", "shift" }
 kb_alt        = { "cmd", "alt" }
@@ -57,6 +58,9 @@ require("mdtodo")
 
 -- Create a new Apple Reminder
 require("reminders")
+
+-- Window Screenshots
+require("wincapture")
 
 -- reload config
 hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",
