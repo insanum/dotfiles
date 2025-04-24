@@ -52,15 +52,15 @@ function fish_my_keybinds
 end
 set -g fish_key_bindings fish_my_keybinds
 
-if type -q exa
-    alias ls="exa --icons -F"
-    alias ll="exa --icons -lF"
-    alias la="exa --icons -aF"
-    alias lal="exa --icons -laF"
-    alias lst="exa --icons -F -s modified -r"
-    alias llt="exa --icons -lF -s modified -r"
-    alias lat="exa --icons -aF -s modified -r"
-    alias lalt="exa --icons -laF -s modified -r"
+if type -q eza
+    alias ls="eza --icons -F"
+    alias ll="eza --icons -lF"
+    alias la="eza --icons -aF"
+    alias lal="eza --icons -laF"
+    alias lst="eza --icons -F -s modified -r"
+    alias llt="eza --icons -lF -s modified -r"
+    alias lat="eza --icons -aF -s modified -r"
+    alias lalt="eza --icons -laF -s modified -r"
 else if type -q lsd
     alias ls="lsd -F"
     alias ll="lsd -lF"
