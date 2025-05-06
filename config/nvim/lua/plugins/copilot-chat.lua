@@ -1,5 +1,6 @@
 return {
     'CopilotC-Nvim/CopilotChat.nvim',
+    enabled = true,
     dependencies = {
         'zbirenbaum/copilot.lua',
         'nvim-lua/plenary.nvim',

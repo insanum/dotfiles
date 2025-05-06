@@ -341,23 +341,16 @@ wezterm.on('gui-startup', function()
   pane1:send_text('git status\n')
 
   local tab2, pane2, window2 = window1:spawn_tab({})
-  tab2:set_title('Cody')
+  tab2:set_title('Test')
   pane2:split({ direction = 'Right', size = 0.5 })
   pane2:send_text('clear\n')
-  pane2:send_text('figlet "Cody"\n')
+  pane2:send_text('figlet "Test"\n')
   pane2:activate()
 
   local tab3, pane3, window3 = window1:spawn_tab({})
-  tab3:set_title('Test')
-  pane3:split({ direction = 'Right', size = 0.5 })
-  pane3:send_text('clear\n')
-  pane3:send_text('figlet "Test"\n')
-  pane3:activate()
-
-  local tab4, pane4, window4 = window1:spawn_tab({})
-  local d = tab4:get_size()
-  local p = pane4:split({ direction = 'Right', size = (d.cols - 91) }) -- +1 for border
-  pane4:split({ direction = 'Bottom', size = 0.5 })
+  local d = tab3:get_size()
+  local p = pane3:split({ direction = 'Right', size = (d.cols - 91) }) -- +1 for border
+  pane3:split({ direction = 'Bottom', size = 0.5 })
   p:activate()
   p:send_text('ls\n')
 

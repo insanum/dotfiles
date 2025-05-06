@@ -1,16 +1,17 @@
 
 # enable the Powerlevel10k instant prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
 #-------------------------------------------------------------------------
 
 # clone antidote if necessary
 if [[ ! -d ${ZDOTDIR:-$HOME}/.zsh_antidote ]]; then
-  git clone https://github.com/mattmc3/antidote ${ZDOTDIR:-$HOME}/.zsh_antidote
+    git clone https://github.com/mattmc3/antidote ${ZDOTDIR:-$HOME}/.zsh_antidote
 fi
 
+# zsh-vi-mode configuration
 function zvm_config() {
     ZVM_INIT_MODE=sourcing
     ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
@@ -28,6 +29,8 @@ prompt powerlevel10k
 
 #-------------------------------------------------------------------------
 
+zle_highlight+=(paste:none)
+
 alias h="history"
 
 HISTFILE="${HISTFILE:-${ZDOTDIR:-$HOME}/.zsh_history}"
@@ -44,6 +47,13 @@ setopt HIST_IGNORE_SPACE      # do not record an event starting with a space
 setopt HIST_SAVE_NO_DUPS      # do not write a duplicate event to the history file
 setopt HIST_VERIFY            # do not execute immediately upon history expansion
 setopt HIST_BEEP              # beep when accessing non-existent history
+
+_set_window_title() {
+    print -Pn "\033]0;👻 %20<…<%~%<<\007"
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _set_window_title
+_set_window_title
 
 alias rm="/bin/rm -i"
 alias mv="/bin/mv -i"
@@ -92,6 +102,10 @@ alias more=$PAGER
 alias less=$PAGER
 export MANPAGER="sh -c 'col -bx | $PAGER -l man -p'"
 export MANROFFOPT="-c"
+
+if (( $+commands[qlmanage] )); then
+    alias ql="qlmanage -p"
+fi
 
 if (( $+commands[nvim] )); then
     alias vi="nvim"

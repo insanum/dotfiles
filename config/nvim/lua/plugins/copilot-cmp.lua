@@ -1,4 +1,5 @@
 return {
-   'zbirenbaum/copilot-cmp',
+    'zbirenbaum/copilot-cmp',
+    enabled = true,
     opts = {},
 }
