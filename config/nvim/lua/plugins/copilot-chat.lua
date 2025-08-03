@@ -1,13 +1,13 @@
 return {
     'CopilotC-Nvim/CopilotChat.nvim',
-    enabled = true,
+    enabled = false,
     dependencies = {
         'zbirenbaum/copilot.lua',
         'nvim-lua/plenary.nvim',
     },
     build = 'make tiktoken',
     opts = {
-        model = 'claude-3.7-sonnet',
+        model = 'claude-sonnet-4',
         highlight_headers = false,
         seperator = '---',
         error_header = '> [!ERROR] Error',

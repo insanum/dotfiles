@@ -1,5 +1,5 @@
 return {
     'zbirenbaum/copilot-cmp',
-    enabled = true,
+    enabled = false,
     opts = {},
 }

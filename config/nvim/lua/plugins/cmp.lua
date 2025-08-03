@@ -1,6 +1,6 @@
 return {
     'iguanacucumber/magazine.nvim',
-    enabled = true,
+    enabled = false,
     name = 'nvim-cmp',
     --'hrsh7th/nvim-cmp',
 
@@ -60,12 +60,14 @@ return {
             },
 
             sources = cmp.config.sources({
-                { name = 'copilot',  max_item_count = 10 },
-                { name = 'codeium',  max_item_count = 10 },
-                { name = 'cody',     max_item_count = 10 },
-                { name = 'nvim_lsp', max_item_count = 10 },
-                { name = 'luasnip',  max_item_count = 10 },
-                { name = 'path',     max_item_count = 10 },
+                { name = 'copilot',       max_item_count = 10 },
+                { name = 'codecompanion', max_item_count = 10 },
+                { name = 'minuet',        max_item_count = 10 },
+                { name = 'codeium',       max_item_count = 10 },
+                { name = 'cody',          max_item_count = 10 },
+                { name = 'nvim_lsp',      max_item_count = 10 },
+                { name = 'luasnip',       max_item_count = 10 },
+                { name = 'path',          max_item_count = 10 },
                 --{ name = 'async_path' },
             }, {
                 { name = 'buffer' },
@@ -81,10 +83,16 @@ return {
                     menu = {},
                     symbol_map = {
                         Copilot = '✨',
+                        openai = '✨',
+                        Minuet = '✨',
                         Codeium = '✨',
                         Cody = '✨',
                     },
                 })
+            },
+
+            performance = {
+                fetching_timeout = 2000,
             },
 
             experimental = {
@@ -112,6 +120,7 @@ return {
                     config = {
                         sources = {
                             { name = 'copilot' },
+                            { name = 'minuet' },
                             { name = 'codeium' },
                             { name = 'cody' },
                         },

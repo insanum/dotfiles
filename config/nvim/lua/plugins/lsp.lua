@@ -5,7 +5,7 @@ return {
         'williamboman/mason.nvim',
         'williamboman/mason-lspconfig.nvim',
         'WhoIsSethDaniel/mason-tool-installer.nvim',
-        'hrsh7th/cmp-nvim-lsp',
+        --'hrsh7th/cmp-nvim-lsp',
     },
 
     config = function()
@@ -15,10 +15,14 @@ return {
         -- Neovim doesn't support everything that is in the LSP specification.
         -- It can gain additional capabilities via plugins like nvim-cmp.
         -- Here the capabilities array is extended with nvim-cmp caps.
+        -- local capabilities = vim.tbl_deep_extend(
+        --     'force',
+        --     vim.lsp.protocol.make_client_capabilities(),
+        --     require('cmp_nvim_lsp').default_capabilities())
         local capabilities = vim.tbl_deep_extend(
             'force',
             vim.lsp.protocol.make_client_capabilities(),
-            require('cmp_nvim_lsp').default_capabilities())
+            require('blink.cmp').get_lsp_capabilities({}, false))
 
         -- See the following for config servers and config variables:
         -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md

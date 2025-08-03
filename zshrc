@@ -38,7 +38,8 @@ HISTSIZE=10000
 SAVEHIST=$HISTSIZE
 setopt BANG_HIST              # treat the '!' character specially during expansion
 setopt EXTENDED_HISTORY       # write the history file in the ':start:elapsed;command' format
-setopt SHARE_HISTORY          # share history between all sessions
+#setopt SHARE_HISTORY         # share history between all sessions
+setopt APPEND_HISTORY         # share history between all sessions (after exit)
 setopt HIST_EXPIRE_DUPS_FIRST # expire a duplicate event first when trimming history
 setopt HIST_IGNORE_DUPS       # do not record an event that was just recorded again
 setopt HIST_IGNORE_ALL_DUPS   # delete an old recorded event if a new event is a duplicate
@@ -108,7 +109,12 @@ if (( $+commands[qlmanage] )); then
 fi
 
 if (( $+commands[nvim] )); then
-    alias vi="nvim"
+    if (( $+commands[proxychains4] )); then
+        alias vi="proxychains4 nvim"
+        alias aider="proxychains4 aider"
+    else
+        alias vi="nvim"
+    fi
 fi
 
 if (( $+commands[dust] )); then

@@ -1,6 +1,6 @@
 return {
     'saghen/blink.cmp',
-    enabled = false,
+    enabled = true,
     dependencies = {
         'rafamadriz/friendly-snippets'
     },
@@ -29,12 +29,18 @@ return {
         },
         -- (Default) Only show the documentation popup when manually triggered
         completion = {
+            list = {
+                selection = {
+                    preselect = false,
+                    auto_insert = false,
+                },
+            },
             menu = {
                 border = 'single',
-                direction_priority = { 'n', 's' },
+                direction_priority = { 's', 'n' },
                 scrollbar = true,
                 draw = {
-                    align_to = 'cursor',
+                    align_to = 'none',
                     treesitter = {
                         'lsp',
                     },
@@ -45,13 +51,15 @@ return {
                 },
             },
             documentation = {
-                auto_show = false,
+                auto_show = true,
                 window = {
                     border = 'single',
                 }
             },
             ghost_text = {
                 enabled = true,
+                show_with_selection = true,
+                show_without_selection = true,
             },
         },
         cmdline = {
@@ -77,17 +85,20 @@ return {
         -- elsewhere in your config, without redefining it, due to `opts_extend`
         sources = {
             default = {
-                'windsurf',
+                'copilot',
+                'codecompanion',
+                -- 'minuet',
                 'lsp',
                 'buffer',
                 'snippets',
                 'path',
             },
             providers = {
-                windsurf = {
-                    name = 'codeium',
-                    module = 'blink.compat.source',
-                    score_offset = 99,
+                copilot = {
+                    name = "copilot",
+                    module = "blink-copilot",
+                    score_offset = 100,
+                    async = true,
                 },
             },
         },

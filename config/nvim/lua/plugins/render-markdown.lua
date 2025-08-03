@@ -4,7 +4,9 @@ return {
         preset = 'obsidian',
         file_types = {
             'markdown',
-            'copilot-chat'
+            'copilot-chat',
+            'codecompanion',
+            'Avante',
         },
     },
 }
