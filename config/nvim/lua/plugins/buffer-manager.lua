@@ -1,5 +1,6 @@
 return {
     'j-morano/buffer_manager.nvim',
+    enabled = true,
     event = 'VeryLazy',
     dependencies = {
         'nvim-lua/plenary.nvim',

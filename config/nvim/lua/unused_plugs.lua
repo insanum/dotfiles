@@ -2,6 +2,7 @@ return {
 
 {
     'marcussimonsen/let-it-snow.nvim',
+    enabled = false,
     cmd = 'LetItSnow',
     opts = {
         delay = 175,
@@ -10,6 +11,7 @@ return {
 
 {
     'jackMort/ChatGPT.nvim',
+    enabled = false,
     event = 'VeryLazy',
     config = function()
       require('chatgpt').setup({})
@@ -24,6 +26,7 @@ return {
 
 {
     'nvim-telescope/telescope.nvim',
+    enabled = false,
     event = 'VimEnter',
     branch = '0.1.x',
     dependencies = {
@@ -135,6 +138,7 @@ return {
 
 {
     'ThePrimeagen/git-worktree.nvim',
+    enabled = false,
     event = 'VeryLazy',
     config = function()
         --vim.g.git_worktree_log_level = 'debug'
@@ -152,12 +156,14 @@ return {
 
 {
     'NvChad/nvim-colorizer.lua',
+    enabled = false,
     main = 'colorizer',
     opts = {},
 },
 
 {
     'nanozuki/tabby.nvim',
+    enabled = false,
     event = 'VimEnter',
     dependencies = {
         'nvim-tree/nvim-web-devicons',
@@ -167,6 +173,7 @@ return {
 
 {
     'folke/todo-comments.nvim',
+    enabled = false,
     event = 'VimEnter',
     dependencies = {
         'nvim-lua/plenary.nvim'
@@ -178,6 +185,7 @@ return {
 
 {
     "folke/trouble.nvim",
+    enabled = false,
     opts = {
         focus = true,
     },
@@ -207,6 +215,7 @@ return {
 
 {
     'lewis6991/gitsigns.nvim',
+    enabled = false,
     opts = {
         on_attach = function(bufnr)
             local gs = package.loaded.gitsigns
@@ -293,6 +302,7 @@ return {
 
 {
     'folke/which-key.nvim',
+    enabled = false,
     event = 'VimEnter',
     opts = {
         icons = {
@@ -315,6 +325,7 @@ return {
 
 {
     'jedrzejboczar/possession.nvim',
+    enabled = false,
     opts = {
         commands = {
             save = 'PoSave',
@@ -337,6 +348,7 @@ return {
 
 {
     'chentoast/marks.nvim',
+    enabled = false,
     event = 'VeryLazy',
     config = function()
         require('marks').setup {
@@ -357,6 +369,7 @@ return {
 
 {
     'debugloop/telescope-undo.nvim',
+    enabled = false,
     dependencies = { -- note how they're inverted to above example
         {
             'nvim-telescope/telescope.nvim',
@@ -387,11 +400,13 @@ return {
 
 {
     'tpope/vim-fugitive',
+    enabled = false,
     event = 'VeryLazy',
 },
 
 {
     'TabbyML/vim-tabby',
+    enabled = false,
     config = function()
         vim.g.tabby_node_binary = '/opt/homebrew/bin/node'
         vim.g.tabby_keybinding_accept = '<C-f>'
@@ -401,12 +416,14 @@ return {
 
 {
     'lukas-reineke/indent-blankline.nvim',
+    enabled = false,
     main = 'ibl',
     opts = {},
 },
 
 {
     'junegunn/vim-easy-align',
+    enabled = false,
     config = function()
         vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
         --vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
@@ -415,6 +432,7 @@ return {
 
 {
     'numToStr/FTerm.nvim',
+    enabled = false,
     config = function()
         require'FTerm'.setup({
             --env = { TERM = 'tmux-256color' },
@@ -429,6 +447,7 @@ return {
 
 {
     'navarasu/onedark.nvim',
+    enabled = false,
     lazy = false,
     priority = 999,
     config = function()
@@ -438,6 +457,7 @@ return {
 
 {
     'rmehri01/onenord.nvim',
+    enabled = false,
     lazy = false,
     priority = 999,
     config = function()
@@ -447,6 +467,7 @@ return {
 
 {
     'ellisonleao/gruvbox.nvim',
+    enabled = false,
     lazy = false,
     priority = 999,
     config = function()
@@ -454,7 +475,6 @@ return {
         vim.cmd.colorscheme 'gruvbox'
     end,
 },
-
 
 {
     'Saghen/blink.compat',

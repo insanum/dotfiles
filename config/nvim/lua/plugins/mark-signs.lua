@@ -1,5 +1,6 @@
 return {
     -- dir = '/Volumes/work/git/mark-signs.nvim',
+    -- enabled = true,
     -- config = function()
     --     require('mark-signs').setup {
     --         builtin_marks = { '.', '^', '`', '\'', '"', '<', '>', '[', ']' },
@@ -7,6 +8,7 @@ return {
     --     }
     -- end,
     'insanum/mark-signs.nvim',
+    enabled = true,
     event = 'VeryLazy',
     config = function()
         require('mark-signs').setup {

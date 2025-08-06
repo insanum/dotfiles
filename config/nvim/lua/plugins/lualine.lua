@@ -1,5 +1,6 @@
 return {
     'nvim-lualine/lualine.nvim',
+    enabled = true,
     event = 'VimEnter',
     config = function()
         -- with lots of splits, make sure the filenames stand out

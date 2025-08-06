@@ -1,5 +1,6 @@
 return {
     'folke/tokyonight.nvim',
+    enabled = true,
     priority = 1000,
     opts = {
         on_colors = function(colors)

@@ -1,5 +1,6 @@
 return {
     'nvzone/typr',
+    enabled = true,
     dependencies = {
       'nvzone/volt',
     },
