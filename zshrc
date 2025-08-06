@@ -111,7 +111,7 @@ fi
 if (( $+commands[nvim] )); then
     if (( $+commands[proxychains4] )); then
         alias vi="proxychains4 nvim"
-        alias aider="proxychains4 aider"
+        alias aider="proxychains4 aider --watch-files"
     else
         alias vi="nvim"
     fi
