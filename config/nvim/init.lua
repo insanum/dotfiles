@@ -67,5 +67,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 require('options')
+require('autocmds')
 require('keymaps')
+require('highlights')
 

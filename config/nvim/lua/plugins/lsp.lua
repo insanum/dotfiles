@@ -27,13 +27,13 @@ return {
             pyright = {},
             ts_ls = {},
             zls = {},
-            lua_ls = {
-                settings = {
-                    Lua = {
-                        diagnostics = {
-                            globals = { 'vim' } -- or install LazyDev
-                        }
-                    }
+            lua_ls = {},
+            --marksman = {},
+            markdown_oxide = {
+                workspace = {
+                    didChangeWatchedFiles = {
+                        dynamicRegistration = true,
+                    },
                 },
             },
         }
@@ -50,11 +50,19 @@ return {
                     -- server config above. Useful to disable certain
                     -- features of an LSP.
                     server.capabilities = vim.tbl_deep_extend(
-                        'force',
-                        capabilities,
-                        server.capabilities or {})
+                        'force', capabilities, server or {})
                     require('lspconfig')[server_name].setup(server)
                 end,
+            },
+        })
+
+        vim.lsp.config('lua_ls', {
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { "vim" },
+                    },
+                },
             },
         })
 

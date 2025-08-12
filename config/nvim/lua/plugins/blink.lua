@@ -89,6 +89,7 @@ return {
                 'codecompanion',
                 -- 'minuet',
                 'lsp',
+                -- 'markdown',
                 'buffer',
                 'snippets',
                 'path',

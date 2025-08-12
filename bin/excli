@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Uses 'excalidraw-brute-export-cli' to convert an Excalidraw file to PNG:
+# https://github.com/realazthat/excalidraw-brute-export-cli
+
+# npm install -g https://github.com/realazthat/excalidraw-brute-export-cli.git
+# npx playwright install-deps
+# npx playwright install firefox
+
+if [[ -z "$1" ]]; then
+    echo "Usage: $0 <excalidraw-file>"
+    exit 1
+fi
+
+EXCALIDRAW_FILE="$1"
+PNG_FILE="${1}.png"
+
+# get the current modification time
+if [[ -f "$EXCALIDRAW_FILE" ]]; then
+    mod_time=$(stat -f "%m" "$EXCALIDRAW_FILE")
+else
+    mod_time=0
+fi
+
+# edit the file in excalidraw pwa
+open -W "$EXCALIDRAW_FILE"
+
+# re-get the file modification time
+if [[ -f "$EXCALIDRAW_FILE" ]]; then
+    new_mod_time=$(stat -f "%m" "$EXCALIDRAW_FILE")
+else
+    new_mod_time=0
+fi
+
+# if the file changed
+if [[ "$mod_time" -ne "$new_mod_time" ]]; then
+    echo "File changed, converting to PNG..."
+    npx excalidraw-brute-export-cli -f png -s 1 -d false -b true --headless \
+        -i "$EXCALIDRAW_FILE" -o "$PNG_FILE"
+else
+    echo "No changes detected to '$EXCALIDRAW_FILE'"
+fi
+

@@ -142,7 +142,9 @@ return {
         -- mini.sessions ----------------------------------------------------
         ---------------------------------------------------------------------
 
-        require('mini.sessions').setup()
+        require('mini.sessions').setup({
+            autowrite = false,
+        })
 
         vim.keymap.set('n', ',oo',
                        '<cmd>lua MiniSessions.select(\'read\')<CR>',
@@ -322,8 +324,30 @@ return {
                        '<cmd>Pick oldfiles<CR>',
                        { desc = '[S]earch [O]ld (recent) files' })
 
+        pick.registry.buffers_with_delete = function()
+            return pick.builtin.buffers(
+                { },
+                {
+                    mappings = {
+                        wipeout = {
+                            char = '<C-b>',
+                            func = function()
+                                local bufnr =
+                                    pick.get_picker_matches().current.bufnr
+
+                                if not vim.api.nvim_buf_is_valid(bufnr) then
+                                    return
+                                end
+
+                                vim.api.nvim_buf_delete(bufnr, {})
+                            end,
+                        },
+                    },
+                })
+        end
+
         vim.keymap.set('n', '<leader><leader>',
-                       '<cmd>Pick buffers<CR>',
+                       '<cmd>Pick buffers_with_delete<CR>',
                        { desc = '[ ] Search current buffers' })
 
         -- Add a 'neovim_config' picker to access the Neovim configuration

@@ -9,5 +9,18 @@ return {
             'codecompanion',
             'Avante',
         },
+        completions = {
+            -- using blink messes with marksman and markdown_oxide
+            --blink = { enabled = true },
+            --lsp = { enabled = true },
+        },
+        heading = {
+            border = true,
+            border_virtual = true,
+        },
+        code = {
+            width = 'block',
+            right_pad = 1,
+        },
     },
 }

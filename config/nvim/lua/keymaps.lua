@@ -28,17 +28,6 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>',
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>',
                { desc = 'Move focus to the upper window' })
 
--- I like cinoptions! (vs an annoying autoformatting plugins)...
-vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
-    pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino',
-                '*.cs', '*.java', '*.js', '*.lua', '*.rs', '*.md' },
-    callback = function()
-        vim.opt.cindent = true
-        vim.opt.indentexpr = nil
-        vim.opt.cinoptions = 's,e0,n0,f0,{0,}0,^0,:0,=s,gs,hs,ps,t0,+s,c1,(0,us,)20,*30,Ws'
-    end
-})
-
 -- toggle list chars
 vim.keymap.set('n', ',l', '<cmd>set list!<CR><cmd>set list?<CR>',
                { desc = 'Toggle listchars' })
@@ -115,27 +104,4 @@ vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist,
 -- diagnostic hover
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float,
                { desc = 'Show diagnostic [E]rror messages' })
-
--- obsidian
-vim.keymap.set('n', '<leader>oq', '<cmd>ObsidianQuickSwitch<CR>',
-               { desc = '[O]bsidian [Q]uickSwitch' })
-vim.keymap.set('n', '<leader>os', '<cmd>ObsidianSearch<CR>',
-               { desc = '[O]bsidian [S]earch' })
-vim.keymap.set('n', '<leader>ot', '<cmd>ObsidianToday<CR>',
-               { desc = '[O]bsidian [T]oday' })
-vim.keymap.set('n', '<leader>oj', '<cmd>ObsidianDailies -30 1<CR>',
-               { desc = '[O]bsidian [J]ournal' })
-vim.keymap.set('n', '<leader>ob', '<cmd>ObsidianBacklinks<CR>',
-               { desc = '[O]bsidian [B]acklinks' })
-vim.keymap.set('n', '<leader>of', '<cmd>ObsidianLinks<CR>',
-               { desc = '[O]bsidian [F]orward links' })
-
--- all comments rendered in italics
-vim.cmd.hi 'Comment gui=none cterm=italic gui=italic'
-
--- virtual text (for search) needs to stand out more
-vim.cmd.hi 'link NoiceVirtualText IncSearch'
-
--- tabline text needs to stand out more
-vim.cmd.hi 'TabLine guifg=#e0af68'
 
