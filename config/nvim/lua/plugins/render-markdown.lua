@@ -19,6 +19,9 @@ return {
             border = true,
             border_virtual = true,
         },
+        checkbox = {
+            right_pad = 0,
+        },
         code = {
             width = 'block',
             right_pad = 1,

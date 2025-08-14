@@ -2,15 +2,24 @@
 vim.api.nvim_create_autocmd('FileType', {
     pattern = { 'markdown' },
     callback = function()
-        -- set the textwidth so auto-wrap works in insert mode
-        vim.opt.textwidth = 80
-
         -- set this if indent-o-matic.nvim isn't working
         --vim.opt.shiftwidth = 4
 
-        -- FIXME these still don't work the way I want...
-        -- vim.opt.formatoptions:append('ro')
-        -- vim.opt.comments = 'fb:-,fb:+,fb:*,fb:>,fb:|'
+        vim.opt.colorcolumn = ''
+        vim.opt.wrap = true
+        vim.opt.linebreak = true
+        vim.opt.textwidth = 0
+        vim.opt.wrapmargin = 0
+        vim.opt.formatoptions:remove('l')
+        vim.opt.formatoptions:append('ro')
+        vim.opt.comments = 'fb:-,fb:+,fb:*,fb:>,fb:|'
+        vim.opt.formatlistpat = '^\\s*\\d\\+\\.\\s\\+\\|^\\s*[-*+]\\s\\+'
+        vim.opt.breakindentopt = 'list:-1'
+
+        vim.keymap.set('n', 'j', 'v:count == 0 ? "gj" : "j"',
+                       { expr = true, noremap = true })
+        vim.keymap.set('n', 'k', 'v:count == 0 ? "gk" : "k"',
+                       { expr = true, noremap = true })
     end
 })
 
