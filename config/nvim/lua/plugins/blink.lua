@@ -49,6 +49,13 @@ return {
                         { 'kind_icon', 'kind', gap = 1 }
                     },
                 },
+                auto_show = function()
+                    if vim.bo.filetype == 'markdown' then
+                        return false
+                    end
+
+                    return true
+                end,
             },
             documentation = {
                 auto_show = true,
@@ -93,6 +100,9 @@ return {
                 'buffer',
                 'snippets',
                 'path',
+            },
+            per_filetype = {
+                markdown = { 'lsp', 'snippets', 'path' },
             },
             providers = {
                 copilot = {

@@ -112,6 +112,7 @@ if (( $+commands[nvim] )); then
     if (( $+commands[proxychains4] )); then
         alias vi="proxychains4 nvim"
         alias aider="proxychains4 aider --watch-files"
+        alias opencode="proxychains4 opencode"
     else
         alias vi="nvim"
     fi
@@ -131,6 +132,10 @@ fi
 
 if [[ -x $HOME/zig/zig ]]; then
     alias zig="$HOME/zig/zig"
+fi
+
+if [[ -x $HOME/.opencode/bin ]]; then
+    export PATH="$HOME/.opencode/bin:$PATH"
 fi
 
 alias bitter="$HOME/work/git/bitter/bitter"

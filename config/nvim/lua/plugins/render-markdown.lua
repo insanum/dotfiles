@@ -2,7 +2,8 @@ return {
     'MeanderingProgrammer/render-markdown.nvim',
     enabled = true,
     opts = {
-        preset = 'obsidian',
+        --preset = 'obsidian',
+        render_modes = true,
         file_types = {
             'markdown',
             'copilot-chat',
