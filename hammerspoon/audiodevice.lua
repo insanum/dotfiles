@@ -1,6 +1,7 @@
 
-hs.hotkey.bind(kb_ctrl, "a", "Show the audio device switcher",
-function()
+mod_key:bind("", "a", "Show the audio device switcher", function()
+    mod_key:exit()
+
     local last_win = hs.window.focusedWindow()
 
     local chooser_cbk = function(selection)

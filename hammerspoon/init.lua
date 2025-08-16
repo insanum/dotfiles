@@ -13,6 +13,52 @@ hs.console.outputBackgroundColor({ white = 0 })
 hs.console.consolePrintColor({ white = 1 })
 hs.console.consoleCommandColor({ green = 1 })
 
+mod_key = hs.hotkey.modal.new(kb_ctrl, 'k', 'Modal In')
+local mod_alert = nil
+
+function mod_key:entered()
+    -- delete existing alert if present
+    if mod_alert then
+        mod_alert:delete()
+    end
+
+    -- define frame and properties for canvas in upper left corner
+    local frame = { x = 0, y = 0, w = 150, h = 50 }
+    mod_alert = hs.canvas.new(frame)
+
+    mod_alert:appendElements({
+        {
+            type = 'rectangle',
+            action = 'fill',
+            fillColor = { red = 1, green = 1, blue = 1, alpha = 0.8 },
+        }
+    })
+
+    -- Add white text on top
+    mod_alert:appendElements({
+        {
+            type = 'text',
+            text = 'modal-in',
+            textColor = { red = 0, green = 0, blue = 0, alpha = 1 },
+            textSize = 28,
+            frame = { x = 8, y = 8, w = 140, h = 30 },
+            textAlignment = 'center',
+        }
+    })
+
+    mod_alert:show()
+end
+
+function mod_key:exited()
+    -- remove the alert indicator
+    if mod_alert then
+        mod_alert:delete()
+        mod_alert = nil
+    end
+end
+
+mod_key:bind('', 'escape', function() mod_key:exit() end)
+
 -- notification manager
 -- # this is broken as the mouse move doesn't activate the x/close button
 --require("notifications")
@@ -61,6 +107,9 @@ require("reminders")
 
 -- Window Screenshots
 require("wincapture")
+
+-- Application Focus
+require("appfocus")
 
 -- reload config
 hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",

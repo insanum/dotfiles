@@ -44,8 +44,9 @@ local function createReminder()
     end
 end
 
-hs.hotkey.bind(kb_ctrl, "9", "Create a new Apple Reminder",
+mod_key:bind("", "r", "New Apple Reminder",
 function()
+    mod_key:exit()
     createReminder()
 end)
 
