@@ -474,3 +474,40 @@ vim.keymap.set('n', '<leader>jP', '<Cmd>JournalWeek -1<CR>',
 vim.keymap.set('n', '<leader>jN', '<Cmd>JournalWeek +1<CR>',
                { desc = '[J]ournal Week [N]ext' })
 
+------------------------------------------------------------------------------
+-- JOURNAL ENTRIES MISSING ---------------------------------------------------
+------------------------------------------------------------------------------
+
+-- journal missing command
+vim.api.nvim_create_user_command('JournalMissing', function(opts)
+    local missing_dates = {}
+    local date_t = os.time()
+
+    for i = 0, 365 do
+        local tmp_date_t = (date_t - (i * 86400)) -- subtract i days
+
+        local tmp_date_str = os.date('%Y-%m-%d', tmp_date_t)
+        local journal_file = journal_entry_path(tmp_date_str)
+
+        if vim.fn.filereadable(journal_file) == 0 then
+            missing_dates[#missing_dates + 1] = tmp_date_str
+        end
+    end
+
+    local date = pick.start({
+        source = {
+            name = "Missing Journal Entries",
+            items = missing_dates,
+        }
+    })
+
+    if not date then
+        return
+    end
+
+    open_journal_date_entry(date)
+end, { desc = 'List missing journal entries', nargs = '?' })
+
+vim.keymap.set('n', '<leader>jm', '<Cmd>JournalMissing<CR>',
+               { desc = '[J]ournal [M]issing' })
+
