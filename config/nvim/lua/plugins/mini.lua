@@ -50,11 +50,23 @@ return {
 
         require('mini.icons').setup()
 
-        require('mini.splitjoin').setup()
+        -- require('mini.splitjoin').setup()
 
         require('mini.trailspace').setup()
 
         require('mini.git').setup()
+
+        ---------------------------------------------------------------------
+        -- mini.keymap ------------------------------------------------------
+        ---------------------------------------------------------------------
+
+        keymap = require('mini.keymap')
+        keymap.setup()
+
+        local mode = { 'i', 'c', 'x', 's' }
+        -- map_combo(mode, 'jj', '<BS><BS><Esc>')
+        keymap.map_combo(mode, 'jk', '<BS><BS><Esc>')
+        keymap.map_combo(mode, 'kj', '<BS><BS><Esc>')
 
         ---------------------------------------------------------------------
         -- mini.diff --------------------------------------------------------
@@ -491,6 +503,8 @@ return {
                 { mode = 'n', keys = '<leader>s',  desc = '+Search' },
                 { mode = 'n', keys = '<leader>t',  desc = '+Tab' },
                 { mode = 'n', keys = ',o',         desc = '+Sessions' },
+                { mode = 'n', keys = '<leader>j',  desc = '+Journal' },
+                { mode = 'n', keys = '<leader>m',  desc = '+Markdown' },
                 { mode = 'n', keys = '<leader>n',  desc = '+Notes' },
                 { mode = 'n', keys = '<leader>nt', desc = '+Tasks' },
             },

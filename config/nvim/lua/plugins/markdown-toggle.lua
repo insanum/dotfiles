@@ -12,6 +12,14 @@ return {
             noremap = true,
         }
 
+        -- An alternate to these markdown-toggle macros is:
+        --
+        --     vim.opt.formatoptions:append('ro')
+        --     vim.opt.comments = 'b:- [ ],b:-,b:>,b:|'
+        --
+        -- Unfortunately this Neovim solution doesn't work with ordered lists!
+        -- The following macros behave well vs pure Neovim.
+
         vim.keymap.set('n', 'O', toggle.autolist_up, opts)
         vim.keymap.set('n', 'o', toggle.autolist_down, opts)
         vim.keymap.set('i', '<CR>', toggle.autolist_cr, opts)

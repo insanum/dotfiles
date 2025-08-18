@@ -14,4 +14,5 @@ vim.cmd.hi 'TabLine guifg=#e0af68'
 -- render-markdown tweaks
 vim.cmd.hi 'RenderMarkdownCode guibg=#2e3440'
 vim.cmd.hi 'RenderMarkdownCodeInline guibg=#2e3440'
+vim.cmd.hi 'RenderMarkdownInlineHighlight guifg=#2e3440 guibg=#88c0d0'
 
