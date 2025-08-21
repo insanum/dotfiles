@@ -4,6 +4,7 @@ return {
     opts = {
         --preset = 'obsidian',
         render_modes = true,
+        debounce = 30,
         file_types = {
             'markdown',
             'copilot-chat',

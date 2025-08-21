@@ -206,8 +206,10 @@ return {
         ---------------------------------------------------------------------
 
         local hi_words = require('mini.extra').gen_highlighter.words
-        require('mini.hipatterns').setup({
+        local hipat = require('mini.hipatterns')
+        hipat.setup({
             highlighters = {
+                hex_color = hipat.gen_highlighter.hex_color(),
                 fixme = hi_words({ 'FIXME', 'Fixme', 'fixme', }, 'MiniHipatternsFixme'),
                 xxx   = hi_words({ 'XXX', 'xxx' }, 'MiniHipatternsFixme'),
                 todo  = hi_words({ 'TODO', 'Todo', 'todo' }, 'MiniHipatternsTodo'),

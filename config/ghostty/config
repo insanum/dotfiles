@@ -1,6 +1,8 @@
 
 theme = tokyonight_night
 split-divider-color = orange
+cursor-color = #ff7000
+cursor-text = black
 
 font-family = Hack Nerd Font Mono
 font-size = 17

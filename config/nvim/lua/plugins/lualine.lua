@@ -7,9 +7,6 @@ return {
         local fn_color = { fg = '#15161e', bg = '#ff9e64' }
 
         require('lualine').setup({
-            options = {
-                theme = 'tokyonight',
-            },
             sections = {
                 lualine_b = {
                     { 'branch' },
