@@ -74,8 +74,8 @@ return {
 
         require('mini.diff').setup({
             view = {
-                --signs = { add = '▒', change = '▒', delete = '▒' },
-                signs = { add = '┃', change = '┃', delete = '-', },
+                signs = { add = '▒', change = '▒', delete = '▒' },
+                --signs = { add = '┃', change = '┃', delete = '━', },
                 priority = 6,
             },
         })

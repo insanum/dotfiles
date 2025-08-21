@@ -1,26 +1,112 @@
 
 --[[
   ... tokyonight palette ...
-  #f7768e  #ff9e64  #e0af68
-  #cfc9c2  #9ece6a  #73daca
-  #b4f9f8  #2ac3de  #7dcfff
-  #7aa2f7  #bb9af7  #c0caf5
-  #a9b1d6  #9aa5ce  #565f89
-  #414868  #24283b  #1a1b26
+  #f7768e #ff9e64 #e0af68 #cfc9c2 #9ece6a #73daca
+  #b4f9f8 #2ac3de #7dcfff #7aa2f7 #bb9af7 #c0caf5
+  #a9b1d6 #9aa5ce #565f89 #414868 #24283b #1a1b26
 
   ... nord palette ...
-  #2e3440  #3b4252  #434c5e  #4c566a
-  #d8dee9  #e5e9f0  #eceff4  #ffffff
-  #8fbcbb  #88c0d0  #81a1c1  #5e81ac
-  #bf616a  #d08770  #ebcb8b  #a3be8c
+  #2e3440 #3b4252 #434c5e #4c566a
+  #d8dee9 #e5e9f0 #eceff4 #ffffff
+  #8fbcbb #88c0d0 #81a1c1 #5e81ac
+  #bf616a #d08770 #ebcb8b #a3be8c
   #b48ead
+
+  ... onedark palette ...
+  dark
+  #181a1f #282c34 #31353f #393f4a #3b3f4c #21252b
+  #73b8f1 #ebd09c #abb2bf #c678dd #98c379 #d19a66
+  #61afef #e5c07b #56b6c2 #e86671 #5c6370 #848b98
+  #2b6f77 #993939 #93691d #8a3fa0 #31392b #382b2c
+  #1c3448 #2c5372
+  darker
+  #0e1013 #1f2329 #282c34 #30363f #323641 #181b20
+  #61afef #e8c88c #a0a8b7 #bf68d9 #8ebd6b #cc9057
+  #4fa6ed #e2b86b #48b0bd #e55561 #535965 #7a818e
+  #266269 #8b3434 #835d1a #7e3992 #272e23 #2d2223
+  #172a3a #274964
+  cool
+  #151820 #242b38 #2d3343 #343e4f #363c51 #1e242e
+  #6db9f7 #f0d197 #a5b0c5 #ca72e4 #97ca72 #d99a5e
+  #5ab0f6 #ebc275 #4dbdcb #ef5f6b #546178 #7d899f
+  #25747d #a13131 #9a6b16 #8f36a9 #303d27 #3c2729
+  #18344c #265478
+  deep
+  #0c0e15 #1a212e #21283b #283347 #2a324a #141b24
+  #54b0fd #f2cc81 #93a4c3 #c75ae8 #8bcd5b #dd9046
+  #41a7fc #efbd5d #34bfd0 #f65866 #455574 #6c7d9c
+  #1b6a73 #992525 #8f610d #862aa1 #27341c #331c1e
+  #102b40 #1c4a6e
+  warm
+  #191a1c #2c2d30 #35373b #3e4045 #404247 #242628
+  #79b7eb #e6cfa1 #b1b4b9 #c27fd7 #99bc80 #c99a6e
+  #68aee8 #dfbe81 #5fafb9 #e16d77 #646568 #8b8d91
+  #316a71 #914141 #8c6724 #854897 #32352f #342f2f
+  #203444 #32526c
+  warmer
+  #101012 #232326 #2c2d31 #35363b #37383d #1b1c1e
+  #68aee8 #e2c792 #a7aab0 #bb70d2 #8fb573 #c49060
+  #57a5e5 #dbb671 #51a8b3 #de5d68 #5a5b5e #818387
+  #2b5d63 #833b3b #7c5c20 #79428a #282b26 #2a2626
+  #1a2a37 #2c485f
+  light
+  #101012 #fafafa #f0f0f0 #e6e6e6 #dcdcdc #c9c9c9
+  #68aee8 #e2c792 #383a42 #a626a4 #50a14f #c18401
+  #4078f2 #986801 #0184bc #e45649 #a0a1a7 #818387
+  #2b5d63 #833b3b #7c5c20 #79428a #e2fbe4 #fce2e5
+  #e2ecfb #cad3e0
 --]]
 
-local themes = { current = 1 }
+local themes = { current = 2 }
 
 themes.themes = {
     {
+        name = 'onedark-darker',
+        md_hdrs = {
+            fg = '#cc9057',
+            bg = '#2c485f',
+        },
+        set = function()
+            vim.o.background = 'dark'
+            vim.g.onedark_config = { style = 'darker' }
+            vim.cmd.colorscheme 'onedark'
+
+            require('lualine').setup({
+                options = { theme = 'onedark' }
+            })
+        end
+    },
+
+    {
+        name = 'onedark-light',
+        md_hdrs = {
+            fg = '#4078f2',
+            bg = '#c9c9c9',
+        },
+        set = function()
+            vim.o.background = 'light'
+            vim.g.onedark_config = { style = 'light' }
+            vim.cmd.colorscheme 'onedark'
+
+            require('lualine').setup({
+                options = { theme = 'onedark' }
+            })
+
+            vim.cmd('hi Normal guibg=#f0f0f0')
+            vim.cmd('hi CursorLine guibg=#e6e6e6')
+            vim.cmd('hi ColorColumn guibg=#e6e6e6')
+            vim.cmd('hi SignColumn guibg=#f0f0f0')
+            vim.cmd('hi WinSeparator guifg=#383a42')
+            vim.cmd('hi RenderMarkdownInlineHighlight guifg=#101012 guibg=#e2c792')
+        end
+    },
+
+    {
         name = 'tokyonight-night',
+        md_hdrs = {
+            fg = '#7aa2f7',
+            bg = '#24283b',
+        },
         set = function()
             vim.o.background = 'dark'
             vim.cmd.colorscheme 'tokyonight-night'
@@ -29,13 +115,8 @@ themes.themes = {
                 options = { theme = 'tokyonight-night' }
             })
 
-            -- split window borders
             vim.cmd('hi WinSeparator guifg=#9aa5ce')
-
-            -- tabline text for non-focused tabs needs to stand out more
             vim.cmd('hi TabLine guifg=#bf616a')
-
-            -- render-markdown tweaks
             vim.cmd('hi RenderMarkdownCode guibg=#24283b')
             vim.cmd('hi RenderMarkdownCodeInline guibg=#24283b')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#1a1b26 guibg=#7dcfff')
@@ -44,6 +125,10 @@ themes.themes = {
 
     {
         name = 'tokyonight-day',
+        md_hdrs = {
+            fg = '#4078f2',
+            bg = '#c9c9c9',
+        },
         set = function()
             vim.o.background = 'light'
             vim.cmd.colorscheme 'tokyonight-day'
@@ -52,23 +137,13 @@ themes.themes = {
                 options = { theme = 'tokyonight-day' }
             })
 
-            -- split window borders
             vim.cmd('hi WinSeparator guifg=#4c566a')
-
-            -- tabline text for non-focused tabs needs to stand out more
             vim.cmd('hi TabLine guifg=#414868')
-
-            -- tame down the cursor line
             vim.cmd('hi CursorLine guibg=#d8dee9')
-
-            -- lighten up search highlighting
+            vim.cmd('hi ColorColumn guibg=#d8dee9')
             vim.cmd('hi IncSearch guifg=#1a1b26 guibg=#e0af68')
             vim.cmd('hi Search guibg=#7dcfff')
-
-            -- lighten up cursorwork highlighting
             vim.cmd('hi MiniCursorword guibg=#eceff4')
-
-            -- render-markdown tweaks
             vim.cmd('hi RenderMarkdownCodeInline guifg=#1a1b26 guibg=#d8dee9')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#1a1b26 guibg=#e0af68')
             vim.cmd('hi RenderMarkdownBullet guifg=#7aa2f7')
@@ -76,23 +151,76 @@ themes.themes = {
     },
 }
 
-local function theme_override_all()
-    -- all comments rendered in italics
-    --vim.cmd('hi Comment gui=none cterm=italic gui=italic')
+local function update_markdown_headers()
+    local md_hdrs = themes.themes[themes.current].md_hdrs
+    if md_hdrs then
+        vim.cmd('hi! RenderMarkdownH1Fg guifg=' .. md_hdrs.fg)
+        for i = 2, 8 do
+            vim.cmd('hi! link RenderMarkdownH' .. i .. 'Fg ' ..
+                    'RenderMarkdownH1Fg')
+        end
+
+        vim.cmd('hi! RenderMarkdownH1Bg guibg=' .. md_hdrs.bg)
+        for i = 2, 8 do
+            vim.cmd('hi! link RenderMarkdownH' .. i .. 'Bg ' ..
+                    'RenderMarkdownH1Bg')
+        end
+
+        for i = 1, 6 do
+            vim.cmd('hi! @markup.heading.' .. i .. '.markdown ' ..
+                    'guifg=' .. md_hdrs.fg)
+        end
+    end
 end
 
-local function theme_toggle()
-    themes.current = ((themes.current % #themes.themes) + 1)
+local function theme_override_all()
+    --vim.cmd('hi Comment gui=none cterm=italic gui=italic')
+
+    -- render-markdown needs to re-init after a theme change
+    update_markdown_headers()
+    vim.cmd('Lazy reload render-markdown.nvim')
+    local file_types = {
+        'markdown',
+        'copilot-chat',
+        'codecompanion',
+        'Avante',
+    }
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(bufnr) then
+            local buf_filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
+            for _, ft in pairs(file_types) do
+                if buf_filetype == ft then
+                    vim.api.nvim_buf_call(bufnr, function()
+                        vim.cmd('filetype detect') -- This does it!
+                    end)
+                end
+            end
+        end
+    end
+end
+
+vim.keymap.set('n', 'T', function()
+    if vim.v.count == 0 then
+        themes.current = ((themes.current % #themes.themes) + 1)
+    else
+        if vim.v.count > #themes.themes then
+            vim.notify("Invalid theme ID (max=" .. #themes.themes .. ")",
+                       vim.log.levels.ERROR)
+            return
+        end
+
+        themes.current = vim.v.count
+    end
+
     themes.themes[themes.current].set()
     theme_override_all()
     vim.notify(themes.themes[themes.current].name, vim.log.levels.INFO)
-end
-
-vim.keymap.set('n', 'T', function() theme_toggle() end)
+end)
 
 vim.api.nvim_create_autocmd('VimEnter', {
     callback = function()
         themes.themes[themes.current].set()
+        update_markdown_headers()
     end
 })
 
