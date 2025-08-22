@@ -57,7 +57,7 @@
   #e2ecfb #cad3e0
 --]]
 
-local themes = { current = 2 }
+local themes = { current = 1 }
 
 themes.themes = {
     {
@@ -175,7 +175,9 @@ end
 
 local function theme_override_all()
     --vim.cmd('hi Comment gui=none cterm=italic gui=italic')
+end
 
+local function theme_markdown_fix()
     -- render-markdown needs to re-init after a theme change
     update_markdown_headers()
     vim.cmd('Lazy reload render-markdown.nvim')
@@ -199,6 +201,13 @@ local function theme_override_all()
     end
 end
 
+local function theme_set()
+    themes.themes[themes.current].set()
+    theme_override_all()
+    theme_markdown_fix()
+    vim.notify(themes.themes[themes.current].name, vim.log.levels.INFO)
+end
+
 vim.keymap.set('n', 'T', function()
     if vim.v.count == 0 then
         themes.current = ((themes.current % #themes.themes) + 1)
@@ -212,9 +221,7 @@ vim.keymap.set('n', 'T', function()
         themes.current = vim.v.count
     end
 
-    themes.themes[themes.current].set()
-    theme_override_all()
-    vim.notify(themes.themes[themes.current].name, vim.log.levels.INFO)
+    theme_set()
 end)
 
 vim.api.nvim_create_autocmd('VimEnter', {

@@ -1,6 +1,7 @@
 
 local notes_dir = '/Volumes/work/notes'
 
+-- set the default config for markdown files
 vim.api.nvim_create_autocmd('FileType', {
     pattern = { 'markdown' },
     callback = function()
@@ -116,6 +117,7 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 
 local pick = require('mini.pick')
 
+-- search for tags
 vim.keymap.set('n', '<leader>ng', function()
                    vim.ui.input({ prompt = 'Tag: ' }, function(input)
                        if not input or input == '' then
@@ -130,6 +132,7 @@ vim.keymap.set('n', '<leader>ng', function()
                end,
                { desc = '[N]otes Ta[G]s' })
 
+-- search for open tasks
 vim.keymap.set('n', '<leader>nto', function()
                    pick.builtin.grep({
                        globs = { '*.md' },
@@ -138,6 +141,7 @@ vim.keymap.set('n', '<leader>nto', function()
                end,
                { desc = '[N]otes [T]asks [O]pen' })
 
+-- search for completed tasks
 vim.keymap.set('n', '<leader>ntc', function()
                    pick.builtin.grep({
                        globs = { '*.md' },
@@ -146,6 +150,7 @@ vim.keymap.set('n', '<leader>ntc', function()
                end,
                { desc = '[N]otes [T]asks [C]ompleted' })
 
+-- search for punted tasks
 vim.keymap.set('n', '<leader>ntp', function()
                    pick.builtin.grep({
                        globs = { '*.md' },
@@ -171,6 +176,7 @@ local function toggle_dataview_tag(tag, tag_pattern)
     vim.api.nvim_buf_set_lines(0, l_num - 1, l_num, false, { l })
 end
 
+-- toggle completion
 vim.keymap.set('n', '<leader>nc', function()
                    local tag = '[completion:: ' .. os.date('%Y-%m-%d') .. ']'
                    local tag_pattern = '%[completion:: %d%d%d%d%-%d%d%-%d%d%]$'
@@ -178,6 +184,7 @@ vim.keymap.set('n', '<leader>nc', function()
                end,
                { desc = '[N]otes [C]omplete Task' })
 
+-- toggle punted
 vim.keymap.set('n', '<leader>np', function()
                    local tag = '[punted:: ' .. os.date('%Y-%m-%d') .. ']'
                    local tag_pattern = '%[punted:: %d%d%d%d%-%d%d%-%d%d%]$'
@@ -283,7 +290,7 @@ vim.api.nvim_create_user_command('Journal', function(opts)
     open_journal_date_entry(target_date)
 end, { desc = 'Open journal entry (use +N/-N for offset)', nargs = '?' })
 
-vim.keymap.set('n', '<leader>jt', '<Cmd>Journal<CR>',
+vim.keymap.set('n', '<leader>jd', '<Cmd>Journal<CR>',
                { desc = '[J]ournal [T]oday' })
 vim.keymap.set('n', '<leader>jp', '<Cmd>Journal -1<CR>',
                { desc = '[J]ournal [P]rev' })
@@ -510,4 +517,52 @@ end, { desc = 'List missing journal entries', nargs = '?' })
 
 vim.keymap.set('n', '<leader>jm', '<Cmd>JournalMissing<CR>',
                { desc = '[J]ournal [M]issing' })
+
+------------------------------------------------------------------------------
+-- KEYMAP HELP ---------------------------------------------------------------
+------------------------------------------------------------------------------
+
+-- New picker that lists all the notes keymaps (help!)
+local notes_help= {
+    '<leader>nh                         Notes Keymap Help',
+    '',
+    '<leader>ng                         Search Tags',
+    '<leader>nto                        Search Open Tasks',
+    '<leader>ntc                        Search Completed Tasks',
+    '<leader>ntp                        Search Punted Tasks',
+    '',
+    '<leader>nc                         Toggle Task Completed',
+    '<leader>np                         Toggle Task Punted',
+    '',
+    '<leader>jd   :Journal [+/-N]       Journal Day',
+    '<leader>jp   :Journal -1           Journal Previous Day',
+    '<leader>jn   :Journal +1           Journal Next Day',
+    '',
+    '<leader>jw   :JournalWeek [+/-N]   Journal Week',
+    '<leader>jP   :JournalWeek -1       Journal Previous Week',
+    '<leader>jN   :JournalWeek +1       Journal Next Week',
+    '',
+    '<leader>jm   :JournalMissing       Missing Journal Days',
+    '',
+    ' --> markdown commands support dot(.) and visual mode <--',
+    '',
+    '<leader>ml                         Markdown List',
+    '<leader>mo                         Markdown Ordered List',
+    '<leader>mc                         Markdown Checkbox',
+    '<leader>mq                         Markdown Quote/Callout',
+    '<leader>mh                         Markdown Heading',
+}
+pick.registry.notes_help = function()
+    pick.start({
+        source = {
+            items = notes_help,
+            name = 'Notes Help',
+            choose = function() end
+        },
+  })
+end
+
+vim.keymap.set('n', '<leader>nh',
+               '<cmd>Pick notes_help<CR>',
+               { desc = '[N]otes [H]elp' })
 
