@@ -509,6 +509,7 @@ return {
                 { mode = 'n', keys = '<leader>m',  desc = '+Markdown' },
                 { mode = 'n', keys = '<leader>n',  desc = '+Notes' },
                 { mode = 'n', keys = '<leader>nt', desc = '+Tasks' },
+                { mode = 'n', keys = '<leader>nr', desc = '+Read' },
             },
         })
 

@@ -1,5 +1,6 @@
 return {
     'roodolv/markdown-toggle.nvim',
+    enabled = true,
     config = function()
         local toggle = require('markdown-toggle')
         toggle.setup({

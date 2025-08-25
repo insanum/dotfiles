@@ -1,5 +1,6 @@
 return {
     'HakonHarnes/img-clip.nvim',
+    enabled = true,
     event = 'VeryLazy',
     opts = {
         default = {

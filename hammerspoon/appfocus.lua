@@ -50,3 +50,8 @@ mod_key:bind('', 'p', 'Focus PDF Expert', function()
     focus_or_launch_app('PDF Expert')
 end)
 
+mod_key:bind('', 'z', 'Focus Zoom', function()
+    mod_key:exit()
+    focus_or_launch_app('Zoom')
+end)
+

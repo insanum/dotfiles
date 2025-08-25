@@ -519,11 +519,139 @@ vim.keymap.set('n', '<leader>jm', '<Cmd>JournalMissing<CR>',
                { desc = '[J]ournal [M]issing' })
 
 ------------------------------------------------------------------------------
+-- READING LIST PICKER -------------------------------------------------------
+------------------------------------------------------------------------------
+
+local function yaml_property_value(path, property)
+    local file = io.open(path, 'r')
+    if not file then
+        return nil
+    end
+
+    local content = file:read('*all')
+    file:close()
+
+    if not content:match('^%-%-%-\n') then
+        return nil
+    end
+
+    local yaml_end = content:find('\n%-%-%-\n', 4)
+    if not yaml_end then
+        return nil
+    end
+
+    local yaml = content:sub(4, yaml_end - 1)
+    local p_value = yaml:match(property .. ':%s*([^\n]+)')
+
+    if not p_value then
+        return nil
+    end
+
+    return p_value:gsub('^%s*', ''):gsub('%s*$', '')
+end
+
+pick.registry.reading_list = function(local_opts)
+    return pick.builtin.cli(
+        {
+            command = {
+                'fd', '-e', 'md', '-g', '*.md',
+            },
+            postprocess = function(lines)
+                local filtered_lines = {}
+
+                local p_name = nil
+                if local_opts.type == 'all' then
+                    p_name = 'created'
+                elseif local_opts.type == 'completed' then
+                    p_name = 'completion'
+                elseif local_opts.type == 'punted' then
+                    p_name = 'punted'
+                end
+
+                for _, line in ipairs(lines) do
+                    local p_value = nil
+                    if p_name then
+                        p_value = yaml_property_value(line, p_name)
+                    else
+                        -- this is the 'todo' type
+                        if not yaml_property_value(line, 'completion') and
+                           not yaml_property_value(line, 'punted') then
+                            p_value = yaml_property_value(line, 'created')
+                        end
+                    end
+                    if p_value then
+                        table.insert(filtered_lines, {
+                            path = line,
+                            date = p_value,
+                        })
+                    end
+                end
+
+                -- property is expected to be a date (YYYY-MM-DD format)
+                table.sort(filtered_lines, function(a, b)
+                    local function parse_date(date_str)
+                        local year, month, day =
+                            date_str:match('^(%d+)%-(%d+)%-(%d+)')
+
+                        if not year or not month or not day then
+                            return 0
+                        end
+
+                        return os.time({
+                            year = year,
+                            month = month,
+                            day = day,
+                        })
+                    end
+
+                    return parse_date(a.date) > parse_date(b.date)
+                end)
+
+                return filtered_lines
+            end
+        },
+        {
+            source = {
+                cwd = notes_dir .. '/' .. local_opts.dir,
+                name = 'Read: ' .. local_opts.type,
+                show = function(buf_id, items, query)
+                    local display_items = {}
+                    for _, item in ipairs(items) do
+                        table.insert(display_items,
+                                     string.format('%s | %s',
+                                                   item.date,
+                                                   item.path))
+                    end
+                    return pick.default_show(buf_id, display_items, query,
+                                             { show_icons = true })
+                end,
+            },
+        }
+    )
+end
+
+vim.keymap.set('n', '<leader>nra',
+               '<cmd>Pick reading_list dir=\'PDFs\' type=\'all\'<CR>',
+               { desc = '[N]otes [R]ead [A]ll' })
+
+vim.keymap.set('n', '<leader>nrt',
+               '<cmd>Pick reading_list dir=\'PDFs\' type=\'todo\'<CR>',
+               { desc = '[N]otes [R]ead [T]odo' })
+
+vim.keymap.set('n', '<leader>nrc',
+               '<cmd>Pick reading_list dir=\'PDFs\' type=\'completed\'<CR>',
+               { desc = '[N]otes [R]ead [C]ompleted' })
+
+vim.keymap.set('n', '<leader>nrp',
+               '<cmd>Pick reading_list dir=\'PDFs\' type=\'punted\'<CR>',
+               { desc = '[N]otes [R]ead [P]unted' })
+
+------------------------------------------------------------------------------
 -- KEYMAP HELP ---------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 -- New picker that lists all the notes keymaps (help!)
-local notes_help= {
+local notes_help = {
     '<leader>nh                         Notes Keymap Help',
     '',
     '<leader>ng                         Search Tags',
@@ -544,6 +672,11 @@ local notes_help= {
     '',
     '<leader>jm   :JournalMissing       Missing Journal Days',
     '',
+    '<leader>nra                        Reading List All',
+    '<leader>nrt                        Reading List Todo',
+    '<leader>nrc                        Reading list Completed',
+    '<leader>nrp                        Reading List Punted',
+    '',
     ' --> markdown commands support dot(.) and visual mode <--',
     '',
     '<leader>ml                         Markdown List',
@@ -552,6 +685,7 @@ local notes_help= {
     '<leader>mq                         Markdown Quote/Callout',
     '<leader>mh                         Markdown Heading',
 }
+
 pick.registry.notes_help = function()
     pick.start({
         source = {
