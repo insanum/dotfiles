@@ -507,6 +507,7 @@ return {
                 { mode = 'n', keys = ',o',         desc = '+Sessions' },
                 { mode = 'n', keys = '<leader>j',  desc = '+Journal' },
                 { mode = 'n', keys = '<leader>m',  desc = '+Markdown' },
+                { mode = 'n', keys = '<leader>mt', desc = '+Tag' },
                 { mode = 'n', keys = '<leader>n',  desc = '+Notes' },
                 { mode = 'n', keys = '<leader>nt', desc = '+Tasks' },
                 { mode = 'n', keys = '<leader>nr', desc = '+Read' },

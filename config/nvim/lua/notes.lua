@@ -647,6 +647,194 @@ vim.keymap.set('n', '<leader>nrp',
                { desc = '[N]otes [R]ead [P]unted' })
 
 ------------------------------------------------------------------------------
+-- TAG MANAGEMENT ------------------------------------------------------------
+------------------------------------------------------------------------------
+
+-- returns the start/end line index of the yaml frontmatter
+-- these values are 0-based (end index is exclusive), for nvim_buf_get_lines
+-- range does NOT include the '---' lines
+local function get_yaml_bounds()
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+
+    if #lines == 0 or lines[1] ~= '---' then
+        return nil, nil
+    end
+
+    for i = 2, #lines do
+        if lines[i] == '---' then
+            return 1, i - 1
+        end
+    end
+
+    return nil, nil
+end
+
+-- returns the start/end line index of the yaml frontmatter
+-- returns the list of tags (empty if none)
+-- returns the start/end line index of the tag property
+-- these values are 0-based (end index is exclusive), for nvim_buf_get_lines
+-- range does NOT include the '---' lines
+local function get_yaml_tags()
+    local yaml_start, yaml_end = get_yaml_bounds()
+    if not yaml_start then
+        return nil, nil, {}, nil, nil
+    end
+
+    local lines = vim.api.nvim_buf_get_lines(0, yaml_start, yaml_end, false)
+    local tags = {}
+    local tags_start = nil
+    local tags_end = nil
+    local in_tags = false
+
+    for i, line in ipairs(lines) do
+        if line:match('^tags:') then
+            tags_start = yaml_start + i - 1
+            in_tags = true
+        elseif in_tags then
+            local tag = line:match('^%s*-%s*(.+)')
+            if tag then
+                local t = tag:gsub('%s*$', '')
+                table.insert(tags, t)
+                tags_end = yaml_start + i
+            elseif not line:match('^%s*$') then
+                in_tags = false
+                break
+            end
+        end
+    end
+
+    return yaml_start, yaml_end, tags, tags_start, tags_end
+end
+
+local function tag_add()
+    if vim.bo.filetype ~= 'markdown' then
+        vim.notify('Markdown files only', vim.log.levels.WARN)
+        return
+    end
+
+    vim.ui.input({ prompt = 'Enter tag to add: ' }, function(tag)
+        if not tag or tag == '' then
+            return
+        end
+
+        tag = tag:gsub('^%s*', ''):gsub('%s*$', '')
+
+        local yaml_start, yaml_end, tags, _, tags_end = get_yaml_tags()
+
+        if not yaml_start then
+            -- no yaml frontmatter, create it
+            local new_yaml = {
+                '---',
+                'tags:',
+                '  - ' .. tag,
+                '---',
+                ''
+            }
+            vim.api.nvim_buf_set_lines(0, 0, 0, false, new_yaml)
+            vim.notify('Added tag: ' .. tag)
+            return
+        end
+
+        if #tags > 0 then
+            -- check if the tag already exists
+            for _, t in ipairs(tags) do
+                if t == tag then
+                    vim.notify('Tag already exists: ' .. tag)
+                    return
+                end
+            end
+
+            -- add the tag to the property list
+            vim.api.nvim_buf_set_lines(0, tags_end, tags_end,
+                                       false, { '  - ' .. tag })
+        else
+            -- there is no tags property, create it
+            local new_tags = {
+                'tags:',
+                '  - ' .. tag
+            }
+
+            vim.api.nvim_buf_set_lines(0, yaml_end, yaml_end,
+                                       false, new_tags)
+        end
+
+        vim.notify('Added tag: ' .. tag)
+    end)
+end
+
+local function tag_remove()
+    if vim.bo.filetype ~= 'markdown' then
+        vim.notify('Markdown files only', vim.log.levels.WARN)
+        return
+    end
+
+    local yaml_start, yaml_end, tags, _, _ = get_yaml_tags()
+
+    if not tags or #tags == 0 then
+        vim.notify('No tags found', vim.log.levels.WARN)
+        return
+    end
+
+    vim.ui.select(tags, { prompt = 'Select tag to remove:' },
+                  function(selected_tag)
+        if not selected_tag then
+            return
+        end
+
+        local lines = vim.api.nvim_buf_get_lines(0, yaml_start, yaml_end,
+                                                 false)
+        local new_lines = {}
+        local removed_tag = false
+        local remaining_tags = 0
+        local tags_section_start = nil
+
+        -- walk the yaml creating a new lines table with the tag removed
+        for i, line in ipairs(lines) do
+            if line:match('^tags:') then
+                tags_section_start = i
+                table.insert(new_lines, line)
+            elseif line:match('^%s*-%s*(.+)') then
+                local tag = line:match('^%s*-%s*(.+)')
+                tag = tag:gsub('%s+$', '')
+                if tag == selected_tag then
+                    removed_tag = true
+                else
+                    table.insert(new_lines, line)
+                    remaining_tags = remaining_tags + 1
+                end
+            else
+                table.insert(new_lines, line)
+            end
+        end
+
+        -- if no tags remain, remove the entire tags section
+        if remaining_tags == 0 and tags_section_start then
+            local final_lines = {}
+            for _, line in ipairs(new_lines) do
+                if not line:match('^tags:') then
+                    table.insert(final_lines, line)
+                end
+            end
+            new_lines = final_lines
+        end
+
+        if removed_tag then
+            -- overwrite the entire yaml frontmatter with the new lines
+            vim.api.nvim_buf_set_lines(0, yaml_start, yaml_end, false,
+                                       new_lines)
+            vim.notify('Removed tag: ' .. selected_tag)
+        else
+            vim.notify('Tag not found: ' .. selected_tag)
+        end
+    end)
+end
+
+vim.keymap.set('n', '<leader>mta', tag_add,
+               { desc = '[M]arkdown [T]ag [A]dd' })
+vim.keymap.set('n', '<leader>mtr', tag_remove,
+               { desc = '[M]arkdown [T]ag [R]emove' })
+
+------------------------------------------------------------------------------
 -- KEYMAP HELP ---------------------------------------------------------------
 ------------------------------------------------------------------------------
 
@@ -684,6 +872,8 @@ local notes_help = {
     '<leader>mc                         Markdown Checkbox',
     '<leader>mq                         Markdown Quote/Callout',
     '<leader>mh                         Markdown Heading',
+    '<leader>mta                        Markdown Tag Add',
+    '<leader>mtr                        Markdown Tag Remove',
 }
 
 pick.registry.notes_help = function()
