@@ -291,7 +291,7 @@ vim.api.nvim_create_user_command('Journal', function(opts)
 end, { desc = 'Open journal entry (use +N/-N for offset)', nargs = '?' })
 
 vim.keymap.set('n', '<leader>jd', '<Cmd>Journal<CR>',
-               { desc = '[J]ournal [T]oday' })
+               { desc = '[J]ournal To[D]ay' })
 vim.keymap.set('n', '<leader>jp', '<Cmd>Journal -1<CR>',
                { desc = '[J]ournal [P]rev' })
 vim.keymap.set('n', '<leader>jn', '<Cmd>Journal +1<CR>',
@@ -864,6 +864,18 @@ local notes_help = {
     '<leader>nrt                        Reading List Todo',
     '<leader>nrc                        Reading list Completed',
     '<leader>nrp                        Reading List Punted',
+    '',
+    ' --> LSP integration <--',
+    '',
+    '<leader>K[K]                       Hover show file link',
+    '<leader>ld                         Follow file link',
+    '<leader>lr                         Find all backlinks of current file',
+    '<leader>lr                         Find all backlinks for file link',
+    '<leader>lr                         Tag find all occurrences',
+    '<leader>ls                         List all headings',
+    '<leader>lR                         Rename file',
+    '<leader>lR                         Tag rename across all files',
+    ':lua vim.lsp.buf.code_action()     Create file for unresolved link',
     '',
     ' --> markdown commands support dot(.) and visual mode <--',
     '',

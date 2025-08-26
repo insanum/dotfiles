@@ -458,7 +458,7 @@ return {
 
         require('mini.clue').setup({
             window = {
-                delay = 0,
+                delay = 500,
                 config = {
                     width = 'auto',
                     border = 'single',
