@@ -255,45 +255,45 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 
 -- search for tags
 vim.keymap.set('n', '<leader>ng', function()
-                   vim.ui.input({ prompt = 'Tag: ' }, function(input)
-                       if not input or input == '' then
-                           return
-                       end
+    vim.ui.input({ prompt = 'Tag: ' }, function(input)
+        if not input or input == '' then
+            return
+        end
 
-                       pick.builtin.grep({
-                           globs = { '*.md' },
-                           pattern = '\\s#' .. input .. '[\\s|/]',
-                       })
-                   end)
-               end,
-               { desc = '[N]otes Ta[G]s' })
+        pick.builtin.grep({
+            globs = { '*.md' },
+            pattern = '\\s#' .. input .. '[\\s|/]',
+        })
+    end)
+end,
+{ desc = '[N]otes Ta[G]s' })
 
 -- search for open tasks
 vim.keymap.set('n', '<leader>nto', function()
-                   pick.builtin.grep({
-                       globs = { '*.md' },
-                       pattern = [[^\s*- \[ \] ]],
-                   })
-               end,
-               { desc = '[N]otes [T]asks [O]pen' })
+    pick.builtin.grep({
+        globs = { '*.md' },
+        pattern = [[^\s*- \[ \] ]],
+    })
+end,
+{ desc = '[N]otes [T]asks [O]pen' })
 
 -- search for completed tasks
 vim.keymap.set('n', '<leader>ntc', function()
-                   pick.builtin.grep({
-                       globs = { '*.md' },
-                       pattern = [[\s\[completion:: ]],
-                   })
-               end,
-               { desc = '[N]otes [T]asks [C]ompleted' })
+    pick.builtin.grep({
+        globs = { '*.md' },
+        pattern = [[\s\[completion:: ]],
+    })
+end,
+{ desc = '[N]otes [T]asks [C]ompleted' })
 
 -- search for punted tasks
 vim.keymap.set('n', '<leader>ntp', function()
-                   pick.builtin.grep({
-                       globs = { '*.md' },
-                       pattern = [[\s\[punted:: ]],
-                   })
-               end,
-               { desc = '[N]otes [T]asks [P]unted' })
+    pick.builtin.grep({
+        globs = { '*.md' },
+        pattern = [[\s\[punted:: ]],
+    })
+end,
+{ desc = '[N]otes [T]asks [P]unted' })
 
 ------------------------------------------------------------------------------
 -- TOGGLE DATAVIEW TAGS ------------------------------------------------------
@@ -318,19 +318,19 @@ end
 
 -- toggle completion
 vim.keymap.set('n', '<leader>nc', function()
-                   local tag = '[completion:: ' .. os.date('%Y-%m-%d') .. ']'
-                   local tag_pattern = '%[completion:: %d%d%d%d%-%d%d%-%d%d%]$'
-                   toggle_dataview_tag(tag, tag_pattern)
-               end,
-               { desc = '[N]otes [C]omplete Task' })
+    local tag = '[completion:: ' .. os.date('%Y-%m-%d') .. ']'
+    local tag_pattern = '%[completion:: %d%d%d%d%-%d%d%-%d%d%]$'
+    toggle_dataview_tag(tag, tag_pattern)
+end,
+{ desc = '[N]otes [C]omplete Task' })
 
 -- toggle punted
 vim.keymap.set('n', '<leader>np', function()
-                   local tag = '[punted:: ' .. os.date('%Y-%m-%d') .. ']'
-                   local tag_pattern = '%[punted:: %d%d%d%d%-%d%d%-%d%d%]$'
-                   toggle_dataview_tag(tag, tag_pattern)
-               end,
-               { desc = '[N]otes [P]unted Task' })
+    local tag = '[punted:: ' .. os.date('%Y-%m-%d') .. ']'
+    local tag_pattern = '%[punted:: %d%d%d%d%-%d%d%-%d%d%]$'
+    toggle_dataview_tag(tag, tag_pattern)
+end,
+{ desc = '[N]otes [P]unted Task' })
 
 ------------------------------------------------------------------------------
 -- JOURNAL DAY ---------------------------------------------------------------
@@ -728,36 +728,36 @@ pick.registry.reading_list = function(local_opts)
 end
 
 vim.keymap.set('n', '<leader>nra', function()
-                   pick.registry.reading_list({
-                       dir = 'PDFs',
-                       type = 'all',
-                   })
-               end,
-               { desc = '[N]otes [R]ead [A]ll' })
+    pick.registry.reading_list({
+        dir = 'PDFs',
+        type = 'all',
+    })
+end,
+{ desc = '[N]otes [R]ead [A]ll' })
 
 vim.keymap.set('n', '<leader>nrt', function()
-                   pick.registry.reading_list({
-                       dir = 'PDFs',
-                       type = 'todo',
-                   })
-               end,
-               { desc = '[N]otes [R]ead [T]odo' })
+    pick.registry.reading_list({
+        dir = 'PDFs',
+        type = 'todo',
+    })
+end,
+{ desc = '[N]otes [R]ead [T]odo' })
 
 vim.keymap.set('n', '<leader>nrc', function()
-                   pick.registry.reading_list({
-                       dir = 'PDFs',
-                       type = 'completed',
-                   })
-               end,
-               { desc = '[N]otes [R]ead [C]ompleted' })
+    pick.registry.reading_list({
+        dir = 'PDFs',
+        type = 'completed',
+    })
+end,
+{ desc = '[N]otes [R]ead [C]ompleted' })
 
 vim.keymap.set('n', '<leader>nrp', function()
-                   pick.registry.reading_list({
-                       dir = 'PDFs',
-                       type = 'punted',
-                   })
-               end,
-               { desc = '[N]otes [R]ead [P]unted' })
+    pick.registry.reading_list({
+        dir = 'PDFs',
+        type = 'punted',
+    })
+end,
+{ desc = '[N]otes [R]ead [P]unted' })
 
 ------------------------------------------------------------------------------
 -- TAG MANAGEMENT ------------------------------------------------------------
@@ -1023,11 +1023,61 @@ pick.registry.recent_files = function(local_opts)
 end
 
 vim.keymap.set('n', '<leader>nR', function()
-                   pick.registry.recent_files({
-                       exclude = { 'Journal', 'templates', },
-                   })
-               end,
-               { desc = '[N]otes [H]elp' })
+    pick.registry.recent_files({
+        exclude = { 'Journal', 'templates', },
+    })
+end,
+{ desc = '[N]otes [H]elp' })
+
+------------------------------------------------------------------------------
+-- EDIT IMAGE IN EXCALIDRAW --------------------------------------------------
+------------------------------------------------------------------------------
+
+local assets_dir = notes_dir .. '/assets/'
+local excli_blank = assets_dir .. 'blank.excalidraw'
+
+local function run_excalidraw(efile_path)
+    if vim.fn.filereadable(efile_path) == 0 then
+        if vim.fn.filereadable(excli_blank) == 0 then
+            vim.notify('Blank Excalidraw file not found',
+                       vim.log.levels.ERROR)
+            return
+        end
+
+        vim.system({ 'cp', '-f', excli_blank, efile_path }):wait()
+    end
+
+    vim.notify('Opening "' .. efile_path .. '"', vim.log.levels.INFO)
+    vim.system({ 'excli', efile_path }, function()
+        vim.notify('Done editing "' .. efile_path .. '"', vim.log.levels.INFO)
+    end)
+end
+
+vim.keymap.set('n', '<leader>nx', function()
+    local file = vim.fn.expand('<cfile>')
+    if not string.match(file, '%.excalidraw.png$') then
+        vim.notify('Excalidraw/PNG only', vim.log.levels.ERROR)
+        return
+    end
+
+    local efile = string.gsub(file, '^(.+).png$', '%1')
+
+    local file_path = assets_dir .. file
+    local efile_path = assets_dir .. efile
+
+    local prompt = 'Edit "' .. efile .. '" (y/n): '
+
+    if vim.fn.filereadable(file_path) == 0 then
+        prompt = 'Create and ' .. prompt
+    end
+
+    vim.ui.input({ prompt = prompt }, function(input)
+        if input == 'y' or input == 'yes' then
+            run_excalidraw(efile_path)
+        end
+    end)
+end,
+{ desc = '[N]otes E[X]calidraw' })
 
 ------------------------------------------------------------------------------
 -- KEYMAP HELP ---------------------------------------------------------------
@@ -1094,7 +1144,7 @@ pick.registry.notes_help = function()
 end
 
 vim.keymap.set('n', '<leader>nh', function()
-                   pick.registry.notes_help()
-               end,
-               { desc = '[N]otes [H]elp' })
+    pick.registry.notes_help()
+end,
+{ desc = '[N]otes [H]elp' })
 
