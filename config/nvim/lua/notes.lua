@@ -330,7 +330,7 @@ vim.keymap.set('n', '<leader>np', function()
     local tag_pattern = '%[punted:: %d%d%d%d%-%d%d%-%d%d%]$'
     toggle_dataview_tag(tag, tag_pattern)
 end,
-{ desc = '[N]otes [P]unted Task' })
+{ desc = '[N]otes [P]unt Task' })
 
 ------------------------------------------------------------------------------
 -- JOURNAL DAY ---------------------------------------------------------------
@@ -430,12 +430,12 @@ vim.api.nvim_create_user_command('Journal', function(opts)
     open_journal_date_entry(target_date)
 end, { desc = 'Open journal entry (use +N/-N for offset)', nargs = '?' })
 
-vim.keymap.set('n', '<leader>jd', '<Cmd>Journal<CR>',
-               { desc = '[J]ournal To[D]ay' })
-vim.keymap.set('n', '<leader>jp', '<Cmd>Journal -1<CR>',
-               { desc = '[J]ournal [P]rev' })
-vim.keymap.set('n', '<leader>jn', '<Cmd>Journal +1<CR>',
-               { desc = '[J]ournal [N]ext' })
+vim.keymap.set('n', '<leader>jdd', '<Cmd>Journal<CR>',
+               { desc = '[J]ournal [D]ay To[D]ay' })
+vim.keymap.set('n', '<leader>jdp', '<Cmd>Journal -1<CR>',
+               { desc = '[J]ournal [D]ay [P]rev' })
+vim.keymap.set('n', '<leader>jdn', '<Cmd>Journal +1<CR>',
+               { desc = '[J]ournal [D]ay [N]ext' })
 
 ------------------------------------------------------------------------------
 -- JOURNAL WEEK --------------------------------------------------------------
@@ -497,7 +497,7 @@ local function date_to_week(date_str)
            os.date('%m/%d', (date_sun_t + (6 * 86400)))
 end
 
--- in { year, week }, out { sunday_date_long, sunday_date, saturday_date }
+-- in "YYYY-wWW", out { sunday_date_long, sunday_date, saturday_date }
 local function week_to_date(week_str)
     local y, wn = week_str:match('^(%d+)%-w(%d+)$')
 
@@ -549,24 +549,33 @@ local function open_journal_week_entry(year, week)
 
     -- if the file doesn't exist, create it with a template
     if vim.fn.filereadable(journal_week_file) == 0 then
-        local _, sun_date, sat_date =
+        local sun_date_long, sun_date, sat_date =
             week_to_date(string.format('%04d-w%02d', year, week))
 
         local formatted_date = string.format('# %d %s-%s (w%02d)',
                                              year, sun_date, sat_date, week)
         local timestamp = os.date('%Y-%m-%dT%H:%M')
 
+        local content = {
+            '---',
+            'created: ' .. timestamp,
+            'updated: ' .. timestamp,
+            '---',
+            '',
+            formatted_date,
+            '',
+            '---',
+            '',
+        }
+
+        for i = 0, 6 do
+            local day_date = adjust_date(sun_date_long, i)
+            table.insert(content, string.format('![[Journal/%s]]', day_date))
+            table.insert(content, '')
+        end
+
         vim.fn.mkdir(vim.fn.fnamemodify(journal_week_file, ':h'), 'p')
-        vim.fn.writefile({
-                             '---',
-                             'created: ' .. timestamp,
-                             'updated: ' .. timestamp,
-                             '---',
-                             '',
-                             formatted_date,
-                             '',
-                             '',
-                         }, journal_week_file)
+        vim.fn.writefile(content, journal_week_file)
     end
 
     vim.cmd('edit ' .. journal_week_file)
@@ -614,19 +623,19 @@ vim.api.nvim_create_user_command('JournalWeek', function(opts)
     open_journal_week_entry(target_year, target_week)
 end, { desc = 'Open journal week entry (use +N/-N for offset)', nargs = '?' })
 
-vim.keymap.set('n', '<leader>jw', '<Cmd>JournalWeek<CR>',
-               { desc = '[J]ournal [W]eek' })
-vim.keymap.set('n', '<leader>jP', '<Cmd>JournalWeek -1<CR>',
-               { desc = '[J]ournal Week [P]rev' })
-vim.keymap.set('n', '<leader>jN', '<Cmd>JournalWeek +1<CR>',
-               { desc = '[J]ournal Week [N]ext' })
+vim.keymap.set('n', '<leader>jww', '<Cmd>JournalWeek<CR>',
+               { desc = '[J]ournal [W]eek [W]eek' })
+vim.keymap.set('n', '<leader>jwp', '<Cmd>JournalWeek -1<CR>',
+               { desc = '[J]ournal [W]eek [P]rev' })
+vim.keymap.set('n', '<leader>jwn', '<Cmd>JournalWeek +1<CR>',
+               { desc = '[J]ournal [W]eek [N]ext' })
 
 ------------------------------------------------------------------------------
 -- JOURNAL ENTRIES MISSING ---------------------------------------------------
 ------------------------------------------------------------------------------
 
--- journal missing command
-vim.api.nvim_create_user_command('JournalMissing', function(opts)
+-- journal missing days command
+vim.api.nvim_create_user_command('JournalMissing', function()
     local missing_dates = {}
     local date_t = os.time()
 
@@ -655,8 +664,53 @@ vim.api.nvim_create_user_command('JournalMissing', function(opts)
     open_journal_date_entry(date)
 end, { desc = 'List missing journal entries', nargs = '?' })
 
-vim.keymap.set('n', '<leader>jm', '<Cmd>JournalMissing<CR>',
-               { desc = '[J]ournal [M]issing' })
+-- journal missing weeks command
+vim.api.nvim_create_user_command('JournalWeekMissing', function()
+    local missing_weeks = {}
+    local date_t = os.time()
+
+    for i = 0, 52 do
+        local tmp_date_t = (date_t - (i * 608400)) -- subtract i weeks
+
+        local tmp_date_str = os.date('%Y-%m-%d', tmp_date_t)
+        local year, week = date_to_week(tmp_date_str)
+
+        local journal_week_file = journal_week_path(year, week)
+
+        if vim.fn.filereadable(journal_week_file) == 0 then
+            missing_weeks[#missing_weeks + 1] = { year = year, week = week }
+        end
+    end
+
+    local week = pick.start({
+        source = {
+            name = 'Missing Journal Week Entries',
+            items = missing_weeks,
+            show = function(buf_id, items, query)
+                local display_items = {}
+                for _, item in ipairs(items) do
+                    table.insert(display_items,
+                                 string.format('%04d-w%02d',
+                                               item.year,
+                                               item.week))
+                end
+                return pick.default_show(buf_id, display_items, query,
+                                         { show_icons = true })
+            end,
+        }
+    })
+
+    if not week then
+        return
+    end
+
+    open_journal_week_entry(week.year, week.week)
+end, { desc = 'List missing journal week entries', nargs = '?' })
+
+vim.keymap.set('n', '<leader>jdm', '<Cmd>JournalMissing<CR>',
+               { desc = '[J]ournal [D]ay [M]issing' })
+vim.keymap.set('n', '<leader>jwm', '<Cmd>JournalWeekMissing<CR>',
+               { desc = '[J]ournal [W]eek [M]issing' })
 
 ------------------------------------------------------------------------------
 -- READING LIST PICKER -------------------------------------------------------
@@ -1003,7 +1057,6 @@ pick.registry.recent_files = function(local_opts)
         },
         {
             source = {
-                --items = find_recent_notes,
                 name = 'Recent Notes',
                 show = function(buf_id, items, query)
                     local display_items = {}
@@ -1095,15 +1148,16 @@ local notes_help = {
     '<leader>nc                         Toggle Task Completed',
     '<leader>np                         Toggle Task Punted',
     '',
-    '<leader>jd   :Journal [+/-N]       Journal Day',
-    '<leader>jp   :Journal -1           Journal Previous Day',
-    '<leader>jn   :Journal +1           Journal Next Day',
+    '<leader>jdd  :Journal [+/-N]       Journal Day',
+    '<leader>jdp  :Journal -1           Journal Previous Day',
+    '<leader>jdn  :Journal +1           Journal Next Day',
     '',
-    '<leader>jw   :JournalWeek [+/-N]   Journal Week',
-    '<leader>jP   :JournalWeek -1       Journal Previous Week',
-    '<leader>jN   :JournalWeek +1       Journal Next Week',
+    '<leader>jww  :JournalWeek [+/-N]   Journal Week',
+    '<leader>jwp  :JournalWeek -1       Journal Previous Week',
+    '<leader>jwn  :JournalWeek +1       Journal Next Week',
     '',
-    '<leader>jm   :JournalMissing       Missing Journal Days',
+    '<leader>jdm  :JournalMissing       Missing Journal Days',
+    '<leader>jwm  :JournalWeekMissing   Missing Journal Week Days',
     '',
     '<leader>nra                        Reading List All',
     '<leader>nrt                        Reading List Todo',
