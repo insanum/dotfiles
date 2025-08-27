@@ -1,5 +1,6 @@
 
 local notes_dir = '/Volumes/work/notes'
+local pick = require('mini.pick')
 
 -- set the default config for markdown files
 vim.api.nvim_create_autocmd('FileType', {
@@ -26,6 +27,139 @@ vim.api.nvim_create_autocmd('FileType', {
                        { expr = true, noremap = true })
     end
 })
+
+------------------------------------------------------------------------------
+-- HELPER FUNCTIONS ----------------------------------------------------------
+------------------------------------------------------------------------------
+
+local function get_file_mtime(filepath)
+    local stat = vim.uv.fs_stat(filepath)
+    return stat and stat.mtime.sec or 0
+end
+
+local function date_to_ts(date_str)
+    if not date_str then
+        return nil
+    end
+
+    local patterns = {
+        '(%d+)-(%d+)-(%d+)T(%d+):(%d+):(%d+)', -- ISO 8601 with time (secs)
+        '(%d+)-(%d+)-(%d+)T(%d+):(%d+)',       -- ISO 8601 with time (no secs)
+        '(%d+)-(%d+)-(%d+)',                   -- ISO 8601 date only
+    }
+
+    for _, pattern in ipairs(patterns) do
+        local year, month, day, hour, min, sec =
+            string.match(date_str, pattern)
+        if year then
+            return os.time({
+                year = year,
+                month = month,
+                day = day,
+                hour = hour or 0,
+                min = min or 0,
+                sec = sec or 0,
+                isdst = true,
+            })
+        end
+    end
+
+    return nil
+end
+
+local function yaml_get(filepath)
+    local file = io.open(filepath, 'r')
+    if not file then
+        return nil
+    end
+
+    local content = file:read('*all')
+    file:close()
+
+    if not string.match(content, '^---\n') then
+        return nil
+    end
+
+    local yaml = string.match(content, '^---\n(.-)---\n')
+    if not yaml then
+        return nil
+    end
+
+    local data = {}
+    local lines = {}
+    for line in yaml:gmatch('[^\n]+') do
+        table.insert(lines, line)
+    end
+
+    local i = 1
+    while i <= #lines do
+        local line = lines[i]
+        local key, value = string.match(line, '^(%w+):%s*(.*)$')
+        if not key then
+            i = i + 1
+            goto continue
+        end
+
+        if value and value ~= '' then
+            -- simple key-value pair (strip off quotes if present)
+            value = string.gsub(value, "^[\"'](.+)[\"']$", '%1')
+            data[key] = value
+            i = i + 1
+            goto continue
+        end
+
+        -- check if this is an array property
+        local array_items = {}
+        local j = i + 1
+
+        while j <= #lines do
+            local next_line = lines[j]
+            local array_item = string.match(next_line, '^%s*-%s*(.+)$')
+
+            if array_item then
+                -- strip off quotes if present
+                array_item = string.gsub(array_item, "^[\"'](.+)[\"']$", "%1")
+                table.insert(array_items, array_item)
+                j = j + 1
+            elseif string.match(next_line, '^%s*$') then
+                -- skip empty lines within array
+                j = j + 1
+            else
+                -- not an array item, break
+                break
+            end
+        end
+
+        if #array_items > 0 then
+            data[key] = array_items
+        else
+            data[key] = nil
+        end
+
+        i = j
+
+        ::continue::
+    end
+
+    return data
+end
+
+local function yaml_get_property(filepath, property)
+    local yaml = yaml_get(filepath)
+    if not yaml then
+        return nil
+    end
+
+    if yaml[property] then
+        return yaml[property]
+    else
+        return nil
+    end
+end
+
+------------------------------------------------------------------------------
+-- UPDATE 'UPDATED' PROPERTY ON SAVE -----------------------------------------
+------------------------------------------------------------------------------
 
 -- update yaml frontmatter on markdown files when saving
 vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
@@ -115,7 +249,9 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
     end,
 })
 
-local pick = require('mini.pick')
+------------------------------------------------------------------------------
+-- VARIOUS PICKERS -----------------------------------------------------------
+------------------------------------------------------------------------------
 
 -- search for tags
 vim.keymap.set('n', '<leader>ng', function()
@@ -158,6 +294,10 @@ vim.keymap.set('n', '<leader>ntp', function()
                    })
                end,
                { desc = '[N]otes [T]asks [P]unted' })
+
+------------------------------------------------------------------------------
+-- TOGGLE DATAVIEW TAGS ------------------------------------------------------
+------------------------------------------------------------------------------
 
 -- helper function to toggle a tag on the current line
 local function toggle_dataview_tag(tag, tag_pattern)
@@ -503,7 +643,7 @@ vim.api.nvim_create_user_command('JournalMissing', function(opts)
 
     local date = pick.start({
         source = {
-            name = "Missing Journal Entries",
+            name = 'Missing Journal Entries',
             items = missing_dates,
         }
     })
@@ -522,39 +662,11 @@ vim.keymap.set('n', '<leader>jm', '<Cmd>JournalMissing<CR>',
 -- READING LIST PICKER -------------------------------------------------------
 ------------------------------------------------------------------------------
 
-local function yaml_property_value(path, property)
-    local file = io.open(path, 'r')
-    if not file then
-        return nil
-    end
-
-    local content = file:read('*all')
-    file:close()
-
-    if not content:match('^%-%-%-\n') then
-        return nil
-    end
-
-    local yaml_end = content:find('\n%-%-%-\n', 4)
-    if not yaml_end then
-        return nil
-    end
-
-    local yaml = content:sub(4, yaml_end - 1)
-    local p_value = yaml:match(property .. ':%s*([^\n]+)')
-
-    if not p_value then
-        return nil
-    end
-
-    return p_value:gsub('^%s*', ''):gsub('%s*$', '')
-end
-
 pick.registry.reading_list = function(local_opts)
     return pick.builtin.cli(
         {
             command = {
-                'fd', '-e', 'md', '-g', '*.md',
+                'fd', '-e', 'md',
             },
             postprocess = function(lines)
                 local filtered_lines = {}
@@ -571,12 +683,12 @@ pick.registry.reading_list = function(local_opts)
                 for _, line in ipairs(lines) do
                     local p_value = nil
                     if p_name then
-                        p_value = yaml_property_value(line, p_name)
+                        p_value = yaml_get_property(line, p_name)
                     else
                         -- this is the 'todo' type
-                        if not yaml_property_value(line, 'completion') and
-                           not yaml_property_value(line, 'punted') then
-                            p_value = yaml_property_value(line, 'created')
+                        if not yaml_get_property(line, 'completion') and
+                           not yaml_get_property(line, 'punted') then
+                            p_value = yaml_get_property(line, 'created')
                         end
                     end
                     if p_value then
@@ -589,22 +701,7 @@ pick.registry.reading_list = function(local_opts)
 
                 -- property is expected to be a date (YYYY-MM-DD format)
                 table.sort(filtered_lines, function(a, b)
-                    local function parse_date(date_str)
-                        local year, month, day =
-                            date_str:match('^(%d+)%-(%d+)%-(%d+)')
-
-                        if not year or not month or not day then
-                            return 0
-                        end
-
-                        return os.time({
-                            year = year,
-                            month = month,
-                            day = day,
-                        })
-                    end
-
-                    return parse_date(a.date) > parse_date(b.date)
+                    return date_to_ts(a.date) > date_to_ts(b.date)
                 end)
 
                 return filtered_lines
@@ -630,20 +727,36 @@ pick.registry.reading_list = function(local_opts)
     )
 end
 
-vim.keymap.set('n', '<leader>nra',
-               '<cmd>Pick reading_list dir=\'PDFs\' type=\'all\'<CR>',
+vim.keymap.set('n', '<leader>nra', function()
+                   pick.registry.reading_list({
+                       dir = 'PDFs',
+                       type = 'all',
+                   })
+               end,
                { desc = '[N]otes [R]ead [A]ll' })
 
-vim.keymap.set('n', '<leader>nrt',
-               '<cmd>Pick reading_list dir=\'PDFs\' type=\'todo\'<CR>',
+vim.keymap.set('n', '<leader>nrt', function()
+                   pick.registry.reading_list({
+                       dir = 'PDFs',
+                       type = 'todo',
+                   })
+               end,
                { desc = '[N]otes [R]ead [T]odo' })
 
-vim.keymap.set('n', '<leader>nrc',
-               '<cmd>Pick reading_list dir=\'PDFs\' type=\'completed\'<CR>',
+vim.keymap.set('n', '<leader>nrc', function()
+                   pick.registry.reading_list({
+                       dir = 'PDFs',
+                       type = 'completed',
+                   })
+               end,
                { desc = '[N]otes [R]ead [C]ompleted' })
 
-vim.keymap.set('n', '<leader>nrp',
-               '<cmd>Pick reading_list dir=\'PDFs\' type=\'punted\'<CR>',
+vim.keymap.set('n', '<leader>nrp', function()
+                   pick.registry.reading_list({
+                       dir = 'PDFs',
+                       type = 'punted',
+                   })
+               end,
                { desc = '[N]otes [R]ead [P]unted' })
 
 ------------------------------------------------------------------------------
@@ -835,6 +948,88 @@ vim.keymap.set('n', '<leader>mtr', tag_remove,
                { desc = '[M]arkdown [T]ag [R]emove' })
 
 ------------------------------------------------------------------------------
+-- RECENT FILES --------------------------------------------------------------
+------------------------------------------------------------------------------
+
+pick.registry.recent_files = function(local_opts)
+    pick.builtin.cli(
+        {
+            command = {
+                'fd', '-e', 'md',
+            },
+            postprocess = function(items)
+                local files = {}
+
+                -- process each file getting the last modified date
+                for _, filepath in ipairs(items) do
+                    local date = nil
+
+                    for _, exclude in ipairs(local_opts.exclude or {}) do
+                        if string.match(filepath, exclude) then
+                            goto continue
+                        end
+                    end
+
+                    -- try to extract the date from the yaml
+                    local yaml = yaml_get(filepath)
+                    if yaml then
+                        if yaml.updated then
+                            date = date_to_ts(yaml.updated)
+                        elseif yaml.created then
+                            date = date_to_ts(yaml.created)
+                        end
+                    end
+
+                    -- fallback to file modification time
+                    if not date then
+                        date = get_file_mtime(filepath)
+                    end
+
+                    table.insert(files, {
+                        path = filepath,
+                        timestamp = date,
+                    })
+
+                    ::continue::
+                end
+
+                -- sort by timestamp (newest first)
+                table.sort(files, function(a, b)
+                    return a.timestamp > b.timestamp
+                end)
+
+                return files
+            end,
+        },
+        {
+            source = {
+                --items = find_recent_notes,
+                name = 'Recent Notes',
+                show = function(buf_id, items, query)
+                    local display_items = {}
+                    for _, item in ipairs(items) do
+                        table.insert(display_items,
+                                     string.format('%s | %s',
+                                                   os.date('%Y-%m-%dT%H:%M',
+                                                           item.timestamp),
+                                                   item.path))
+                    end
+                    return pick.default_show(buf_id, display_items, query,
+                                             { show_icons = true })
+                end,
+            },
+        }
+    )
+end
+
+vim.keymap.set('n', '<leader>nR', function()
+                   pick.registry.recent_files({
+                       exclude = { 'Journal', 'templates', },
+                   })
+               end,
+               { desc = '[N]otes [H]elp' })
+
+------------------------------------------------------------------------------
 -- KEYMAP HELP ---------------------------------------------------------------
 ------------------------------------------------------------------------------
 
@@ -895,10 +1090,11 @@ pick.registry.notes_help = function()
             name = 'Notes Help',
             choose = function() end
         },
-  })
+    })
 end
 
-vim.keymap.set('n', '<leader>nh',
-               '<cmd>Pick notes_help<CR>',
+vim.keymap.set('n', '<leader>nh', function()
+                   pick.registry.notes_help()
+               end,
                { desc = '[N]otes [H]elp' })
 
