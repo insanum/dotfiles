@@ -2,7 +2,6 @@ return {
     'MeanderingProgrammer/render-markdown.nvim',
     enabled = true,
     opts = {
-        --preset = 'obsidian',
         render_modes = true,
         debounce = 30,
         file_types = {
@@ -19,9 +18,26 @@ return {
         heading = {
             border = true,
             border_virtual = true,
+            left_pad = 1,
+            icons = { '󰉫 ', '󰉬 ', '󰉭 ', '󰉮 ', '󰉯 ', '󰉰 ' },
         },
         checkbox = {
             right_pad = 0,
+            unchecked = {
+                icon = '󰄱 ',
+            },
+            checked = {
+                icon = '󰄵 ',
+                scope_highlight = '@markup.italic',
+            },
+            custom = {
+                punted = {
+                    raw = '[-]',
+                    rendered = '✘ ',
+                    highlight = 'RenderMarkdownChecked',
+                    scope_highlight = '@markup.strikethrough',
+                },
+            },
         },
         code = {
             width = 'block',

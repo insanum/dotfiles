@@ -174,7 +174,7 @@ local function update_markdown_headers()
 end
 
 local function theme_override_all()
-    --vim.cmd('hi Comment gui=none cterm=italic gui=italic')
+    -- nothing yet
 end
 
 local function theme_markdown_fix()
@@ -227,6 +227,7 @@ end)
 vim.api.nvim_create_autocmd('VimEnter', {
     callback = function()
         themes.themes[themes.current].set()
+        theme_override_all()
         update_markdown_headers()
     end
 })
