@@ -6,7 +6,7 @@ return {
         'sindrets/diffview.nvim',
         'nvim-tree/nvim-web-devicons',
         --'nvim-telescope/telescope.nvim',
-        'echasnovski/mini.pick',
+        'nvim-mini/mini.pick',
     },
     config = true,
     keys = {

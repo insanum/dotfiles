@@ -7,7 +7,7 @@ return {
     dependencies = {
         'nvim-lua/plenary.nvim',
         'MunifTanjim/nui.nvim',
-        'echasnovski/mini.pick',
+        'nvim-mini/mini.pick',
         'nvim-tree/nvim-web-devicons',
         'zbirenbaum/copilot.lua',
     },

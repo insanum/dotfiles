@@ -10,3 +10,4 @@ vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
     end
 })
 
+-- comments=sO:* -,mO:*  ,exO:*/,s1:/*,mb:*,ex:*/,:///,://

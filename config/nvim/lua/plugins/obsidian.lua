@@ -5,7 +5,7 @@ return {
         'nvim-lua/plenary.nvim',
         'nvim-treesitter/nvim-treesitter',
         --'nvim-telescope/telescope.nvim',
-        'echasnovski/mini.pick',
+        'nvim-mini/mini.pick',
     },
     config = function()
         local opts = {
