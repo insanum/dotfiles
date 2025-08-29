@@ -59,7 +59,7 @@ local function date_to_ts(date_str)
                 hour = hour or 0,
                 min = min or 0,
                 sec = sec or 0,
-                isdst = true,
+                isdst = false,
             })
         end
     end
@@ -716,6 +716,10 @@ vim.keymap.set('n', '<leader>jwm', '<Cmd>JournalWeekMissing<CR>',
 -- READING LIST PICKER -------------------------------------------------------
 ------------------------------------------------------------------------------
 
+-- FIXME
+-- This could be simplified by simply parsing the PDFs/_pdf_*.txt files
+-- created by the 'pdf_gen_lists' script.
+
 pick.registry.reading_list = function(local_opts)
     return pick.builtin.cli(
         {
@@ -1080,7 +1084,44 @@ vim.keymap.set('n', '<leader>nR', function()
         exclude = { 'Journal', 'templates', },
     })
 end,
-{ desc = '[N]otes [H]elp' })
+{ desc = '[N]otes [R]ecent' })
+
+------------------------------------------------------------------------------
+-- OPEN PDF FROM FILE LINK ---------------------------------------------------
+------------------------------------------------------------------------------
+
+local pdf_dir = notes_dir .. '/PDFs/'
+
+local function run_pdf_expert(file_path)
+    vim.notify('Opening "' .. file_path .. '"', vim.log.levels.INFO)
+    vim.system({ 'open', file_path }, function()
+        vim.notify('Done editing "' .. file_path .. '"', vim.log.levels.INFO)
+    end)
+end
+
+vim.keymap.set('n', '<leader>nP', function()
+    local file = vim.fn.expand('<cfile>:t')
+    if not string.match(file, '%.pdf$') then
+        vim.notify('PDF only', vim.log.levels.ERROR)
+        return
+    end
+
+    local file_path = pdf_dir .. file
+
+    if vim.fn.filereadable(file_path) == 0 then
+        vim.notify('PDF doesn\'t exist', vim.log.levels.ERROR)
+        return
+    end
+
+    vim.ui.input({
+        prompt = 'Open "' .. file .. '" (y/n): '
+    }, function(input)
+        if input == 'y' or input == 'yes' then
+            run_pdf_expert(file_path)
+        end
+    end)
+end,
+{ desc = '[N]otes [P]DF Expert' })
 
 ------------------------------------------------------------------------------
 -- EDIT IMAGE IN EXCALIDRAW --------------------------------------------------
@@ -1147,6 +1188,9 @@ local notes_help = {
     '',
     '<leader>nc                         Toggle Task Completed',
     '<leader>np                         Toggle Task Punted',
+    '',
+    '<leader>nx                         Open image under cursor (Excalidraw)',
+    '<leader>nP                         Open PDF under cursor (PDF Expert)',
     '',
     '<leader>jdd  :Journal [+/-N]       Journal Day',
     '<leader>jdp  :Journal -1           Journal Previous Day',
