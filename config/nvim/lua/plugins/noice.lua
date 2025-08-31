@@ -19,8 +19,8 @@ return {
         lsp = {
             -- override markdown rendering so that other plugins use treesitter
             override = {
-                ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                ["vim.lsp.util.stylize_markdown"] = true,
+                ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+                ['vim.lsp.util.stylize_markdown'] = true,
             },
         },
         presets = {
@@ -31,7 +31,7 @@ return {
             lsp_doc_border = true, -- add a border to hover docs and signature help
         },
         messages = {
-            view_search = "virtualtext",
+            view_search = 'virtualtext',
         },
         views = {
             mini = {

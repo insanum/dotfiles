@@ -6,14 +6,8 @@ return {
     },
     version = '*',
     opts = {
-        -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
-        -- 'super-tab' for mappings similar to vscode (tab to accept)
-        -- 'enter' for enter to accept
-        -- 'none' for no mappings
-        --
-        -- All presets have the following mappings:
         -- C-space: Open menu or open docs if already open
-        -- C-n/C-p or Up/Down: Select next/previous item
+        -- C-j/C-k or Up/Down: Select next/previous item
         -- C-e: Hide menu
         -- C-k: Toggle signature help (if signature.enabled = true)
         --
@@ -23,6 +17,7 @@ return {
             ['<C-j>'] = { 'select_next', 'fallback' },
             ['<C-k>'] = { 'select_prev', 'fallback' },
             ['<C-l>'] = { 'select_and_accept' },
+            ['<C-h>'] = { 'show_signature', 'hide_signature', 'fallback' },
         },
         appearance = {
             nerd_font_variant = 'mono',
@@ -46,7 +41,7 @@ return {
                     },
                     columns = {
                         { 'label', 'label_description', gap = 1 },
-                        { 'kind_icon', 'kind', gap = 1 }
+                        { 'kind_icon', 'kind', gap = 1 },
                     },
                 },
                 auto_show = function()
@@ -71,11 +66,7 @@ return {
         },
         cmdline = {
             keymap = {
-                -- recommended, as the default keymap will only show and select the next item
-                ['<Tab>'] = { 'show', 'accept' },
-                ['<C-j>'] = { 'select_next', 'fallback' },
-                ['<C-k>'] = { 'select_prev', 'fallback' },
-                ['<C-l>'] = { 'select_and_accept' },
+                preset = 'inherit',
             },
             completion = {
                 menu = {
@@ -84,8 +75,9 @@ return {
             },
         },
         signature = {
+            enabled = true,
             window = {
-                border = 'single',
+                border = 'double',
             },
         },
         -- Default list of enabled providers defined so that you can extend it

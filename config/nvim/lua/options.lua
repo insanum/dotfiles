@@ -34,10 +34,10 @@ vim.opt.scrolloff = 10
 vim.opt.splitright = false
 vim.opt.splitbelow = false
 
-vim.opt.winheight = 10
-vim.opt.winminheight = 10
-vim.opt.winwidth = 10
-vim.opt.winminwidth = 10
+-- vim.opt.winheight = 10
+-- vim.opt.winminheight = 10
+-- vim.opt.winwidth = 10
+-- vim.opt.winminwidth = 10
 
 vim.opt.showmode = false
 

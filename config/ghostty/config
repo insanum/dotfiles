@@ -30,6 +30,7 @@ keybind = ctrl+a>space=next_tab
 keybind = ctrl+a>p=previous_tab
 #keybind = ctrl+a>ctrl+a=last_active_tab
 keybind = ctrl+a>ctrl+a=ignore
+keybind = ctrl+a>a=text:\x01
 
 keybind = ctrl+a>1=goto_tab:1
 keybind = ctrl+a>2=goto_tab:2

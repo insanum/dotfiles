@@ -174,7 +174,8 @@ local function update_markdown_headers()
 end
 
 local function theme_override_all()
-    -- nothing yet
+    vim.cmd('hi BlinkCmpMenuBorder guifg=#e16d77')
+    vim.cmd('hi BlinkCmpSignatureHelpBorder guifg=#e16d77')
 end
 
 local function theme_markdown_fix()
