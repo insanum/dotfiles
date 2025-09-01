@@ -18,6 +18,8 @@ return {
             ['<C-k>'] = { 'select_prev', 'fallback' },
             ['<C-l>'] = { 'select_and_accept' },
             ['<C-h>'] = { 'show_signature', 'hide_signature', 'fallback' },
+            ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
+            ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
         },
         appearance = {
             nerd_font_variant = 'mono',

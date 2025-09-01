@@ -18,11 +18,12 @@ function zvm_config() {
     ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
 }
 
-bindkey '^F' autosuggest-accept
-
 # source antidote and load plugins
 source ${ZDOTDIR:-$HOME}/.zsh_antidote/antidote.zsh
 antidote load ${ZDOTDIR:-$HOME}/.zsh_plugins.txt
+
+bindkey '^L' autosuggest-accept
+zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
 
 autoload -U promptinit && promptinit
 prompt powerlevel10k
