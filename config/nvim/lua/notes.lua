@@ -25,6 +25,10 @@ vim.api.nvim_create_autocmd('FileType', {
                        { expr = true, noremap = true })
         vim.keymap.set('n', 'k', 'v:count == 0 ? "gk" : "k"',
                        { expr = true, noremap = true })
+
+        vim.keymap.set('n', 'gf',
+                       '<cmd>Pick lsp scope=\'definition\'<CR>',
+                       { desc = 'Edit file under cursor', noremap = true })
     end
 })
 
@@ -1219,6 +1223,8 @@ local notes_help = {
     '<leader>lR                         Rename file',
     '<leader>lR                         Tag rename across all files',
     ':lua vim.lsp.buf.code_action()     Create file for unresolved link',
+    '',
+    'gf                                 Follow file link',
     '',
     ' --> markdown commands support dot(.) and visual mode <--',
     '',

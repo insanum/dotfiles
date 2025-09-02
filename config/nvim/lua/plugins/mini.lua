@@ -86,9 +86,11 @@ return {
 
         -- Better Around/Inside textobjects
         -- Examples:
-        --  - va)  - [V]isually select [A]round [)]paren
-        --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-        --  - ci'  - [C]hange [I]nside [']quote
+        --   va)  - [V]isually select [A]round [)]paren
+        --   yinq - [Y]ank [I]nside [N]ext [Q]uote
+        --   ci'  - [C]hange [I]nside [']quote
+        --   g[`  - [G]oto [\[]previous [`]backtick
+        --   g[)  - [G]oto [\]]next [)]paren
         require('mini.ai').setup({ n_lines = 500 })
 
         ---------------------------------------------------------------------
@@ -96,10 +98,11 @@ return {
         ---------------------------------------------------------------------
 
         -- Add/delete/replace surroundings (brackets, quotes, etc.)
-        -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-        -- - sd'   - [S]urround [D]elete [']quotes
-        -- - sr)'  - [S]urround [R]eplace [)] [']
+        --   saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
+        --   sd'   - [S]urround [D]elete [']quotes
+        --   sr)'  - [S]urround [R]eplace [)] [']
         require('mini.surround').setup()
+        vim.keymap.set({ 'n', 'x' }, 's', '<Nop>')
 
         ---------------------------------------------------------------------
         -- mini.animate -----------------------------------------------------
@@ -534,7 +537,6 @@ return {
         -- do all the redirecting of messages. Noice+mini backend is great!
 
         -- HACK: mini.completion
-        -- I don't have high hopes for this. Integration with an AI assistant
-        -- and having the popup always be above the curosr is needed.
+        -- I don't have high hopes for this vs blink.
     end,
 }
