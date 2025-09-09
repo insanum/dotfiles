@@ -61,7 +61,13 @@ return {
                 }
             },
             ghost_text = {
-                enabled = true,
+                enabled = function()
+                    if vim.bo.filetype == 'markdown' then
+                        return false
+                    end
+
+                    return true
+                end,
                 show_with_selection = true,
                 show_without_selection = true,
             },

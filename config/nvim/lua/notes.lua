@@ -1178,6 +1178,61 @@ end,
 { desc = '[N]otes E[X]calidraw' })
 
 ------------------------------------------------------------------------------
+-- MARKDOWN TABLE UTILITIES ---------------------------------------------------
+------------------------------------------------------------------------------
+
+local function clear_table_except_first_column()
+    local start_row = vim.fn.line("'<")
+    local end_row = vim.fn.line("'>")
+
+    local lines = vim.api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
+    local new_lines = {}
+
+    for _, line in ipairs(lines) do
+        if not line:match('^%s*|') then
+            table.insert(new_lines, line)
+            goto SKIP
+        end
+
+        local pipe_positions = {}
+        local i = 1
+        while i <= #line do
+            if line:sub(i, i) == '|' then
+                table.insert(pipe_positions, i)
+            end
+            i = i + 1
+        end
+
+        if #pipe_positions < 2 then
+            table.insert(new_lines, line)
+            goto SKIP
+        end
+
+        local new_line = line
+
+        for j = 2, #pipe_positions - 1 do
+            local start_pos = pipe_positions[j] + 1
+            local end_pos = pipe_positions[j + 1] - 1
+
+            local spaces = string.rep(' ', end_pos - start_pos + 1)
+            new_line = new_line:sub(1, start_pos - 1) .. spaces ..
+                       new_line:sub(end_pos + 1)
+        end
+
+        table.insert(new_lines, new_line)
+
+        ::SKIP::
+    end
+
+    vim.api.nvim_buf_set_lines(0, start_row - 1, end_row, false, new_lines)
+end
+
+vim.api.nvim_create_user_command('ClearTableCells', clear_table_except_first_column, {
+    range = true,
+    desc = 'Clear all table cells except first column in visual selection'
+})
+
+------------------------------------------------------------------------------
 -- KEYMAP HELP ---------------------------------------------------------------
 ------------------------------------------------------------------------------
 
@@ -1235,6 +1290,8 @@ local notes_help = {
     '<leader>mh                         Markdown Heading',
     '<leader>mta                        Markdown Tag Add',
     '<leader>mtr                        Markdown Tag Remove',
+    '',
+    '\'<,\'>ClearTableCells               Clear table cells (visual selection)',
 }
 
 pick.registry.notes_help = function()

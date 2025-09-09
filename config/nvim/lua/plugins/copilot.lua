@@ -10,8 +10,8 @@ return {
         require('copilot').setup({
             --copilot_model = 'gpt-4o',
             filetypes = {
-                yaml = true,
-                markdown = true,
+                yaml = false,
+                markdown = false,
             },
             suggestion = {
                 enabled = false,

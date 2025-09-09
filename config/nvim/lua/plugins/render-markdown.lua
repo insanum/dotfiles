@@ -43,5 +43,10 @@ return {
             width = 'block',
             right_pad = 1,
         },
+        pipe_table = {
+            preset = 'round',
+            border_virtual = true,
+            cell = 'raw',
+        },
     },
 }

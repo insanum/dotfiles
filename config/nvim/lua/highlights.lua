@@ -63,8 +63,12 @@ themes.themes = {
     {
         name = 'onedark-darker',
         md_hdrs = {
-            fg = '#cc9057',
-            bg = '#2c485f',
+            fg1 = '#cc9057',
+            bg1 = '#2c485f',
+            fg2 = '#8bcd5b',
+            bg2 = '#2c485f',
+            fg3 = '#de5d68',
+            bg3 = '#2c485f',
         },
         set = function()
             vim.o.background = 'dark'
@@ -74,14 +78,20 @@ themes.themes = {
             require('lualine').setup({
                 options = { theme = 'onedark' }
             })
+
+            vim.cmd('hi RenderMarkdownInlineHighlight guibg=#d19a66 guifg=#2a1b26')
         end
     },
 
     {
         name = 'onedark-light',
         md_hdrs = {
-            fg = '#4078f2',
-            bg = '#c9c9c9',
+            fg1 = '#4078f2',
+            bg1 = '#c9c9c9',
+            fg2 = '#50a14f',
+            bg2 = '#c9c9c9',
+            fg3 = '#de5d68',
+            bg3 = '#c9c9c9',
         },
         set = function()
             vim.o.background = 'light'
@@ -104,8 +114,12 @@ themes.themes = {
     {
         name = 'tokyonight-night',
         md_hdrs = {
-            fg = '#7aa2f7',
-            bg = '#24283b',
+            fg1 = '#7aa2f7',
+            bg1 = '#24283b',
+            fg2 = '#9ece6a',
+            bg2 = '#24283b',
+            fg3 = '#de5d68',
+            bg3 = '#24283b',
         },
         set = function()
             vim.o.background = 'dark'
@@ -126,8 +140,12 @@ themes.themes = {
     {
         name = 'tokyonight-day',
         md_hdrs = {
-            fg = '#4078f2',
-            bg = '#c9c9c9',
+            fg1 = '#4078f2',
+            bg1 = '#c9c9c9',
+            fg2 = '#50a14f',
+            bg2 = '#c9c9c9',
+            fg3 = '#bf616a',
+            bg3 = '#c9c9c9',
         },
         set = function()
             vim.o.background = 'light'
@@ -154,21 +172,28 @@ themes.themes = {
 local function update_markdown_headers()
     local md_hdrs = themes.themes[themes.current].md_hdrs
     if md_hdrs then
-        vim.cmd('hi! RenderMarkdownH1Fg guifg=' .. md_hdrs.fg)
-        for i = 2, 8 do
+        vim.cmd('hi! RenderMarkdownH1Fg guifg=' .. md_hdrs.fg1)
+        vim.cmd('hi! RenderMarkdownH2Fg guifg=' .. md_hdrs.fg2)
+        vim.cmd('hi! RenderMarkdownH3Fg guifg=' .. md_hdrs.fg3)
+        for i = 4, 8 do
             vim.cmd('hi! link RenderMarkdownH' .. i .. 'Fg ' ..
                     'RenderMarkdownH1Fg')
         end
 
-        vim.cmd('hi! RenderMarkdownH1Bg guibg=' .. md_hdrs.bg)
-        for i = 2, 8 do
+        vim.cmd('hi! RenderMarkdownH1Bg guibg=' .. md_hdrs.bg1)
+        vim.cmd('hi! RenderMarkdownH2Bg guibg=' .. md_hdrs.bg3)
+        vim.cmd('hi! RenderMarkdownH3Bg guibg=' .. md_hdrs.bg3)
+        for i = 4, 8 do
             vim.cmd('hi! link RenderMarkdownH' .. i .. 'Bg ' ..
                     'RenderMarkdownH1Bg')
         end
 
-        for i = 1, 6 do
+        vim.cmd('hi! @markup.heading.1.markdown guifg=' .. md_hdrs.fg1)
+        vim.cmd('hi! @markup.heading.2.markdown guifg=' .. md_hdrs.fg2)
+        vim.cmd('hi! @markup.heading.3.markdown guifg=' .. md_hdrs.fg3)
+        for i = 4, 6 do
             vim.cmd('hi! @markup.heading.' .. i .. '.markdown ' ..
-                    'guifg=' .. md_hdrs.fg)
+                    'guifg=' .. md_hdrs.fg1)
         end
     end
 end
