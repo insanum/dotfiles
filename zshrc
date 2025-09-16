@@ -110,13 +110,7 @@ if (( $+commands[qlmanage] )); then
 fi
 
 if (( $+commands[nvim] )); then
-    if (( $+commands[proxychains4] )); then
-        alias vi="proxychains4 nvim"
-        alias aider="proxychains4 aider --watch-files"
-        alias opencode="proxychains4 opencode"
-    else
-        alias vi="nvim"
-    fi
+    alias vi="nvim"
 fi
 
 if (( $+commands[dust] )); then
@@ -137,6 +131,12 @@ fi
 
 if [[ -x $HOME/.opencode/bin ]]; then
     export PATH="$HOME/.opencode/bin:$PATH"
+fi
+
+if (( $+commands[proxychains4] )); then
+    alias vi="proxychains4 nvim"
+    alias aider="proxychains4 aider --watch-files"
+    alias opencode="proxychains4 opencode"
 fi
 
 alias bitter="$HOME/work/git/bitter/bitter"

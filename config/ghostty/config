@@ -1,5 +1,5 @@
 
-theme = tokyonight_night
+theme = TokyoNight Night
 split-divider-color = orange
 cursor-color = #ff7000
 cursor-text = black
@@ -24,6 +24,9 @@ unfocused-split-fill = black
 shell-integration = fish
 confirm-close-surface = always
 copy-on-select = clipboard
+
+quick-terminal-position = top
+quick-terminal-size = 50%,50%
 
 keybind = ctrl+a>c=new_tab
 keybind = ctrl+a>space=next_tab
@@ -62,4 +65,7 @@ keybind = global:cmd+grave_accent=toggle_quick_terminal
 
 #custom-shader = sparks-from-fire.glsl
 #custom-shader = ghostty-shaders/...
+
+# claude code entering multiline commands
+keybind = shift+enter=text:\x1b\r
 

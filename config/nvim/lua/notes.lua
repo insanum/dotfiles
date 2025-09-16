@@ -266,7 +266,7 @@ vim.keymap.set('n', '<leader>ng', function()
 
         pick.builtin.grep({
             globs = { '*.md' },
-            pattern = '\\s#' .. input .. '[\\s|/]',
+            pattern = '\\s#' .. input .. '(\\s|$|/)',
         })
     end)
 end,

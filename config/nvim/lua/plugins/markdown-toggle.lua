@@ -6,6 +6,8 @@ return {
         toggle.setup({
             use_default_keymaps = false,
             list_before_box = true,
+            box_table = { 'x', '-' },
+            cycle_box_table = true,
         })
 
         local opts = {
@@ -34,7 +36,7 @@ return {
         vim.keymap.set('n', '<leader>mo', toggle.olist_dot, opts)
 
         opts.desc = '[M]arkdown [C]heckbox'
-        vim.keymap.set('n', '<leader>mc', toggle.checkbox_dot, opts)
+        vim.keymap.set('n', '<leader>mc', toggle.checkbox_cycle_dot, opts)
 
         opts.desc = '[M]arkdown [Q]uote'
         vim.keymap.set('n', '<leader>mq', toggle.quote_dot, opts)
@@ -51,7 +53,7 @@ return {
         vim.keymap.set('x', '<leader>mo', toggle.olist, opts)
 
         opts.desc = '[M]arkdown [C]heckbox'
-        vim.keymap.set('x', '<leader>mc', toggle.checkbox, opts)
+        vim.keymap.set('x', '<leader>mc', toggle.checkbox_cycle, opts)
 
         opts.desc = '[M]arkdown [Q]uote'
         vim.keymap.set('x', '<leader>mq', toggle.quote, opts)
