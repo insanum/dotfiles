@@ -93,7 +93,7 @@ return {
         sources = {
             default = {
                 'copilot',
-                'codecompanion',
+                -- 'codecompanion',
                 -- 'minuet',
                 'lsp',
                 -- 'markdown',

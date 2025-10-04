@@ -137,6 +137,9 @@ if (( $+commands[proxychains4] )); then
     alias vi="proxychains4 nvim"
     alias aider="proxychains4 aider --watch-files"
     alias opencode="proxychains4 opencode"
+    alias claude="NODE_TLS_REJECT_UNAUTHORIZED=0 proxychains4 claude"
+    alias codex="proxychains4 codex"
+    alias gemini="proxychains4 gemini"
 fi
 
 alias bitter="$HOME/work/git/bitter/bitter"
