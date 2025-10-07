@@ -4,6 +4,7 @@ return {
     opts = {
         render_modes = true,
         debounce = 30,
+        -- anti_conceal = { enabled = false },
         file_types = {
             'markdown',
             'copilot-chat',
@@ -28,14 +29,16 @@ return {
             },
             checked = {
                 icon = '󰄵 ',
-                scope_highlight = '@markup.italic',
+                --scope_highlight = '@markup.italic',
+                scope_highlight = 'FoobarTaskChecked',
             },
             custom = {
                 punted = {
                     raw = '[-]',
                     rendered = '✘ ',
                     highlight = 'RenderMarkdownChecked',
-                    scope_highlight = '@markup.strikethrough',
+                    --scope_highlight = '@markup.strikethrough',
+                    scope_highlight = 'FoobarTaskPunted',
                 },
             },
         },

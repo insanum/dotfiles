@@ -1,28 +1,41 @@
 
-theme = TokyoNight Night
+#theme = TokyoNight Night
+theme = "dark:One Double Dark,light:One Half Light"
 split-divider-color = orange
+
 cursor-color = #ff7000
 cursor-text = black
+adjust-cursor-thickness = 2
+selection-foreground = black
+selection-background = #73b8f1
 
-font-family = Hack Nerd Font Mono
+font-family = Hack Nerd Font
 font-size = 17
 
-#font-style = semi-bold
 font-thicken = true
 font-thicken-strength = 0
+#adjust-cell-width = -7%
 adjust-cell-width = -2
 #adjust-cell-height = -1
-adjust-cursor-thickness = 2
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
 
 macos-titlebar-style = tabs
-window-title-font-family = Hack Nerd Font Mono
+window-title-font-family = Hack Nerd Font
+
+window-padding-x = 4
+window-padding-y = 4
+window-padding-balance = true
+window-width = 270
+window-height = 60
 
 background-opacity = 0.9
-#background-blur-radius = 20
+background-blur-radius = 10
 unfocused-split-opacity = 0.7
 unfocused-split-fill = black
 
-shell-integration = fish
+shell-integration = zsh
 confirm-close-surface = always
 copy-on-select = clipboard
 
@@ -65,8 +78,9 @@ keybind = cmd+shift+l=resize_split:right,10
 keybind = global:cmd+grave_accent=toggle_quick_terminal
 
 #custom-shader = sparks-from-fire.glsl
-#custom-shader = ghostty-shaders/...
+#custom-shader = ghostty-shaders/inside-the-matrix.glsl
+#custom-shader = ghostty-shaders/drunkard.glsl
 
-# claude code entering multiline commands
+# AI agent entering multiline commands
 keybind = shift+enter=text:\x1b\r
 

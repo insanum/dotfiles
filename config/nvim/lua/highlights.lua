@@ -79,7 +79,16 @@ themes.themes = {
                 options = { theme = 'onedark' }
             })
 
-            vim.cmd('hi RenderMarkdownInlineHighlight guibg=#d19a66 guifg=#2a1b26')
+            vim.cmd('hi FoobarTaskChecked guifg=#535965 gui=italic')
+            vim.cmd('hi FoobarTaskPunted guifg=#535965 gui=italic,strikethrough')
+
+            vim.cmd('hi RenderMarkdownCodeInline guifg=#8ebd6b guibg=#323641')
+            vim.cmd('hi RenderMarkdownInlineHighlight guifg=#2a1b26 guibg=#d19a66')
+            -- Foreground colors don't work...
+            -- vim.cmd('hi @attribute guifg=#8ebd6b guibg=#323641')
+            -- vim.cmd('hi @markup.link guifg=#d19a66 guibg=#2a1b26')
+            vim.cmd('hi @attribute guibg=#323641')
+            vim.cmd('hi @markup.link guibg=#323641')
         end
     },
 
@@ -102,12 +111,18 @@ themes.themes = {
                 options = { theme = 'onedark' }
             })
 
+            vim.cmd('hi FoobarTaskChecked guifg=#a0a1a7 gui=italic')
+            vim.cmd('hi FoobarTaskPunted guifg=#a0a1a7 gui=italic,strikethrough')
+
             vim.cmd('hi Normal guibg=#f0f0f0')
             vim.cmd('hi CursorLine guibg=#e6e6e6')
             vim.cmd('hi ColorColumn guibg=#e6e6e6')
             vim.cmd('hi SignColumn guibg=#f0f0f0')
             vim.cmd('hi WinSeparator guifg=#383a42')
+            vim.cmd('hi RenderMarkdownCodeInline guifg=#50a14f guibg=#e6e6e6')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#101012 guibg=#e2c792')
+            vim.cmd('hi @attribute guibg=#e6e6e6')
+            vim.cmd('hi @markup.link guibg=#e6e6e6')
         end
     },
 
@@ -129,11 +144,16 @@ themes.themes = {
                 options = { theme = 'tokyonight-night' }
             })
 
+            vim.cmd('hi FoobarTaskChecked guifg=#565f89 gui=italic')
+            vim.cmd('hi FoobarTaskPunted guifg=#565f89 gui=italic,strikethrough')
+
             vim.cmd('hi WinSeparator guifg=#9aa5ce')
             vim.cmd('hi TabLine guifg=#bf616a')
             vim.cmd('hi RenderMarkdownCode guibg=#24283b')
-            vim.cmd('hi RenderMarkdownCodeInline guibg=#24283b')
+            vim.cmd('hi RenderMarkdownCodeInline guifg=#7aa2f7 guibg=#24283b')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#1a1b26 guibg=#7dcfff')
+            vim.cmd('hi @lsp.type.decorator.markdown guifg=#2ac3de guibg=#24283b')
+            vim.cmd('hi @markup.link.label.markdown_inline guifg=#7aa2f7 guibg=#24283b')
         end,
     },
 
@@ -155,6 +175,9 @@ themes.themes = {
                 options = { theme = 'tokyonight-day' }
             })
 
+            vim.cmd('hi FoobarTaskChecked guifg=#a9b1d6 gui=italic')
+            vim.cmd('hi FoobarTaskPunted guifg=#a9b1d6 gui=italic,strikethrough')
+
             vim.cmd('hi WinSeparator guifg=#4c566a')
             vim.cmd('hi TabLine guifg=#414868')
             vim.cmd('hi CursorLine guibg=#d8dee9')
@@ -162,9 +185,11 @@ themes.themes = {
             vim.cmd('hi IncSearch guifg=#1a1b26 guibg=#e0af68')
             vim.cmd('hi Search guibg=#7dcfff')
             vim.cmd('hi MiniCursorword guibg=#eceff4')
-            vim.cmd('hi RenderMarkdownCodeInline guifg=#1a1b26 guibg=#d8dee9')
-            vim.cmd('hi RenderMarkdownInlineHighlight guifg=#1a1b26 guibg=#e0af68')
             vim.cmd('hi RenderMarkdownBullet guifg=#7aa2f7')
+            vim.cmd('hi RenderMarkdownCodeInline guifg=#50a14f guibg=#d8dee9')
+            vim.cmd('hi RenderMarkdownInlineHighlight guifg=#2a1b26 guibg=#e0af68')
+            vim.cmd('hi @lsp.type.decorator.markdown guifg=#bf616a guibg=#cad3e0')
+            vim.cmd('hi @markup.link.label.markdown_inline guifg=#7aa2f7 guibg=#cad3e0')
         end,
     },
 }
@@ -205,7 +230,6 @@ end
 
 local function theme_markdown_fix()
     -- render-markdown needs to re-init after a theme change
-    update_markdown_headers()
     vim.cmd('Lazy reload render-markdown.nvim')
     local file_types = {
         'markdown',
@@ -230,6 +254,8 @@ end
 local function theme_set()
     themes.themes[themes.current].set()
     theme_override_all()
+    update_markdown_headers()
+
     theme_markdown_fix()
     vim.notify(themes.themes[themes.current].name, vim.log.levels.INFO)
 end

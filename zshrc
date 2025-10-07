@@ -134,6 +134,7 @@ if [[ -x $HOME/.opencode/bin ]]; then
 fi
 
 if (( $+commands[proxychains4] )); then
+    #alias vi="NODE_TLS_REJECT_UNAUTHORIZED=0 proxychains4 nvim"
     alias vi="proxychains4 nvim"
     alias aider="proxychains4 aider --watch-files"
     alias opencode="proxychains4 opencode"
