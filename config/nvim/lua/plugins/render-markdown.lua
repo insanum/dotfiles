@@ -41,6 +41,8 @@ return {
                     scope_highlight = 'FoobarTaskPunted',
                 },
             },
+            -- low priority to not override inline highlights
+            scope_priority = 1,
         },
         code = {
             width = 'block',

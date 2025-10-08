@@ -84,11 +84,8 @@ themes.themes = {
 
             vim.cmd('hi RenderMarkdownCodeInline guifg=#8ebd6b guibg=#323641')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#2a1b26 guibg=#d19a66')
-            -- Foreground colors don't work...
-            -- vim.cmd('hi @attribute guifg=#8ebd6b guibg=#323641')
-            -- vim.cmd('hi @markup.link guifg=#d19a66 guibg=#2a1b26')
-            vim.cmd('hi @attribute guibg=#323641')
-            vim.cmd('hi @markup.link guibg=#323641')
+            vim.cmd('hi @attribute guifg=#8ebd6b guibg=#323641')
+            vim.cmd('hi @markup.link guifg=#5c6370 guibg=#282c34')
         end
     },
 
@@ -121,8 +118,8 @@ themes.themes = {
             vim.cmd('hi WinSeparator guifg=#383a42')
             vim.cmd('hi RenderMarkdownCodeInline guifg=#50a14f guibg=#e6e6e6')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#101012 guibg=#e2c792')
-            vim.cmd('hi @attribute guibg=#e6e6e6')
-            vim.cmd('hi @markup.link guibg=#e6e6e6')
+            vim.cmd('hi @attribute guifg=#0184bc guibg=#e6e6e6')
+            vim.cmd('hi @markup.link guifg=#a0a1a7 guibg=#e6e6e6')
         end
     },
 
@@ -153,7 +150,8 @@ themes.themes = {
             vim.cmd('hi RenderMarkdownCodeInline guifg=#7aa2f7 guibg=#24283b')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#1a1b26 guibg=#7dcfff')
             vim.cmd('hi @lsp.type.decorator.markdown guifg=#2ac3de guibg=#24283b')
-            vim.cmd('hi @markup.link.label.markdown_inline guifg=#7aa2f7 guibg=#24283b')
+            vim.cmd('hi @markup.link guifg=#565f89 guibg=#24283b')
+            vim.cmd('hi @markup.link.label.markdown_inline guifg=#565f89 guibg=#24283b')
         end,
     },
 
@@ -189,7 +187,8 @@ themes.themes = {
             vim.cmd('hi RenderMarkdownCodeInline guifg=#50a14f guibg=#d8dee9')
             vim.cmd('hi RenderMarkdownInlineHighlight guifg=#2a1b26 guibg=#e0af68')
             vim.cmd('hi @lsp.type.decorator.markdown guifg=#bf616a guibg=#cad3e0')
-            vim.cmd('hi @markup.link.label.markdown_inline guifg=#7aa2f7 guibg=#cad3e0')
+            vim.cmd('hi @markup.link guifg=#9aa5ce guibg=#d8dee9')
+            vim.cmd('hi @markup.link.label.markdown_inline guifg=#9aa5ce guibg=#d8dee9')
         end,
     },
 }
