@@ -28,7 +28,7 @@ return {
             ts_ls = {},
             zls = {},
             lua_ls = {},
-            --marksman = {},
+            -- marksman = {},
             markdown_oxide = {
                 workspace = {
                     didChangeWatchedFiles = {

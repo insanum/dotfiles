@@ -152,9 +152,9 @@ eval "$(pyenv init - zsh)"
 
 #export FZF_DEFAULT_OPTS="--no-mouse --bind ctrl-p:toggle-preview,pgdn:preview-page-down,pgup:preview-page-up,ctrl-d:page-down,ctrl-u:page-up --color='hl:39,hl+:39:bold'"
 
-export HOMEBREW_GITHUB_API_TOKEN=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
-
 eval "$(zoxide init zsh)"
+
+source ~/.priv/zshrc
 
 #-------------------------------------------------------------------------
 
