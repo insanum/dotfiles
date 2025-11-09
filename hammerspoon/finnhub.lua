@@ -41,6 +41,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
         --local color = hs.drawing.color.x11.white
         local prfx = "+"
         local change = 0
+        local percent = tonumber(data["dp"])
         if tonumber(data["c"]) >= tonumber(data["pc"]) then
             change = (tonumber(data["c"]) - tonumber(data["pc"]))
         else -- tonumber(data["c"]) < tonumber(data["pc"])
@@ -68,6 +69,16 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
                             --color = hs.drawing.color.x11.white
                           }) ..
         hs.styledtext.new(prfx .. round_decimal(change),
+                          {
+                            font  = font,
+                            --color = color
+                          }) ..
+        hs.styledtext.new("/",
+                          {
+                            font  = font,
+                            --color = hs.drawing.color.x11.white
+                          }) ..
+        hs.styledtext.new(round_decimal(percent) .. "%",
                           {
                             font  = font,
                             --color = color

@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+mime=$(file -bL --mime-type "$1")
+category=${mime%%/*}
+kind=${mime##*/}
+
+if [ -d "$1" ]; then
+	eza --git -hl --color=always --icons "$1"
+elif [ "$kind" = zip ]; then
+	unzip -l "$1"
+elif [ "$category" = image ]; then
+	chafa -s ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear "$1"
+	#timg -g${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear -p k "$1"
+	#exiftool "$1"
+elif [ "$category" = text ]; then
+	bat --color=always "$1"
+else
+	lesspipe.sh "$1" | bat --color=always
+fi
+

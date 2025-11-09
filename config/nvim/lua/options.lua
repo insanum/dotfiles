@@ -1,5 +1,5 @@
 
-vim.opt.title = true
+vim.opt.title = false
 
 vim.opt.number = true
 vim.opt.relativenumber = true

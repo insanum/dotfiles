@@ -9,6 +9,7 @@ vim.api.nvim_create_autocmd('FileType', {
         -- set this if indent-o-matic.nvim isn't working
         --vim.opt.shiftwidth = 4
 
+        vim.opt.spell = true
         vim.opt.colorcolumn = ''
         vim.opt.wrap = true
         vim.opt.linebreak = true

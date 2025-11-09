@@ -24,6 +24,9 @@ antidote load ${ZDOTDIR:-$HOME}/.zsh_plugins.txt
 
 bindkey '^L' autosuggest-accept
 zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
+export LESS='-r'
+export LESSOPEN='|~/.bin/lessfilter %s'
 
 autoload -U promptinit && promptinit
 prompt powerlevel10k
@@ -50,12 +53,12 @@ setopt HIST_SAVE_NO_DUPS      # do not write a duplicate event to the history fi
 setopt HIST_VERIFY            # do not execute immediately upon history expansion
 setopt HIST_BEEP              # beep when accessing non-existent history
 
-_set_window_title() {
-    print -Pn "\033]0;👻 %20<…<%~%<<\007"
-}
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd _set_window_title
-_set_window_title
+# _set_window_title() {
+#     print -Pn "\033]0;👻 %20<…<%~%<<\007"
+# }
+# autoload -Uz add-zsh-hook
+# add-zsh-hook precmd _set_window_title
+# _set_window_title
 
 alias rm="/bin/rm -i"
 alias mv="/bin/mv -i"

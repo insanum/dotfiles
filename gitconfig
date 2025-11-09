@@ -75,10 +75,10 @@
 	pbr          = push origin HEAD:refs/for/rel_nxt_216.0
 	####################
 	# BRANCH...
-	b            = branch -vv
+	b            = branch
 	bv           = branch -vv
 	ba           = branch -a
-	bav          = branch -av
+	bav          = branch -avv
 	####################
 [include]
 	path = ~/.priv/gitconfig

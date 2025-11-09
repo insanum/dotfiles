@@ -36,18 +36,22 @@ unfocused-split-opacity = 0.6
 unfocused-split-fill = black
 
 shell-integration = zsh
+shell-integration-features = cursor,no-sudo,no-title,ssh-env,ssh-terminfo,path
 confirm-close-surface = always
 copy-on-select = clipboard
 
 quick-terminal-position = top
 quick-terminal-size = 50%,50%
 
-keybind = ctrl+a>c=new_tab
-keybind = ctrl+a>space=next_tab
-keybind = ctrl+a>p=previous_tab
+#keybind = ctrl+a>c=new_tab
+#keybind = ctrl+a>space=next_tab
+#keybind = ctrl+a>p=previous_tab
+keybind = cmd+.=next_tab
+keybind = cmd+,=previous_tab
 #keybind = ctrl+a>ctrl+a=last_active_tab
 keybind = ctrl+a>ctrl+a=ignore
 keybind = ctrl+a>a=text:\x01
+keybind = ctrl+a>t=prompt_surface_title
 
 keybind = ctrl+a>1=goto_tab:1
 keybind = ctrl+a>2=goto_tab:2
