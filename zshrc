@@ -25,8 +25,6 @@ antidote load ${ZDOTDIR:-$HOME}/.zsh_plugins.txt
 bindkey '^L' autosuggest-accept
 zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
 zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
-export LESS='-r'
-export LESSOPEN='|~/.bin/lessfilter %s'
 
 autoload -U promptinit && promptinit
 prompt powerlevel10k
@@ -95,18 +93,21 @@ else
 fi
 
 if (( $+commands[bat] )); then
-    export PAGER="bat"
+    MPAGER="bat -l man --paging=always --style=plain"
 elif (( $+commands[batcat] )); then
-    export PAGER="batcat"
+    MPAGER="batcat -l man --paging=always --style=plain"
 else
-    export PAGER="less"
+    MPAGER="less"
 fi
+
+export LESS="-r"
+export LESSOPEN="| lesspipe.sh %s"
+export PAGER="less"
 
 alias cat=$PAGER
 alias more=$PAGER
 alias less=$PAGER
-export MANPAGER="sh -c 'col -bx | $PAGER -l man -p'"
-export MANROFFOPT="-c"
+export MANPAGER="sh -c 'col -bx | $MPAGER'"
 
 if (( $+commands[qlmanage] )); then
     alias ql="qlmanage -p"
