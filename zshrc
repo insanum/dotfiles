@@ -1,4 +1,6 @@
 
+VIEWER=${HOME}/.bin/my_viewer
+
 # enable the Powerlevel10k instant prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -24,7 +26,7 @@ antidote load ${ZDOTDIR:-$HOME}/.zsh_plugins.txt
 
 bindkey '^L' autosuggest-accept
 zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
-zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
+zstyle ':fzf-tab:complete:*:*' fzf-preview $VIEWER '${(Q)realpath}'
 
 autoload -U promptinit && promptinit
 prompt powerlevel10k
@@ -93,21 +95,20 @@ else
 fi
 
 if (( $+commands[bat] )); then
-    MPAGER="bat -l man --paging=always --style=plain"
+    MPAGER="bat -l man --style=plain"
 elif (( $+commands[batcat] )); then
-    MPAGER="batcat -l man --paging=always --style=plain"
+    MPAGER="batcat -l man --style=plain"
 else
     MPAGER="less"
 fi
 
-export LESS="-r"
-export LESSOPEN="| lesspipe.sh %s"
-export PAGER="less"
+export PAGER=$VIEWER
+export BAT_PAGER="less -r"
+export MANPAGER="sh -c 'col -bx | $MPAGER'"
 
 alias cat=$PAGER
 alias more=$PAGER
 alias less=$PAGER
-export MANPAGER="sh -c 'col -bx | $MPAGER'"
 
 if (( $+commands[qlmanage] )); then
     alias ql="qlmanage -p"

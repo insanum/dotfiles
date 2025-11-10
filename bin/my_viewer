@@ -1,0 +1,54 @@
+#!/bin/bash
+
+mime=$(file -bL --mime-type "$1")
+category=${mime%%/*}
+kind=${mime##*/}
+
+dirname=$(dirname "$1")
+filename_with_ext=$(basename "$1")
+extension="${filename_with_ext##*.}"
+filename="${filename_with_ext%.*}"
+
+if [[ -d "$1" ]]; then
+
+    eza -hlF --color=always --icons "$1"
+
+elif [[ "$kind" = zip ]]; then
+
+    unzip -l "$1" | bat --color=always
+
+elif [[ "$category" = image ]]; then
+
+    if [[ -n "$FZF_PREVIEW_COLUMNS" && -n "$FZF_PREVIEW_LINES" ]]; then
+        chafa -s ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear "$1"
+        #timg -g${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear -p k "$1"
+    else
+        chafa --clear "$1"
+        #timg --clear -p k "$2"
+    fi
+
+    #exiftool "$1"
+
+elif [[ "$kind" = pdf ]]; then
+
+    pdftotext "$1" - | bat --color=always
+
+elif [[ "$kind" = octet-stream && "$extension" = cap ]]; then
+
+    tshark -r "$1" | bat --color=always
+
+elif [[ "$category" = text ]]; then
+
+    bat --color=always "$1"
+
+else
+
+    # TODO
+    #   *.tar -> tar
+    #   *.gz -> gunzip
+    #   *.tgz -> gunzip/tar
+
+    echo "Unknown filter for mime type: $mime" >&2
+
+fi
+
