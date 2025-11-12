@@ -5,7 +5,7 @@ M.setup = function(add)
         source = 'kaymmm/bullets.nvim',
     })
 
-    require('bullets').setup({
+    require('Bullets').setup({
         colon_indent = true,
         delete_last_bullet = true,
         empty_buffers = true,
