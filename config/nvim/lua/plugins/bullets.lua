@@ -1,6 +1,11 @@
-return {
-    'kaymmm/bullets.nvim',
-    opts = {
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'kaymmm/bullets.nvim',
+    })
+
+    require('bullets').setup({
         colon_indent = true,
         delete_last_bullet = true,
         empty_buffers = true,
@@ -33,5 +38,7 @@ return {
             markers = ' x',
             toggle_partials = false,
         },
-    },
-}
+    })
+end
+
+return M

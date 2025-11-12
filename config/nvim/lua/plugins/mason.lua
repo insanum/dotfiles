@@ -1,5 +1,11 @@
-return {
-    'williamboman/mason.nvim',
-    enabled = true,
-    opts = { },
-}
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'williamboman/mason.nvim',
+    })
+
+    require('mason').setup()
+end
+
+return M

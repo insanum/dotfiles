@@ -1,9 +1,14 @@
-return {
-    'nvim-treesitter/nvim-treesitter',
-    enabled = true,
-    build = ':TSUpdate',
-    main = 'nvim-treesitter.configs',
-    opts = {
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'nvim-treesitter/nvim-treesitter',
+        checkout = 'master',
+        monitor = 'main',
+        hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
+    })
+
+    require('nvim-treesitter.configs').setup({
         ensure_installed = {
             'bash',
             'c',
@@ -15,10 +20,14 @@ return {
             'vimdoc',
             'javascript',
             'rust',
-            'python'
+            'python',
+            'zig',
         },
         auto_install = true,
         highlight = { enable = true },
         indent = { enable = false }, -- This completely F's cinoptions...
-    },
-}
+    })
+
+end
+
+return M

@@ -1,5 +1,7 @@
 return {
-    cmd = { vim.fn.stdpath('data') .. '/mason/bin/lua-language-server' },
+    cmd = {
+        vim.fn.stdpath('data') .. '/mason/bin/lua-language-server'
+    },
     root_markers = {
         '.luarc.json',
         '.luarc.jsonc',

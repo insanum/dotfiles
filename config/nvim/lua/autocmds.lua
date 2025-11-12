@@ -1,4 +1,13 @@
 
+-- highlight when yanking (copying) text
+vim.api.nvim_create_autocmd('TextYankPost', {
+    desc = 'Highlight when yanking (copying) text',
+    group = vim.api.nvim_create_augroup('insanum-yank', { clear = true }),
+    callback = function()
+        vim.highlight.on_yank()
+    end,
+})
+
 -- I like cinoptions! (autoformatting plugins are so annoying)
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufReadPost' }, {
     pattern = { '*.c', '*.h', '*.cc', '*.cpp', '*.ino',

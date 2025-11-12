@@ -134,7 +134,7 @@ if [[ -x $HOME/zig/zig ]]; then
     alias zig="$HOME/zig/zig"
 fi
 
-if [[ -x $HOME/.opencode/bin ]]; then
+if [[ -d $HOME/.opencode/bin ]]; then
     export PATH="$HOME/.opencode/bin:$PATH"
 fi
 
@@ -153,14 +153,18 @@ alias bitter="$HOME/work/git/bitter/bitter"
 alias nostalgic="$HOME/work/git/nostalgic/nostalgic"
 
 export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
+if [[ -d $PYENV_ROOT/bin ]]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init - zsh)"
+fi
 
 #export FZF_DEFAULT_OPTS="--no-mouse --bind ctrl-p:toggle-preview,pgdn:preview-page-down,pgup:preview-page-up,ctrl-d:page-down,ctrl-u:page-up --color='hl:39,hl+:39:bold'"
 
 eval "$(zoxide init zsh)"
 
-source ~/.priv/zshrc
+if [[ -d ~/.priv ]]; then
+    source ~/.priv/zshrc
+fi
 
 #-------------------------------------------------------------------------
 

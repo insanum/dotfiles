@@ -1,5 +1,8 @@
 return {
-    cmd = { vim.fn.stdpath('data') .. '/mason/bin/pyright-langserver', '--stdio' },
+    cmd = {
+        vim.fn.stdpath('data') .. '/mason/bin/pyright-langserver',
+        '--stdio'
+    },
     root_markers = {
         'pyproject.toml',
         'setup.py',

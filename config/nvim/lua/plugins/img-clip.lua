@@ -1,8 +1,11 @@
-return {
-    'HakonHarnes/img-clip.nvim',
-    enabled = true,
-    event = 'VeryLazy',
-    opts = {
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'HakonHarnes/img-clip.nvim',
+    })
+
+    require('img-clip').setup({
         default = {
             dir_path = '/Volumes/work/notes/assets',
             relative_to_current_file = true,
@@ -13,8 +16,10 @@ return {
                 template = '![[$FILE_NAME]]',
             },
         },
-    },
-    keys = {
-        { '<Leader>p', '<Cmd>PasteImage<CR>', desc = 'Paste image from system clipboard' },
-    },
-}
+    })
+
+    vim.keymap.set('n', '<leader>p', '<cmd>PasteImage<CR>',
+                   { desc = 'Paste image from system clipboard' })
+end
+
+return M

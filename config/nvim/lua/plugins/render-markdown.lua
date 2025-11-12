@@ -1,7 +1,11 @@
-return {
-    'MeanderingProgrammer/render-markdown.nvim',
-    enabled = true,
-    opts = {
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'MeanderingProgrammer/render-markdown.nvim',
+    })
+
+    require('render-markdown').setup({
         render_modes = true,
         debounce = 30,
         -- anti_conceal = { enabled = false },
@@ -53,5 +57,7 @@ return {
             border_virtual = true,
             cell = 'raw',
         },
-    },
-}
+    })
+end
+
+return M

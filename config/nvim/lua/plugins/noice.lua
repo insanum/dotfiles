@@ -1,21 +1,14 @@
-return {
-    'folke/noice.nvim',
-    enabled = true,
-    event = 'VeryLazy',
-    dependencies = {
-        'MunifTanjim/nui.nvim',
-        --[[
-        {
-            'rcarriga/nvim-notify',
-            opts = {
-                render = 'default',
-                stages = 'static',
-                top_down = false,
-            },
-        },
-        --]]
-    },
-    opts = {
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'folke/noice.nvim',
+        depends = {
+            'MunifTanjim/nui.nvim',
+        }
+    })
+
+    require('noice').setup({
         lsp = {
             -- override markdown rendering so that other plugins use treesitter
             override = {
@@ -50,5 +43,7 @@ return {
                 },
             },
         },
-    },
-}
+    })
+end
+
+return M

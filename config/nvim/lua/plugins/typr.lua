@@ -1,12 +1,14 @@
-return {
-    'nvzone/typr',
-    enabled = true,
-    dependencies = {
-      'nvzone/volt',
-    },
-    opts = {},
-    cmd = {
-      'Typr',
-      'TyprStats'
-    },
-}
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'nvzone/typr',
+        depends = {
+            'nvzone/volt',
+        },
+    })
+
+    require('typr').setup()
+end
+
+return M

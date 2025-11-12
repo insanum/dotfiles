@@ -1,5 +1,9 @@
 return {
-    cmd = { vim.fn.stdpath('data') .. '/mason/bin/clangd', '--background-index', '--clang-tidy' },
+    cmd = {
+        vim.fn.stdpath('data') .. '/mason/bin/clangd',
+        '--background-index',
+        '--clang-tidy'
+    },
     root_markers = {
         '.clangd',
         '.clang-tidy',

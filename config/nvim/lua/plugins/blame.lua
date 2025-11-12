@@ -1,5 +1,11 @@
-return {
-    'FabijanZulj/blame.nvim',
-    enabled = true,
-    opts = {},
-}
+local M = {}
+
+M.setup = function(add)
+    add({
+        source = 'FabijanZulj/blame.nvim',
+    })
+
+    require('blame').setup()
+end
+
+return M

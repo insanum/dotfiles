@@ -229,7 +229,8 @@ end
 
 local function theme_markdown_fix()
     -- render-markdown needs to re-init after a theme change
-    vim.cmd('Lazy reload render-markdown.nvim')
+    --vim.cmd('Lazy reload render-markdown.nvim')
+    vim.cmd('DepsUpdateOffline! render-markdown.nvim')
     local file_types = {
         'markdown',
         'copilot-chat',
@@ -259,7 +260,7 @@ local function theme_set()
     vim.notify(themes.themes[themes.current].name, vim.log.levels.INFO)
 end
 
-vim.keymap.set('n', 'T', function()
+vim.keymap.set('n', '<leader>T', function()
     if vim.v.count == 0 then
         themes.current = ((themes.current % #themes.themes) + 1)
     else
@@ -273,7 +274,7 @@ vim.keymap.set('n', 'T', function()
     end
 
     theme_set()
-end)
+end, { desc = "[T]heme change" })
 
 vim.api.nvim_create_autocmd('VimEnter', {
     callback = function()

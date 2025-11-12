@@ -446,16 +446,6 @@ return {
 },
 
 {
-    'navarasu/onedark.nvim',
-    enabled = false,
-    lazy = false,
-    priority = 999,
-    config = function()
-        vim.cmd.colorscheme 'onedark'
-    end,
-},
-
-{
     'rmehri01/onenord.nvim',
     enabled = false,
     lazy = false,
