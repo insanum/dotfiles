@@ -300,6 +300,91 @@ vim.keymap.set('n', '<leader>ntp', function()
 end,
 { desc = '[N]otes [T]asks [P]unted' })
 
+-- search for completed or punted tasks from the past month
+vim.keymap.set('n', '<leader>ntr', function()
+    local one_month_ago = os.time() - (30 * 24 * 60 * 60)
+
+    pick.builtin.cli(
+        {
+            command = {
+                'rg', '--no-heading', '--line-number',
+                '--color=never', '\\s\\[(completion|punted)::\\s',
+                '--glob', '*.md'
+            },
+            postprocess = function(lines)
+                local tasks = {}
+
+                for _, line in ipairs(lines) do
+                    -- Parse: filepath:line_number:content
+                    local filepath, line_num, content = line:match('^([^:]+):(%d+):(.*)$')
+                    if filepath and content then
+                        -- Extract date and type from [completion:: YYYY-MM-DD] or [punted:: YYYY-MM-DD]
+                        local date_str = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
+                        local task_type = 'completion'
+
+                        if not date_str then
+                            date_str = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
+                            task_type = 'punted'
+                        end
+
+                        if date_str then
+                            local task_ts = date_to_ts(date_str)
+
+                            -- Only include tasks from the past month
+                            if task_ts and task_ts >= one_month_ago then
+                                table.insert(tasks, {
+                                    filepath = filepath,
+                                    line_num = line_num,
+                                    content = content:gsub('^%s+', ''),
+                                    date = date_str,
+                                    timestamp = task_ts,
+                                    type = task_type
+                                })
+                            end
+                        end
+                    end
+                end
+
+                -- Sort by timestamp (newest first)
+                table.sort(tasks, function(a, b)
+                    return a.timestamp > b.timestamp
+                end)
+
+                return tasks
+            end
+        },
+        {
+            source = {
+                cwd = notes_dir,
+                name = 'Recent Completed/Punted Tasks (Past Month)',
+                show = function(buf_id, items, query)
+                    local display_items = {}
+                    for _, item in ipairs(items) do
+                        local type_label = item.type == 'completion' and '✓' or '→'
+                        table.insert(display_items,
+                                     string.format('%s %s | %s:%s | %s',
+                                                   type_label,
+                                                   item.date,
+                                                   item.filepath,
+                                                   item.line_num,
+                                                   item.content))
+                    end
+                    return pick.default_show(buf_id, display_items, query,
+                                             { show_icons = true })
+                end,
+                choose = function(item)
+                    if item then
+                        vim.cmd('edit ' .. item.filepath)
+                        vim.api.nvim_win_set_cursor(0,
+                            { tonumber(item.line_num), 0 })
+                    end
+                end
+            },
+        }
+    )
+end,
+{ desc = '[N]otes [T]asks [R]ecent (Past Month)' })
+
 ------------------------------------------------------------------------------
 -- TOGGLE DATAVIEW TAGS ------------------------------------------------------
 ------------------------------------------------------------------------------
@@ -1245,6 +1330,7 @@ local notes_help = {
     '<leader>nto                        Search Open Tasks',
     '<leader>ntc                        Search Completed Tasks',
     '<leader>ntp                        Search Punted Tasks',
+    '<leader>ntr                        Search Recent Tasks (Past Month)',
     '',
     '<leader>nc                         Toggle Task Completed',
     '<leader>np                         Toggle Task Punted',

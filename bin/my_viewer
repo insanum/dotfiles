@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ -z "$1" ]]; then
+    exec bat
+fi
+
 mime=$(file -bL --mime-type "$1")
 category=${mime%%/*}
 kind=${mime##*/}
