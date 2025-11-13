@@ -111,6 +111,9 @@ require("wincapture")
 -- Application Focus
 require("appfocus")
 
+-- Ghostty hacks
+require("ghostty")
+
 -- reload config
 hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",
 function()
