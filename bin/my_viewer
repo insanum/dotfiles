@@ -41,6 +41,10 @@ elif [[ "$kind" = octet-stream && "$extension" = cap ]]; then
 
     tshark -r "$1" | bat --color=always
 
+elif [[ "$kind" = json || "$extension" = json ]]; then
+
+    jq -C . "$1" | bat --color=always
+
 elif [[ "$category" = text ]]; then
 
     bat --color=always "$1"
