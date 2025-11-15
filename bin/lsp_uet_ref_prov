@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Verify we're in a git repository
+if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    echo "ERROR: Not in a git repository"
+    exit 1
+fi
+
+# Verify this is the uet-ref-prov repo by checking for key files
+if [ ! -f "uet.c" ] || [ ! -f "uet_pds.c" ] || [ ! -d "util" ]; then
+    echo "ERROR: This doesn't appear to be the uet-ref-prov repository"
+    echo "Current directory: $(pwd)"
+    exit 1
+fi
+
+# Auto-discover libfabric directory by searching up parent directories
+LIBFABRIC=""
+current_dir="$(pwd)"
+while [ "$current_dir" != "/" ]; do
+    for dir in "$current_dir"/libfabric*; do
+        if [ -d "$dir/include" ]; then
+            LIBFABRIC="$dir"
+            echo "Found libfabric directory: $LIBFABRIC"
+            break 2
+        fi
+    done
+    current_dir="$(dirname "$current_dir")"
+done
+
+if [ -z "$LIBFABRIC" ]; then
+    echo "ERROR: libfabric directory not found"
+    exit 1
+fi
+
+# Export LIBFABRIC for make to use
+export LIBFABRIC
+
+# Remove existing compile_commands.json if it exists
+/bin/rm -f compile_commands.json
+
+# Generate compile_commands.json using compiledb
+compiledb -S -f -- make -n
+
+# Add Linux kernel headers include path to each compile command arguments array
+LINUX_HEADERS="/Volumes/work/git/linux_kernels/linux/include/uapi"
+jq --arg inc "-I$LINUX_HEADERS" \
+   'map(.arguments += [$inc])' \
+   compile_commands.json > compile_commands.json.tmp && \
+   mv compile_commands.json.tmp compile_commands.json
+
+echo "compile_commands.json created successfully with Linux kernel headers"
+

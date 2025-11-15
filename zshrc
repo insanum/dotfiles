@@ -172,6 +172,12 @@ if [[ -d ~/.priv ]]; then
     source ~/.priv/zshrc
 fi
 
+if [[ $(hostname) = ubuntu13 ||
+      $(hostname) = ubuntu42 ]]; then
+    echo "insecure" > $HOME/.curlrc
+    export HOMEBREW_CURLRC=1
+fi
+
 #-------------------------------------------------------------------------
 
 # to customize prompt, run `p10k configure` or edit ~/.p10k.zsh

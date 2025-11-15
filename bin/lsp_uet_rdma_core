@@ -1,0 +1,247 @@
+#!/bin/bash
+
+set -e  # Exit on error
+
+# Color output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Configuration
+LINUX_HOST="172.16.71.13"
+LINUX_USER="${LINUX_USER:-edavis}"
+MACOS_LINUX_HEADERS="/Volumes/work/git/linux_kernels/linux/include/uapi"
+
+# Working directory must be the rdma-core repo
+WORK_DIR="$(pwd)"
+
+function usage() {
+    echo "Usage: $0 [linux|macos]"
+    echo ""
+    echo "Modes:"
+    echo "  linux  - Run on Linux system to generate compile_commands.json"
+    echo "  macos  - Run on macOS to fetch and fix compile_commands.json for local LSP"
+    echo ""
+    echo "Requirements:"
+    echo "  - Must be run from an rdma-core git repository or worktree"
+    echo ""
+    echo "Environment variables:"
+    echo "  LINUX_USER         - Username on Linux system (default: edavis)"
+    echo "  LINUX_PROJECT_PATH - Override Linux path (macOS mode only)"
+    echo "                       Default: converts /Volumes/work -> /home/\$LINUX_USER"
+    exit 1
+}
+
+function verify_rdma_core_repo() {
+    # Check if this looks like an rdma-core repo
+    if [[ ! -d "libibverbs" ]] || [[ ! -f "CMakeLists.txt" ]]; then
+        log_error "This doesn't appear to be an rdma-core repository"
+        log_error "Expected to find libibverbs/ directory and CMakeLists.txt"
+        exit 1
+    fi
+
+    log_info "Verified rdma-core repository at: ${WORK_DIR}"
+}
+
+function log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+function log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+function log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+function linux_mode() {
+    log_info "Running in Linux mode..."
+
+    verify_rdma_core_repo
+
+    # Create cc directory in current directory
+    log_info "Creating cc directory..."
+    cd "${WORK_DIR}"
+    rm -rf cc
+    mkdir cc
+
+    # Clean build directory
+    log_info "Cleaning build directory..."
+    rm -rf build
+
+    # Run build and capture output
+    log_info "Running build (this may take a while)..."
+    VERBOSE=1 UET_REF_PROV_PATH=/home/${LINUX_USER}/sync/uec/uet-ref-prov.fork/wt_pds ./build.sh | tee cc/cmake.out
+
+    # Copy generated headers
+    log_info "Copying generated headers..."
+    cp -r build/include cc/
+
+    log_info "Done! Files are in ${WORK_DIR}/cc/"
+    log_info "Run 'cc.sh macos' on your macOS system to fetch and finalize."
+}
+
+function macos_mode() {
+    log_info "Running in macOS mode..."
+
+    verify_rdma_core_repo
+
+    # Verify we're on macOS
+    if [[ "$(uname)" != "Darwin" ]]; then
+        log_error "This mode should only be run on macOS!"
+        exit 1
+    fi
+
+    # Verify Linux headers exist
+    if [[ ! -d "${MACOS_LINUX_HEADERS}" ]]; then
+        log_warn "Linux headers not found at: ${MACOS_LINUX_HEADERS}"
+        log_warn "LSP may not work correctly without them."
+    fi
+
+    # Convert macOS path to Linux path (e.g., /Volumes/work -> /home/edavis)
+    # Can be overridden with LINUX_PROJECT_PATH environment variable
+    if [[ -z "${LINUX_PROJECT_PATH}" ]]; then
+        LINUX_PROJECT_PATH=$(echo "${WORK_DIR}" | sed "s|/Volumes/work|/home/${LINUX_USER}|")
+    fi
+    LINUX_CC_PATH="${LINUX_PROJECT_PATH}/cc"
+
+    log_info "Linux path: ${LINUX_CC_PATH}"
+    log_info "Tip: Set LINUX_PROJECT_PATH env var if path conversion is incorrect"
+
+    # Fetch cc directory from Linux system
+    log_info "Fetching cc directory from ${LINUX_USER}@${LINUX_HOST}..."
+    cd "${WORK_DIR}"
+    rm -rf cc
+    scp -r "${LINUX_USER}@${LINUX_HOST}:${LINUX_CC_PATH}" .
+
+    if [[ ! -f cc/cmake.out ]]; then
+        log_error "Failed to fetch cmake.out from Linux system"
+        exit 1
+    fi
+
+    # Generate compile_commands.json using compiledb
+    log_info "Generating compile_commands.json using compiledb..."
+    cd cc
+    compiledb -S -f -p cmake.out -o compile_commands.json
+    cd "${WORK_DIR}"
+
+    if [[ ! -f cc/compile_commands.json ]]; then
+        log_error "Failed to generate compile_commands.json"
+        exit 1
+    fi
+
+    # Add include paths and fix path substitutions in compile_commands.json
+    log_info "Adding include paths and fixing path substitutions..."
+    python3 - <<'EOF'
+import json
+import sys
+import re
+
+# Read the compile commands
+with open('cc/compile_commands.json', 'r') as f:
+    commands = json.load(f)
+
+# Add include paths to each command and fix path substitutions
+for cmd in commands:
+    # Prefer 'arguments' over 'command' if both exist
+    if 'arguments' in cmd:
+        # Fix path substitutions in arguments
+        new_arguments = []
+        for arg in cmd['arguments']:
+            if isinstance(arg, str):
+                arg = arg.replace(
+                    '/home/edavis/sync/uec/uet-rdma-core.fork/wt_uet/build/include',
+                    '/Volumes/work/sync/uec/uet-rdma-core.fork/wt_uet/cc/include'
+                )
+                arg = arg.replace('/home/edavis', '/Volumes/work')
+            new_arguments.append(arg)
+
+        # For commands specified as argument arrays
+        new_args = [new_arguments[0]]  # compiler
+        new_args.extend([
+            '-I/Volumes/work/git/linux_kernels/linux/include/uapi',
+            '-I./cc/include'
+        ])
+        new_args.extend(new_arguments[1:])
+        cmd['arguments'] = new_args
+
+        # Also fix command string if it exists (for compatibility)
+        if 'command' in cmd:
+            cmd['command'] = cmd['command'].replace(
+                '/home/edavis/sync/uec/uet-rdma-core.fork/wt_uet/build/include',
+                '/Volumes/work/sync/uec/uet-rdma-core.fork/wt_uet/cc/include'
+            )
+            cmd['command'] = cmd['command'].replace('/home/edavis', '/Volumes/work')
+
+    elif 'command' in cmd:
+        # Fix path substitutions in the command
+        cmd['command'] = cmd['command'].replace(
+            '/home/edavis/sync/uec/uet-rdma-core.fork/wt_uet/build/include',
+            '/Volumes/work/sync/uec/uet-rdma-core.fork/wt_uet/cc/include'
+        )
+        cmd['command'] = cmd['command'].replace('/home/edavis', '/Volumes/work')
+
+        # Find the position after the compiler command (gcc/g++/clang)
+        parts = cmd['command'].split()
+
+        # Insert include flags after the compiler command
+        new_parts = [parts[0]]  # compiler
+        new_parts.extend([
+            '-I/Volumes/work/git/linux_kernels/linux/include/uapi',
+            '-I./cc/include'
+        ])
+        new_parts.extend(parts[1:])  # rest of the command
+
+        cmd['command'] = ' '.join(new_parts)
+
+    # Fix directory and file paths
+    if 'directory' in cmd and isinstance(cmd['directory'], str):
+        cmd['directory'] = cmd['directory'].replace('/home/edavis', '/Volumes/work')
+
+    if 'file' in cmd and isinstance(cmd['file'], str):
+        cmd['file'] = cmd['file'].replace('/home/edavis', '/Volumes/work')
+
+# Write back the modified commands
+with open('cc/compile_commands.json', 'w') as f:
+    json.dump(commands, f, indent=2)
+
+print("Successfully added include paths and fixed path substitutions")
+EOF
+
+    if [[ $? -ne 0 ]]; then
+        log_error "Failed to modify compile_commands.json"
+        exit 1
+    fi
+
+    # Copy to current directory for LSP
+    log_info "Copying compile_commands.json to project root..."
+    cp cc/compile_commands.json compile_commands.json
+
+    # Clean up cc directory
+    log_info "Cleaning up cc directory..."
+    rm -rf cc
+
+    log_info "Done! Your LSP should now be configured."
+    log_info "compile_commands.json is ready at: ${WORK_DIR}/compile_commands.json"
+}
+
+# Main
+if [[ $# -eq 0 ]]; then
+    usage
+fi
+
+case "$1" in
+    linux)
+        linux_mode
+        ;;
+    macos)
+        macos_mode
+        ;;
+    *)
+        log_error "Unknown mode: $1"
+        usage
+        ;;
+esac
+
