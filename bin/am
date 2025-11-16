@@ -72,7 +72,8 @@ function status()
 	printf '%s\n' "$cur_min:$cur_sec/$end_min:$end_sec"
 }
 
-tui() {
+function tui()
+{
 	help='false'
 	while :
 	do
@@ -146,7 +147,8 @@ h   Show/Hide keybindings"
 	done
 }
 
-list() {
+function list()
+{
 	usage="Usage: list [-grouping] [name]
 
   -s           List all songs.
@@ -165,13 +167,24 @@ list() {
 			if [ "$#" -eq 1 ]; then
 				shift
 				osascript -e 'tell application "Music" to get name of playlists' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>/dev/null | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
 			else
 				shift
-				osascript -e 'on run args' \
-					  -e 'tell application "Music" to get name of every track of playlist (item 1 of args)' \
+				result=$(osascript -e 'on run args' \
+					  -e 'tell application "Music"' \
+					  -e     'set matchingPlaylists to (every playlist whose name contains (item 1 of args))' \
+					  -e     'if (count of matchingPlaylists) is 0 then' \
+					  -e         'error "No playlist found"' \
+					  -e     'end if' \
+					  -e     'get name of every track of item 1 of matchingPlaylists' \
+					  -e 'end tell' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>&1)
+				if [[ $? -ne 0 ]]; then
+					printf 'Playlist not found: %s\n' "$*"
+				else
+					printf '%s\n' "$result" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+				fi
 			fi
 		elif [ $1 = "-s" ]; then
 			if [ "$#" -eq 1 ]; then
@@ -179,7 +192,7 @@ list() {
 				osascript -e 'on run args' \
 					  -e 'tell application "Music" to get name of every track' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>/dev/null | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
 			else
 				echo $usage
 			fi
@@ -189,13 +202,18 @@ list() {
 				osascript -e 'on run args' \
 					  -e 'tell application "Music" to get album of every track' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>/dev/null | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
 			else
 				shift
-				osascript -e 'on run args' \
-					  -e 'tell application "Music" to get name of every track whose album is (item 1 of args)' \
+				result=$(osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track whose album contains (item 1 of args)' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>&1)
+				if [[ $? -ne 0 ]]; then
+					printf 'Album not found: %s\n' "$*"
+				else
+					printf '%s\n' "$result" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+				fi
 			fi
 		elif [ $1 = "-a" ]; then
 			if [ "$#" -eq 1 ]; then
@@ -203,13 +221,18 @@ list() {
 				osascript -e 'on run args' \
 					  -e 'tell application "Music" to get artist of every track' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>/dev/null | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
 			else
 				shift
-				osascript -e 'on run args' \
-					  -e 'tell application "Music" to get name of every track whose artist is (item 1 of args)' \
+				result=$(osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track whose artist contains (item 1 of args)' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>&1)
+				if [[ $? -ne 0 ]]; then
+					printf 'Artist not found: %s\n' "$*"
+				else
+					printf '%s\n' "$result" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+				fi
 			fi
 		elif [ $1 = "-g" ]; then
 			if [ "$#" -eq 1 ]; then
@@ -217,13 +240,18 @@ list() {
 				osascript -e 'on run args' \
 					  -e 'tell application "Music" to get genre of every track' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>/dev/null | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
 			else
 				shift
-				osascript -e 'on run args' \
-					  -e 'tell application "Music" to get name of every track whose genre is (item 1 of args)' \
+				result=$(osascript -e 'on run args' \
+					  -e 'tell application "Music" to get name of every track whose genre contains (item 1 of args)' \
 					  -e 'end' \
-					  "$*" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+					  "$*" 2>&1)
+				if [[ $? -ne 0 ]]; then
+					printf 'Genre not found: %s\n' "$*"
+				else
+					printf '%s\n' "$result" | tr "," "\n" | sort | awk '!seen[$0]++' | /usr/bin/pr -t -a -3
+				fi
 			fi
 		else
 			printf '%s\n' "$usage";
@@ -231,8 +259,9 @@ list() {
 	fi
 }
 
-play() {
-	usage="Usage: play [-grouping] [name]
+function search()
+{
+	usage="Usage: search [-grouping] [name]
 
   -s           Fzf for a song and begin playback.
   -s PATTERN   Play the song PATTERN.
@@ -250,84 +279,101 @@ play() {
 	else
 		if [ $1 = "-p" ]; then
 			if [ "$#" -eq 1 ]; then
-				playlist=$(osascript -e 'tell application "Music" to get name of playlists' | tr "," "\n" | fzf)
-				set -- ${playlist:1}
+				playlist=$(osascript -e 'tell application "Music" to get name of playlists' | tr "," "\n" | fzf | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+				if [ -z "$playlist" ]; then return; fi
+				shift
+				set -- "$playlist"
 			else
 				shift
 			fi
 			osascript -e 'on run argv' \
 				  -e 'tell application "Music" to play playlist (item 1 of argv)' \
-				  -e 'end' "$*"
+				  -e 'end' "$@"
 		elif [ $1 = "-s" ]; then
 			if [ "$#" -eq 1 ]; then
-				song=$(osascript -e 'tell application "Music" to get name of every track' | tr "," "\n" | fzf)
-				set -- ${song:1}
+				song=$(osascript -e 'tell application "Music" to get name of every track' | tr "," "\n" | fzf | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+				if [ -z "$song" ]; then return; fi
+				shift
+				set -- "$song"
 			else
 				shift
 			fi
 			osascript -e 'on run argv' \
 				  -e 'tell application "Music" to play track (item 1 of argv)' \
-				  -e 'end' "$*"
+				  -e 'end' "$@"
 		elif [ $1 = "-r" ]; then
 			if [ "$#" -eq 1 ]; then
-				record=$(osascript -e 'tell application "Music" to get album of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf)
-				set -- ${record:1}
+				record=$(osascript -e 'tell application "Music" to get album of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+				if [ -z "$record" ]; then return; fi
+				shift
+				set -- "$record"
 			else
 				shift
 			fi
+			printf 'Playing album: %s\n' "$1"
 			osascript -e 'on run argv' \
 				  -e 'tell application "Music"' \
-				  -e     'if (exists playlist "temp_playlist") then' \
-				  -e         'delete playlist "temp_playlist"' \
-				  -e     'end if' \
-				  -e     'set name of (make new playlist) to "temp_playlist"' \
-				  -e     'set theseTracks to every track of playlist "Library" whose album is (item 1 of argv)' \
+				  -e     'try' \
+				  -e         'if (exists user playlist "temp_playlist") then' \
+				  -e             'delete user playlist "temp_playlist"' \
+				  -e         'end if' \
+				  -e     'end try' \
+				  -e     'set tempPlaylist to (make new user playlist with properties {name:"temp_playlist"})' \
+				  -e     'set theseTracks to (every track of playlist "Library" whose album contains (item 1 of argv))' \
 				  -e     'repeat with thisTrack in theseTracks' \
-				  -e         'duplicate thisTrack to playlist "temp_playlist"' \
+				  -e         'duplicate thisTrack to tempPlaylist' \
 				  -e     'end repeat' \
-				  -e     'play playlist "temp_playlist"' \
+				  -e     'play tempPlaylist' \
 				  -e 'end tell' \
-				  -e 'end' "$*"
+				  -e 'end' "$@" 2>&1
 		elif [ $1 = "-a" ]; then
 			if [ "$#" -eq 1 ]; then
-				artist=$(osascript -e 'tell application "Music" to get artist of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf)
-				set -- ${artist:1}
+				artist=$(osascript -e 'tell application "Music" to get artist of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+				if [ -z "$artist" ]; then return; fi
+				shift
+				set -- "$artist"
 			else
 				shift
 			fi
 			osascript -e 'on run argv' \
 				  -e 'tell application "Music"' \
-				  -e     'if (exists playlist "temp_playlist") then' \
-				  -e         'delete playlist "temp_playlist"' \
-				  -e     'end if' \
-				  -e     'set name of (make new playlist) to "temp_playlist"' \
-				  -e     'set theseTracks to every track of playlist "Library" whose artist is (item 1 of argv)' \
+				  -e     'try' \
+				  -e         'if (exists user playlist "temp_playlist") then' \
+				  -e             'delete user playlist "temp_playlist"' \
+				  -e         'end if' \
+				  -e     'end try' \
+				  -e     'set tempPlaylist to (make new user playlist with properties {name:"temp_playlist"})' \
+				  -e     'set theseTracks to (every track of playlist "Library" whose artist contains (item 1 of argv))' \
 				  -e     'repeat with thisTrack in theseTracks' \
-				  -e         'duplicate thisTrack to playlist "temp_playlist"' \
+				  -e         'duplicate thisTrack to tempPlaylist' \
 				  -e     'end repeat' \
-				  -e     'play playlist "temp_playlist"' \
+				  -e     'play tempPlaylist' \
 				  -e 'end tell' \
-				  -e 'end' "$*"
+				  -e 'end' "$@"
 		elif [ $1 = "-g" ]; then
 			if [ "$#" -eq 1 ]; then
-				genre=$(osascript -e 'tell application "Music" to get genre of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf)
-				set -- ${genre:1}
+				genre=$(osascript -e 'tell application "Music" to get genre of every track' | tr "," "\n" | sort | awk '!seen[$0]++' | fzf | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+				if [ -z "$genre" ]; then return; fi
+				shift
+				set -- "$genre"
 			else
 				shift
 			fi
 			osascript -e 'on run argv' \
 				  -e 'tell application "Music"' \
-				  -e     'if (exists playlist "temp_playlist") then' \
-				  -e         'delete playlist "temp_playlist"' \
-				  -e     'end if' \
-				  -e     'set name of (make new playlist) to "temp_playlist"' \
-				  -e     'set theseTracks to every track of playlist "Library" whose genre is (item 1 of argv)' \
+				  -e     'try' \
+				  -e         'if (exists user playlist "temp_playlist") then' \
+				  -e             'delete user playlist "temp_playlist"' \
+				  -e         'end if' \
+				  -e     'end try' \
+				  -e     'set tempPlaylist to (make new user playlist with properties {name:"temp_playlist"})' \
+				  -e     'set theseTracks to (every track of playlist "Library" whose genre contains (item 1 of argv))' \
 				  -e     'repeat with thisTrack in theseTracks' \
-				  -e         'duplicate thisTrack to playlist "temp_playlist"' \
+				  -e         'duplicate thisTrack to tempPlaylist' \
 				  -e     'end repeat' \
-				  -e     'play playlist "temp_playlist"' \
+				  -e     'play tempPlaylist' \
 				  -e 'end tell' \
-				  -e 'end' "$*"
+				  -e 'end' "$@"
 		elif [ $1 = "-l" ]; then
 			osascript -e 'tell application "Music"' \
 				  -e     'play playlist "Library"' \
@@ -338,60 +384,98 @@ play() {
 	fi
 }
 
-function lyrics_music_get()
-{
-	osascript -e 'tell application "Music" to get lyrics of current track'
-}
-
-function lyrics_music_scrape()
+function queue()
 {
 	osascript <<'END'
-  tell application "Music"
-      if player state is playing then
-          set currentTrack to current track
-          set trackName to name of currentTrack
-          set artistName to artist of currentTrack
+tell application "Music"
+	try
+		if player state is stopped then
+			return "Music.app is stopped"
+		end if
 
-          tell application "System Events"
-              tell process "Music"
-                  click menu item "Show Lyrics" of menu "View" of menu bar 1
-                  delay 2 -- Wait for lyrics view to load
+		-- Get the current playlist being played
+		set currentPlaylistName to ""
+		set currentTrackIndex to 0
 
-                  set lyricsText to ""
-                  try
-                      set lyricsText to value of text area 1 of scroll area 1 of window 1
-                  on error
-                      set lyricsText to "No lyrics available for this track."
-                  end try
+		try
+			set currentPlaylistName to name of current playlist
+			set allTracks to tracks of current playlist
+			set currentTrack to current track
 
-                  -- Close lyrics view
-                  --click menu item "Hide Lyrics" of menu "View" of menu bar 1
-              end tell
-          end tell
+			-- Find the index of the current track
+			repeat with i from 1 to count of allTracks
+				if id of item i of allTracks is id of currentTrack then
+					set currentTrackIndex to i
+					exit repeat
+				end if
+			end repeat
 
-          return "Lyrics for " & trackName & " by " & artistName & ":\n\n" & lyricsText
-      else
-          return "No track is currently playing."
-      end if
-  end tell
+			set totalTracks to count of allTracks
+			set remainingTracks to totalTracks - currentTrackIndex
+
+			if remainingTracks is 0 then
+				return "No more tracks in current playlist"
+			end if
+
+			set output to "Up Next from \"" & currentPlaylistName & "\" (" & remainingTracks & " tracks):" & linefeed & linefeed
+
+			set trackNum to 1
+			repeat with i from (currentTrackIndex + 1) to totalTracks
+				set aTrack to item i of allTracks
+				set trackName to name of aTrack
+				set trackArtist to artist of aTrack
+				set output to output & trackNum & ". " & trackArtist & " - " & trackName & linefeed
+				set trackNum to trackNum + 1
+
+				-- Limit to first 30 tracks to avoid too much output
+				if trackNum > 30 then
+					set output to output & linefeed & "... and " & (remainingTracks - 30) & " more tracks"
+					exit repeat
+				end if
+			end repeat
+
+			return output
+		on error errMsg
+			return "Error: Unable to determine queue. Make sure a playlist is playing." & linefeed & "Details: " & errMsg
+		end try
+	on error errMsg
+		return "Error accessing Music: " & errMsg
+	end try
+end tell
 END
 }
 
 function lyrics_fetch()
 {
+	# Get current track info
 	mapfile -t status < \
 		<(osascript -e 'tell application "Music"' \
 		            -e     'set _nam to get name of current track' \
-			    -e     'set _art to get artist of current track' \
-			    -e     'log _nam' \
-			    -e     'log _art' \
-			    -e 'end tell' 2>&1)
+		            -e     'set _art to get artist of current track' \
+		            -e     'log _nam' \
+		            -e     'log _art' \
+		            -e 'end tell' 2>&1)
 
-	nam=$(echo ${status[0]} | sed 's/[[:space:]]/%20/g')
-	art=$(echo ${status[1]} | sed 's/[[:space:]]/%20/g')
+	track_name="${status[0]}"
+	artist_name="${status[1]}"
 
-	#echo "wget -qO- \"https://makeitpersonal.co/lyrics?artist=${art}&title=${nam}\""
-	wget -qO- "https://makeitpersonal.co/lyrics?artist=${art}&title=${nam}"
+	printf '%s\n' "$track_name"
+	printf '%s\n' "$artist_name"
+	printf '\n'
+
+	# URL encode the track and artist names
+	track_encoded=$(printf '%s' "$track_name" | python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.stdin.read().strip()))")
+	artist_encoded=$(printf '%s' "$artist_name" | python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.stdin.read().strip()))")
+
+	# Try lyrics.ovh API (free, no auth required)
+	lyrics=$(curl -s "https://api.lyrics.ovh/v1/${artist_encoded}/${track_encoded}" | python3 -c "import sys, json; data = json.load(sys.stdin); print(data.get('lyrics', '').strip())" 2>/dev/null)
+
+	if [ -n "$lyrics" ] && [ "$lyrics" != "" ]; then
+		# Remove all blank lines
+		printf '%s\n' "$lyrics" | grep -v '^[[:space:]]*$'
+	else
+		printf '%s\n' "No lyrics found for this track"
+	fi
 }
 
 usage="Usage: $0 [command] ...
@@ -411,6 +495,7 @@ usage="Usage: $0 [command] ...
   repeat <state|off|one|all>      Set repeat mode
   volume <state|up|down|0-100>    Change the volume +/- 5% or set the level
   lyrics                          Show lyrics for the current track
+  queue                           List the upcoming songs in the queue
   tui                             Open TUI with status of current track"
 
 if [ "$#" -eq 0 ]; then
@@ -518,27 +603,29 @@ else
 
 	elif [ $1 = "lyrics" ]; then
 
-		#lyrics_music_get
-		#lyrics_music_scrape
 		lyrics_fetch
+
+	elif [ $1 = "queue" ]; then
+
+		status
+		printf '\n'
+		queue
 
 	elif [ $1 = "tui" ]; then
 		#osascript -e 'tell application "Music" to set visible of window 1 to false'
 		osascript -e 'tell application "Music" to run'
 		tui
 
-	# favorited ?
-	# queue ?
-	# clear (queue) ?
-	# search ?
+	elif [ $1 = "list" ]; then
+		shift
+		list "$@"
 
-	#elif [ $1 = "list" ]; then
-	#	shift
-	#	list "$@"
+	elif [ $1 = "search" ]; then
+		shift
+		search "$@"
 
-	#elif [ $1 = "play" ]; then
-	#	shift
-	#	play "$@"
+	# favorited ? <-- playlist "Favorite Songs"
+	# clear queue ? <-- not really possible with existing commands
 
 	else
 		printf '%s\n' "$usage";

@@ -4,6 +4,8 @@ local alert = hs.alert
 local et = hs.eventtap
 local t = hs.timer
 
+local ascii_dir = "figlet $(basename `pwd`) | lolcat"
+
 local g = nil
 local delay = 0.2
 
@@ -46,6 +48,7 @@ local ghostty_actions = {
     function() ghostty_tab_title_open() end,
     function() ghostty_tab_title_set('notes') end,
     function() ghostty_send_cmd('z notes') end,
+    function() ghostty_send_cmd(ascii_dir) end,
     function() ghostty_hsplit() end,
     function() ghostty_tab_title_open() end,
     function() ghostty_tab_title_set('notes') end,
@@ -59,23 +62,27 @@ local ghostty_actions = {
 
     function() ghostty_goto_tab('3') end,
     function() ghostty_tab_title_open() end,
-    function() ghostty_tab_title_set('rdma-core.fork') end,
+    function() ghostty_tab_title_set('uet-rdma-core.fork') end,
     function() ghostty_send_cmd('z wt_uet') end,
+    function() ghostty_send_cmd(ascii_dir) end,
 
     function() ghostty_goto_tab('4') end,
     function() ghostty_tab_title_open() end,
     function() ghostty_tab_title_set('uet-ref-prov.fork') end,
     function() ghostty_send_cmd('z wt_pds') end,
+    function() ghostty_send_cmd(ascii_dir) end,
 
     function() ghostty_goto_tab('5') end,
     function() ghostty_tab_title_open() end,
     function() ghostty_tab_title_set('linux_kernels') end,
     function() ghostty_send_cmd('z linux_kernels') end,
+    function() ghostty_send_cmd(ascii_dir) end,
 
     function() ghostty_goto_tab('6') end,
     function() ghostty_tab_title_open() end,
     function() ghostty_tab_title_set('csg_drivers') end,
     function() ghostty_send_cmd('z csg_drivers') end,
+    function() ghostty_send_cmd(ascii_dir) end,
 
     function() ghostty_goto_tab('1') end,
 }

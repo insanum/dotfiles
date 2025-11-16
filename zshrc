@@ -1,5 +1,6 @@
 
-VIEWER=${HOME}/.bin/my_viewer
+# My 'fv' script is used to view many types of files
+FILE_VIEWER=${HOME}/.bin/fv
 
 # enable the Powerlevel10k instant prompt
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -26,7 +27,7 @@ antidote load ${ZDOTDIR:-$HOME}/.zsh_plugins.txt
 
 bindkey '^L' autosuggest-accept
 zstyle ':fzf-tab:*' fzf-bindings 'ctrl-l:accept'
-zstyle ':fzf-tab:complete:*:*' fzf-preview $VIEWER '${(Q)realpath}'
+zstyle ':fzf-tab:complete:*:*' fzf-preview $FILE_VIEWER '${(Q)realpath}'
 
 autoload -U promptinit && promptinit
 prompt powerlevel10k
@@ -108,7 +109,7 @@ else
     MPAGER="less"
 fi
 
-export PAGER=$VIEWER
+export PAGER=$FILE_VIEWER
 export BAT_PAGER="less -r"
 export MANPAGER="sh -c 'col -bx | $MPAGER'"
 
