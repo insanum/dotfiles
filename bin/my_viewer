@@ -1,62 +1,228 @@
 #!/bin/bash
 
+# Detect how the script was called
+script_name=$(basename "$0")
+
+bat_opts="--color=always"
+
+# If called as 'cat', disable paging by default
+if [[ "$script_name" = "cat" ]]; then
+    bat_opts="--color=always --paging=never"
+fi
+
+while [[ "$1" =~ ^- ]]; do
+    case "$1" in
+        -p)
+            bat_opts="--color=always --style=plain"
+            shift
+            ;;
+        -pp)
+            bat_opts="--color=always --style=plain --paging=never"
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+# If there is no argument then assume input is from stdin...
 if [[ -z "$1" ]]; then
-    exec bat
+    exec bat $bat_opts
+fi
+
+# Check if file exists
+if [[ ! -e "$1" ]]; then
+    # Check if it's a broken symlink
+    if [[ -L "$1" ]]; then
+        echo "Error: Broken symlink: $1 -> $(readlink "$1")" >&2
+    else
+        echo "Error: File not found: $1" >&2
+    fi
+    exit 1
 fi
 
 mime=$(file -bL --mime-type "$1")
 category=${mime%%/*}
 kind=${mime##*/}
 
-dirname=$(dirname "$1")
 filename_with_ext=$(basename "$1")
 extension="${filename_with_ext##*.}"
-filename="${filename_with_ext%.*}"
 
 if [[ -d "$1" ]]; then
 
-    eza -hlF --color=always --icons "$1"
+    eza -hlF --color=always --icons "$1" | bat $bat_opts
+
+elif [[ "$kind" = "x-empty" ||
+        "$kind" = "empty" ]]; then
+
+    echo "(Empty file)"
+
+elif [[ "$extension" = json ||
+        "$kind" = json ]]; then
+
+    if ! command -v jq &>/dev/null; then
+        echo "Error: jq not found. Install jq." >&2
+        exit 1
+    fi
+
+    jq -C . "$1" 2>/dev/null | bat $bat_opts || bat $bat_opts "$1"
+
+elif [[ "$extension" = "yaml" ||
+        "$extension" = "yml" ]]; then
+
+    bat $bat_opts --language=yaml "$1"
+
+elif [[ "$extension" = "xml" ||
+        "$kind" = xml ||
+        "$kind" = "application/xml" ]]; then
+
+    if ! command -v xmllint &>/dev/null; then
+        echo "Error: xmllint not found. Install libxml2." >&2
+        exit 1
+    fi
+
+    xmllint --format "$1" 2>/dev/null | bat $bat_opts || bat $bat_opts "$1"
+
+elif [[ "$extension" = "md" ||
+        "$extension" = "markdown" ]]; then
+
+    if ! command -v glow &>/dev/null; then
+        echo "Error: glow not found. Install glow." >&2
+        exit 1
+    fi
+
+    glow -s dark -p "$1"
+
+elif [[ "$extension" = "csv" ]]; then
+
+    if command -v csvlook &>/dev/null; then
+        # csvlook from csvkit handles quoted fields correctly
+        csvlook "$1" | bat $bat_opts
+    else
+        # Fallback to column, which may not handle complex CSVs correctly
+        column -t -s, "$1" 2>/dev/null | bat $bat_opts || bat $bat_opts "$1"
+    fi
 
 elif [[ "$kind" = zip ]]; then
 
-    unzip -l "$1" | bat --color=always
+    if ! command -v unzip &>/dev/null; then
+        echo "Error: unzip not found. Install unzip." >&2
+        exit 1
+    fi
+
+    unzip -l "$1" | bat $bat_opts
+
+elif [[ "$kind" = "x-7z-compressed" ]]; then
+
+    if ! command -v 7z &>/dev/null; then
+        echo "Error: 7z not found. Install p7zip." >&2
+        exit 1
+    fi
+
+    7z l "$1" | bat $bat_opts
+
+elif [[ "$kind" = "vnd.rar" ||
+        "$kind" = "x-rar" ||
+        "$kind" = "x-rar-compressed" ]]; then
+
+    if ! command -v unrar &>/dev/null; then
+        echo "Error: unrar not found. Install unrar." >&2
+        exit 1
+    fi
+
+    unrar l "$1" | bat $bat_opts
+
+elif [[ "$kind" = "x-tar" ||
+        "$kind" = "tar" ]]; then
+
+    tar -tvf "$1" | bat $bat_opts
+
+elif [[ "$kind" = "gzip" ||
+        "$kind" = "x-gzip" ]]; then
+
+    # Check if it's a .tar.gz / .tgz
+    if [[ "$extension" = "tgz" ||
+          "$filename_with_ext" =~ \.tar\.gz$ ]]; then
+        tar -ztvf "$1" | bat $bat_opts
+    else
+        gzip -l "$1" 2>/dev/null || gzip -dc "$1" | bat $bat_opts
+    fi
+
+elif [[ "$kind" = "x-bzip2" ||
+        "$kind" = "bzip2" ]]; then
+
+    # Check if it's a .tar.bz2 / .tbz
+    if [[ "$extension" = "tbz" ||
+          "$extension" = "tbz2" ||
+          "$filename_with_ext" =~ \.tar\.bz2$ ]]; then
+        tar -jtvf "$1" | bat $bat_opts
+    else
+        bzip2 -dc "$1" | bat $bat_opts
+    fi
+
+elif [[ "$kind" = "x-xz" ||
+        "$kind" = "xz" ]]; then
+
+    # Check if it's a .tar.xz / .txz
+    if [[ "$extension" = "txz" ||
+          "$filename_with_ext" =~ \.tar\.xz$ ]]; then
+        tar -Jtvf "$1" | bat $bat_opts
+    else
+        xz -l "$1" 2>/dev/null || xz -dc "$1" | bat $bat_opts
+    fi
 
 elif [[ "$category" = image ]]; then
 
-    if [[ -n "$FZF_PREVIEW_COLUMNS" && -n "$FZF_PREVIEW_LINES" ]]; then
-        chafa -s ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear "$1"
-        #timg -g${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear -p k "$1"
-    else
-        chafa --clear "$1"
-        #timg --clear -p k "$2"
+    if ! command -v chafa &>/dev/null; then
+        echo "Error: chafa not found. Install chafa." >&2
+        exit 1
     fi
 
-    #exiftool "$1"
+    if [[ -n "$FZF_PREVIEW_COLUMNS" && -n "$FZF_PREVIEW_LINES" ]]; then
+        chafa -s ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear "$1"
+    else
+        chafa --clear "$1"
+    fi
 
 elif [[ "$kind" = pdf ]]; then
 
-    pdftotext "$1" - | bat --color=always
+    if ! command -v pdftotext &>/dev/null; then
+        echo "Error: pdftotext not found. Install poppler." >&2
+        exit 1
+    fi
 
-elif [[ "$kind" = octet-stream && "$extension" = cap ]]; then
+    pdftotext "$1" - 2>/dev/null | bat $bat_opts || {
+        echo "Error: Failed to extract text from PDF" >&2
+        exit 1
+    }
 
-    tshark -r "$1" | bat --color=always
+elif [[ "$kind" = octet-stream &&
+        "$extension" = cap ]]; then
 
-elif [[ "$kind" = json || "$extension" = json ]]; then
+    if ! command -v tshark &>/dev/null; then
+        echo "Error: tshark not found. Install wireshark/tshark." >&2
+        exit 1
+    fi
 
-    jq -C . "$1" | bat --color=always
+    tshark -r "$1" | bat $bat_opts
 
 elif [[ "$category" = text ]]; then
 
-    bat --color=always "$1"
+    bat $bat_opts "$1"
 
 else
 
-    # TODO
-    #   *.tar -> tar
-    #   *.gz -> gunzip
-    #   *.tgz -> gunzip/tar
-
-    echo "Unknown filter for mime type: $mime" >&2
+    # Check if file is binary and dump with hex viewer
+    if file -b "$1" | grep -q "binary\|executable\|data"; then
+        if ! command -v hx &>/dev/null; then
+            echo "Error: hx not found. Install helix editor to view binary files as hex." >&2
+            exit 1
+        fi
+        hx --color 1 "$1" | bat $bat_opts
+    else
+        echo "Unknown filter for mime type: $mime" >&2
+    fi
 
 fi
 
