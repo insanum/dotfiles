@@ -258,20 +258,175 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 -- VARIOUS PICKERS -----------------------------------------------------------
 ------------------------------------------------------------------------------
 
--- search for tags
+-- Helper function to search for a specific tag and show results
+local function search_tag(tag)
+    pick.builtin.cli(
+        {
+            command = {
+                'rg', '--no-heading', '--with-filename',
+                '--line-number', '--color=never',
+                '(^|\\s)#' .. tag .. '(\\s|$|/)',
+                '--glob', '*.md'
+            },
+            postprocess = function(lines)
+                local results = {}
+                local file_cache = {}
+
+                for _, line in ipairs(lines) do
+                    local filepath, line_num, content = line:match('^([^:]+):(%d+):(.*)$')
+
+                    if filepath and line_num and content then
+                        if not file_cache[filepath] then
+                            local updated = yaml_get_property(filepath, 'updated')
+                            file_cache[filepath] = date_to_ts(updated) or 0
+                        end
+
+                        table.insert(results, {
+                            path = filepath,
+                            lnum = tonumber(line_num),
+                            content = content,
+                            timestamp = file_cache[filepath]
+                        })
+                    end
+                end
+
+                table.sort(results, function(a, b)
+                    return a.timestamp > b.timestamp
+                end)
+
+                return results
+            end
+        },
+        {
+            source = {
+                cwd = notes_dir,
+                name = 'Tag: ' .. tag,
+                show = function(buf_id, items, query)
+                    local display_items = {}
+                    for _, item in ipairs(items) do
+                        table.insert(display_items,
+                                     string.format('%s:%s:%s',
+                                                   item.path,
+                                                   item.lnum,
+                                                   item.content))
+                    end
+                    return pick.default_show(buf_id, display_items, query,
+                                             { show_icons = true })
+                end,
+            },
+        }
+    )
+end
+
+-- search for a hashtag
 vim.keymap.set('n', '<leader>ng', function()
     vim.ui.input({ prompt = 'Tag: ' }, function(input)
-        if not input or input == '' then
-            return
+        if input and input ~= '' then
+            search_tag(input)
         end
-
-        pick.builtin.grep({
-            globs = { '*.md' },
-            pattern = '\\s#' .. input .. '(\\s|$|/)',
-        })
     end)
 end,
 { desc = '[N]otes Ta[G]s' })
+
+-- Helper function to check if a tag is valid (not a number or color code)
+local function is_valid_tag(tag)
+    return not tag:match('^%d') and
+           not tag:match('^%x%x%x%x%x%x$') and
+           not tag:match('^%x%x%x%x%x%x%x%x$')
+end
+
+-- helper function to get code block line ranges for a file
+local function get_codeblock_ranges(filepath)
+    local file = io.open(filepath, 'r')
+    if not file then
+        return {}
+    end
+
+    local ranges = {}
+    local in_block = false
+    local block_start = nil
+    local line_num = 1
+
+    for line in file:lines() do
+        if line:match('^```') then
+            if in_block then
+                -- End of code block
+                table.insert(ranges, { start = block_start, finish = line_num })
+                in_block = false
+                block_start = nil
+            else
+                -- Start of code block
+                in_block = true
+                block_start = line_num
+            end
+        end
+        line_num = line_num + 1
+    end
+
+    file:close()
+    return ranges
+end
+
+-- helper function to check if a line number is inside a code block
+local function is_in_codeblock(line_num, ranges)
+    for _, range in ipairs(ranges) do
+        if line_num >= range.start and line_num <= range.finish then
+            return true
+        end
+    end
+    return false
+end
+
+-- list all hashtags and search for the selected one
+vim.keymap.set('n', '<leader>ns', function()
+    pick.builtin.cli(
+        {
+            command = {
+                'rg', '--no-heading', '--with-filename',
+                '--line-number', '--only-matching',
+                '(^|\\s)#[\\w/-]+', '--glob', '*.md'
+            },
+            postprocess = function(lines)
+                local tags = {}
+                local seen = {}
+                local file_cache = {}
+
+                for _, line in ipairs(lines) do
+                    local filepath, line_num, match = line:match('^([^:]+):(%d+):(.+)$')
+                    local tag = match and match:match('#([%w/-]+)')
+
+                    if filepath and line_num and tag and not seen[tag] and is_valid_tag(tag) then
+                        line_num = tonumber(line_num)
+
+                        if not file_cache[filepath] then
+                            file_cache[filepath] = get_codeblock_ranges(filepath)
+                        end
+
+                        if not is_in_codeblock(line_num, file_cache[filepath]) then
+                            seen[tag] = true
+                            table.insert(tags, tag)
+                        end
+                    end
+                end
+
+                table.sort(tags)
+                return tags
+            end
+        },
+        {
+            source = {
+                cwd = notes_dir,
+                name = 'All Hashtags',
+                choose = function(tag)
+                    if tag then
+                        search_tag(tag)
+                    end
+                end
+            },
+        }
+    )
+end,
+{ desc = '[N]otes Tag [S]earch' })
 
 -- search for open tasks
 vim.keymap.set('n', '<leader>nto', function()
@@ -333,8 +488,8 @@ vim.keymap.set('n', '<leader>ntr', function()
                             -- Only include tasks from the past month
                             if task_ts and task_ts >= one_month_ago then
                                 table.insert(tasks, {
-                                    filepath = filepath,
-                                    line_num = line_num,
+                                    path = filepath,
+                                    lnum = tonumber(line_num),
                                     content = content:gsub('^%s+', ''),
                                     date = date_str,
                                     timestamp = task_ts,
@@ -365,20 +520,13 @@ vim.keymap.set('n', '<leader>ntr', function()
                                      string.format('%s %s | %s:%s | %s',
                                                    type_label,
                                                    item.date,
-                                                   item.filepath,
-                                                   item.line_num,
+                                                   item.path,
+                                                   item.lnum,
                                                    item.content))
                     end
                     return pick.default_show(buf_id, display_items, query,
                                              { show_icons = true })
                 end,
-                choose = function(item)
-                    if item then
-                        vim.cmd('edit ' .. item.filepath)
-                        vim.api.nvim_win_set_cursor(0,
-                            { tonumber(item.line_num), 0 })
-                    end
-                end
             },
         }
     )
@@ -1091,9 +1239,9 @@ local function tag_remove()
 end
 
 vim.keymap.set('n', '<leader>mta', tag_add,
-               { desc = '[M]arkdown [T]ag [A]dd' })
+               { desc = '[M]arkdown [T]ag [A]dd to file' })
 vim.keymap.set('n', '<leader>mtr', tag_remove,
-               { desc = '[M]arkdown [T]ag [R]emove' })
+               { desc = '[M]arkdown [T]ag [R]emove from file' })
 
 ------------------------------------------------------------------------------
 -- RECENT FILES --------------------------------------------------------------
@@ -1326,7 +1474,8 @@ vim.api.nvim_create_user_command('ClearTableCells', clear_table_except_first_col
 local notes_help = {
     '<leader>nh                         Notes Keymap Help',
     '',
-    '<leader>ng                         Search Tags',
+    '<leader>ng                         Search for Tag',
+    '<leader>ns                         Select Tag and Search',
     '<leader>nto                        Search Open Tasks',
     '<leader>ntc                        Search Completed Tasks',
     '<leader>ntp                        Search Punted Tasks',
@@ -1368,15 +1517,11 @@ local notes_help = {
     '',
     'gf                                 Follow file link',
     '',
-    ' --> markdown commands support dot(.) and visual mode <--',
+    ' --> Markdown commands <--',
     '',
-    '<leader>ml                         Markdown List',
-    '<leader>mo                         Markdown Ordered List',
-    '<leader>mc                         Markdown Checkbox',
-    '<leader>mq                         Markdown Quote/Callout',
-    '<leader>mh                         Markdown Heading',
     '<leader>mta                        Markdown Tag Add',
     '<leader>mtr                        Markdown Tag Remove',
+    '<leader>m<...>                     markdown-plus plugin commands',
     '',
     '\'<,\'>ClearTableCells               Clear table cells (visual selection)',
 }
