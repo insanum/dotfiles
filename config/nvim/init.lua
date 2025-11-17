@@ -37,10 +37,12 @@ for name, type in vim.fs.dir(path) do
     if (type == 'file' or type == 'link') and name:match('%.lua$') then
         local plugin = config_dir .. '.' .. name:gsub('%.lua$', '')
         local m = require(plugin)
-        if m.now then
-            MiniDeps.now(function() m.setup(MiniDeps.add) end)
-        else
-            MiniDeps.later(function() m.setup(MiniDeps.add) end)
+        if not m.disabled then
+            if m.now then
+                MiniDeps.now(function() m.setup(MiniDeps.add) end)
+            else
+                MiniDeps.later(function() m.setup(MiniDeps.add) end)
+            end
         end
     end
 end

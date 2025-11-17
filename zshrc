@@ -110,7 +110,7 @@ else
 fi
 
 export PAGER=$FILE_VIEWER
-export BAT_PAGER="less -r"
+export BAT_PAGER="less -rFX"
 export MANPAGER="sh -c 'col -bx | $MPAGER'"
 
 alias cat=$PAGER
