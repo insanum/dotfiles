@@ -387,15 +387,14 @@ vim.keymap.set('n', '<leader>ns', function()
                 '(^|\\s)#[\\w/-]+', '--glob', '*.md'
             },
             postprocess = function(lines)
-                local tags = {}
-                local seen = {}
+                local tag_counts = {}
                 local file_cache = {}
 
                 for _, line in ipairs(lines) do
                     local filepath, line_num, match = line:match('^([^:]+):(%d+):(.+)$')
                     local tag = match and match:match('#([%w/-]+)')
 
-                    if filepath and line_num and tag and not seen[tag] and is_valid_tag(tag) then
+                    if filepath and line_num and tag and is_valid_tag(tag) then
                         line_num = tonumber(line_num)
 
                         if not file_cache[filepath] then
@@ -403,13 +402,18 @@ vim.keymap.set('n', '<leader>ns', function()
                         end
 
                         if not is_in_codeblock(line_num, file_cache[filepath]) then
-                            seen[tag] = true
-                            table.insert(tags, tag)
+                            tag_counts[tag] = (tag_counts[tag] or 0) + 1
                         end
                     end
                 end
 
-                table.sort(tags)
+                -- convert to array with counts and sort by tag name
+                local tags = {}
+                for tag, count in pairs(tag_counts) do
+                    table.insert(tags, { tag = tag, count = count })
+                end
+                table.sort(tags, function(a, b) return a.tag < b.tag end)
+
                 return tags
             end
         },
@@ -417,9 +421,18 @@ vim.keymap.set('n', '<leader>ns', function()
             source = {
                 cwd = notes_dir,
                 name = 'All Hashtags',
-                choose = function(tag)
-                    if tag then
-                        search_tag(tag)
+                show = function(buf_id, items, query)
+                    local display_items = {}
+                    for _, item in ipairs(items) do
+                        table.insert(display_items,
+                                     string.format('%-20s (%d)', item.tag, item.count))
+                    end
+                    return pick.default_show(buf_id, display_items, query,
+                                             { show_icons = true })
+                end,
+                choose = function(item)
+                    if item then
+                        search_tag(item.tag)
                     end
                 end
             },
@@ -1412,7 +1425,7 @@ end,
 { desc = '[N]otes E[X]calidraw' })
 
 ------------------------------------------------------------------------------
--- MARKDOWN TABLE UTILITIES ---------------------------------------------------
+-- MARKDOWN TABLE UTILITIES --------------------------------------------------
 ------------------------------------------------------------------------------
 
 local function clear_table_except_first_column()
@@ -1467,6 +1480,183 @@ vim.api.nvim_create_user_command('ClearTableCells', clear_table_except_first_col
 })
 
 ------------------------------------------------------------------------------
+-- RANDOM NOTE ---------------------------------------------------------------
+------------------------------------------------------------------------------
+
+vim.keymap.set('n', '<leader>nd', function()
+    pick.builtin.cli(
+        {
+            command = {
+                'fd', '-e', 'md',
+                '--exclude', 'Journal',
+                '--exclude', 'PDFs',
+                '--exclude', 'libfabric',
+                '--exclude', 'templates',
+                '--exclude', 'templates_nvim',
+            },
+            postprocess = function(items)
+                if #items == 0 then
+                    vim.notify('No markdown files found', vim.log.levels.WARN)
+                    return {}
+                end
+
+                math.randomseed(os.time())
+                local random_index = math.random(1, #items)
+                return { items[random_index] }
+            end
+        },
+        {
+            source = {
+                cwd = notes_dir,
+                name = 'Random Note',
+            },
+        }
+    )
+end,
+{ desc = '[N]otes Ran[D]om' })
+
+------------------------------------------------------------------------------
+-- RANDOM QUOTE --------------------------------------------------------------
+------------------------------------------------------------------------------
+
+local function get_random_stoicism_quote()
+    local stoicism_file = notes_dir .. '/snips/stoicism_quotes.json'
+
+    -- use jq to get a random quote (pipe-delimited format)
+    -- first run to get the count, second run to select random index
+    local cmd = string.format(
+        [[
+            bash -c 'INDEX=$(jq ".quotes | length" %s);
+            INDEX=$((RANDOM %% INDEX));
+            jq -r ".quotes[$INDEX] | .text + \"|\" + .author" %s'
+        ]],
+        vim.fn.shellescape(stoicism_file),
+        vim.fn.shellescape(stoicism_file)
+    )
+
+    local handle = io.popen(cmd)
+    if not handle then
+        return nil
+    end
+
+    local result = handle:read('*all')
+    handle:close()
+
+    if not result or result == '' then
+        return nil
+    end
+
+    -- parse the pipe-delimited result and strip whitespace
+    local text, author = result:match('^(.-)%s*|%s*(.-)%s*$')
+    if text and author then
+        return { text = text, author = author }
+    end
+
+    return nil
+end
+
+local function get_random_quote_md()
+    local quotes_file = notes_dir .. '/Quotes.md'
+    local file = io.open(quotes_file, 'r')
+    if not file then
+        return nil
+    end
+
+    local quotes = {}
+    for line in file:lines() do
+        -- match lines that start with '- ' (bullet points)
+        local quote = line:match('^%s*-%s*(.+)$')
+        if quote then
+            -- remove == emphasis markers if present
+            quote = quote:gsub('==(.+)==', '%1')
+            table.insert(quotes, quote)
+        end
+    end
+    file:close()
+
+    if #quotes == 0 then
+        return nil
+    end
+
+    math.randomseed(os.time())
+    local random_index = math.random(1, #quotes)
+    return quotes[random_index]
+end
+
+vim.keymap.set('n', '<leader>nq', function()
+    local stoicism_quote = get_random_stoicism_quote()
+    local md_quote = get_random_quote_md()
+
+    if not stoicism_quote and not md_quote then
+        vim.notify('No quotes found', vim.log.levels.ERROR)
+        return
+    end
+
+    local lines = {}
+
+    table.insert(lines, '')
+
+    if stoicism_quote then
+        table.insert(lines, 'STOICISM QUOTE')
+        table.insert(lines, '')
+        table.insert(lines, stoicism_quote.text)
+        table.insert(lines, '    - ' .. stoicism_quote.author)
+        table.insert(lines, '')
+    end
+
+    if md_quote then
+        table.insert(lines, 'PERSONAL QUOTE')
+        table.insert(lines, '')
+        table.insert(lines, md_quote)
+    end
+
+    table.insert(lines, '')
+
+    -- create a new floating window
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+
+    -- calculate window size to fit all content
+    local width = 70
+    -- calculate actual visual height accounting for wrapped lines
+    local visual_height = 0
+    for _, line in ipairs(lines) do
+        local line_length = vim.fn.strdisplaywidth(line)
+        -- calculate how many wrapped lines this will take (at least 1)
+        visual_height = visual_height + math.max(1, math.ceil(line_length / width))
+    end
+
+    local max_height = math.floor(vim.o.lines * 0.8) -- 80% of screen height
+    local height = math.min(visual_height, max_height)
+
+    local win_opts = {
+        relative = 'editor',
+        width = width,
+        height = height,
+        col = (vim.o.columns - width) / 2,
+        row = math.floor((vim.o.lines - height) / 2),
+        style = 'minimal',
+        border = 'rounded',
+    }
+
+    local win = vim.api.nvim_open_win(buf, true, win_opts)
+
+    -- set wrap and linebreak for better text display
+    vim.api.nvim_win_set_option(win, 'wrap', true)
+    vim.api.nvim_win_set_option(win, 'linebreak', true)
+
+    -- close with 'q' or ESC
+    local close_win = function()
+        vim.api.nvim_win_close(win, true)
+    end
+    vim.keymap.set('n', 'q', close_win, { buffer = buf, noremap = true })
+    vim.keymap.set('n', '<Esc>', close_win, { buffer = buf, noremap = true })
+end,
+{ desc = '[N]otes Random [Q]uote' })
+
+------------------------------------------------------------------------------
 -- KEYMAP HELP ---------------------------------------------------------------
 ------------------------------------------------------------------------------
 
@@ -1474,8 +1664,12 @@ vim.api.nvim_create_user_command('ClearTableCells', clear_table_except_first_col
 local notes_help = {
     '<leader>nh                         Notes Keymap Help',
     '',
+    '<leader>nd                         Open Random Note',
+    '<leader>nq                         Display Random Quote',
+    '',
     '<leader>ng                         Search for Tag',
     '<leader>ns                         Select Tag and Search',
+    '',
     '<leader>nto                        Search Open Tasks',
     '<leader>ntc                        Search Completed Tasks',
     '<leader>ntp                        Search Punted Tasks',
