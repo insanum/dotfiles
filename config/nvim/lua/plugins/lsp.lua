@@ -6,66 +6,36 @@ M.setup = function(add)
         depends = {
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
-            'WhoIsSethDaniel/mason-tool-installer.nvim',
         }
     })
 
-    require('mason').setup()
-
-    -- Neovim doesn't support everything that is in the LSP specification.
-    -- Here the capabilities array is extended with blink.cmp caps.
-    local capabilities = vim.tbl_deep_extend(
-        'force',
-        vim.lsp.protocol.make_client_capabilities(),
-        require('blink.cmp').get_lsp_capabilities({}, false))
-
-    -- See the following for config servers and config variables:
-    -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
-    local servers = {
-        clangd = {},
-        rust_analyzer = {},
-        bashls = {},
-        pyright = {},
-        ts_ls = {},
-        zls = {},
-        lua_ls = {},
-        -- marksman = {},
-        markdown_oxide = {
-            workspace = {
-                didChangeWatchedFiles = {
-                    dynamicRegistration = true,
-                },
-            },
-        },
+    local lsp_servers = {
+        'clangd',
+        'rust_analyzer',
+        'bashls',
+        'pyright',
+        'ts_ls',
+        'zls',
+        'lua_ls',
+        -- 'marksman',
+        'markdown_oxide',
     }
 
-    require('mason-tool-installer').setup({
-        ensure_installed = vim.tbl_keys(servers or {}),
+    -- See ":help lspconfig-all" for LSP configs!
+
+    -- Any configs tweaks via "vim.lsp.config('<server>', { ... })" must
+    -- happen here before setting up mason-lspconfig since mason-lspconfig
+    -- will call "vim.lsp.enable('<server>')" for each server.
+
+    -- Neovim doesn't support everything that is in the LSP specification and
+    -- blink.cmp adds more. Here the default capabilities are extended for
+    -- use by all LSP servers.
+    vim.lsp.config('*', {
+        capabilities = require('blink.cmp').get_lsp_capabilities(),
     })
 
-    require('mason-lspconfig').setup({
-        handlers = {
-            function(server_name)
-                local server = servers[server_name] or {}
-                -- Override capability values explicitly set in the
-                -- server config above. Useful to disable certain
-                -- features of an LSP.
-                server.capabilities = vim.tbl_deep_extend(
-                    'force', capabilities, server or {})
-                require('lspconfig')[server_name].setup(server)
-            end,
-        },
-    })
-
-    vim.lsp.config('lua_ls', {
-        settings = {
-            Lua = {
-                diagnostics = {
-                    globals = { "vim" },
-                },
-            },
-        },
-    })
+    require('mason').setup()
+    require('mason-lspconfig').setup({ ensure_installed = lsp_servers, })
 end
 
 return M
