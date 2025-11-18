@@ -11,12 +11,12 @@ M.setup = function()
     starter.setup({
         items = {
             starter.sections.sessions(10, true),
-            starter.sections.recent_files(10, false, true),
-            {
-                --{ name = 'Lazy', action = 'Lazy', section = 'Updaters'},
-                { name = 'Mason', action = 'Mason', section = 'Updaters'},
-            },
-            starter.sections.builtin_actions(),
+            -- starter.sections.recent_files(10, false, true),
+            -- {
+            --     --{ name = 'Lazy', action = 'Lazy', section = 'Updaters'},
+            --     { name = 'Mason', action = 'Mason', section = 'Updaters'},
+            -- },
+            -- starter.sections.builtin_actions(),
         },
         content_hooks = {
             starter.gen_hook.aligning('center', 'center'),
@@ -33,6 +33,7 @@ M.setup = function()
 ██████  █████████████████████ ████ █████ █████ ████ █████]]
             return banner
         end,
+        footer = '',
     })
 
     ---------------------------------------------------------------------

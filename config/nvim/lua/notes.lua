@@ -255,7 +255,7 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 })
 
 ------------------------------------------------------------------------------
--- VARIOUS PICKERS -----------------------------------------------------------
+-- HASHTAG PICKERS -----------------------------------------------------------
 ------------------------------------------------------------------------------
 
 -- Helper function to search for a specific tag and show results
@@ -273,11 +273,13 @@ local function search_tag(tag)
                 local file_cache = {}
 
                 for _, line in ipairs(lines) do
-                    local filepath, line_num, content = line:match('^([^:]+):(%d+):(.*)$')
+                    local filepath, line_num, content =
+                        line:match('^([^:]+):(%d+):(.*)$')
 
                     if filepath and line_num and content then
                         if not file_cache[filepath] then
-                            local updated = yaml_get_property(filepath, 'updated')
+                            local updated = yaml_get_property(filepath,
+                                                              'updated')
                             file_cache[filepath] = date_to_ts(updated) or 0
                         end
 
@@ -351,7 +353,8 @@ local function get_codeblock_ranges(filepath)
         if line:match('^```') then
             if in_block then
                 -- End of code block
-                table.insert(ranges, { start = block_start, finish = line_num })
+                table.insert(ranges,
+                             { start = block_start, finish = line_num })
                 in_block = false
                 block_start = nil
             else
@@ -391,17 +394,20 @@ vim.keymap.set('n', '<leader>ns', function()
                 local file_cache = {}
 
                 for _, line in ipairs(lines) do
-                    local filepath, line_num, match = line:match('^([^:]+):(%d+):(.+)$')
+                    local filepath, line_num, match =
+                        line:match('^([^:]+):(%d+):(.+)$')
                     local tag = match and match:match('#([%w/-]+)')
 
                     if filepath and line_num and tag and is_valid_tag(tag) then
                         line_num = tonumber(line_num)
 
                         if not file_cache[filepath] then
-                            file_cache[filepath] = get_codeblock_ranges(filepath)
+                            file_cache[filepath] =
+                                get_codeblock_ranges(filepath)
                         end
 
-                        if not is_in_codeblock(line_num, file_cache[filepath]) then
+                        if not is_in_codeblock(line_num,
+                                               file_cache[filepath]) then
                             tag_counts[tag] = (tag_counts[tag] or 0) + 1
                         end
                     end
@@ -425,7 +431,8 @@ vim.keymap.set('n', '<leader>ns', function()
                     local display_items = {}
                     for _, item in ipairs(items) do
                         table.insert(display_items,
-                                     string.format('%-20s (%d)', item.tag, item.count))
+                                     string.format('%-20s (%d)', item.tag,
+                                                   item.count))
                     end
                     return pick.default_show(buf_id, display_items, query,
                                              { show_icons = true })
@@ -441,75 +448,94 @@ vim.keymap.set('n', '<leader>ns', function()
 end,
 { desc = '[N]otes Tag [S]earch' })
 
--- search for open tasks
-vim.keymap.set('n', '<leader>nto', function()
-    pick.builtin.grep({
-        globs = { '*.md' },
-        pattern = [[^\s*- \[ \] ]],
-    })
-end,
-{ desc = '[N]otes [T]asks [O]pen' })
+------------------------------------------------------------------------------
+-- TASK PICKERS --------------------------------------------------------------
+------------------------------------------------------------------------------
 
--- search for completed tasks
-vim.keymap.set('n', '<leader>ntc', function()
-    pick.builtin.grep({
-        globs = { '*.md' },
-        pattern = [[\s\[completion:: ]],
-    })
-end,
-{ desc = '[N]otes [T]asks [C]ompleted' })
+-- helper function to create a task picker with sorting by a date/time
+local function search_tasks(opts)
+    local rg_pattern = opts.pattern
+    local picker_name = opts.name
 
--- search for punted tasks
-vim.keymap.set('n', '<leader>ntp', function()
-    pick.builtin.grep({
-        globs = { '*.md' },
-        pattern = [[\s\[punted:: ]],
-    })
-end,
-{ desc = '[N]otes [T]asks [P]unted' })
+    -- optional function(task_ts) -> boolean
+    local time_filter = opts.time_filter
 
--- search for completed or punted tasks from the past month
-vim.keymap.set('n', '<leader>ntr', function()
-    local one_month_ago = os.time() - (30 * 24 * 60 * 60)
+    -- optional function(content) -> type, date
+    local type_extractor = opts.type_extractor
+
+    -- optional boolean: sort by task date instead of file timestamp
+    local sort_by_task_date = opts.sort_by_task_date or false
 
     pick.builtin.cli(
         {
             command = {
-                'rg', '--no-heading', '--line-number',
-                '--color=never', '\\s\\[(completion|punted)::\\s',
-                '--glob', '*.md'
+                'rg', '--no-heading', '--line-number', '--color=never',
+                rg_pattern, '--glob', '*.md'
             },
             postprocess = function(lines)
                 local tasks = {}
+                local file_cache = {}
 
                 for _, line in ipairs(lines) do
-                    -- Parse: filepath:line_number:content
-                    local filepath, line_num, content = line:match('^([^:]+):(%d+):(.*)$')
+                    local filepath, line_num, content =
+                        line:match('^([^:]+):(%d+):(.*)$')
                     if filepath and content then
-                        -- Extract date and type from [completion:: YYYY-MM-DD] or [punted:: YYYY-MM-DD]
-                        local date_str = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
-                        local task_type = 'completion'
-
-                        if not date_str then
-                            date_str = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
-                            task_type = 'punted'
+                        -- get file's updated timestamp and cache it
+                        if not file_cache[filepath] then
+                            local updated =
+                                yaml_get_property(filepath, 'updated')
+                            file_cache[filepath] = {
+                                timestamp = date_to_ts(updated) or 0,
+                                date_str = updated,
+                            }
                         end
 
-                        if date_str then
-                            local task_ts = date_to_ts(date_str)
+                        local task_type = nil
+                        local task_date = nil
 
-                            -- Only include tasks from the past month
-                            if task_ts and task_ts >= one_month_ago then
-                                table.insert(tasks, {
-                                    path = filepath,
-                                    lnum = tonumber(line_num),
-                                    content = content:gsub('^%s+', ''),
-                                    date = date_str,
-                                    timestamp = task_ts,
-                                    type = task_type
-                                })
+                        -- extract task type/date if extractor is provided
+                        if type_extractor then
+                            task_type, task_date = type_extractor(content)
+                        end
+
+                        -- apply time filter if provided
+                        if time_filter then
+                            local task_ts =
+                                task_date and date_to_ts(task_date)
+                            if not task_ts or not time_filter(task_ts) then
+                                goto continue
                             end
                         end
+
+                        -- determine which timestamp to use for sorting
+                        local sort_timestamp = file_cache[filepath].timestamp
+                        if sort_by_task_date and task_date then
+                            sort_timestamp =
+                                date_to_ts(task_date) or sort_timestamp
+                        end
+
+                        -- determine which date string to display
+                        local display_date =
+                            task_date or file_cache[filepath].date_str
+
+                        -- strip time component if present
+                        if display_date then
+                            display_date =
+                                display_date:match('^(%d%d%d%d%-%d%d%-%d%d)')
+                                or display_date
+                        end
+
+                        table.insert(tasks, {
+                            path = filepath,
+                            lnum = tonumber(line_num),
+                            content = content:gsub('^%s+', ''),
+                            timestamp = sort_timestamp,
+                            type = task_type,
+                            date = task_date,
+                            display_date = display_date,
+                        })
+
+                        ::continue::
                     end
                 end
 
@@ -523,26 +549,142 @@ vim.keymap.set('n', '<leader>ntr', function()
         },
         {
             source = {
+                name = picker_name,
                 cwd = notes_dir,
-                name = 'Recent Completed/Punted Tasks (Past Month)',
                 show = function(buf_id, items, query)
                     local display_items = {}
+
                     for _, item in ipairs(items) do
-                        local type_label = item.type == 'completion' and '✓' or '→'
+                        local type_label = 'o'
+                        if item.type == 'completion' then
+                            type_label = '✓'
+                        elseif item.type == 'punted' then
+                            type_label = '→'
+                        end
+
                         table.insert(display_items,
                                      string.format('%s %s | %s:%s | %s',
                                                    type_label,
-                                                   item.date,
+                                                   item.display_date or '',
                                                    item.path,
                                                    item.lnum,
                                                    item.content))
                     end
+
                     return pick.default_show(buf_id, display_items, query,
                                              { show_icons = true })
-                end,
+                end
+                -- match = function(stritems, inds, query)
+                --     return pick.default_match(stritems, inds, query,
+                --                               { sync = true,
+                --                                 preserve_order = true })
+                -- end
             },
         }
     )
+end
+
+-- search for all tasks
+vim.keymap.set('n', '<leader>nta', function()
+    search_tasks({
+        pattern = [[^\s*- \[ \] |^\s*- \[x\] |^\s*- \[-\] ]],
+        name = 'All Tasks',
+        sort_by_task_date = true,
+        type_extractor = function(content)
+            -- check for the completion date first
+            local date = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
+            if date then
+                return 'completion', date
+            end
+            -- next check for the punted date
+            date = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
+            if date then
+                return 'punted', date
+            end
+            -- determine type by checkbox if no date found
+            if content:match('^%s*-%s*%[x%]') then
+                return 'completion', nil
+            elseif content:match('^%s*-%s*%[%-]') then
+                return 'punted', nil
+            elseif content:match('^%s*-%s*%[%s%]') then
+                return 'open', nil
+            end
+            return nil, nil
+        end,
+    })
+end,
+{ desc = '[N]otes [T]asks [A]ll' })
+
+-- search for open tasks
+vim.keymap.set('n', '<leader>nto', function()
+    search_tasks({
+        pattern = [[^\s*- \[ \] ]],
+        name = 'Open Tasks',
+    })
+end,
+{ desc = '[N]otes [T]asks [O]pen' })
+
+-- search for completed tasks
+vim.keymap.set('n', '<leader>ntc', function()
+    search_tasks({
+        pattern = [[^\s*- \[x\] ]],
+        name = 'Completed Tasks',
+        sort_by_task_date = true,
+        type_extractor = function(content)
+            local date = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
+            return 'completion', date
+        end,
+    })
+end,
+{ desc = '[N]otes [T]asks [C]ompleted' })
+
+-- search for punted tasks
+vim.keymap.set('n', '<leader>ntp', function()
+    search_tasks({
+        pattern = [[^\s*- \[-\] ]],
+        name = 'Punted Tasks',
+        sort_by_task_date = true,
+        type_extractor = function(content)
+            local date = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
+            return 'punted', date
+        end,
+    })
+end,
+{ desc = '[N]otes [T]asks [P]unted' })
+
+-- search for completed or punted tasks from the past 6 months
+vim.keymap.set('n', '<leader>ntr', function()
+    local one_month_ago = os.time() - (6 * 30 * 24 * 60 * 60)
+
+    search_tasks({
+        pattern = [[^\s*- \[x\] |^\s*- \[-\] ]],
+        name = 'Recent Completed/Punted Tasks (Past Month)',
+        sort_by_task_date = true,
+        type_extractor = function(content)
+            -- check for the completion date first
+            local date = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
+            if date then
+                return 'completion', date
+            end
+            -- next check for the punted date
+            date = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
+            if date then
+                return 'punted', date
+            end
+            -- determine type by checkbox if no date found
+            if content:match('^%s*-%s*%[x%]') then
+                return 'completion', nil
+            elseif content:match('^%s*-%s*%[%-]') then
+                return 'punted', nil
+            end
+            return nil, nil
+        end,
+        time_filter = function(task_ts)
+            -- only filter if we have a task timestamp
+            -- if task_ts is nil, it means no date was found, so we keep it
+            return task_ts == nil or task_ts >= one_month_ago
+        end,
+    })
 end,
 { desc = '[N]otes [T]asks [R]ecent (Past Month)' })
 
@@ -1069,7 +1211,7 @@ end,
 { desc = '[N]otes [R]ead [P]unted' })
 
 ------------------------------------------------------------------------------
--- TAG MANAGEMENT ------------------------------------------------------------
+-- FILE TAG MANAGEMENT -------------------------------------------------------
 ------------------------------------------------------------------------------
 
 -- returns the start/end line index of the yaml frontmatter
@@ -1261,7 +1403,7 @@ vim.keymap.set('n', '<leader>mtr', tag_remove,
 ------------------------------------------------------------------------------
 
 pick.registry.recent_files = function(local_opts)
-    pick.builtin.cli(
+    return pick.builtin.cli(
         {
             command = {
                 'fd', '-e', 'md',
@@ -1312,13 +1454,14 @@ pick.registry.recent_files = function(local_opts)
         },
         {
             source = {
+                cwd = notes_dir,
                 name = 'Recent Notes',
                 show = function(buf_id, items, query)
                     local display_items = {}
                     for _, item in ipairs(items) do
                         table.insert(display_items,
                                      string.format('%s | %s',
-                                                   os.date('%Y-%m-%dT%H:%M',
+                                                   os.date('%Y-%m-%d',
                                                            item.timestamp),
                                                    item.path))
                     end
@@ -1474,7 +1617,8 @@ local function clear_table_except_first_column()
     vim.api.nvim_buf_set_lines(0, start_row - 1, end_row, false, new_lines)
 end
 
-vim.api.nvim_create_user_command('ClearTableCells', clear_table_except_first_column, {
+vim.api.nvim_create_user_command(
+    'ClearTableCells', clear_table_except_first_column, {
     range = true,
     desc = 'Clear all table cells except first column in visual selection'
 })
@@ -1625,7 +1769,8 @@ vim.keymap.set('n', '<leader>nq', function()
     for _, line in ipairs(lines) do
         local line_length = vim.fn.strdisplaywidth(line)
         -- calculate how many wrapped lines this will take (at least 1)
-        visual_height = visual_height + math.max(1, math.ceil(line_length / width))
+        visual_height =
+            visual_height + math.max(1, math.ceil(line_length / width))
     end
 
     local max_height = math.floor(vim.o.lines * 0.8) -- 80% of screen height
@@ -1664,8 +1809,11 @@ end,
 local notes_help = {
     '<leader>nh                         Notes Keymap Help',
     '',
-    '<leader>nd                         Open Random Note',
-    '<leader>nq                         Display Random Quote',
+    '<leader>sf                         All Files',
+    '<leader>nr                         Recent Notes',
+    '',
+    '<leader>nd                         Random Note',
+    '<leader>nq                         Random Quote',
     '',
     '<leader>ng                         Search for Tag',
     '<leader>ns                         Select Tag and Search',
