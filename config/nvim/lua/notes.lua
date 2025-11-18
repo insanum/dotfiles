@@ -2,6 +2,23 @@
 local notes_dir = '/Volumes/work/notes'
 local pick = require('mini.pick')
 
+------------------------------------------------------------------------------
+-- CONSTANTS ------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+local PATTERNS = {
+    DATE = '%d%d%d%d%-%d%d%-%d%d',
+    DATE_ISO = '^%d%d%d%d%-%d%d%-%d%d$',
+    CHECKBOX_DONE = '^%s*-%s*%[x%]',
+    CHECKBOX_PUNTED = '^%s*-%s*%[%-]',
+    CHECKBOX_OPEN = '^%s*-%s*%[%s%]',
+    COMPLETION_TAG = '%%[completion:: (%s)%%]',
+    PUNTED_TAG = '%%[punted:: (%s)%%]',
+}
+
+local RG_DEFAULTS = { '--no-heading', '--line-number', '--color=never' }
+local RG_MD_GLOB = { '--glob', '*.md' }
+
 -- set the default config for markdown files
 vim.api.nvim_create_autocmd('FileType', {
     pattern = { 'markdown' },
@@ -36,6 +53,15 @@ vim.api.nvim_create_autocmd('FileType', {
 ------------------------------------------------------------------------------
 -- HELPER FUNCTIONS ----------------------------------------------------------
 ------------------------------------------------------------------------------
+
+-- helper function for y/n confirmation before executing an action
+local function confirm_and_run(prompt, action)
+    vim.ui.input({ prompt = prompt .. ' (y/n): '}, function(input)
+        if input == 'y' or input == 'yes' then
+            action()
+        end
+    end)
+end
 
 local function get_file_mtime(filepath)
     local stat = vim.uv.fs_stat(filepath)
@@ -151,15 +177,7 @@ end
 
 local function yaml_get_property(filepath, property)
     local yaml = yaml_get(filepath)
-    if not yaml then
-        return nil
-    end
-
-    if yaml[property] then
-        return yaml[property]
-    else
-        return nil
-    end
+    return yaml and yaml[property] or nil
 end
 
 ------------------------------------------------------------------------------
@@ -452,6 +470,29 @@ end,
 -- TASK PICKERS --------------------------------------------------------------
 ------------------------------------------------------------------------------
 
+-- helper function to extract task type and date from content
+local function extract_task_type_and_date(content)
+    -- check for completion date first
+    local date = content:match(PATTERNS.COMPLETION_TAG:format(PATTERNS.DATE))
+    if date then
+        return 'completion', date
+    end
+    -- next check for punted date
+    date = content:match(PATTERNS.PUNTED_TAG:format(PATTERNS.DATE))
+    if date then
+        return 'punted', date
+    end
+    -- determine type by checkbox if no date found
+    if content:match(PATTERNS.CHECKBOX_DONE) then
+        return 'completion', nil
+    elseif content:match(PATTERNS.CHECKBOX_PUNTED) then
+        return 'punted', nil
+    elseif content:match(PATTERNS.CHECKBOX_OPEN) then
+        return 'open', nil
+    end
+    return nil, nil
+end
+
 -- helper function to create a task picker with sorting by a date/time
 local function search_tasks(opts)
     local rg_pattern = opts.pattern
@@ -590,27 +631,7 @@ vim.keymap.set('n', '<leader>nta', function()
         pattern = [[^\s*- \[ \] |^\s*- \[x\] |^\s*- \[-\] ]],
         name = 'All Tasks',
         sort_by_task_date = true,
-        type_extractor = function(content)
-            -- check for the completion date first
-            local date = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
-            if date then
-                return 'completion', date
-            end
-            -- next check for the punted date
-            date = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
-            if date then
-                return 'punted', date
-            end
-            -- determine type by checkbox if no date found
-            if content:match('^%s*-%s*%[x%]') then
-                return 'completion', nil
-            elseif content:match('^%s*-%s*%[%-]') then
-                return 'punted', nil
-            elseif content:match('^%s*-%s*%[%s%]') then
-                return 'open', nil
-            end
-            return nil, nil
-        end,
+        type_extractor = extract_task_type_and_date,
     })
 end,
 { desc = '[N]otes [T]asks [A]ll' })
@@ -630,10 +651,7 @@ vim.keymap.set('n', '<leader>ntc', function()
         pattern = [[^\s*- \[x\] ]],
         name = 'Completed Tasks',
         sort_by_task_date = true,
-        type_extractor = function(content)
-            local date = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
-            return 'completion', date
-        end,
+        type_extractor = extract_task_type_and_date,
     })
 end,
 { desc = '[N]otes [T]asks [C]ompleted' })
@@ -644,10 +662,7 @@ vim.keymap.set('n', '<leader>ntp', function()
         pattern = [[^\s*- \[-\] ]],
         name = 'Punted Tasks',
         sort_by_task_date = true,
-        type_extractor = function(content)
-            local date = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
-            return 'punted', date
-        end,
+        type_extractor = extract_task_type_and_date,
     })
 end,
 { desc = '[N]otes [T]asks [P]unted' })
@@ -658,27 +673,9 @@ vim.keymap.set('n', '<leader>ntr', function()
 
     search_tasks({
         pattern = [[^\s*- \[x\] |^\s*- \[-\] ]],
-        name = 'Recent Completed/Punted Tasks (Past Month)',
+        name = 'Recent Completed/Punted Tasks (Past 6 Months)',
         sort_by_task_date = true,
-        type_extractor = function(content)
-            -- check for the completion date first
-            local date = content:match('%[completion:: (%d%d%d%d%-%d%d%-%d%d)%]')
-            if date then
-                return 'completion', date
-            end
-            -- next check for the punted date
-            date = content:match('%[punted:: (%d%d%d%d%-%d%d%-%d%d)%]')
-            if date then
-                return 'punted', date
-            end
-            -- determine type by checkbox if no date found
-            if content:match('^%s*-%s*%[x%]') then
-                return 'completion', nil
-            elseif content:match('^%s*-%s*%[%-]') then
-                return 'punted', nil
-            end
-            return nil, nil
-        end,
+        type_extractor = extract_task_type_and_date,
         time_filter = function(task_ts)
             -- only filter if we have a task timestamp
             -- if task_ts is nil, it means no date was found, so we keep it
@@ -686,7 +683,7 @@ vim.keymap.set('n', '<leader>ntr', function()
         end,
     })
 end,
-{ desc = '[N]otes [T]asks [R]ecent (Past Month)' })
+{ desc = '[N]otes [T]asks [R]ecent (Past 6 Months)' })
 
 ------------------------------------------------------------------------------
 -- TOGGLE DATAVIEW TAGS ------------------------------------------------------
@@ -709,21 +706,22 @@ local function toggle_dataview_tag(tag, tag_pattern)
     vim.api.nvim_buf_set_lines(0, l_num - 1, l_num, false, { l })
 end
 
+-- factory function to create tag togglers
+local function create_dataview_tag_toggler(tag_type)
+    return function()
+        local tag = string.format('[%s:: %s]', tag_type, os.date('%Y-%m-%d'))
+        local tag_pattern = string.format('%%[%s:: %s%%]$', tag_type, PATTERNS.DATE)
+        toggle_dataview_tag(tag, tag_pattern)
+    end
+end
+
 -- toggle completion
-vim.keymap.set('n', '<leader>nc', function()
-    local tag = '[completion:: ' .. os.date('%Y-%m-%d') .. ']'
-    local tag_pattern = '%[completion:: %d%d%d%d%-%d%d%-%d%d%]$'
-    toggle_dataview_tag(tag, tag_pattern)
-end,
-{ desc = '[N]otes [C]omplete Task' })
+vim.keymap.set('n', '<leader>nc', create_dataview_tag_toggler('completion'),
+    { desc = '[N]otes [C]omplete Task' })
 
 -- toggle punted
-vim.keymap.set('n', '<leader>np', function()
-    local tag = '[punted:: ' .. os.date('%Y-%m-%d') .. ']'
-    local tag_pattern = '%[punted:: %d%d%d%d%-%d%d%-%d%d%]$'
-    toggle_dataview_tag(tag, tag_pattern)
-end,
-{ desc = '[N]otes [P]unt Task' })
+vim.keymap.set('n', '<leader>np', create_dataview_tag_toggler('punted'),
+    { desc = '[N]otes [P]unt Task' })
 
 ------------------------------------------------------------------------------
 -- JOURNAL DAY ---------------------------------------------------------------
@@ -1507,12 +1505,8 @@ vim.keymap.set('n', '<leader>nP', function()
         return
     end
 
-    vim.ui.input({
-        prompt = 'Open "' .. file .. '" (y/n): '
-    }, function(input)
-        if input == 'y' or input == 'yes' then
-            run_pdf_expert(file_path)
-        end
+    confirm_and_run('Open "' .. file .. '"', function()
+        run_pdf_expert(file_path)
     end)
 end,
 { desc = '[N]otes [P]DF Expert' })
@@ -1553,16 +1547,13 @@ vim.keymap.set('n', '<leader>nx', function()
     local file_path = assets_dir .. file
     local efile_path = assets_dir .. efile
 
-    local prompt = 'Edit "' .. efile .. '" (y/n): '
-
+    local prompt = 'Edit "' .. efile .. '"'
     if vim.fn.filereadable(file_path) == 0 then
         prompt = 'Create and ' .. prompt
     end
 
-    vim.ui.input({ prompt = prompt }, function(input)
-        if input == 'y' or input == 'yes' then
-            run_excalidraw(efile_path)
-        end
+    confirm_and_run(prompt, function()
+        run_excalidraw(efile_path)
     end)
 end,
 { desc = '[N]otes E[X]calidraw' })
