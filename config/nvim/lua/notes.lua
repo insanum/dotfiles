@@ -1750,8 +1750,8 @@ vim.keymap.set('n', '<leader>nq', function()
     -- create a new floating window
     local buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    vim.api.nvim_buf_set_option(buf, 'modifiable', false)
-    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
+    vim.api.nvim_set_option_value('modifiable', false, { buf = buf })
+    vim.api.nvim_set_option_value('bufhidden', 'wipe', { buf = buf })
 
     -- calculate window size to fit all content
     local width = 70
@@ -1780,8 +1780,8 @@ vim.keymap.set('n', '<leader>nq', function()
     local win = vim.api.nvim_open_win(buf, true, win_opts)
 
     -- set wrap and linebreak for better text display
-    vim.api.nvim_win_set_option(win, 'wrap', true)
-    vim.api.nvim_win_set_option(win, 'linebreak', true)
+    vim.api.nvim_set_option_value('wrap', true, { win = win })
+    vim.api.nvim_set_option_value('linebreak', true, { win = win })
 
     -- close with 'q' or ESC
     local close_win = function()
@@ -1791,6 +1791,116 @@ vim.keymap.set('n', '<leader>nq', function()
     vim.keymap.set('n', '<Esc>', close_win, { buffer = buf, noremap = true })
 end,
 { desc = '[N]otes Random [Q]uote' })
+
+------------------------------------------------------------------------------
+-- BROKEN LINK CHECKER --------------------------------------------------------
+------------------------------------------------------------------------------
+
+-- helper function to build file cache for link checking
+local function build_file_cache()
+    local cache = {}
+    local files = vim.fn.systemlist(
+        string.format('find %s -type f', vim.fn.shellescape(notes_dir))
+    )
+
+    for _, fpath in ipairs(files) do
+        local relpath = fpath:gsub('^' .. vim.pesc(notes_dir) .. '/', '')
+        local basename = vim.fn.fnamemodify(fpath, ':t')
+
+        -- store by basename and relpath (lowercase for case-insensitive)
+        cache[basename:lower()] = true
+        cache[relpath:lower()] = true
+
+        -- for .md files, also store without extension
+        if relpath:match('%.md$') then
+            cache[relpath:gsub('%.md$', ''):lower()] = true
+            cache[basename:gsub('%.md$', ''):lower()] = true
+        end
+    end
+
+    return cache
+end
+
+-- helper function to extract clean link target from [[...]]
+local function extract_link_target(link)
+    -- strip alias: [[file|alias]] -> file
+    local target = link:match('^([^|]+)') or link
+    -- strip heading: [[file#heading]] -> file
+    target = target:match('^([^#]+)') or target
+    -- trim whitespace
+    return target:gsub('^%s*(.-)%s*$', '%1')
+end
+
+vim.keymap.set('n', '<leader>nB', function()
+    pick.builtin.cli(
+        {
+            command = {
+                'rg', '--no-heading', '--line-number', '--color=never',
+                '\\[\\[[^]]+\\]\\]', '--glob', '*.md'
+            },
+            postprocess = function(lines)
+                local broken_links = {}
+                local file_cache = build_file_cache()
+                local codeblock_cache = {}
+
+                for _, line in ipairs(lines) do
+                    local filepath, line_num, content =
+                        line:match('^([^:]+):(%d+):(.*)$')
+
+                    if not filepath then goto continue_line end
+
+                    line_num = tonumber(line_num)
+
+                    -- skip code blocks
+                    if not codeblock_cache[filepath] then
+                        codeblock_cache[filepath] =
+                            get_codeblock_ranges(filepath)
+                    end
+                    if is_in_codeblock(line_num,
+                                       codeblock_cache[filepath]) then
+                        goto continue_line
+                    end
+
+                    -- check each link on the line
+                    for link in content:gmatch('%[%[([^%]]+)%]%]') do
+                        local target = extract_link_target(link)
+
+                        if target ~= '' and not file_cache[target:lower()] then
+                            table.insert(broken_links, {
+                                path = filepath,
+                                lnum = line_num,
+                                link = link,
+                            })
+                        end
+                    end
+
+                    ::continue_line::
+                end
+
+                return broken_links
+            end
+        },
+        {
+            source = {
+                cwd = notes_dir,
+                name = 'Broken Links',
+                show = function(buf_id, items, query)
+                    local display_items = {}
+                    for _, item in ipairs(items) do
+                        table.insert(display_items,
+                                     string.format('%s:%s | [[%s]]',
+                                                   item.path,
+                                                   item.lnum,
+                                                   item.link))
+                    end
+                    return pick.default_show(buf_id, display_items, query,
+                                             { show_icons = true })
+                end,
+            },
+        }
+    )
+end,
+{ desc = '[N]otes [B]roken Links' })
 
 ------------------------------------------------------------------------------
 -- KEYMAP HELP ---------------------------------------------------------------
@@ -1849,6 +1959,7 @@ local notes_help = {
     ':lua vim.lsp.buf.code_action()     Create file for unresolved link',
     '',
     'gf                                 Follow file link',
+    '<leader>nB                         Find broken links',
     '',
     ' --> Markdown commands <--',
     '',
