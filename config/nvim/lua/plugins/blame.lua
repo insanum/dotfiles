@@ -1,11 +1,9 @@
-local M = {}
-
-M.setup = function(add)
-    add({
-        source = 'FabijanZulj/blame.nvim',
-    })
-
-    require('blame').setup()
-end
+local M = {
+    name = 'blame',
+    plug = {
+        'https://github.com/FabijanZulj/blame.nvim',
+    },
+    priority = 90,
+}
 
 return M

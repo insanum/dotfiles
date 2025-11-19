@@ -1,14 +1,17 @@
-local M = {}
+local M = {
+    name = 'lspconfig',
+    setup = false,
+    plug = {
+        'https://github.com/neovim/nvim-lspconfig',
+    },
+    depends = {
+        'https://github.com/williamboman/mason.nvim',
+        'https://github.com/williamboman/mason-lspconfig.nvim',
+    },
+    priority = 50,
+}
 
-M.setup = function(add)
-    add({
-        source = 'neovim/nvim-lspconfig',
-        depends = {
-            'williamboman/mason.nvim',
-            'williamboman/mason-lspconfig.nvim',
-        }
-    })
-
+M.post_setup = function()
     local lsp_servers = {
         'clangd',
         'rust_analyzer',
@@ -31,11 +34,11 @@ M.setup = function(add)
     -- blink.cmp adds more. Here the default capabilities are extended for
     -- use by all LSP servers.
     vim.lsp.config('*', {
-        capabilities = require('blink.cmp').get_lsp_capabilities(),
+        capabilities = require('blink.cmp').get_lsp_capabilities()
     })
 
     require('mason').setup()
-    require('mason-lspconfig').setup({ ensure_installed = lsp_servers, })
+    require('mason-lspconfig').setup({ ensure_installed = lsp_servers })
 end
 
 return M

@@ -1,13 +1,9 @@
 local M = {
-    now = true,
+    name = 'markdown-plus',
+    plug = {
+        'https://github.com/yousefhadder/markdown-plus.nvim',
+    },
+    priority = 10,
 }
-
-M.setup = function(add)
-    add({
-        source = 'yousefhadder/markdown-plus.nvim',
-    })
-
-    require("markdown-plus").setup()
-end
 
 return M

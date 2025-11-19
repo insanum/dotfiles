@@ -1,13 +1,9 @@
 local M = {
-    now = true,
+    name = 'tokyonight',
+    plug = {
+        'https://github.com/folke/tokyonight.nvim',
+    },
+    priority = 1,
 }
-
-M.setup = function(add)
-    add({
-        source = 'folke/tokyonight.nvim',
-    })
-
-    require('tokyonight').setup()
-end
 
 return M

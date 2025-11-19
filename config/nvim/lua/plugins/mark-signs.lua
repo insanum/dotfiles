@@ -1,18 +1,16 @@
 local M = {
-    now = true,
+    name = 'mark-signs',
+    plug = {
+        -- '/Volumes/work/git/mark-signs.nvim',
+        'https://github.com/insanum/mark-signs.nvim',
+    },
+    priority = 5,
 }
 
-M.setup = function(add)
-    add({
-        --source = '/Volumes/work/git/mark-signs.nvim',
-        source = 'insanum/mark-signs.nvim',
-    })
-
-    require('mark-signs').setup {
-        --builtin_marks = { '.', '^', '`', '\'', '"', '<', '>', '[', ']' },
-        builtin_marks = { },
-        sign_priority = { lower=10, upper=15, builtin=8 },
-    }
-end
+M.opts = {
+    --builtin_marks = { '.', '^', '`', '\'', '"', '<', '>', '[', ']' },
+    builtin_marks = { },
+    sign_priority = { lower=10, upper=15, builtin=8 },
+}
 
 return M

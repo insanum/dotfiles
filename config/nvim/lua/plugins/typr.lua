@@ -1,14 +1,12 @@
-local M = {}
-
-M.setup = function(add)
-    add({
-        source = 'nvzone/typr',
-        depends = {
-            'nvzone/volt',
-        },
-    })
-
-    require('typr').setup()
-end
+local M = {
+    name = 'typr',
+    plug = {
+        'https://github.com/nvzone/typr',
+    },
+    depends = {
+        'https://github.com/nvzone/volt',
+    },
+    priority = 90,
+}
 
 return M

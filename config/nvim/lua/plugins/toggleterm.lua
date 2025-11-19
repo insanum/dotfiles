@@ -1,13 +1,13 @@
-local M = {}
+local M = {
+    name = 'toggleterm',
+    plug = {
+        'https://github.com/akinsho/toggleterm.nvim',
+    },
+    priority = 90,
+}
 
-M.setup = function(add)
-    add({
-        source = 'akinsho/toggleterm.nvim',
-    })
-
-    require('toggleterm').setup({
-        shade_terminals = false,
-    })
-end
+M.opts = {
+    shade_terminals = false,
+}
 
 return M

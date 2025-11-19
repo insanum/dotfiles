@@ -1,8 +1,13 @@
 local M = {
-    now = true,
+    name = 'mini',
+    setup = false,
+    plug = {
+        'https://github.com/nvim-mini/mini.nvim',
+    },
+    priority = 2,
 }
 
-M.setup = function()
+M.post_setup = function()
     ---------------------------------------------------------------------
     -- mini.starter -----------------------------------------------------
     ---------------------------------------------------------------------

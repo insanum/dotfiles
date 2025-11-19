@@ -1,18 +1,18 @@
-local M = {}
+local M = {
+    name = 'snacks',
+    plug = {
+        'https://github.com/folke/snacks.nvim',
+    },
+    priority = 90,
+}
 
-M.setup = function(add)
-    add({
-        source = 'folke/snacks.nvim',
-    })
-
-    require('snacks').setup({
-        image = {
-            enabled = true,
-            doc = {
-                inline = true,
-            },
+M.opts = {
+    image = {
+        enabled = true,
+        doc = {
+            inline = true,
         },
-    })
-end
+    },
+}
 
 return M

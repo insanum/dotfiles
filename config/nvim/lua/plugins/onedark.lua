@@ -1,13 +1,12 @@
 local M = {
-    now = true,
+    name = 'onedark',
+    plug = {
+        {
+            src = 'https://github.com/navarasu/onedark.nvim',
+            version = 'v0.1.0'
+        },
+    },
+    priority = 1,
 }
-
-M.setup = function(add)
-    add({
-        source = 'navarasu/onedark.nvim',
-    })
-
-    require('onedark').setup()
-end
 
 return M

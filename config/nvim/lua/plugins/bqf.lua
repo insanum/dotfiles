@@ -1,11 +1,9 @@
-local M = {}
-
-M.setup = function(add)
-    add({
-        source = 'kevinhwang91/nvim-bqf',
-    })
-
-    require('bqf').setup()
-end
+local M = {
+    name = 'bqf',
+    plug = {
+        'https://github.com/kevinhwang91/nvim-bqf',
+    },
+    priority = 90,
+}
 
 return M

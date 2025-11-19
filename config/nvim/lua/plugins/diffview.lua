@@ -1,11 +1,9 @@
-local M = {}
-
-M.setup = function(add)
-    add({
-        source = 'sindrets/diffview.nvim',
-    })
-
-    require('diffview').setup()
-end
+local M = {
+    name = 'diffview',
+    plug = {
+        'https://github.com/sindrets/diffview.nvim',
+    },
+    priority = 90,
+}
 
 return M
