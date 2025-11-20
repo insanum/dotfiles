@@ -67,7 +67,7 @@ M.post_setup = function()
     -- mini.keymap ------------------------------------------------------
     ---------------------------------------------------------------------
 
-    keymap = require('mini.keymap')
+    local keymap = require('mini.keymap')
     keymap.setup()
 
     local mode = { 'i', 'c', 'x', 's' }
@@ -262,11 +262,13 @@ M.post_setup = function()
             choose_marked     = '<C-q>',
             paste             = '',
             location_list     = {
-                char = '<C-o>',
+                char = '<C-l>',
                 func = function()
                     local picks = pick.get_picker_matches()
-                    pick.default_choose_marked(picks.all,
-                                               { list_type = 'location' })
+                    if picks and picks.all then
+                        pick.default_choose_marked(picks.all,
+                                                   { list_type = 'location' })
+                    end
                     return true
                 end,
             },

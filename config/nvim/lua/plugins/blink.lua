@@ -1,7 +1,10 @@
 local M = {
     name = 'blink.cmp',
     plug = {
-        'https://github.com/saghen/blink.cmp',
+        {
+            src = 'https://github.com/saghen/blink.cmp',
+            version = 'v1.8.0',
+        },
     },
     depends = {
         'https://github.com/fang2hou/blink-copilot',
@@ -10,30 +13,30 @@ local M = {
     priority = 50,
 }
 
-M.pre_pack_add = function()
-    local build_blink = function(params)
-        vim.notify('Building blink.cmp', vim.log.levels.INFO)
-        local obj = vim.system({ 'cargo', 'build', '--release' },
-                               { cwd = params.path }):wait()
-        if obj.code == 0 then
-            vim.notify('Building blink.cmp done', vim.log.levels.INFO)
-        else
-            vim.notify('Building blink.cmp failed', vim.log.levels.ERROR)
-        end
-    end
-
-    local blink_hook = function(ev)
-        local name, kind = ev.data.spec.name, ev.data.kind
-        if name == 'blink.cmp' and kind == 'install' then
-            build_blink(ev.data)
-        end
-    end
-
-    vim.api.nvim_create_autocmd('PackChanged', {
-        callback = blink_hook,
-        once = true,
-    })
-end
+-- M.pre_pack_add = function()
+--     local build_blink = function(params)
+--         vim.notify('Building blink.cmp', vim.log.levels.INFO)
+--         local obj = vim.system({ 'cargo', 'build', '--release' },
+--                                { cwd = params.path }):wait()
+--         if obj.code == 0 then
+--             vim.notify('Building blink.cmp done', vim.log.levels.INFO)
+--         else
+--             vim.notify('Building blink.cmp failed', vim.log.levels.ERROR)
+--         end
+--     end
+--
+--     local blink_hook = function(ev)
+--         local name, kind = ev.data.spec.name, ev.data.kind
+--         if name == 'blink.cmp' and kind == 'install' then
+--             build_blink(ev.data)
+--         end
+--     end
+--
+--     vim.api.nvim_create_autocmd('PackChanged', {
+--         callback = blink_hook,
+--         once = true,
+--     })
+-- end
 
 M.opts = {
     -- C-space: Open menu or open docs if already open

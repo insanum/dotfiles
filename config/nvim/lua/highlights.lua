@@ -227,36 +227,19 @@ local function theme_override_all()
     vim.cmd('hi BlinkCmpSignatureHelpBorder guifg=#e16d77')
 end
 
-local function theme_markdown_fix()
-    -- render-markdown needs to re-init after a theme change
-    --vim.cmd('Lazy reload render-markdown.nvim')
-    vim.cmd('DepsUpdateOffline! render-markdown.nvim')
-    local file_types = {
-        'markdown',
-        'copilot-chat',
-        'codecompanion',
-        'Avante',
-    }
-    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_loaded(bufnr) then
-            local buf_filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
-            for _, ft in pairs(file_types) do
-                if buf_filetype == ft then
-                    vim.api.nvim_buf_call(bufnr, function()
-                        vim.cmd('filetype detect') -- This does it!
-                    end)
-                end
-            end
-        end
-    end
+local function theme_tweaks()
+    theme_override_all()
+    update_markdown_headers()
 end
 
 local function theme_set()
     themes.themes[themes.current].set()
-    theme_override_all()
-    update_markdown_headers()
+    theme_tweaks()
 
-    theme_markdown_fix()
+    -- render-markdown needs to re-init after a theme change
+    --require('pack').reload('render-markdown.nvim')
+    vim.cmd('doautocmd ColorScheme')
+
     vim.notify(themes.themes[themes.current].name, vim.log.levels.INFO)
 end
 
@@ -276,11 +259,7 @@ vim.keymap.set('n', '<leader>T', function()
     theme_set()
 end, { desc = "[T]heme change" })
 
-vim.api.nvim_create_autocmd('VimEnter', {
-    callback = function()
-        themes.themes[themes.current].set()
-        theme_override_all()
-        update_markdown_headers()
-    end
-})
+-- Set the default theme right now when loaded!
+themes.themes[themes.current].set()
+theme_tweaks()
 
