@@ -1,33 +1,29 @@
 -- Markdown-specific utilities and commands
 
-local M = {}
+-- register markdown filetype autocmd
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = { 'markdown' },
+    callback = function()
+        vim.opt.spell = true
+        vim.opt.colorcolumn = ''
+        vim.opt.wrap = true
+        vim.opt.linebreak = true
+        vim.opt.textwidth = 0
+        vim.opt.wrapmargin = 0
+        vim.opt.formatoptions:remove('l')
+        vim.opt.formatlistpat = '^\\s*\\d\\+\\.\\s\\+\\|^\\s*-\\s\\+'
+        vim.opt.breakindentopt = 'list:-1'
 
--- Set markdown-specific options and keymaps
-function M.setup_filetype()
-    vim.api.nvim_create_autocmd('FileType', {
-        pattern = { 'markdown' },
-        callback = function()
-            vim.opt.spell = true
-            vim.opt.colorcolumn = ''
-            vim.opt.wrap = true
-            vim.opt.linebreak = true
-            vim.opt.textwidth = 0
-            vim.opt.wrapmargin = 0
-            vim.opt.formatoptions:remove('l')
-            vim.opt.formatlistpat = '^\\s*\\d\\+\\.\\s\\+\\|^\\s*-\\s\\+'
-            vim.opt.breakindentopt = 'list:-1'
+        vim.keymap.set('n', 'j', 'v:count == 0 ? "gj" : "j"',
+                       { expr = true, noremap = true })
+        vim.keymap.set('n', 'k', 'v:count == 0 ? "gk" : "k"',
+                       { expr = true, noremap = true })
 
-            vim.keymap.set('n', 'j', 'v:count == 0 ? "gj" : "j"',
-                           { expr = true, noremap = true })
-            vim.keymap.set('n', 'k', 'v:count == 0 ? "gk" : "k"',
-                           { expr = true, noremap = true })
-
-            vim.keymap.set('n', 'gf',
-                           '<cmd>Pick lsp scope=\'definition\'<CR>',
-                           { desc = 'Edit file under cursor', noremap = true })
-        end
-    })
-end
+        vim.keymap.set('n', 'gf',
+                       '<cmd>Pick lsp scope=\'definition\'<CR>',
+                       { desc = 'Edit file under cursor', noremap = true })
+    end
+})
 
 -- Clear all table cells except first column in visual selection
 local function clear_table_except_first_column()
@@ -40,7 +36,7 @@ local function clear_table_except_first_column()
     for _, line in ipairs(lines) do
         if not line:match('^%s*|') then
             table.insert(new_lines, line)
-            goto SKIP
+            goto continue
         end
 
         local pipe_positions = {}
@@ -54,7 +50,7 @@ local function clear_table_except_first_column()
 
         if #pipe_positions < 2 then
             table.insert(new_lines, line)
-            goto SKIP
+            goto continue
         end
 
         local new_line = line
@@ -70,19 +66,17 @@ local function clear_table_except_first_column()
 
         table.insert(new_lines, new_line)
 
-        ::SKIP::
+        ::continue::
     end
 
     vim.api.nvim_buf_set_lines(0, start_row - 1, end_row, false, new_lines)
 end
 
--- Register the table clearing command
-function M.setup_commands()
-    vim.api.nvim_create_user_command(
-        'ClearTableCells', clear_table_except_first_column, {
-        range = true,
-        desc = 'Clear all table cells except first column in visual selection'
-    })
-end
+-- register commands
 
-return M
+vim.api.nvim_create_user_command(
+    'ClearTableCells', clear_table_except_first_column, {
+    range = true,
+    desc = 'Clear all table cells except first column in visual selection'
+})
+

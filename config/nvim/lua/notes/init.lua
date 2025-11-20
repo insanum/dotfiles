@@ -3,16 +3,15 @@
 NOTES SYSTEM
 
   config.lua    - Constants and configuration (paths, patterns)
-  yaml.lua      - YAML frontmatter parsing and manipulation
+  journal.lua   - Journal day and week entry management
+  links.lua     - Broken wiki-link checker
+  markdown.lua  - Markdown-specific utilities and filetype config
+  misc.lua      - Random notes, quotes, recent files, PDF/Excalidraw
+  reading.lua   - Reading list pickers for PDFs
   tags.lua      - Hashtag searching and file tag management
   tasks.lua     - Task searching, filtering, and toggling
-  journal.lua   - Journal day and week entry management
-  reading.lua   - Reading list pickers for PDFs
-  links.lua     - Broken wiki-link checker
-  pdf.lua       - PDF and Excalidraw utilities
-  markdown.lua  - Markdown-specific utilities and filetype config
-  misc.lua      - Random notes, quotes, recent files, help
   utils.lua     - Generic utility functions
+  yaml.lua      - YAML frontmatter parsing and manipulation
 
 KEY FEATURES:
   - YAML frontmatter auto-update on save
@@ -30,67 +29,60 @@ USAGE:
   See <leader>nh for a complete keymap reference!
 --]]
 
-local yaml     = require('notes.yaml')
-local tags     = require('notes.tags')
-local tasks    = require('notes.tasks')
-local journal  = require('notes.journal')
-local reading  = require('notes.reading')
-local links    = require('notes.links')
-local pdf      = require('notes.pdf')
-local markdown = require('notes.markdown')
-local misc     = require('notes.misc')
-local kmap     = require('keymaps').kmap
-
--- Setup markdown filetype configuration
-markdown.setup_filetype()
-
--- Setup markdown commands
-markdown.setup_commands()
-
--- Setup YAML frontmatter auto-update
-yaml.setup_autocmd()
+require('notes.config')
+require('notes.journal')
+require('notes.links')
+require('notes.markdown')
+require('notes.misc')
+require('notes.reading')
+require('notes.tags')
+require('notes.tasks')
+require('notes.utils')
+require('notes.yaml')
 
 ------------------------------------------------------------------------------
 -- KEYMAPS ------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
+local kmap = require('keymaps').kmap
+
 -- <leader>n<.> - Hashtag searching
 local hashtag_maps = {
-    { 'ng', tags.search,            '[N]otes Ta[G]s' },
-    { 'ns', tags.select_and_search, '[N]otes Tag [S]earch' },
+    { 'ng', 'NotesTagSearch', '[N]otes Ta[G]s' },
+    { 'ns', 'NotesTagSelect', '[N]otes Tag [S]earch' },
 }
 for _, m in ipairs(hashtag_maps) do
-    kmap('n', '<leader>' .. m[1], m[2], { desc = m[3] })
+    kmap('n', '<leader>' .. m[1], '<Cmd>' .. m[2] .. '<CR>', { desc = m[3] })
 end
 
 -- <leader>mt<.> - File tag management
 local file_tag_maps = {
-    { 'mta', tags.add_to_file,      '[M]arkdown [T]ag [A]dd to file' },
-    { 'mtr', tags.remove_from_file, '[M]arkdown [T]ag [R]emove from file' },
+    { 'mta', 'NotesTagAdd',    '[M]arkdown [T]ag [A]dd to file' },
+    { 'mtr', 'NotesTagRemove', '[M]arkdown [T]ag [R]emove from file' },
 }
 for _, m in ipairs(file_tag_maps) do
-    kmap('n', '<leader>' .. m[1], m[2], { desc = m[3] })
+    kmap('n', '<leader>' .. m[1], '<Cmd>' .. m[2] .. '<CR>', { desc = m[3] })
 end
 
 -- <leader>nt<.> - Task searching
 local task_search_maps = {
-    { 'nta', tasks.search_all,       '[N]otes [T]asks [A]ll' },
-    { 'nto', tasks.search_open,      '[N]otes [T]asks [O]pen' },
-    { 'ntc', tasks.search_completed, '[N]otes [T]asks [C]ompleted' },
-    { 'ntp', tasks.search_punted,    '[N]otes [T]asks [P]unted' },
-    { 'ntr', tasks.search_recent,    '[N]otes [T]asks [R]ecent (Past 6 Months)' },
+    { 'nta', 'NotesTasksAll',       '[N]otes [T]asks [A]ll' },
+    { 'nto', 'NotesTasksOpen',      '[N]otes [T]asks [O]pen' },
+    { 'ntc', 'NotesTasksCompleted', '[N]otes [T]asks [C]ompleted' },
+    { 'ntp', 'NotesTasksPunted',    '[N]otes [T]asks [P]unted' },
+    { 'ntr', 'NotesTasksRecent',    '[N]otes [T]asks [R]ecent (Past 6 Months)' },
 }
 for _, m in ipairs(task_search_maps) do
-    kmap('n', '<leader>' .. m[1], m[2], { desc = m[3] })
+    kmap('n', '<leader>' .. m[1], '<Cmd>' .. m[2] .. '<CR>', { desc = m[3] })
 end
 
 -- <leader>n<.> - Task toggling
 local task_toggle_maps = {
-    { 'nc', tasks.toggle_completion, '[N]otes [C]omplete Task' },
-    { 'np', tasks.toggle_punted,     '[N]otes [P]unt Task' },
+    { 'nc', 'NotesTaskToggleComplete', '[N]otes [C]omplete Task' },
+    { 'np', 'NotesTaskTogglePunt',     '[N]otes [P]unt Task' },
 }
 for _, m in ipairs(task_toggle_maps) do
-    kmap('n', '<leader>' .. m[1], m[2], { desc = m[3] })
+    kmap('n', '<leader>' .. m[1], '<Cmd>' .. m[2] .. '<CR>', { desc = m[3] })
 end
 
 -- <leader>jd<.> - Journal day
@@ -119,43 +111,106 @@ end
 
 -- <leader>nr<.> - Reading list
 local reading_maps = {
-    { 'nra', reading.all,       '[N]otes [R]ead [A]ll' },
-    { 'nrt', reading.todo,      '[N]otes [R]ead [T]odo' },
-    { 'nrc', reading.completed, '[N]otes [R]ead [C]ompleted' },
-    { 'nrp', reading.punted,    '[N]otes [R]ead [P]unted' },
+    { 'nra', 'NotesReadingAll',       '[N]otes [R]ead [A]ll' },
+    { 'nrt', 'NotesReadingTodo',      '[N]otes [R]ead [T]odo' },
+    { 'nrc', 'NotesReadingCompleted', '[N]otes [R]ead [C]ompleted' },
+    { 'nrp', 'NotesReadingPunted',    '[N]otes [R]ead [P]unted' },
 }
 for _, m in ipairs(reading_maps) do
-    kmap('n', '<leader>' .. m[1], m[2], { desc = m[3] })
+    kmap('n', '<leader>' .. m[1], '<Cmd>' .. m[2] .. '<CR>', { desc = m[3] })
 end
 
 -- <leader>n<.> - Miscellaneous
 local misc_maps = {
-    { 'nP', pdf.open,            '[N]otes [P]DF Expert' },
-    { 'nx', pdf.edit_excalidraw, '[N]otes E[X]calidraw' },
-    { 'nB', links.find,          '[N]otes [B]roken Links' },
-    { 'nd', misc.random_note,    '[N]otes Ran[D]om' },
-    { 'nq', misc.random_quote,   '[N]otes Random [Q]uote' },
-    { 'nR', misc.recent,         '[N]otes [R]ecent' },
-    { 'nh', misc.help,           '[N]otes [H]elp' },
+    { 'nP', 'NotesPdfOpen',        '[N]otes [P]DF Expert' },
+    { 'nx', 'NotesExcalidrawEdit', '[N]otes E[X]calidraw' },
+    { 'nB', 'NotesBrokenLinks',    '[N]otes [B]roken Links' },
+    { 'nd', 'NotesRandom',         '[N]otes Ran[D]om' },
+    { 'nq', 'NotesQuote',          '[N]otes Random [Q]uote' },
+    { 'nR', 'NotesRecent',         '[N]otes [R]ecent' },
+    { 'nh', 'NotesHelp',           '[N]otes [H]elp' },
 }
 for _, m in ipairs(misc_maps) do
-    kmap('n', '<leader>' .. m[1], m[2], { desc = m[3] })
+    kmap('n', '<leader>' .. m[1], '<Cmd>' .. m[2] .. '<CR>', { desc = m[3] })
 end
 
 ------------------------------------------------------------------------------
--- COMMANDS -----------------------------------------------------------------
+-- NOTES HELP COMMAND --------------------------------------------------------
 ------------------------------------------------------------------------------
 
--- Journal commands
-vim.api.nvim_create_user_command('Journal', journal.open_day,
-    { desc = 'Open journal entry (use +N/-N for offset)', nargs = '?' })
+local pick = require('mini.pick')
 
-vim.api.nvim_create_user_command('JournalWeek', journal.open_week,
-    { desc = 'Open journal week entry (use +N/-N for offset)', nargs = '?' })
+-- Notes help keymap reference
+local notes_help = {
+    '<leader>nh                         Notes Keymap Help',
+    '',
+    '<leader>sf                         All Files',
+    '<leader>nr                         Recent Notes',
+    '',
+    '<leader>nd                         Random Note',
+    '<leader>nq                         Random Quote',
+    '',
+    '<leader>ng                         Search for Tag',
+    '<leader>ns                         Select Tag and Search',
+    '',
+    '<leader>nto                        Search Open Tasks',
+    '<leader>ntc                        Search Completed Tasks',
+    '<leader>ntp                        Search Punted Tasks',
+    '<leader>ntr                        Search Recent Tasks (Past Month)',
+    '',
+    '<leader>nc                         Toggle Task Completed',
+    '<leader>np                         Toggle Task Punted',
+    '',
+    '<leader>nx                         Open image under cursor (Excalidraw)',
+    '<leader>nP                         Open PDF under cursor (PDF Expert)',
+    '',
+    '<leader>jdd  :Journal [+/-N]       Journal Day',
+    '<leader>jdp  :Journal -1           Journal Previous Day',
+    '<leader>jdn  :Journal +1           Journal Next Day',
+    '',
+    '<leader>jww  :JournalWeek [+/-N]   Journal Week',
+    '<leader>jwp  :JournalWeek -1       Journal Previous Week',
+    '<leader>jwn  :JournalWeek +1       Journal Next Week',
+    '',
+    '<leader>jdm  :JournalMissing       Missing Journal Days',
+    '<leader>jwm  :JournalWeekMissing   Missing Journal Week Days',
+    '',
+    '<leader>nra                        Reading List All',
+    '<leader>nrt                        Reading List Todo',
+    '<leader>nrc                        Reading list Completed',
+    '<leader>nrp                        Reading List Punted',
+    '',
+    ' --> LSP integration <--',
+    '',
+    '<leader>K[K]                       Hover show file link',
+    '<leader>ld                         Follow file link',
+    '<leader>lr                         Find all backlinks of current file',
+    '<leader>lr                         Find all backlinks for file link',
+    '<leader>lr                         Tag find all occurrences',
+    '<leader>ls                         List all headings',
+    '<leader>lR                         Rename file',
+    '<leader>lR                         Tag rename across all files',
+    ':lua vim.lsp.buf.code_action()     Create file for unresolved link',
+    '',
+    'gf                                 Follow file link',
+    '<leader>nB                         Find broken links',
+    '',
+    ' --> Markdown commands <--',
+    '',
+    '<leader>mta                        Markdown Tag Add',
+    '<leader>mtr                        Markdown Tag Remove',
+    '<leader>m<...>                     markdown-plus plugin commands',
+    '',
+    '\'<,\'>ClearTableCells               Clear table cells (visual selection)',
+}
 
-vim.api.nvim_create_user_command('JournalMissing', journal.missing_days,
-    { desc = 'List missing journal entries', nargs = '?' })
-
-vim.api.nvim_create_user_command('JournalWeekMissing', journal.missing_weeks,
-    { desc = 'List missing journal week entries', nargs = '?' })
+vim.api.nvim_create_user_command('NotesHelp', function()
+    pick.start({
+        source = {
+            items = notes_help,
+            name = 'Notes Help',
+            choose = function() end
+        },
+    })
+end, { desc = 'Show notes keymap reference' })
 

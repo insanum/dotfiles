@@ -1,9 +1,7 @@
 -- Journal management: daily and weekly entries
 
 local config = require('notes.config')
-local pick = require('mini.pick')
-
-local M = {}
+local pick   = require('mini.pick')
 
 -- Helper function to get journal file path for a given date
 local function journal_entry_path(date_str)
@@ -207,7 +205,7 @@ local function open_journal_week_entry(year, week)
 end
 
 -- Open journal entry for a specific date (or with offset)
-function M.open_day(opts)
+local function open_day(opts)
     local date = current_date()
     local offset = 0
 
@@ -238,7 +236,7 @@ function M.open_day(opts)
 end
 
 -- Open journal week entry (or with offset)
-function M.open_week(opts)
+local function open_week(opts)
     local date = current_date()
     local offset = 0
 
@@ -280,7 +278,7 @@ function M.open_week(opts)
 end
 
 -- Show missing journal day entries
-function M.missing_days()
+local function missing_days()
     local missing_dates = {}
     local date_t = os.time()
 
@@ -310,8 +308,8 @@ function M.missing_days()
 end
 
 -- Show missing journal week entries
-function M.missing_weeks()
-    local missing_weeks = {}
+local function missing_weeks()
+    local missing = {}
     local date_t = os.time()
 
     for i = 0, 52 do
@@ -323,14 +321,14 @@ function M.missing_weeks()
         local journal_week_file = journal_week_path(year, week)
 
         if vim.fn.filereadable(journal_week_file) == 0 then
-            missing_weeks[#missing_weeks + 1] = { year = year, week = week }
+            missing[#missing + 1] = { year = year, week = week }
         end
     end
 
     local week = pick.start({
         source = {
             name = 'Missing Journal Week Entries',
-            items = missing_weeks,
+            items = missing,
             show = function(buf_id, items, query)
                 local display_items = {}
                 for _, item in ipairs(items) do
@@ -352,4 +350,17 @@ function M.missing_weeks()
     open_journal_week_entry(week.year, week.week)
 end
 
-return M
+-- register commands
+
+vim.api.nvim_create_user_command('Journal', open_day,
+    { desc = 'Open journal entry (use +N/-N for offset)', nargs = '?' })
+
+vim.api.nvim_create_user_command('JournalWeek', open_week,
+    { desc = 'Open journal week entry (use +N/-N for offset)', nargs = '?' })
+
+vim.api.nvim_create_user_command('JournalMissing', missing_days,
+    { desc = 'List missing journal entries', nargs = '?' })
+
+vim.api.nvim_create_user_command('JournalWeekMissing', missing_weeks,
+    { desc = 'List missing journal week entries', nargs = '?' })
+

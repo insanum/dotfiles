@@ -3,7 +3,7 @@
 local M = {}
 
 -- Parse YAML frontmatter from a file
-function M.get(filepath)
+function M.yaml_get(filepath)
     local file = io.open(filepath, 'r')
     if not file then
         return nil
@@ -81,46 +81,15 @@ function M.get(filepath)
 end
 
 -- Get a specific property from YAML frontmatter
-function M.get_property(filepath, property)
-    local yaml = M.get(filepath)
+function M.yaml_get_property(filepath, property)
+    local yaml = M.yaml_get(filepath)
     return yaml and yaml[property] or nil
-end
-
--- Convert ISO date string to timestamp
-function M.date_to_ts(date_str)
-    if not date_str then
-        return nil
-    end
-
-    local patterns = {
-        '(%d+)-(%d+)-(%d+)T(%d+):(%d+):(%d+)', -- ISO 8601 with time (secs)
-        '(%d+)-(%d+)-(%d+)T(%d+):(%d+)',       -- ISO 8601 with time (no secs)
-        '(%d+)-(%d+)-(%d+)',                   -- ISO 8601 date only
-    }
-
-    for _, pattern in ipairs(patterns) do
-        local year, month, day, hour, min, sec =
-            string.match(date_str, pattern)
-        if year then
-            return os.time({
-                year = year,
-                month = month,
-                day = day,
-                hour = hour or 0,
-                min = min or 0,
-                sec = sec or 0,
-                isdst = false,
-            })
-        end
-    end
-
-    return nil
 end
 
 -- Returns the start/end line index of the yaml frontmatter
 -- These values are 0-based (end index is exclusive), for nvim_buf_get_lines
 -- Range does NOT include the '---' lines
-function M.get_bounds()
+local function get_bounds()
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
     if #lines == 0 or lines[1] ~= '---' then
@@ -138,8 +107,8 @@ end
 
 -- Returns yaml start/end, list of tags, and tags start/end line indices
 -- All values are 0-based (end index is exclusive), for nvim_buf_get_lines
-function M.get_tags()
-    local yaml_start, yaml_end = M.get_bounds()
+function M.yaml_get_tags()
+    local yaml_start, yaml_end = get_bounds()
     if not yaml_start then
         return nil, nil, {}, nil, nil
     end
@@ -171,93 +140,92 @@ function M.get_tags()
 end
 
 -- Auto-update YAML frontmatter on save
-function M.setup_autocmd()
-    vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
-        pattern = '*.md',
-        callback = function()
-            local bufnr = vim.api.nvim_get_current_buf()
+-- Register autocmd for YAML frontmatter auto-update
+vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
+    pattern = '*.md',
+    callback = function()
+        local bufnr = vim.api.nvim_get_current_buf()
 
-            -- bail if buffer hasn't been modified
-            if not vim.api.nvim_buf_get_option(bufnr, 'modified') then
-                return
+        -- bail if buffer hasn't been modified
+        if not vim.api.nvim_get_option_value('modified', { buf = bufnr }) then
+            return
+        end
+
+        -- bail if buffer isn't of type markdown
+        if vim.bo.filetype ~= 'markdown' then
+            return
+        end
+
+        -- get the lines for this buffer
+        local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+        -- get the current date and time
+        local updated_time = os.date('%Y-%m-%dT%H:%M')
+        local created_time = updated_time
+
+        -- helper to replace the lines in the buffer
+        local function set_buf_lines(new_lines)
+            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_lines)
+        end
+
+        -- helper to create a default yaml frontmatter block
+        local function default_frontmatter()
+            return {
+                '---',
+                'created: ' .. created_time,
+                'updated: ' .. updated_time,
+                '---',
+            }
+        end
+
+        -- detect if the yaml frontmatter exists or not
+        if #lines == 0 or lines[1] ~= '---' then
+            -- no yaml frontmatter, create it with the updated time
+            local new_lines = vim.list_extend(default_frontmatter(), lines)
+            set_buf_lines(new_lines)
+            return
+        end
+
+        -- find the end of the yaml frontmatter
+        local frontmatter_end = nil
+        for i = 2, #lines do
+            if lines[i] == '---' then
+                frontmatter_end = i
+                break
             end
+        end
+        -- if not found then frontmater is malformed, bail
+        if not frontmatter_end then
+            return
+        end
 
-            -- bail if buffer isn't of type markdown
-            if vim.bo.filetype ~= 'markdown' then
-                return
+        -- attribute found flags
+        local found_created = false
+        local created_index = 0
+        local found_updated = false
+
+        -- update or insert the attributes
+        for i = 2, frontmatter_end - 1 do
+            if lines[i]:match('^created:') then
+                found_created = true
+                created_index = i
+            elseif lines[i]:match('^updated:') then
+                found_updated = true
+                lines[i] = 'updated: ' .. updated_time
             end
+        end
 
-            -- get the lines for this buffer
-            local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+        if not found_created then
+            table.insert(lines, 2, 'created: ' .. created_time)
+            created_index = 2
+        end
 
-            -- get the current date and time
-            local updated_time = os.date('%Y-%m-%dT%H:%M')
-            local created_time = updated_time
+        if not found_updated then
+            table.insert(lines, created_index + 1, 'updated: ' .. updated_time)
+        end
 
-            -- helper to replace the lines in the buffer
-            local function set_buf_lines(new_lines)
-                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, new_lines)
-            end
-
-            -- helper to create a default yaml frontmatter block
-            local function default_frontmatter()
-                return {
-                    '---',
-                    'created: ' .. created_time,
-                    'updated: ' .. updated_time,
-                    '---',
-                }
-            end
-
-            -- detect if the yaml frontmatter exists or not
-            if #lines == 0 or lines[1] ~= '---' then
-                -- no yaml frontmatter, create it with the updated time
-                local new_lines = vim.list_extend(default_frontmatter(), lines)
-                set_buf_lines(new_lines)
-                return
-            end
-
-            -- find the end of the yaml frontmatter
-            local frontmatter_end = nil
-            for i = 2, #lines do
-                if lines[i] == '---' then
-                    frontmatter_end = i
-                    break
-                end
-            end
-            -- if not found then frontmater is malformed, bail
-            if not frontmatter_end then
-                return
-            end
-
-            -- attributre found flags
-            local found_created = false
-            local created_index = 0
-            local found_updated = false
-
-            -- update or insert the attributes
-            for i = 2, frontmatter_end - 1 do
-                if lines[i]:match('^created:') then
-                    found_created = true
-                    created_index = i
-                elseif lines[i]:match('^updated:') then
-                    found_updated = true
-                    lines[i] = 'updated: ' .. updated_time
-                end
-            end
-
-            if not found_created then
-                table.insert(lines, 2, 'created: ' .. created_time)
-                created_index = 2
-            end
-
-            if not found_updated then
-                table.insert(lines, created_index + 1, 'updated: ' .. updated_time)
-            end
-
-            set_buf_lines(lines)
-        end,
-    })
-end
+        set_buf_lines(lines)
+    end,
+})
 
 return M

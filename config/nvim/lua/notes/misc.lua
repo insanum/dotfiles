@@ -1,14 +1,82 @@
--- Miscellaneous notes utilities: random notes, quotes, recent files, help
+-- Miscellaneous notes utilities: random notes, quotes, recent files, PDF/Excalidraw
 
 local config = require('notes.config')
-local yaml = require('notes.yaml')
-local utils = require('notes.utils')
-local pick = require('mini.pick')
+local pick   = require('mini.pick')
+local utils  = require('notes.utils')
+local yaml   = require('notes.yaml')
 
-local M = {}
+-- Open PDF in external app
+local function run_pdf_expert(file_path)
+    vim.notify('Opening "' .. file_path .. '"', vim.log.levels.INFO)
+    vim.system({ 'open', file_path }, function()
+        vim.notify('Done editing "' .. file_path .. '"', vim.log.levels.INFO)
+    end)
+end
+
+-- Open PDF from file link under cursor
+local function open_pdf()
+    local file = vim.fn.expand('<cfile>:t')
+    if not string.match(file, '%.pdf$') then
+        vim.notify('PDF only', vim.log.levels.ERROR)
+        return
+    end
+
+    local file_path = config.pdf_dir .. file
+
+    if vim.fn.filereadable(file_path) == 0 then
+        vim.notify('PDF doesn\'t exist', vim.log.levels.ERROR)
+        return
+    end
+
+    utils.utils_confirm_and_run('Open "' .. file .. '"', function()
+        run_pdf_expert(file_path)
+    end)
+end
+
+-- Run Excalidraw on a file
+local function run_excalidraw(efile_path)
+    if vim.fn.filereadable(efile_path) == 0 then
+        if vim.fn.filereadable(config.excli_blank) == 0 then
+            vim.notify('Blank Excalidraw file not found',
+                       vim.log.levels.ERROR)
+            return
+        end
+
+        vim.system({ 'cp', '-f', config.excli_blank, efile_path }):wait()
+    end
+
+    vim.notify('Opening "' .. efile_path .. '"', vim.log.levels.INFO)
+    vim.system({ 'excli', efile_path }, function()
+        vim.notify('Done editing "' .. efile_path .. '"',
+                   vim.log.levels.INFO)
+    end)
+end
+
+-- Edit Excalidraw image under cursor
+local function open_excalidraw()
+    local file = vim.fn.expand('<cfile>')
+    if not string.match(file, '%.excalidraw.png$') then
+        vim.notify('Excalidraw/PNG only', vim.log.levels.ERROR)
+        return
+    end
+
+    local efile = string.gsub(file, '^(.+).png$', '%1')
+
+    local file_path = config.assets_dir .. file
+    local efile_path = config.assets_dir .. efile
+
+    local prompt = 'Edit "' .. efile .. '"'
+    if vim.fn.filereadable(file_path) == 0 then
+        prompt = 'Create and ' .. prompt
+    end
+
+    utils.utils_confirm_and_run(prompt, function()
+        run_excalidraw(efile_path)
+    end)
+end
 
 -- Pick a random note from the collection
-function M.random_note()
+local function random_note()
     pick.builtin.cli(
         {
             command = {
@@ -104,7 +172,7 @@ local function get_random_quote_md()
 end
 
 -- Display random quotes in a floating window
-function M.random_quote()
+local function random_quote()
     local stoicism_quote = get_random_stoicism_quote()
     local md_quote = get_random_quote_md()
 
@@ -175,7 +243,7 @@ function M.random_quote()
 end
 
 -- Recent files picker
-pick.registry.recent_files = function(local_opts)
+local function recent_files(local_opts)
     return pick.builtin.cli(
         {
             command = {
@@ -194,18 +262,18 @@ pick.registry.recent_files = function(local_opts)
                     end
 
                     -- try to extract the date from the yaml
-                    local yaml_data = yaml.get(filepath)
+                    local yaml_data = yaml.yaml_get(filepath)
                     if yaml_data then
                         if yaml_data.updated then
-                            date = yaml.date_to_ts(yaml_data.updated)
+                            date = utils.utils_date_to_ts(yaml_data.updated)
                         elseif yaml_data.created then
-                            date = yaml.date_to_ts(yaml_data.created)
+                            date = utils.utils_date_to_ts(yaml_data.created)
                         end
                     end
 
                     -- fallback to file modification time
                     if not date then
-                        date = utils.get_file_mtime(filepath)
+                        date = utils.utils_get_file_mtime(filepath)
                     end
 
                     table.insert(files, {
@@ -245,90 +313,21 @@ pick.registry.recent_files = function(local_opts)
     )
 end
 
--- Show recent notes
-function M.recent()
-    pick.registry.recent_files({
-        exclude = { 'Journal', 'templates', },
-    })
-end
+-- register commands
 
--- Notes help keymap reference
-local notes_help = {
-    '<leader>nh                         Notes Keymap Help',
-    '',
-    '<leader>sf                         All Files',
-    '<leader>nr                         Recent Notes',
-    '',
-    '<leader>nd                         Random Note',
-    '<leader>nq                         Random Quote',
-    '',
-    '<leader>ng                         Search for Tag',
-    '<leader>ns                         Select Tag and Search',
-    '',
-    '<leader>nto                        Search Open Tasks',
-    '<leader>ntc                        Search Completed Tasks',
-    '<leader>ntp                        Search Punted Tasks',
-    '<leader>ntr                        Search Recent Tasks (Past Month)',
-    '',
-    '<leader>nc                         Toggle Task Completed',
-    '<leader>np                         Toggle Task Punted',
-    '',
-    '<leader>nx                         Open image under cursor (Excalidraw)',
-    '<leader>nP                         Open PDF under cursor (PDF Expert)',
-    '',
-    '<leader>jdd  :Journal [+/-N]       Journal Day',
-    '<leader>jdp  :Journal -1           Journal Previous Day',
-    '<leader>jdn  :Journal +1           Journal Next Day',
-    '',
-    '<leader>jww  :JournalWeek [+/-N]   Journal Week',
-    '<leader>jwp  :JournalWeek -1       Journal Previous Week',
-    '<leader>jwn  :JournalWeek +1       Journal Next Week',
-    '',
-    '<leader>jdm  :JournalMissing       Missing Journal Days',
-    '<leader>jwm  :JournalWeekMissing   Missing Journal Week Days',
-    '',
-    '<leader>nra                        Reading List All',
-    '<leader>nrt                        Reading List Todo',
-    '<leader>nrc                        Reading list Completed',
-    '<leader>nrp                        Reading List Punted',
-    '',
-    ' --> LSP integration <--',
-    '',
-    '<leader>K[K]                       Hover show file link',
-    '<leader>ld                         Follow file link',
-    '<leader>lr                         Find all backlinks of current file',
-    '<leader>lr                         Find all backlinks for file link',
-    '<leader>lr                         Tag find all occurrences',
-    '<leader>ls                         List all headings',
-    '<leader>lR                         Rename file',
-    '<leader>lR                         Tag rename across all files',
-    ':lua vim.lsp.buf.code_action()     Create file for unresolved link',
-    '',
-    'gf                                 Follow file link',
-    '<leader>nB                         Find broken links',
-    '',
-    ' --> Markdown commands <--',
-    '',
-    '<leader>mta                        Markdown Tag Add',
-    '<leader>mtr                        Markdown Tag Remove',
-    '<leader>m<...>                     markdown-plus plugin commands',
-    '',
-    '\'<,\'>ClearTableCells               Clear table cells (visual selection)',
-}
+vim.api.nvim_create_user_command('NotesRandom', random_note,
+    { desc = 'Open a random note' })
 
-pick.registry.notes_help = function()
-    pick.start({
-        source = {
-            items = notes_help,
-            name = 'Notes Help',
-            choose = function() end
-        },
-    })
-end
+vim.api.nvim_create_user_command('NotesQuote', random_quote,
+    { desc = 'Show random quote' })
 
--- Show notes help
-function M.help()
-    pick.registry.notes_help()
-end
+vim.api.nvim_create_user_command('NotesRecent', function()
+    recent_files({ exclude = { 'Journal', 'templates', } })
+end, { desc = 'Show recent notes' })
 
-return M
+vim.api.nvim_create_user_command('NotesPdfOpen', open_pdf,
+    { desc = 'Open PDF under cursor in external app' })
+
+vim.api.nvim_create_user_command('NotesExcalidrawEdit', open_excalidraw,
+    { desc = 'Edit Excalidraw image under cursor' })
+

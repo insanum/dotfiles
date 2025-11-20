@@ -1,10 +1,8 @@
 -- Broken link checker for wiki-style markdown links
 
 local config = require('notes.config')
-local utils = require('notes.utils')
-local pick = require('mini.pick')
-
-local M = {}
+local pick   = require('mini.pick')
+local utils  = require('notes.utils')
 
 -- Helper function to build file cache for link checking
 local function build_file_cache()
@@ -42,7 +40,7 @@ local function extract_link_target(link)
 end
 
 -- Find all broken links in notes
-function M.find()
+local function find()
     pick.builtin.cli(
         {
             command = {
@@ -65,9 +63,9 @@ function M.find()
                     -- skip code blocks
                     if not codeblock_cache[filepath] then
                         codeblock_cache[filepath] =
-                            utils.get_codeblock_ranges(filepath)
+                            utils.utils_get_codeblock_ranges(filepath)
                     end
-                    if utils.is_in_codeblock(line_num,
+                    if utils.utils_is_in_codeblock(line_num,
                                        codeblock_cache[filepath]) then
                         goto continue_line
                     end
@@ -112,4 +110,8 @@ function M.find()
     )
 end
 
-return M
+-- register commands
+
+vim.api.nvim_create_user_command('NotesBrokenLinks', find,
+    { desc = 'Find all broken wiki-links in notes' })
+

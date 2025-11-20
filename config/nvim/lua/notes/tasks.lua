@@ -1,10 +1,9 @@
 -- Task management: searching, filtering, and toggling task states
 
 local config = require('notes.config')
-local yaml = require('notes.yaml')
-local pick = require('mini.pick')
-
-local M = {}
+local pick   = require('mini.pick')
+local utils  = require('notes.utils')
+local yaml   = require('notes.yaml')
 
 -- Helper function to extract task type and date from content
 local function extract_task_type_and_date(content)
@@ -60,9 +59,9 @@ local function search_tasks(opts)
                         -- get file's updated timestamp and cache it
                         if not file_cache[filepath] then
                             local updated =
-                                yaml.get_property(filepath, 'updated')
+                                yaml.yaml_get_property(filepath, 'updated')
                             file_cache[filepath] = {
-                                timestamp = yaml.date_to_ts(updated) or 0,
+                                timestamp = utils.utils_date_to_ts(updated) or 0,
                                 date_str = updated,
                             }
                         end
@@ -78,7 +77,7 @@ local function search_tasks(opts)
                         -- apply time filter if provided
                         if time_filter then
                             local task_ts =
-                                task_date and yaml.date_to_ts(task_date)
+                                task_date and utils.utils_date_to_ts(task_date)
                             if not task_ts or not time_filter(task_ts) then
                                 goto continue
                             end
@@ -88,7 +87,8 @@ local function search_tasks(opts)
                         local sort_timestamp = file_cache[filepath].timestamp
                         if sort_by_task_date and task_date then
                             sort_timestamp =
-                                yaml.date_to_ts(task_date) or sort_timestamp
+                                utils.utils_date_to_ts(task_date) or
+                                sort_timestamp
                         end
 
                         -- determine which date string to display
@@ -156,61 +156,6 @@ local function search_tasks(opts)
     )
 end
 
--- Search for all tasks
-function M.search_all()
-    search_tasks({
-        pattern = [[^\s*- \[ \] |^\s*- \[x\] |^\s*- \[-\] ]],
-        name = 'All Tasks',
-        sort_by_task_date = true,
-        type_extractor = extract_task_type_and_date,
-    })
-end
-
--- Search for open tasks
-function M.search_open()
-    search_tasks({
-        pattern = [[^\s*- \[ \] ]],
-        name = 'Open Tasks',
-    })
-end
-
--- Search for completed tasks
-function M.search_completed()
-    search_tasks({
-        pattern = [[^\s*- \[x\] ]],
-        name = 'Completed Tasks',
-        sort_by_task_date = true,
-        type_extractor = extract_task_type_and_date,
-    })
-end
-
--- Search for punted tasks
-function M.search_punted()
-    search_tasks({
-        pattern = [[^\s*- \[-\] ]],
-        name = 'Punted Tasks',
-        sort_by_task_date = true,
-        type_extractor = extract_task_type_and_date,
-    })
-end
-
--- Search for completed or punted tasks from the past 6 months
-function M.search_recent()
-    local one_month_ago = os.time() - (6 * 30 * 24 * 60 * 60)
-
-    search_tasks({
-        pattern = [[^\s*- \[x\] |^\s*- \[-\] ]],
-        name = 'Recent Completed/Punted Tasks (Past 6 Months)',
-        sort_by_task_date = true,
-        type_extractor = extract_task_type_and_date,
-        time_filter = function(task_ts)
-            -- only filter if we have a task timestamp
-            -- if task_ts is nil, it means no date was found, so we keep it
-            return task_ts == nil or task_ts >= one_month_ago
-        end,
-    })
-end
-
 -- Helper function to toggle a dataview tag on the current line
 local function toggle_dataview_tag(tag, tag_pattern)
     -- get the current line in the buffer
@@ -232,19 +177,66 @@ end
 local function create_dataview_tag_toggler(tag_type)
     return function()
         local tag = string.format('[%s:: %s]', tag_type, os.date('%Y-%m-%d'))
-        local tag_pattern = string.format('%%[%s:: %s%%]$', tag_type, config.PATTERNS.DATE)
+        local tag_pattern = string.format('%%[%s:: %s%%]$', tag_type,
+                                          config.PATTERNS.DATE)
         toggle_dataview_tag(tag, tag_pattern)
     end
 end
 
--- Toggle completion tag on current line
-function M.toggle_completion()
-    create_dataview_tag_toggler('completion')()
-end
+-- register commands
 
--- Toggle punted tag on current line
-function M.toggle_punted()
-    create_dataview_tag_toggler('punted')()
-end
+vim.api.nvim_create_user_command('NotesTasksAll', function()
+    search_tasks({
+        pattern = [[^\s*- \[ \] |^\s*- \[x\] |^\s*- \[-\] ]],
+        name = 'All Tasks',
+        sort_by_task_date = true,
+        type_extractor = extract_task_type_and_date,
+    })
+end, { desc = 'Search all tasks' })
 
-return M
+vim.api.nvim_create_user_command('NotesTasksOpen', function()
+    search_tasks({
+        pattern = [[^\s*- \[ \] ]],
+        name = 'Open Tasks',
+    })
+end, { desc = 'Search open tasks' })
+
+vim.api.nvim_create_user_command('NotesTasksCompleted', function()
+    search_tasks({
+        pattern = [[^\s*- \[x\] ]],
+        name = 'Completed Tasks',
+        sort_by_task_date = true,
+        type_extractor = extract_task_type_and_date,
+    })
+end, { desc = 'Search completed tasks' })
+
+vim.api.nvim_create_user_command('NotesTasksPunted', function()
+    search_tasks({
+        pattern = [[^\s*- \[-\] ]],
+        name = 'Punted Tasks',
+        sort_by_task_date = true,
+        type_extractor = extract_task_type_and_date,
+    })
+end, { desc = 'Search punted tasks' })
+
+vim.api.nvim_create_user_command('NotesTasksRecent', function()
+    local one_month_ago = os.time() - (6 * 30 * 24 * 60 * 60)
+    search_tasks({
+        pattern = [[^\s*- \[x\] |^\s*- \[-\] ]],
+        name = 'Recent Completed/Punted Tasks (Past 6 Months)',
+        sort_by_task_date = true,
+        type_extractor = extract_task_type_and_date,
+        time_filter = function(task_ts)
+            return task_ts == nil or task_ts >= one_month_ago
+        end,
+    })
+end, { desc = 'Search recent completed/punted tasks (past 6 months)' })
+
+vim.api.nvim_create_user_command('NotesTaskToggleComplete',
+    create_dataview_tag_toggler('completion'),
+    { desc = 'Toggle task completion on current line' })
+
+vim.api.nvim_create_user_command('NotesTaskTogglePunt',
+    create_dataview_tag_toggler('punted'),
+    { desc = 'Toggle task punted status on current line' })
+

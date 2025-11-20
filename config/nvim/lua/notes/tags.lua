@@ -1,11 +1,9 @@
 -- Hashtag searching and file tag management for markdown notes
 
 local config = require('notes.config')
-local yaml = require('notes.yaml')
-local utils = require('notes.utils')
-local pick = require('mini.pick')
-
-local M = {}
+local pick   = require('mini.pick')
+local utils  = require('notes.utils')
+local yaml   = require('notes.yaml')
 
 -- Helper function to check if a tag is valid (not a number or color code)
 local function is_valid_tag(tag)
@@ -34,9 +32,10 @@ local function search_tag(tag)
 
                     if filepath and line_num and content then
                         if not file_cache[filepath] then
-                            local updated = yaml.get_property(filepath,
-                                                              'updated')
-                            file_cache[filepath] = yaml.date_to_ts(updated) or 0
+                            local updated = yaml.yaml_get_property(filepath,
+                                                                   'updated')
+                            file_cache[filepath] =
+                                utils.utils_date_to_ts(updated) or 0
                         end
 
                         table.insert(results, {
@@ -77,7 +76,7 @@ local function search_tag(tag)
 end
 
 -- Search for a hashtag (user input)
-function M.search()
+local function search()
     vim.ui.input({ prompt = 'Tag: ' }, function(input)
         if input and input ~= '' then
             search_tag(input)
@@ -86,7 +85,7 @@ function M.search()
 end
 
 -- List all hashtags and search for the selected one
-function M.select_and_search()
+local function select_and_search()
     pick.builtin.cli(
         {
             command = {
@@ -108,11 +107,11 @@ function M.select_and_search()
 
                         if not file_cache[filepath] then
                             file_cache[filepath] =
-                                utils.get_codeblock_ranges(filepath)
+                                utils.utils_get_codeblock_ranges(filepath)
                         end
 
-                        if not utils.is_in_codeblock(line_num,
-                                               file_cache[filepath]) then
+                        if not utils.utils_is_in_codeblock(line_num,
+                                                           file_cache[filepath]) then
                             tag_counts[tag] = (tag_counts[tag] or 0) + 1
                         end
                     end
@@ -153,7 +152,7 @@ function M.select_and_search()
 end
 
 -- Add a tag to current file's YAML frontmatter
-function M.add_to_file()
+local function add_to_file()
     if vim.bo.filetype ~= 'markdown' then
         vim.notify('Markdown files only', vim.log.levels.WARN)
         return
@@ -166,7 +165,7 @@ function M.add_to_file()
 
         tag = tag:gsub('^%s*', ''):gsub('%s*$', '')
 
-        local yaml_start, yaml_end, tags, _, tags_end = yaml.get_tags()
+        local yaml_start, yaml_end, tags, _, tags_end = yaml.yaml_get_tags()
 
         if not yaml_start then
             -- no yaml frontmatter, create it
@@ -210,13 +209,13 @@ function M.add_to_file()
 end
 
 -- Remove a tag from current file's YAML frontmatter
-function M.remove_from_file()
+local function remove_from_file()
     if vim.bo.filetype ~= 'markdown' then
         vim.notify('Markdown files only', vim.log.levels.WARN)
         return
     end
 
-    local yaml_start, yaml_end, tags, _, _ = yaml.get_tags()
+    local yaml_start, yaml_end, tags, _, _ = yaml.yaml_get_tags()
 
     if not tags or #tags == 0 then
         vim.notify('No tags found', vim.log.levels.WARN)
@@ -277,4 +276,17 @@ function M.remove_from_file()
     end)
 end
 
-return M
+-- register commands
+
+vim.api.nvim_create_user_command('NotesTagSearch', search,
+    { desc = 'Search for a specific hashtag' })
+
+vim.api.nvim_create_user_command('NotesTagSelect', select_and_search,
+    { desc = 'Select a hashtag and search' })
+
+vim.api.nvim_create_user_command('NotesTagAdd', add_to_file,
+    { desc = 'Add a tag to current file YAML frontmatter' })
+
+vim.api.nvim_create_user_command('NotesTagRemove', remove_from_file,
+    { desc = 'Remove a tag from current file YAML frontmatter' })
+

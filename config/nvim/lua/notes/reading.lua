@@ -1,13 +1,12 @@
 -- Reading list picker for PDFs
 
 local config = require('notes.config')
-local yaml = require('notes.yaml')
-local pick = require('mini.pick')
-
-local M = {}
+local pick   = require('mini.pick')
+local utils  = require('notes.utils')
+local yaml   = require('notes.yaml')
 
 -- Create a reading list picker
-pick.registry.reading_list = function(local_opts)
+local function reading_list(reading_type)
     return pick.builtin.cli(
         {
             command = {
@@ -17,23 +16,23 @@ pick.registry.reading_list = function(local_opts)
                 local filtered_lines = {}
 
                 local p_name = nil
-                if local_opts.type == 'all' then
+                if reading_type == 'all' then
                     p_name = 'created'
-                elseif local_opts.type == 'completed' then
+                elseif reading_type == 'completed' then
                     p_name = 'completion'
-                elseif local_opts.type == 'punted' then
+                elseif reading_type == 'punted' then
                     p_name = 'punted'
                 end
 
                 for _, line in ipairs(lines) do
                     local p_value = nil
                     if p_name then
-                        p_value = yaml.get_property(line, p_name)
+                        p_value = yaml.yaml_get_property(line, p_name)
                     else
                         -- this is the 'todo' type
-                        if not yaml.get_property(line, 'completion') and
-                           not yaml.get_property(line, 'punted') then
-                            p_value = yaml.get_property(line, 'created')
+                        if not yaml.yaml_get_property(line, 'completion') and
+                           not yaml.yaml_get_property(line, 'punted') then
+                            p_value = yaml.yaml_get_property(line, 'created')
                         end
                     end
                     if p_value then
@@ -46,7 +45,8 @@ pick.registry.reading_list = function(local_opts)
 
                 -- property is expected to be a date (YYYY-MM-DD format)
                 table.sort(filtered_lines, function(a, b)
-                    return yaml.date_to_ts(a.date) > yaml.date_to_ts(b.date)
+                    return utils.utils_date_to_ts(a.date) >
+                           utils.utils_date_to_ts(b.date)
                 end)
 
                 return filtered_lines
@@ -54,8 +54,8 @@ pick.registry.reading_list = function(local_opts)
         },
         {
             source = {
-                cwd = config.notes_dir .. '/' .. local_opts.dir,
-                name = 'Read: ' .. local_opts.type,
+                cwd = config.pdf_dir,
+                name = 'Read: ' .. reading_type,
                 show = function(buf_id, items, query)
                     local display_items = {}
                     for _, item in ipairs(items) do
@@ -72,36 +72,21 @@ pick.registry.reading_list = function(local_opts)
     )
 end
 
--- Show all reading list items
-function M.all()
-    pick.registry.reading_list({
-        dir = 'PDFs',
-        type = 'all',
-    })
-end
+-- register commands
 
--- Show todo reading list items
-function M.todo()
-    pick.registry.reading_list({
-        dir = 'PDFs',
-        type = 'todo',
-    })
-end
+vim.api.nvim_create_user_command('NotesReadingAll', function()
+    reading_list('all')
+end, { desc = 'Show all reading list items' })
 
--- Show completed reading list items
-function M.completed()
-    pick.registry.reading_list({
-        dir = 'PDFs',
-        type = 'completed',
-    })
-end
+vim.api.nvim_create_user_command('NotesReadingTodo', function()
+    reading_list('todo')
+end, { desc = 'Show todo reading list items' })
 
--- Show punted reading list items
-function M.punted()
-    pick.registry.reading_list({
-        dir = 'PDFs',
-        type = 'punted',
-    })
-end
+vim.api.nvim_create_user_command('NotesReadingCompleted', function()
+    reading_list('completed')
+end, { desc = 'Show completed reading list items' })
 
-return M
+vim.api.nvim_create_user_command('NotesReadingPunted', function()
+    reading_list('punted')
+end, { desc = 'Show punted reading list items' })
+

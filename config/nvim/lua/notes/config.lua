@@ -20,8 +20,4 @@ M.PATTERNS = {
     PUNTED_TAG = '%%[punted:: (%s)%%]',
 }
 
--- Ripgrep defaults
-M.RG_DEFAULTS = { '--no-heading', '--line-number', '--color=never' }
-M.RG_MD_GLOB = { '--glob', '*.md' }
-
 return M
