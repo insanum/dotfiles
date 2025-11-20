@@ -1,3 +1,47 @@
+--[[
+══════════════════════════════════════════════════════════════════════════════
+PLUGIN SPECIFICATION FORMAT
+══════════════════════════════════════════════════════════════════════════════
+
+Each plugin file in lua/plugins/*.lua should return a table with this
+structure:
+
+REQUIRED FIELDS:
+  name          (string)  Module name for require() (e.g., 'mini', 'lspconfig')
+                          This is the name used for require('name').setup()
+  plug          (table)   Git URL spec for vim.pack.add() - singly entry
+                          - string: 'https://github.com/user/repo'
+                          - table: { src = 'url', version = 'v1.0.0' }
+
+OPTIONAL FIELDS:
+  disabled      (boolean)  If true, plugin is not loaded (default: false)
+  priority      (number)   Load order; lower = earlier (default: 100)
+  depends       (table)    Array of dependency Git URLs for vim.pack.add()
+  setup         (boolean)  Call plugin.setup() with opts? (default: true)
+  opts          (table)    Options passed to plugin.setup()
+  pre_pack_add  (function) Called BEFORE vim.pack.add()
+  post_setup    (function) Called AFTER plugin.setup()
+
+EXAMPLE:
+  See lua/plugins/*.lua files for examples.
+
+LOADING ORDER:
+  1. Plugins sorted by priority (lower = first), then alpha by name
+  2. For each plugin:
+     - Run pre_pack_add() if defined
+     - Load dependencies via vim.pack.add(spec.depends) if defined
+     - Load plugin via vim.pack.add(spec.plug)
+     - Call plugin.setup(spec.opts) if setup != false
+     - Run post_setup() if defined
+
+USER COMMANDS:
+  :PackUpdate           Update all plugins
+  :PackDelete <name>    Delete a plugin (tab complete plugin names)
+  :PackReload <name>    Reload a plugin (tab complete plugin names)
+  :PackInfo             Show plugin info (priority sorted)
+
+══════════════════════════════════════════════════════════════════════════════
+--]]
 
 -- extract the git repo name from a plugin spec
 -- spec.plug is always a table; first entry is either a string (git url)

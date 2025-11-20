@@ -87,10 +87,6 @@ M.post_setup = function()
         },
     })
 
-    vim.keymap.set('n', '<leader>hd',
-                   '<cmd>lua MiniDiff.toggle_overlay()<CR>',
-                   { desc = 'Toggle Diff Overlay' })
-
     ---------------------------------------------------------------------
     -- mini.ai ----------------------------------------------------------
     ---------------------------------------------------------------------
@@ -146,50 +142,12 @@ M.post_setup = function()
     })
 
     ---------------------------------------------------------------------
-    -- mini.files -------------------------------------------------------
-    ---------------------------------------------------------------------
-
-    --[[
-    require('mini.files').setup({
-        windows = {
-            preview = true, -- show preview of file/directory under cursor
-            width_focus = 40,
-            width_nofocus = 40,
-            width_preview = 40,
-        },
-    })
-
-    vim.keymap.set('n', '<F12>',
-                   '<cmd>lua MiniFiles.open()<CR>',
-                   { desc = 'Mini Files', })
-    --]]
-
-    ---------------------------------------------------------------------
     -- mini.sessions ----------------------------------------------------
     ---------------------------------------------------------------------
 
     require('mini.sessions').setup({
         autowrite = false,
     })
-
-    vim.keymap.set('n', ',oo',
-                   '<cmd>lua MiniSessions.select(\'read\')<CR>',
-                   { desc = 'Open Session' })
-
-    vim.keymap.set('n', ',od',
-                   '<cmd>lua MiniSessions.select(\'delete\')<CR>',
-                   { desc = 'Delete Session' })
-
-    vim.keymap.set('n', ',os', function()
-        local ok, res = pcall(vim.fn.input, {
-            prompt = 'Save session as: ',
-            cancelreturn = false,
-        })
-        if not ok or res == false then
-            return nil
-        end
-        MiniSessions.write(res)
-    end, { desc = 'Save Session' })
 
     ---------------------------------------------------------------------
     -- mini.jump --------------------------------------------------------
@@ -208,12 +166,6 @@ M.post_setup = function()
             n_steps_ahead = 1,
         },
     })
-
-    vim.keymap.set(
-        { 'o', 'x', 'n' },
-        '<CR>',
-        '<cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>',
-        { desc = 'Jump anywhere' })
 
     ---------------------------------------------------------------------
     -- mini.hipatterns --------------------------------------------------
@@ -292,68 +244,6 @@ M.post_setup = function()
     --     end,
     -- })
 
-    -- Search keymaps
-
-    vim.keymap.set('n', '<leader>sf',
-                   '<cmd>Pick files<CR>',
-                   { desc = '[S]earch [F]iles' })
-
-    vim.keymap.set('n', '<leader>se',
-                   '<cmd>Pick explorer<CR>',
-                   { desc = '[S]earch [E]xplorer' })
-
-    vim.keymap.set('n', '<leader>sw',
-                   '<cmd>Pick grep pattern=\'<cword>\'<CR>',
-                   { desc = '[S]earch [G]rep live' })
-
-    vim.keymap.set('n', '<leader>sg',
-                   '<cmd>Pick grep_live<CR>',
-                   { desc = '[S]earch [G]rep live' })
-
-    vim.keymap.set('n', '<leader>/',
-                   '<cmd>Pick buf_lines scope=\'current\'<CR>',
-                   { desc = '[/] Search in current buffer' })
-
-    vim.keymap.set('n', '<leader>s/',
-                   '<cmd>Pick buf_lines scope=\'all\'<CR>',
-                   { desc = '[S]earch [/] across all buffers' })
-
-    vim.keymap.set('n', '<leader>sh',
-                   '<cmd>Pick help<CR>',
-                   { desc = '[S]earch [H]elp' })
-
-    vim.keymap.set('n', '<leader>sk',
-                   '<cmd>Pick keymaps<CR>',
-                   { desc = '[S]earch [K]eymaps' })
-
-    vim.keymap.set('n', '<leader>sd',
-                   '<cmd>Pick diagnostic<CR>',
-                   { desc = '[S]earch [D]iagnostics' })
-
-    vim.keymap.set('n', '<leader>sl',
-                   '<cmd>Pick list scope=\'location\'<CR>',
-                   { desc = '[S]earch [L]ocation list' })
-
-    vim.keymap.set('n', '<leader>st',
-                   '<cmd>Pick hipatterns<CR>',
-                   { desc = '[S]earch [T]odos' })
-
-    vim.keymap.set('n', '<leader>sm',
-                   '<cmd>Pick marks<CR>',
-                   { desc = '[S]earch [M]arks' })
-
-    vim.keymap.set('n', '<leader>sc',
-                   '<cmd>Pick commands<CR>',
-                   { desc = '[S]earch [C]ommands' })
-
-    vim.keymap.set('n', '<leader>sr',
-                   '<cmd>Pick resume<CR>',
-                   { desc = '[S]earch [R]esume' })
-
-    vim.keymap.set('n', '<leader>so',
-                   '<cmd>Pick oldfiles<CR>',
-                   { desc = '[S]earch [O]ld (recent) files' })
-
     pick.registry.buffers_with_delete = function()
         return pick.builtin.buffers(
             { },
@@ -375,10 +265,6 @@ M.post_setup = function()
                 },
             })
     end
-
-    vim.keymap.set('n', '<leader><leader>',
-                   '<cmd>Pick buffers_with_delete<CR>',
-                   { desc = '[ ] Search current buffers' })
 
     -- Add a 'neovim_config' picker to access the Neovim configuration
     pick.registry.neovim_config = function()
@@ -403,11 +289,6 @@ M.post_setup = function()
             })
     end
 
-    -- Shortcut to edit a Neovim configuration file
-    vim.keymap.set('n', '<leader>sn',
-                   '<cmd>Pick neovim_config<CR>',
-                   { desc = '[S]earch [N]eovim files' })
-
     -- Add a 'registry' picker that lists all the available pickers
     pick.registry.registry = function()
         local items = vim.tbl_keys(pick.registry)
@@ -422,49 +303,6 @@ M.post_setup = function()
         if chosen_picker_name == nil then return end
         return pick.registry[chosen_picker_name]()
     end
-
-    -- Shortcut for searching the Pick registry and execute
-    vim.keymap.set('n', '<leader>ss',
-                   '<cmd>Pick registry<CR>',
-                   { desc = '[S]earch [S]earch Pick registry' })
-
-    -- LSP keymaps
-
-    vim.keymap.set('n', '<leader>lD',
-                   '<cmd>Pick lsp scope=\'declaration\'<CR>',
-                   { desc = '[L]SP [D]eclaration' })
-
-    vim.keymap.set('n', '<leader>ld',
-                   '<cmd>Pick lsp scope=\'definition\'<CR>',
-                   { desc = '[L]SP [D]efinition' })
-
-    vim.keymap.set('n', '<leader>lt',
-                   '<cmd>Pick lsp scope=\'type_definition\'<CR>',
-                   { desc = '[L]SP [T]ype Definition' })
-
-    vim.keymap.set('n', '<leader>lr',
-                   '<cmd>Pick lsp scope=\'references\'<CR>',
-                   { desc = '[L]SP [R]eference' })
-
-    vim.keymap.set('n', '<leader>li',
-                   '<cmd>Pick lsp scope=\'implementation\'<CR>',
-                   { desc = '[L]SP [I]mplementation' })
-
-    vim.keymap.set('n', '<leader>ls',
-                   '<cmd>Pick lsp scope=\'document_symbol\'<CR>',
-                   { desc = '[L]SP [S]ymbols buffer' })
-
-    vim.keymap.set('n', '<leader>lS',
-                   '<cmd>Pick lsp scope=\'workspace_symbol\'<CR>',
-                   { desc = '[L]SP [S]ymbols all buffers' })
-
-    vim.keymap.set('n', '<leader>lR',
-                   vim.lsp.buf.rename,
-                   { desc = '[L]SP [R]ename symbol' })
-
-    vim.keymap.set('n', '<leader>lh',
-                   vim.lsp.buf.hover,
-                   { desc = '[L]SP [H]over documentation' })
 
     vim.ui.select = pick.ui_select
 
@@ -516,11 +354,10 @@ M.post_setup = function()
             require('mini.clue').gen_clues.z(),
             { mode = 'n', keys = '<leader>h',  desc = '+Git' },
             { mode = 'n', keys = '<leader>l',  desc = '+LSP' },
-            { mode = 'n', keys = '<leader>o',  desc = '+Obsidian' },
+            { mode = 'n', keys = '<leader>o',  desc = '+Session' },
             { mode = 'n', keys = '<leader>q',  desc = '+Quickfix' },
             { mode = 'n', keys = '<leader>s',  desc = '+Search' },
             { mode = 'n', keys = '<leader>t',  desc = '+Tab' },
-            { mode = 'n', keys = ',o',         desc = '+Sessions' },
             { mode = 'n', keys = '<leader>j',  desc = '+Journal' },
             { mode = 'n', keys = '<leader>jd', desc = '+Journal Day' },
             { mode = 'n', keys = '<leader>jw', desc = '+Journal Week' },
@@ -548,6 +385,9 @@ M.post_setup = function()
 
     -- HACK: mini.completion
     -- I don't have high hopes for this vs blink.
+
+    -- HACK: mini.files
+    -- I like oil better along with mini.pick pickers
 end
 
 return M
