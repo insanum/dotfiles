@@ -97,14 +97,24 @@ vim.keymap.set('n', '<leader>qo', '<cmd>lopen<CR>',
                { silent = true, desc = '[Q]uickfix [O]pen' })
 vim.keymap.set('n', '<leader>qc', '<cmd>lclose<CR>',
                { silent = true, desc = '[Q]uickfix [C]lose' })
+vim.keymap.set('n', '<leader>qn', '<cmd>lnext<CR>',
+               { silent = true, desc = '[Q]uickfix [N]ext' })
+vim.keymap.set('n', '<leader>qp', '<cmd>lprev<CR>',
+               { silent = true, desc = '[Q]uickfix [P]revious' })
+vim.keymap.set('n', '<leader>qf', '<cmd>lnfile<CR>',
+               { silent = true, desc = '[Q]uickfix Next [F]ile' })
+vim.keymap.set('n', '<leader>qF', '<cmd>lpfile<CR>',
+               { silent = true, desc = '[Q]uickfix Previous [F]ile' })
 vim.keymap.set('n', '<leader>qx', '<cmd>lexpr []<CR>',
                { silent = true, desc = '[Q]uickfix [X]clear' })
 vim.keymap.set('n', '<leader>qd', vim.diagnostic.setloclist,
                { desc = '[Q]uickfix [D]iagnostic' })
+
 -- diagnostic hover
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float,
                { desc = 'Show diagnostic [E]rror messages' })
 
+-- escape in a terminal (outside of escape with vim mode in zsh)
 vim.keymap.set({ 't' }, '<C-v><C-v>', '<C-\\><C-n>',
                { noremap = true, desc = 'Terminal Escape' })
 
