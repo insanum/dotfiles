@@ -101,17 +101,16 @@ else
     alias lalt="lsd -laFt"
 fi
 
-if (( $+commands[bat] )); then
-    MPAGER="bat -l man --style=plain"
-elif (( $+commands[batcat] )); then
-    MPAGER="batcat -l man --style=plain"
-else
-    MPAGER="less"
-fi
-
 export PAGER=$FILE_VIEWER
 export BAT_PAGER="less -rFX"
-export MANPAGER="sh -c 'col -bx | $MPAGER'"
+
+if (( $+commands[bat] )); then
+    export MANPAGER="bat -l man --color=always --style=plain"
+elif (( $+commands[batcat] )); then
+    export MANPAGER="batcat -l man --color=always --style=plain"
+else
+    export MANPAGER="less -s"
+fi
 
 alias cat=$PAGER
 alias more=$PAGER
@@ -123,6 +122,11 @@ fi
 
 if (( $+commands[nvim] )); then
     alias vi="nvim"
+fi
+
+# if exists, override to a nightly neovim build
+if [[ -d $HOME/nvim/bin ]]; then
+    alias vi=$HOME/nvim/bin/nvim
 fi
 
 if (( $+commands[dust] )); then
