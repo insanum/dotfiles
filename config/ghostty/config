@@ -21,6 +21,9 @@ font-feature = -calt
 font-feature = -liga
 font-feature = -dlig
 
+working-directory = home
+window-inherit-working-directory = false
+
 macos-titlebar-style = tabs
 window-title-font-family = Hack Nerd Font
 

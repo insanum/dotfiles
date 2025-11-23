@@ -160,7 +160,7 @@ if (( $+commands[proxychains4] )); then
     alias gemini="proxychains4 gemini"
 fi
 
-alias bitter="$HOME/work/git/bitter/bitter"
+alias bitz="$HOME/work/git/bitz/bitz.py"
 alias nostalgic="$HOME/work/git/nostalgic/nostalgic"
 
 export PYENV_ROOT="$HOME/.pyenv"
