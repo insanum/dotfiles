@@ -172,6 +172,122 @@ kmap('n', '<leader>e', vim.diagnostic.open_float,
 kmap('t', '<C-v><C-v>', '<C-\\><C-n>',
      { noremap = true, desc = 'Terminal Escape' })
 
+-- helper function to populate location list with git hunks
+local function list_git_hunks_impl(staged)
+    -- build git diff command based on whether we want staged or unstaged
+    local diff_args = staged and '--cached' or ''
+    local change_type = staged and 'staged' or 'unstaged'
+
+    -- disable external diff tools and pagers to get raw unified diff
+    local cmd = string.format(
+        'git --no-pager -c diff.external= -c pager.diff= diff %s --unified=0 --no-color --no-ext-diff',
+        diff_args
+    )
+
+    local handle = io.popen(cmd)
+    if not handle then
+        vim.notify('Failed to run git diff', vim.log.levels.ERROR)
+        return
+    end
+
+    local output = handle:read('*a')
+    handle:close()
+
+    if output == '' then
+        vim.notify(string.format('No %s changes', change_type), vim.log.levels.INFO)
+        return
+    end
+
+    -- parse the git diff output to extract hunks
+    local qf_items = {}
+    local current_file = nil
+    local in_hunk = false
+    local current_hunk = nil
+
+    -- get git root directory for building absolute paths
+    local git_root_handle = io.popen('git rev-parse --show-toplevel')
+    local git_root = git_root_handle and git_root_handle:read('*l') or ''
+    if git_root_handle then git_root_handle:close() end
+
+    for line in output:gmatch('[^\r\n]+') do
+        -- match the diff --git line to extract the filename
+        local file = line:match('^diff %-%-git a/(.*) b/')
+        if file then
+            current_file = file
+            in_hunk = false
+        end
+
+        -- match the hunk header line (e.g., @@ -10,3 +10,4 @@)
+        local old_line, old_count, new_line, new_count =
+            line:match('^@@ %-(%d+),?(%d*) %+(%d+),?(%d*) @@')
+
+        if old_line and new_line and current_file then
+            -- save the current hunk info and wait for the first changed line
+            local lnum = tonumber(new_line)
+            local full_path = git_root ~= '' and (git_root .. '/' .. current_file) or current_file
+            local adds = new_count ~= '' and new_count or '1'
+            local dels = old_count ~= '' and old_count or '1'
+
+            current_hunk = {
+                filename = full_path,
+                lnum = lnum,
+                col = 1,
+                adds = adds,
+                dels = dels,
+                text = string.format('+%s -%s', adds, dels),
+            }
+            in_hunk = true
+        elseif in_hunk and current_hunk then
+            -- capture the first actual changed line (starts with + or -)
+            local change = line:match('^([+%-])(.*)')
+            if change then
+                local content = line:sub(2) -- strip the +/- prefix
+                content = content:match('^%s*(.-)%s*$') or content -- trim whitespace
+                if content ~= '' then
+                    current_hunk.text = string.format('+%s -%s | %s',
+                                                     current_hunk.adds,
+                                                     current_hunk.dels,
+                                                     content)
+                end
+                table.insert(qf_items, current_hunk)
+                in_hunk = false
+                current_hunk = nil
+            end
+        end
+    end
+
+    -- add any remaining hunk that didn't have changed lines
+    if current_hunk then
+        table.insert(qf_items, current_hunk)
+    end
+
+    if #qf_items == 0 then
+        vim.notify('No hunks found', vim.log.levels.WARN)
+        return
+    end
+
+    -- set the location list with all the hunks
+    vim.fn.setloclist(0, qf_items, 'r')
+    vim.cmd('lopen')
+    vim.notify(string.format('Found %d %s hunks', #qf_items, change_type), vim.log.levels.INFO)
+end
+
+-- populate location list with all unstaged git hunks
+local function list_unstaged_hunks()
+    list_git_hunks_impl(false)
+end
+
+-- populate location list with all staged git hunks
+local function list_staged_hunks()
+    list_git_hunks_impl(true)
+end
+
+kmap('n', '<leader>hu', list_unstaged_hunks,
+     { desc = '[H]unks: List all [U]nstaged hunks' })
+
+kmap('n', '<leader>hs', list_staged_hunks,
+     { desc = '[H]unks: List all [S]taged hunks' })
+
 ---------------------------------------------------------------------
 -- mini.nvim keymaps ------------------------------------------------
 ---------------------------------------------------------------------
