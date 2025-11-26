@@ -115,18 +115,20 @@ M.post_setup = function()
     -- mini.animate -----------------------------------------------------
     ---------------------------------------------------------------------
 
-    local animate = require('mini.animate')
-    local animate_timing = animate.gen_timing.linear({
-        duration = 100, -- msecs
-        unit = 'total'
-    })
-    animate.setup({
-        cursor = { timing = animate_timing },
-        scroll = { timing = animate_timing },
-        resize = { timing = animate_timing },
-        open   = { timing = animate_timing },
-        close  = { timing = animate_timing },
-    })
+    -- Enable mini.animate if not using ghostty with a cursor shader!
+
+    -- local animate = require('mini.animate')
+    -- local animate_timing = animate.gen_timing.linear({
+    --     duration = 100, -- msecs
+    --     unit = 'total'
+    -- })
+    -- animate.setup({
+    --     cursor = { timing = animate_timing },
+    --     scroll = { timing = animate_timing },
+    --     resize = { timing = animate_timing },
+    --     open   = { timing = animate_timing },
+    --     close  = { timing = animate_timing },
+    -- })
 
     ---------------------------------------------------------------------
     -- mini.indentscope -------------------------------------------------

@@ -39,8 +39,8 @@ end
 
 local ghostty_actions = {
     function() ghostty_new_tab() end, -- 2 test
-    function() ghostty_new_tab() end, -- 3 rdma-core.fork
-    function() ghostty_new_tab() end, -- 4 uet-ref-prov.fork
+    function() ghostty_new_tab() end, -- 3 uet-rdma-core
+    function() ghostty_new_tab() end, -- 4 uet-ref-prov
     function() ghostty_new_tab() end, -- 5 linux_kernels
     function() ghostty_new_tab() end, -- 6 csg_drivers
 
@@ -62,13 +62,13 @@ local ghostty_actions = {
 
     function() ghostty_goto_tab('3') end,
     function() ghostty_tab_title_open() end,
-    function() ghostty_tab_title_set('uet-rdma-core.fork') end,
+    function() ghostty_tab_title_set('uet-rdma-core') end,
     function() ghostty_send_cmd('z wt_uet') end,
     function() ghostty_send_cmd(ascii_dir) end,
 
     function() ghostty_goto_tab('4') end,
     function() ghostty_tab_title_open() end,
-    function() ghostty_tab_title_set('uet-ref-prov.fork') end,
+    function() ghostty_tab_title_set('uet-ref-prov') end,
     function() ghostty_send_cmd('z wt_pds') end,
     function() ghostty_send_cmd(ascii_dir) end,
 

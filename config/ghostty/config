@@ -3,7 +3,7 @@
 theme = "dark:One Double Dark,light:One Half Light"
 split-divider-color = orange
 
-cursor-color = #ff7000
+cursor-color = #f0f0f0
 cursor-text = black
 adjust-cursor-thickness = 2
 selection-foreground = black
@@ -84,9 +84,13 @@ keybind = cmd+shift+l=resize_split:right,10
 
 keybind = global:cmd+grave_accent=toggle_quick_terminal
 
+#custom-shader-animation=true
+#custom-shader = cursor_blaze_no_trail.glsl
+custom-shader = cursor_smear.glsl
 #custom-shader = sparks-from-fire.glsl
 #custom-shader = ghostty-shaders/inside-the-matrix.glsl
 #custom-shader = ghostty-shaders/drunkard.glsl
+#custom-shader = ghostty-shader-playground/public/shaders/cursor_smear_fade.glsl
 
 # AI agent entering multiline commands
 keybind = shift+enter=text:\x1b\r
