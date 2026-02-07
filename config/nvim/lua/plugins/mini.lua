@@ -73,7 +73,7 @@ M.post_setup = function()
     local mode = { 'i', 'c', 'x', 's' }
     -- map_combo(mode, 'jj', '<BS><BS><Esc>')
     keymap.map_combo(mode, 'jk', '<BS><BS><Esc>')
-    keymap.map_combo(mode, 'kj', '<BS><BS><Esc>')
+    -- keymap.map_combo(mode, 'kj', '<BS><BS><Esc>')
 
     ---------------------------------------------------------------------
     -- mini.diff --------------------------------------------------------

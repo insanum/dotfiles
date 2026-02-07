@@ -1,5 +1,6 @@
 local M = {
     name = 'copilot',
+    disabled = true,
     plug = {
         'https://github.com/zbirenbaum/copilot.lua',
     },

@@ -10,7 +10,7 @@ local g = nil
 local delay = 0.2
 
 local function ghostty_tab_title_open(title)
-    et.keyStroke({ 'ctrl' }, 'a', g)
+    et.keyStroke({ 'ctrl' }, 's', g)
     et.keyStroke({}, 't', g)
 end
 
@@ -20,7 +20,7 @@ local function ghostty_tab_title_set(title)
 end
 
 local function ghostty_hsplit()
-    et.keyStroke({ 'ctrl' }, 'a', g)
+    et.keyStroke({ 'ctrl' }, 's', g)
     et.keyStroke({}, 'v', g)
 end
 
@@ -41,8 +41,9 @@ local ghostty_actions = {
     function() ghostty_new_tab() end, -- 2 test
     function() ghostty_new_tab() end, -- 3 uet-rdma-core
     function() ghostty_new_tab() end, -- 4 uet-ref-prov
-    function() ghostty_new_tab() end, -- 5 linux_kernels
-    function() ghostty_new_tab() end, -- 6 csg_drivers
+    function() ghostty_new_tab() end, -- 5 libmrc
+    function() ghostty_new_tab() end, -- 6 linux_kernels
+    function() ghostty_new_tab() end, -- 7 csg_drivers
 
     function() ghostty_goto_tab('1') end,
     function() ghostty_tab_title_open() end,
@@ -74,11 +75,17 @@ local ghostty_actions = {
 
     function() ghostty_goto_tab('5') end,
     function() ghostty_tab_title_open() end,
+    function() ghostty_tab_title_set('libmrc') end,
+    function() ghostty_send_cmd('z libmrc') end,
+    function() ghostty_send_cmd(ascii_dir) end,
+
+    function() ghostty_goto_tab('6') end,
+    function() ghostty_tab_title_open() end,
     function() ghostty_tab_title_set('linux_kernels') end,
     function() ghostty_send_cmd('z linux_kernels') end,
     function() ghostty_send_cmd(ascii_dir) end,
 
-    function() ghostty_goto_tab('6') end,
+    function() ghostty_goto_tab('7') end,
     function() ghostty_tab_title_open() end,
     function() ghostty_tab_title_set('csg_drivers') end,
     function() ghostty_send_cmd('z csg_drivers') end,

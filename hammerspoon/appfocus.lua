@@ -35,9 +35,9 @@ local function focus_or_launch_app(appName)
     end
 end
 
-mod_key:bind('', 'g', 'Focus Ghostty', function()
+mod_key:bind('', 'c', 'Focus Chrome', function()
     mod_key:exit()
-    focus_or_launch_app('Ghostty')
+    focus_or_launch_app('Chrome')
 end)
 
 mod_key:bind('', 'f', 'Focus Firefox', function()
@@ -45,9 +45,19 @@ mod_key:bind('', 'f', 'Focus Firefox', function()
     focus_or_launch_app('Firefox')
 end)
 
+mod_key:bind('', 'g', 'Focus Ghostty', function()
+    mod_key:exit()
+    focus_or_launch_app('Ghostty')
+end)
+
 mod_key:bind('', 'p', 'Focus PDF Expert', function()
     mod_key:exit()
     focus_or_launch_app('PDF Expert')
+end)
+
+mod_key:bind('', 's', 'Focus Stickies', function()
+    mod_key:exit()
+    focus_or_launch_app('Stickies')
 end)
 
 mod_key:bind('', 'z', 'Focus Zoom', function()

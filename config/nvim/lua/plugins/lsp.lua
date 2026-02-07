@@ -14,6 +14,7 @@ local M = {
 M.post_setup = function()
     local lsp_servers = {
         'clangd',
+        'copilot',
         'rust_analyzer',
         'bashls',
         'pyright',

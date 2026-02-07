@@ -18,7 +18,7 @@ fi
 function zvm_config() {
     ZVM_INIT_MODE=sourcing
     ZVM_LINE_INIT_MODE=$ZVM_MODE_INSERT
-    ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
+    ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 }
 
 # source antidote and load plugins
@@ -47,6 +47,7 @@ alias h="history"
 HISTFILE="${HISTFILE:-${ZDOTDIR:-$HOME}/.zsh_history}"
 HISTSIZE=10000
 SAVEHIST=$HISTSIZE
+setopt IGNORE_EOF
 setopt BANG_HIST              # treat the '!' character specially during expansion
 setopt EXTENDED_HISTORY       # write the history file in the ':start:elapsed;command' format
 #setopt SHARE_HISTORY         # share history between all sessions
@@ -59,6 +60,8 @@ setopt HIST_IGNORE_SPACE      # do not record an event starting with a space
 setopt HIST_SAVE_NO_DUPS      # do not write a duplicate event to the history file
 setopt HIST_VERIFY            # do not execute immediately upon history expansion
 setopt HIST_BEEP              # beep when accessing non-existent history
+
+unset zle_bracketed_paste
 
 # _set_window_title() {
 #     print -Pn "\033]0;👻 %20<…<%~%<<\007"

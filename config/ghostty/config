@@ -10,7 +10,7 @@ selection-foreground = black
 selection-background = #73b8f1
 
 font-family = Hack Nerd Font
-font-size = 17
+font-size = 15
 
 font-thicken = true
 font-thicken-strength = 0
@@ -46,36 +46,36 @@ copy-on-select = clipboard
 quick-terminal-position = top
 quick-terminal-size = 50%,50%
 
-#keybind = ctrl+a>c=new_tab
-#keybind = ctrl+a>space=next_tab
-#keybind = ctrl+a>p=previous_tab
+#keybind = ctrl+s>c=new_tab
+#keybind = ctrl+s>space=next_tab
+#keybind = ctrl+s>p=previous_tab
 keybind = cmd+.=next_tab
 keybind = cmd+,=previous_tab
-#keybind = ctrl+a>ctrl+a=last_active_tab
-keybind = ctrl+a>ctrl+a=ignore
-keybind = ctrl+a>a=text:\x01
-keybind = ctrl+a>t=prompt_surface_title
+#keybind = ctrl+s>ctrl+s=last_active_tab
+keybind = ctrl+s>ctrl+s=ignore
+keybind = ctrl+s>a=text:\x01
+keybind = ctrl+s>t=prompt_surface_title
 
-keybind = ctrl+a>1=goto_tab:1
-keybind = ctrl+a>2=goto_tab:2
-keybind = ctrl+a>3=goto_tab:3
-keybind = ctrl+a>4=goto_tab:4
-keybind = ctrl+a>5=goto_tab:5
-keybind = ctrl+a>6=goto_tab:6
-keybind = ctrl+a>7=goto_tab:7
-keybind = ctrl+a>8=goto_tab:8
-keybind = ctrl+a>9=goto_tab:9
+keybind = ctrl+s>1=goto_tab:1
+keybind = ctrl+s>2=goto_tab:2
+keybind = ctrl+s>3=goto_tab:3
+keybind = ctrl+s>4=goto_tab:4
+keybind = ctrl+s>5=goto_tab:5
+keybind = ctrl+s>6=goto_tab:6
+keybind = ctrl+s>7=goto_tab:7
+keybind = ctrl+s>8=goto_tab:8
+keybind = ctrl+s>9=goto_tab:9
 
-keybind = ctrl+a>s=new_split:down
-keybind = ctrl+a>v=new_split:right
+keybind = ctrl+s>s=new_split:down
+keybind = ctrl+s>v=new_split:right
 
-keybind = ctrl+a>h=goto_split:left
-keybind = ctrl+a>j=goto_split:bottom
-keybind = ctrl+a>k=goto_split:top
-keybind = ctrl+a>l=goto_split:right
+keybind = ctrl+s>h=goto_split:left
+keybind = ctrl+s>j=goto_split:bottom
+keybind = ctrl+s>k=goto_split:top
+keybind = ctrl+s>l=goto_split:right
 
-keybind = ctrl+a>z=toggle_split_zoom
-keybind = ctrl+a>equal=equalize_splits
+keybind = ctrl+s>z=toggle_split_zoom
+keybind = ctrl+s>equal=equalize_splits
 
 keybind = cmd+shift+h=resize_split:left,11
 keybind = cmd+shift+j=resize_split:down,10
