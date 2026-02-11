@@ -113,7 +113,7 @@ local function ghostty_dispatch_actions()
     next_step()
 end
 
-hs.hotkey.bind(kb_ctrl_shift, 'w', 'Ghostty Work',
+hs.hotkey.bind(Cmd_ctrl_shift, 'w', 'Ghostty Work',
 function()
     g = app.find('Ghostty')
     if g == nil then

@@ -1,6 +1,6 @@
 
-mod_key:bind("", "a", "Show the audio device switcher", function()
-    mod_key:exit()
+Mod_Key:bind("", "a", "Show the audio device switcher", function()
+    Mod_Key:exit()
 
     local last_win = hs.window.focusedWindow()
 

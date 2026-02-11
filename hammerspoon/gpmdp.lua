@@ -313,7 +313,7 @@ local function gpmdp_play_pause()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Play / Pause", kb_alt, "p", gpmdp_play_pause, false)
+gpmdp_bind_cmd("Play / Pause", Cmd_alt, "p", gpmdp_play_pause, false)
 menu_play_pause = #gpmdp.menu_table
 
 ---------------------------------------------------------------------
@@ -326,7 +326,7 @@ local function gpmdp_replay()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Replay", kb_alt, "b", gpmdp_replay, false)
+gpmdp_bind_cmd("Replay", Cmd_alt, "b", gpmdp_replay, false)
 
 ---------------------------------------------------------------------
 
@@ -338,7 +338,7 @@ local function gpmdp_seek_backward()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Seek -10", kb_alt, "Left", gpmdp_seek_backward, false)
+gpmdp_bind_cmd("Seek -10", Cmd_alt, "Left", gpmdp_seek_backward, false)
 
 ---------------------------------------------------------------------
 
@@ -350,7 +350,7 @@ local function gpmdp_seek_forward()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Seek +10", kb_alt, "Right", gpmdp_seek_forward, false)
+gpmdp_bind_cmd("Seek +10", Cmd_alt, "Right", gpmdp_seek_forward, false)
 
 ---------------------------------------------------------------------
 
@@ -378,7 +378,7 @@ local function gpmdp_lyrics()
     gpmdp_schedule_work(cbk, nil, cbk_done)
 end
 
-gpmdp_bind_cmd("Lyrics", kb_alt, "y", gpmdp_lyrics, false)
+gpmdp_bind_cmd("Lyrics", Cmd_alt, "y", gpmdp_lyrics, false)
 
 ---------------------------------------------------------------------
 
@@ -390,7 +390,7 @@ local function gpmdp_thumbs_up()
     gpmdp_schedule_work(cbk)
 end
 
-gpmdp_bind_cmd("Thumbs Up", kb_alt, "Up", gpmdp_thumbs_up, false)
+gpmdp_bind_cmd("Thumbs Up", Cmd_alt, "Up", gpmdp_thumbs_up, false)
 
 ---------------------------------------------------------------------
 
@@ -402,7 +402,7 @@ local function gpmdp_thumbs_down()
     gpmdp_schedule_work(cbk)
 end
 
-gpmdp_bind_cmd("Thumbs Down", kb_alt, "Down", gpmdp_thumbs_down, false)
+gpmdp_bind_cmd("Thumbs Down", Cmd_alt, "Down", gpmdp_thumbs_down, false)
 
 ---------------------------------------------------------------------
 
@@ -416,7 +416,7 @@ local function gpmdp_next()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Next", kb_alt, ".", gpmdp_next, false)
+gpmdp_bind_cmd("Next", Cmd_alt, ".", gpmdp_next, false)
 
 ---------------------------------------------------------------------
 
@@ -432,7 +432,7 @@ local function gpmdp_previous()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Previous", kb_alt, ",", gpmdp_previous, false)
+gpmdp_bind_cmd("Previous", Cmd_alt, ",", gpmdp_previous, false)
 
 ---------------------------------------------------------------------
 
@@ -460,7 +460,7 @@ local function gpmdp_shuffle()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Shuffle", kb_alt, "f", gpmdp_shuffle, false)
+gpmdp_bind_cmd("Shuffle", Cmd_alt, "f", gpmdp_shuffle, false)
 menu_shuffle = #gpmdp.menu_table
 
 ---------------------------------------------------------------------
@@ -495,7 +495,7 @@ local function gpmdp_repeat()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Repeat", kb_alt, "r", gpmdp_repeat, false)
+gpmdp_bind_cmd("Repeat", Cmd_alt, "r", gpmdp_repeat, false)
 menu_repeat = #gpmdp.menu_table
 
 ---------------------------------------------------------------------
@@ -514,7 +514,7 @@ local function gpmdp_clear_queue()
     gpmdp_get_status()
 end
 
-gpmdp_bind_cmd("Clear Queue", kb_alt, "c", gpmdp_clear_queue, false)
+gpmdp_bind_cmd("Clear Queue", Cmd_alt, "c", gpmdp_clear_queue, false)
 
 ---------------------------------------------------------------------
 
@@ -555,7 +555,7 @@ local function gpmdp_get_queue()
     gpmdp_schedule_work(cbk, nil, cbk_done)
 end
 
-gpmdp_bind_cmd("Get Queue", kb_alt, "q", gpmdp_get_queue, false)
+gpmdp_bind_cmd("Get Queue", Cmd_alt, "q", gpmdp_get_queue, false)
 
 ---------------------------------------------------------------------
 
@@ -584,7 +584,7 @@ local function gpmdp_get_playlists()
     gpmdp_schedule_work(cbk, nil, cbk_done)
 end
 
-gpmdp_bind_cmd("Get Playlists", kb_alt_shift, "l", gpmdp_get_playlists, false)
+gpmdp_bind_cmd("Get Playlists", Cmd_alt_shift, "l", gpmdp_get_playlists, false)
 
 ---------------------------------------------------------------------
 
@@ -645,7 +645,7 @@ local function gpmdp_select_track()
     ch:show()
 end
 
-gpmdp_bind_cmd("Select Track", kb_alt, "t", gpmdp_select_track, false)
+gpmdp_bind_cmd("Select Track", Cmd_alt, "t", gpmdp_select_track, false)
 
 ---------------------------------------------------------------------
 
@@ -709,7 +709,7 @@ local function gpmdp_select_playlist()
     ch:show()
 end
 
-gpmdp_bind_cmd("Select Playlist", kb_alt, "l", gpmdp_select_playlist, false)
+gpmdp_bind_cmd("Select Playlist", Cmd_alt, "l", gpmdp_select_playlist, false)
 
 ---------------------------------------------------------------------
 
@@ -793,7 +793,7 @@ local function gpmdp_search()
     gpmdp_schedule_work(search_cbk, nil, search_cbk_done)
 end
 
-gpmdp_bind_cmd("Search", kb_alt, "s", gpmdp_search, false)
+gpmdp_bind_cmd("Search", Cmd_alt, "s", gpmdp_search, false)
 
 ---------------------------------------------------------------------
 
@@ -826,8 +826,8 @@ local function gpmdp_volume_down()
     gpmdp_schedule_work(gpmdp_set_volume, { delta = -10 })
 end
 
-gpmdp_bind_cmd("Volume +10", kb_alt, "]", gpmdp_volume_up, false)
-gpmdp_bind_cmd("Volume -10", kb_alt, "[", gpmdp_volume_down, false)
+gpmdp_bind_cmd("Volume +10", Cmd_alt, "]", gpmdp_volume_up, false)
+gpmdp_bind_cmd("Volume -10", Cmd_alt, "[", gpmdp_volume_down, false)
 
 ---------------------------------------------------------------------
 
@@ -847,7 +847,7 @@ local function gpmdp_notifications()
     gpmdp.menu:setMenu(gpmdp.menu_table)
 end
 
-gpmdp_bind_cmd("Notifications", kb_alt, "n", gpmdp_notifications, true)
+gpmdp_bind_cmd("Notifications", Cmd_alt, "n", gpmdp_notifications, true)
 menu_notifications = #gpmdp.menu_table
 
 ---------------------------------------------------------------------
@@ -880,7 +880,7 @@ local function gpmdp_reset()
     gpmdp_get_queue()
 end
 
-gpmdp_bind_cmd("Reset", kb_alt_shift, "r", gpmdp_reset, false)
+gpmdp_bind_cmd("Reset", Cmd_alt_shift, "r", gpmdp_reset, false)
 
 ---------------------------------------------------------------------
 
@@ -896,7 +896,7 @@ gpmdp_halt = function()
     end
 end
 
-gpmdp_bind_cmd("Halt", kb_alt, "h", gpmdp_halt, false)
+gpmdp_bind_cmd("Halt", Cmd_alt, "h", gpmdp_halt, false)
 
 menu_halt = #gpmdp.menu_table
 
@@ -932,7 +932,7 @@ local function gpmdp_launch()
     end
 end
 
-gpmdp_bind_cmd("Launch", kb_alt_shift, "g", gpmdp_launch, false)
+gpmdp_bind_cmd("Launch", Cmd_alt_shift, "g", gpmdp_launch, false)
 
 ---------------------------------------------------------------------
 

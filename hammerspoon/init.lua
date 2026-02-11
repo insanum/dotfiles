@@ -1,9 +1,15 @@
 
-kb_shift      = { "cmd", "shift" }
-kb_ctrl       = { "cmd", "ctrl" }
-kb_ctrl_shift = { "cmd", "ctrl", "shift" }
-kb_alt        = { "cmd", "alt" }
-kb_alt_shift  = { "cmd", "alt", "shift" }
+Cmd                = { "cmd "}
+Ctrl               = { "ctrl "}
+Alt                = { "alt "}
+Shift              = { "shift "}
+Cmd_ctrl           = { "cmd", "ctrl" }
+Cmd_alt            = { "cmd", "alt" }
+Cmd_shift          = { "cmd", "shift" }
+Cmd_ctrl_alt       = { "cmd", "ctrl", "alt" }
+Cmd_ctrl_shift     = { "cmd", "ctrl", "shift" }
+Cmd_ctrl_shift_alt = { "cmd", "ctrl", "shift", "alt" }
+Cmd_alt_shift      = { "cmd", "alt", "shift" }
 
 hs.hotkey.alertDuration = 0
 
@@ -13,167 +19,129 @@ hs.console.outputBackgroundColor({ white = 0 })
 hs.console.consolePrintColor({ white = 1 })
 hs.console.consoleCommandColor({ green = 1 })
 
-mod_key = hs.hotkey.modal.new(kb_ctrl, 'k', 'Modal In')
-local mod_alert = nil
+local function show_help(help)
+    local help_alert_loc = { radius = 0, textSize = 16, atScreenEdge = 0 }
+    hs.alert(help, help_alert_loc, 5)
+end
 
-function mod_key:entered()
+local modal_alert_loc = { radius = 0, atScreenEdge = 0 }
+local modal_alert = nil
+
+local function modal_enter(msg)
     -- delete existing alert if present
-    if mod_alert then
-        mod_alert:delete()
+    if modal_alert then
+        hs.alert.closeAll(1)
     end
 
-    -- define frame and properties for canvas in upper left corner
-    local frame = { x = 0, y = 0, w = 150, h = 50 }
-    mod_alert = hs.canvas.new(frame)
-
-    mod_alert:appendElements({
-        {
-            type = 'rectangle',
-            action = 'fill',
-            fillColor = { red = 1, green = 1, blue = 1, alpha = 0.8 },
-        }
-    })
-
-    -- Add white text on top
-    mod_alert:appendElements({
-        {
-            type = 'text',
-            text = 'modal-in',
-            textColor = { red = 0, green = 0, blue = 0, alpha = 1 },
-            textSize = 28,
-            frame = { x = 8, y = 8, w = 140, h = 30 },
-            textAlignment = 'center',
-        }
-    })
-
-    mod_alert:show()
+    modal_alert = hs.alert(msg, modal_alert_loc, 'infinite')
 end
 
-function mod_key:exited()
+local function modal_exit()
     -- remove the alert indicator
-    if mod_alert then
-        mod_alert:delete()
-        mod_alert = nil
+    if modal_alert then
+        hs.alert.closeAll(1)
+        modal_alert = nil
     end
 end
 
-mod_key:bind('', 'escape', function() mod_key:exit() end)
+local function modal_help(m)
+    local key_list = ''
 
--- notification manager
--- # this is broken as the mouse move doesn't activate the x/close button
---require("notifications")
-
--- volume commands
--- # with Voyager keyboard layers, no longer need this
---require("volume")
-
--- audio device switcher
-require("audiodevice")
-
--- window management
-require("window")
-
--- application launcher (like spotlight)
---require("launcher")
-
--- mpd client
---require("mpc")
-
--- gpmdp client
---require("gpmdp")
-
--- music client
-require("music")
-
--- stock quotes
---require("intrinio")
---require("alphavantage")
-require("finnhub")
-
--- pomodoro timer
---require("pomodoro")
-
--- input logger
---require("ilog")
-
--- send pushover messages
---require("pushover")
-
--- Add a new task to the Obsidian INBOX note
-require("mdtodo")
-
--- Create a new Apple Reminder
-require("reminders")
-
--- Window Screenshots
-require("wincapture")
-
--- Application Focus
-require("appfocus")
-
--- Ghostty hacks
-require("ghostty")
-
--- reload config
-hs.hotkey.bind(kb_ctrl_shift, "r", "Reload Hammerspoon config",
-function()
-    hs.notify.show("Hammerspoon", "Reloading configuration...", "");
-    hs.reload()
-end)
-
-hs.hotkey.bind(kb_ctrl, "q", "Show help",
-function()
-    local last_win = hs.window.focusedWindow()
-    local keys     = hs.hotkey.getHotkeys()
-
-    local chooser_cbk = function(selection)
-        if last_win ~= nil then
-            last_win:focus() -- focus last window
+    for i = 1,#m.keys do
+        if i == 1 then
+            key_list = m.keys[i].msg
+        else
+            key_list = key_list .. '\n' .. m.keys[i].msg
         end
     end
 
-    local help = { }
-    for i = 1,#keys do
-        table.insert(help, { text = keys[i].msg })
-    end
+    show_help(key_list)
+end
 
-    chooser = hs.chooser.new(chooser_cbk)
-    chooser:choices(help)
-    --chooser:rows(#help)
-    chooser:rows(15)
-    chooser:width(40)
-    chooser:bgDark(true)
-    chooser:fgColor(hs.drawing.color.x11.orange)
-    chooser:subTextColor(hs.drawing.color.x11.chocolate)
-    chooser:show()
-end)
+function New_Modal_Key(mods, key, msg)
+    local m = hs.hotkey.modal.new(mods, key, msg)
+    function m:entered() modal_enter(msg) end
+    function m:exited() modal_exit() end
+    m:bind('', 'q', 'Show help', function() modal_help(m) end)
+    m:bind('', 'escape', function() m:exit() end)
+    return m
+end
 
-hs.hotkey.bind(kb_ctrl, "e", "Launch Finder",
+Mod_Key = New_Modal_Key(Cmd_ctrl, 'k', 'Modal Misc')
+
+local function loadit(module)
+    print("----> require " .. module)
+    require(module)
+end
+
+-- notification manager
+-- # this is broken as the mouse move doesn't activate the x/close button
+--loadit("notifications")
+
+-- volume commands
+-- # with Voyager keyboard layers, no longer need this
+--loadit("volume")
+
+-- audio device switcher
+loadit("audiodevice")
+
+-- window management
+loadit("window")
+
+-- application launcher (like spotlight)
+--loadit("launcher")
+
+-- mpd client
+--loadit("mpc")
+
+-- gpmdp client
+--loadit("gpmdp")
+
+-- Apple Music client
+loadit("music")
+
+-- stock quotes
+--loadit("intrinio")
+--loadit("alphavantage")
+loadit("finnhub")
+
+-- Pomodoro timer
+--loadit("pomodoro")
+
+-- input logger
+--loadit("ilog")
+
+-- send Pushover messages
+--loadit("pushover")
+
+-- add a new task to the Obsidian INBOX note
+loadit("mdtodo")
+
+-- create a new Apple Reminder
+loadit("reminders")
+
+-- window screenshots
+loadit("wincapture")
+
+-- focus applications
+loadit("appfocus")
+
+-- Ghostty hacks
+loadit("ghostty")
+
+hs.hotkey.bind(Cmd_ctrl, "q", "Show help",
 function()
-    local finder = hs.application.open("Finder")
-    local wins = finder:allWindows()
-    if #wins == 1 and wins[1]:isStandard() == false then
-        finder:selectMenuItem({ "File", "New Finder Window" })
+    local keys = hs.hotkey.getHotkeys()
+    local key_list = ''
+
+    for i = 1,#keys do
+        if i == 1 then
+            key_list = keys[i].msg
+        else
+            key_list = key_list .. '\n' .. keys[i].msg
+        end
     end
-    finder:activate()
-end)
 
--- media controls (play/pause, next, previous)
-
---[[
-hs.hotkey.bind(kb_ctrl, "\\", function()
-  hs.eventtap.event.newSystemKeyEvent('PLAY', true):post()
-  hs.eventtap.event.newSystemKeyEvent('PLAY', false):post()
+    show_help(key_list)
 end)
-
-hs.hotkey.bind(kb_ctrl, "]", function()
-  hs.eventtap.event.newSystemKeyEvent('NEXT', true):post()
-  hs.eventtap.event.newSystemKeyEvent('NEXT', false):post()
-end)
-
-hs.hotkey.bind(kb_ctrl, "[", function()
-  hs.eventtap.event.newSystemKeyEvent('PREVIOUS', true):post()
-  hs.eventtap.event.newSystemKeyEvent('PREVIOUS', false):post()
-end)
---]]
 

@@ -147,68 +147,83 @@ local function amCmd(...)
     end
 end
 
-hs.hotkey.bind(kb_ctrl_shift, "m", "Music run",
+local music_modal = New_Modal_Key(Cmd_ctrl, 'u', 'Modal Music')
+
+music_modal:bind({}, "m", "Music run",
 function()
+    music_modal:exit()
     amCmd("run")
 end)
 
-hs.hotkey.bind(kb_ctrl_shift, "s", "Music stop",
+music_modal:bind({}, "s", "Music stop",
 function()
+    music_modal:exit()
     amCmd("stop")
 end)
 
-hs.hotkey.bind(kb_ctrl, "s", "Music status",
+music_modal:bind({}, "t", "Music status",
 function()
+    music_modal:exit()
     amCmd("status")
 end)
 
-hs.hotkey.bind(kb_ctrl, "p", "Music playpause",
+music_modal:bind({}, "p", "Music toggle play/pause",
 function()
+    music_modal:exit()
     amCmd("playpause")
 end)
 
-hs.hotkey.bind(kb_ctrl, ".", "Music next",
+music_modal:bind({}, ".", "Music next track",
 function()
+    music_modal:exit()
     amCmd("next")
 end)
 
-hs.hotkey.bind(kb_ctrl, ",", "Music prev",
+music_modal:bind({}, ",", "Music previous track",
 function()
+    music_modal:exit()
     amCmd("prev")
 end)
 
-hs.hotkey.bind(kb_ctrl_shift, "f", "Music shuffle toggle",
+music_modal:bind({}, "f", "Music shuffle toggle",
 function()
+    music_modal:exit()
     amCmd("shuffle", "state")
 end)
 
-hs.hotkey.bind(kb_ctrl, "r", "Music repeat toggle",
+music_modal:bind({}, "r", "Music repeat toggle",
 function()
+    music_modal:exit()
     amCmd("repeat", "state")
 end)
 
-hs.hotkey.bind(kb_ctrl, "Up", "Music volume up",
+music_modal:bind({}, "Up", "Music volume up",
 function()
+    music_modal:exit()
     amCmd("volume", "up")
 end)
 
-hs.hotkey.bind(kb_ctrl, "Down", "Music volume down",
+music_modal:bind({}, "Down", "Music volume down",
 function()
+    music_modal:exit()
     amCmd("volume", "down")
 end)
 
-hs.hotkey.bind(kb_ctrl, "Left", "Music seek backward",
+music_modal:bind({}, "Left", "Music seek backward",
 function()
+    music_modal:exit()
     amCmd("seek", "backward")
 end)
 
-hs.hotkey.bind(kb_ctrl, "Right", "Music seek forward",
+music_modal:bind({}, "Right", "Music seek forward",
 function()
+    music_modal:exit()
     amCmd("seek", "forward")
 end)
 
-hs.hotkey.bind(kb_ctrl, "l", "Music select playlist",
+music_modal:bind({}, "l", "Music select playlist",
 function()
+    music_modal:exit()
     amCmd("playlists")
 end)
 

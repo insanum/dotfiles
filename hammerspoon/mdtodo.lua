@@ -52,9 +52,9 @@ local function mdtodoNewTask()
     end
 end
 
-mod_key:bind("", "i", "New INBOX Task",
+Mod_Key:bind("", "i", "New INBOX Task",
 function()
-    mod_key:exit()
+    Mod_Key:exit()
     mdtodoNewTask()
 end)
 

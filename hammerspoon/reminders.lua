@@ -44,9 +44,9 @@ local function createReminder()
     end
 end
 
-mod_key:bind("", "r", "New Apple Reminder",
+Mod_Key:bind("", "r", "New Apple Reminder",
 function()
-    mod_key:exit()
+    Mod_Key:exit()
     createReminder()
 end)
 
