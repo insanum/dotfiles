@@ -133,7 +133,7 @@ stock_updater = hs.timer.new((STOCKS_UPDATE_TIMER * 60), doUpdate, true):start()
 forced_update = true
 doUpdate()
 
-hs.hotkey.bind(Cmd_ctrl_shift, "q", "Refresh stock ticker",
+hs.hotkey.bind(CMD_CTRL_SHIFT, "q", "Refresh stock ticker",
 function()
     forced_update = true
     doUpdate()

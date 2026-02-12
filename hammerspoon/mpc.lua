@@ -1023,67 +1023,67 @@ mpc.menu_table =
 -- initialize the mpc state and display
 mpc_reset()
 
-hotkey.bind(Cmd_alt, "p", "MPD Play/Pause",
+hotkey.bind(CMD_ALT, "p", "MPD Play/Pause",
 function()
     mpc_pause()
 end)
 
-hotkey.bind(Cmd_alt, "s", "MPD Stop",
+hotkey.bind(CMD_ALT, "s", "MPD Stop",
 function()
     mpc_stop()
 end)
 
-hotkey.bind(Cmd_alt, "n", "MPD Next",
+hotkey.bind(CMD_ALT, "n", "MPD Next",
 function()
     mpc_next()
 end)
 
-hotkey.bind(Cmd_alt_shift, "n", "MPD Previous",
+hotkey.bind(CMD_ALT_SHIFT, "n", "MPD Previous",
 function()
     mpc_previous()
 end)
 
-hotkey.bind(Cmd_alt, "r", "MPD Repeat",
+hotkey.bind(CMD_ALT, "r", "MPD Repeat",
 function()
     mpc_repeat()
 end)
 
-hotkey.bind(Cmd_alt, "Up", "MPD Volume +5",
+hotkey.bind(CMD_ALT, "Up", "MPD Volume +5",
 function()
     mpc_volume_up()
 end)
 
-hotkey.bind(Cmd_alt, "Down", "MPD Volume -5",
+hotkey.bind(CMD_ALT, "Down", "MPD Volume -5",
 function()
     mpc_volume_down()
 end)
 
-hotkey.bind(Cmd_alt, "Left", "MPD Seek -15",
+hotkey.bind(CMD_ALT, "Left", "MPD Seek -15",
 function()
     mpc_seek_backward()
 end)
 
-hotkey.bind(Cmd_alt, "Right", "MPD Seek +15",
+hotkey.bind(CMD_ALT, "Right", "MPD Seek +15",
 function()
     mpc_seek_forward()
 end)
 
-hotkey.bind(Cmd_alt, "l", "MPD Load Playlist",
+hotkey.bind(CMD_ALT, "l", "MPD Load Playlist",
 function()
     mpc_load_playlist()
 end)
 
-hotkey.bind(Cmd_alt, "t", "MPD Play Track",
+hotkey.bind(CMD_ALT, "t", "MPD Play Track",
 function()
     mpc_play_track()
 end)
 
-hotkey.bind(Cmd_alt, "a", "MPD Notifications",
+hotkey.bind(CMD_ALT, "a", "MPD Notifications",
 function()
     mpc_notifications()
 end)
 
-hotkey.bind(Cmd_alt, "h", "MPD Halt",
+hotkey.bind(CMD_ALT, "h", "MPD Halt",
 function()
     mpc_halt()
 end)

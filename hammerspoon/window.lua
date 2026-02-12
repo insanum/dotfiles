@@ -1,10 +1,11 @@
 
-local w_modal = New_Modal_Key(Cmd_ctrl, 'w', 'Modal Window')
+--local win_modal = NewModalKey(CMD_CTRL, 'w', 'Modal Window')
 
+--[[
 -- maximize window
-w_modal:bind({}, "f", "Maximize window",
+win_modal:bind({}, "f", "Maximize window",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local ad = hs.window.animationDuration
     hs.window.animationDuration = 0
 
@@ -13,6 +14,7 @@ function()
 
     hs.window.animationDuration = ad
 end)
+--]]
 
 --[[
 local function winMove(win, x, y, w, h)
@@ -30,9 +32,9 @@ local function winMove(win, x, y, w, h)
 end
 
 -- center window
-w_modal:bind({}, "c", "Center window",
+win_modal:bind({}, "c", "Center window",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.frontmostWindow()
     local max = win:screen():frame()
     winMove(win, (max.x + (max.w * .10)),
@@ -42,9 +44,9 @@ function()
 end)
 
 -- window left half of screen
-w_modal:bind({}, "h", "Move/Resize window left half of screen",
+win_modal:bind({}, "h", "Move/Resize window left half of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x    ),
@@ -54,9 +56,9 @@ function()
 end)
 
 -- window right half of screen
-w_modal:bind({}, "l", "Move/Resize window right half of screen",
+win_modal:bind({}, "l", "Move/Resize window right half of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x + (max.w / 2)),
@@ -66,9 +68,9 @@ function()
 end)
 
 -- window top half of screen
-w_modal:bind({}, "k", "Move/Resize window top half of screen",
+win_modal:bind({}, "k", "Move/Resize window top half of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x    ),
@@ -78,9 +80,9 @@ function()
 end)
 
 -- window bottom half of screen
-w_modal:bind({}, "j", "Move/Resize window bottom half of screen",
+win_modal:bind({}, "j", "Move/Resize window bottom half of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x              ),
@@ -90,9 +92,9 @@ function()
 end)
 
 -- window upper left quadrant screen
-w_modal:bind(Ctrl, "h", "Move/Resize window upper left of screen",
+win_modal:bind(CTRL, "h", "Move/Resize window upper left of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x     ),
@@ -102,9 +104,9 @@ function()
 end)
 
 -- window lower left quadrant screen
-w_modal:bind(Ctrl, "j", "Move/Resize window lower left of screen",
+win_modal:bind(CTRL, "j", "Move/Resize window lower left of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x              ),
@@ -114,9 +116,9 @@ function()
 end)
 
 -- window lower right quadrant screen
-w_modal:bind(Ctrl, "k", "Move/Resize window lower right of screen",
+win_modal:bind(CTRL, "k", "Move/Resize window lower right of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x + (max.w / 2)),
@@ -126,9 +128,9 @@ function()
 end)
 
 -- window upper right quadrant screen
-w_modal:bind(Ctrl, "l", "Move/Resize window upper right of screen",
+win_modal:bind(CTRL, "l", "Move/Resize window upper right of screen",
 function()
-    w_modal:exit()
+    win_modal:exit()
     local win = hs.window.focusedWindow()
     local max = win:screen():frame()
     winMove(win, (max.x + (max.w / 2)),
@@ -149,15 +151,15 @@ function moveWindowMonitor(direction)
     end
 end
 
-w_modal:bind(Ctrl, "n", "Move window to the right monitor",
+win_modal:bind(CTRL, "n", "Move window to the right monitor",
 function()
-    w_modal:exit()
+    win_modal:exit()
     moveWindowMonitor("west")
 end)
 
-w_modal:bind(Ctrl, "m", "Move window to the left monitor",
+win_modal:bind(CTRL, "m", "Move window to the left monitor",
 function()
-    w_modal:exit()
+    win_modal:exit()
     moveWindowMonitor("east")
 end)
 --]]
@@ -194,15 +196,15 @@ function moveWindowSpace(direction)
     hs.mouse.absolutePosition(mouseOrigin)
 end
 
-w_modal:bind({}, "n", "Move window one space to the left",
+win_modal:bind({}, "n", "Move window one space to the left",
 function()
-    w_modal:exit()
+    win_modal:exit()
     moveWindowSpace("left")
 end)
 
-w_modal:bind({}, "m", "Move window one space to the right",
+win_modal:bind({}, "m", "Move window one space to the right",
 function()
-    w_modal:exit()
+    win_modal:exit()
     moveWindowSpace("right")
 end)
 --]]
@@ -223,38 +225,40 @@ end)
 screenWatch:start()
 --]]
 
+--[[
 -- grid stuff
 hs.grid.setGrid("10x10")
 hs.grid.ui.textSize = 60
 
-w_modal:bind({}, "g", "Show window grid",
+win_modal:bind({}, "g", "Show window grid",
 function()
-    w_modal:exit()
+    win_modal:exit()
     hs.grid.toggleShow()
 end)
+--]]
 
 --[[
-w_modal:bind({}, "w", "Move window up on grid",
+win_modal:bind({}, "w", "Move window up on grid",
 function()
-    w_modal:exit()
+    win_modal:exit()
     hs.grid.pushWindowUp(hs.window.focusedWindow())
 end)
 
-w_modal:bind({}, "a", "Move window left on grid",
+win_modal:bind({}, "a", "Move window left on grid",
 function()
-    w_modal:exit()
+    win_modal:exit()
     hs.grid.pushWindowLeft(hs.window.focusedWindow())
 end)
 
-w_modal:bind({}, "s", "Move window down on grid",
+win_modal:bind({}, "s", "Move window down on grid",
 function()
-    w_modal:exit()
+    win_modal:exit()
     hs.grid.pushWindowDown(hs.window.focusedWindow())
 end)
 
-w_modal:bind({}, "d", "Move window right on grid",
+win_modal:bind({}, "d", "Move window right on grid",
 function()
-    w_modal:exit()
+    win_modal:exit()
     hs.grid.pushWindowRight(hs.window.focusedWindow())
 end)
 --]]
@@ -264,116 +268,109 @@ end)
 -- mkdir .hammerspoon/Spoons; cd .hammerspoon/Spoons
 -- git clone https://github.com/mogenson/PaperWM.spoon
 
-hs.loadSpoon("PaperWM")
+local pwm = hs.loadSpoon("PaperWM")
 
-spoon.PaperWM.window_gap = 16
-spoon.PaperWM.window_ratios = { 0.25, 0.50, 0.75, 0.90 }
+pwm.window_gap = 16
+pwm.window_ratios = { 0.25, 0.50, 0.75, 0.90 }
 
---spoon.PaperWM.drag_window = Cmd_alt
---spoon.PaperWM.lift_window = Cmd_ctl
-spoon.PaperWM.scroll_window = Cmd_alt
-spoon.PaperWM.scroll_gain = 30
+pwm.lift_window = CMD_SHIFT
+--pwm.drag_window = CMD_ALT
+pwm.scroll_window = CMD_ALT
+pwm.scroll_gain = 30
 
-spoon.PaperWM.window_filter:rejectApp("Stickies")
+pwm.window_filter:rejectApp("Stickies")
 
-spoon.PaperWM:bindHotkeys(spoon.PaperWM.default_hotkeys)
+pwm:start()
 
-local pwm_modal = New_Modal_Key(Cmd, 'return', 'Modal PWM')
+local pwm_a = pwm.actions.actions()
 
-local actions = spoon.PaperWM.actions.actions()
+local pwm_modal = NewModalKey(CMD, 'return', 'Modal PWM')
 
-pwm_modal:bind({}, "w", "PWM cycle width", actions.cycle_width)
-pwm_modal:bind(Shift, "w", "PWM cycle height", actions.cycle_height)
+pwm_modal:bind({}, "w", "PWM cycle width", pwm_a.cycle_width)
+pwm_modal:bind(SHIFT, "w", "PWM cycle height", pwm_a.cycle_height)
 
-pwm_modal:bind({}, "h", "PWM focus left", actions.focus_left)
-pwm_modal:bind({}, "j", "PWM focus down", actions.focus_down)
-pwm_modal:bind({}, "k", "PWM focus up", actions.focus_up)
-pwm_modal:bind({}, "l", "PWM focus right", actions.focus_right)
+pwm_modal:bind({}, "h", "PWM focus left", pwm_a.focus_left)
+pwm_modal:bind({}, "j", "PWM focus down", pwm_a.focus_down)
+pwm_modal:bind({}, "k", "PWM focus up", pwm_a.focus_up)
+pwm_modal:bind({}, "l", "PWM focus right", pwm_a.focus_right)
 
-pwm_modal:bind(Ctrl, "h", "PWM move window left", actions.swap_left)
-pwm_modal:bind(Ctrl, "j", "PWM move window down", actions.swap_down)
-pwm_modal:bind(Ctrl, "k", "PWM move window up", actions.swap_up)
-pwm_modal:bind(Ctrl, "l", "PWM move window right", actions.swap_right)
+pwm_modal:bind(CTRL, "h", "PWM move window left", pwm_a.swap_left)
+pwm_modal:bind(CTRL, "j", "PWM move window down", pwm_a.swap_down)
+pwm_modal:bind(CTRL, "k", "PWM move window up", pwm_a.swap_up)
+pwm_modal:bind(CTRL, "l", "PWM move window right", pwm_a.swap_right)
 
-pwm_modal:bind(Cmd, "h", "PWM switch space left", function()
+pwm_modal:bind(CMD, "h", "PWM switch space left", function()
     pwm_modal:exit()
-    actions.switch_space_l()
+    pwm_a.switch_space_l()
 end)
 
-pwm_modal:bind(Cmd, "l", "PWM switch space right", function()
+pwm_modal:bind(CMD, "l", "PWM switch space right", function()
     pwm_modal:exit()
-    actions.switch_space_r()
+    pwm_a.switch_space_r()
 end)
 
-pwm_modal:bind(Cmd, "1", "PWM switch space 1", function()
+pwm_modal:bind(CMD, "1", "PWM switch space 1", function()
     pwm_modal:exit()
-    actions.switch_space_1()
+    pwm_a.switch_space_1()
 end)
 
-pwm_modal:bind(Cmd, "2", "PWM switch space 2", function()
+pwm_modal:bind(CMD, "2", "PWM switch space 2", function()
     pwm_modal:exit()
-    actions.switch_space_2()
+    pwm_a.switch_space_2()
 end)
 
-pwm_modal:bind(Cmd, "3", "PWM switch space 3", function()
+pwm_modal:bind(CMD, "3", "PWM switch space 3", function()
     pwm_modal:exit()
-    actions.switch_space_3()
+    pwm_a.switch_space_3()
 end)
 
-pwm_modal:bind(Alt, "1", "PWM move window space 1", function()
+pwm_modal:bind(ALT, "1", "PWM move window space 1", function()
     pwm_modal:exit()
-    actions.move_window_1()
+    pwm_a.move_window_1()
 end)
 
-pwm_modal:bind(Alt, "2", "PWM move window space 2", function()
+pwm_modal:bind(ALT, "2", "PWM move window space 2", function()
     pwm_modal:exit()
-    actions.move_window_2()
+    pwm_a.move_window_2()
 end)
 
-pwm_modal:bind(Alt, "3", "PWM move window space 3", function()
+pwm_modal:bind(ALT, "3", "PWM move window space 3", function()
     pwm_modal:exit()
-    actions.move_window_3()
+    pwm_a.move_window_3()
 end)
 
 pwm_modal:bind({}, "c", "PWM window center", function()
     pwm_modal:exit()
-    actions.center_window()
+    pwm_a.center_window()
 end)
 
 pwm_modal:bind({}, "f", "PWM window full width", function()
     pwm_modal:exit()
-    actions.full_width()
+    pwm_a.full_width()
 end)
 
-pwm_modal:bind(Cmd, "i", "PWM slurp in", function()
+pwm_modal:bind(CMD, "i", "PWM slurp in", function()
     pwm_modal:exit()
-    actions.slurp_in()
+    pwm_a.slurp_in()
 end)
 
-pwm_modal:bind(Cmd, "o", "PWM barf out", function()
+pwm_modal:bind(CMD, "o", "PWM barf out", function()
     pwm_modal:exit()
-    actions.barf_out()
+    pwm_a.barf_out()
 end)
 
 pwm_modal:bind(Shift, "r", "PWM refresh windows", function()
     pwm_modal:exit()
-    actions.refresh_windows()
+    pwm_a.refresh_windows()
 end)
 
 pwm_modal:bind({}, "t", "PWM toggle floating", function()
     pwm_modal:exit()
-    actions.toggle_floating()
+    pwm_a.toggle_floating()
 end)
 
 pwm_modal:bind(Shift, "t", "PWM focus floating", function()
     pwm_modal:exit()
-    actions.focus_floating()
+    pwm_a.focus_floating()
 end)
-
---[[
-    -- figure out a way to dynamic start/stop PaperWM
-    stop_events          = { { "alt", "cmd", "shift" }, "q" },
---]]
-
-spoon.PaperWM:start()
 

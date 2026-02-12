@@ -35,13 +35,13 @@ local function focus_or_launch_app(appName)
     end
 end
 
-Mod_Key:bind('', 'c', 'Focus Chrome', function()
-    Mod_Key:exit()
+MISC_MODAL:bind('', 'c', 'Focus Chrome', function()
+    MISC_MODAL:exit()
     focus_or_launch_app('Chrome')
 end)
 
-Mod_Key:bind('', 'e', 'Focus Finder', function()
-    Mod_Key:exit()
+MISC_MODAL:bind('', 'e', 'Focus Finder', function()
+    MISC_MODAL:exit()
     local finder = hs.application.open("Finder")
     local wins = finder:allWindows()
     if #wins == 1 and wins[1]:isStandard() == false then
@@ -50,28 +50,28 @@ Mod_Key:bind('', 'e', 'Focus Finder', function()
     finder:activate()
 end)
 
-Mod_Key:bind('', 'f', 'Focus Firefox', function()
-    Mod_Key:exit()
+MISC_MODAL:bind('', 'f', 'Focus Firefox', function()
+    MISC_MODAL:exit()
     focus_or_launch_app('Firefox')
 end)
 
-Mod_Key:bind('', 'g', 'Focus Ghostty', function()
-    Mod_Key:exit()
+MISC_MODAL:bind('', 'g', 'Focus Ghostty', function()
+    MISC_MODAL:exit()
     focus_or_launch_app('Ghostty')
 end)
 
-Mod_Key:bind('', 'p', 'Focus PDF Expert', function()
-    Mod_Key:exit()
+MISC_MODAL:bind('', 'p', 'Focus PDF Expert', function()
+    MISC_MODAL:exit()
     focus_or_launch_app('PDF Expert')
 end)
 
-Mod_Key:bind('', 's', 'Focus Stickies', function()
-    Mod_Key:exit()
+MISC_MODAL:bind('', 's', 'Focus Stickies', function()
+    MISC_MODAL:exit()
     focus_or_launch_app('Stickies')
 end)
 
-Mod_Key:bind('', 'z', 'Focus Zoom', function()
-    Mod_Key:exit()
+MISC_MODAL:bind('', 'z', 'Focus Zoom', function()
+    MISC_MODAL:exit()
     focus_or_launch_app('Zoom')
 end)
 

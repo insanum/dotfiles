@@ -63,7 +63,7 @@ function clearNotification(doubleClick)
     win:focus()
 end
 
-hs.hotkey.bind(Cmd_ctrl, "o", "Clear the top notification",
+hs.hotkey.bind(CMD_CTRL, "o", "Clear the top notification",
 function()
     -- Uncomment the following to print current mouse location to console.
     if (false) then

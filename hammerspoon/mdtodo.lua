@@ -52,9 +52,9 @@ local function mdtodoNewTask()
     end
 end
 
-Mod_Key:bind("", "i", "New INBOX Task",
+MISC_MODAL:bind("", "i", "New INBOX Task",
 function()
-    Mod_Key:exit()
+    MISC_MODAL:exit()
     mdtodoNewTask()
 end)
 
