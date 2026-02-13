@@ -52,17 +52,17 @@ local function decVolume()
     volumeAlert(device:name(), volume)
 end
 
-hs.hotkey.bind(CMD_CTRL_SHIFT, "Return", "Volume mute",
+hs.hotkey.bind(CMD_CTRL_SHIFT, "Return", "Volume Mute",
 function()
     toggleMute()
 end)
 
-hs.hotkey.bind(CMD_CTRL_SHIFT, "Up", "Volume step up "..volume_step.."%",
+hs.hotkey.bind(CMD_CTRL_SHIFT, "Up", "Volume Step Up "..volume_step.."%",
 function()
     incVolume()
 end)
 
-hs.hotkey.bind(CMD_CTRL_SHIFT, "Down", "Volume step down "..volume_step.."%",
+hs.hotkey.bind(CMD_CTRL_SHIFT, "Down", "Volume Step Down "..volume_step.."%",
 function()
     decVolume()
 end)

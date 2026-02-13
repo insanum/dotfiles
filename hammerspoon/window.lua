@@ -2,6 +2,9 @@
 --local win_modal = NewModalKey(CMD_CTRL, 'w', 'Modal Window')
 
 --[[
+------------------------------------------------------------------------------
+-- window stuff
+
 -- maximize window
 win_modal:bind({}, "f", "Maximize window",
 function()
@@ -14,9 +17,7 @@ function()
 
     hs.window.animationDuration = ad
 end)
---]]
 
---[[
 local function winMove(win, x, y, w, h)
     local ad = hs.window.animationDuration
     hs.window.animationDuration = 0
@@ -141,6 +142,9 @@ end)
 --]]
 
 --[[
+------------------------------------------------------------------------------
+-- monitor stuff
+
 -- move a window to next monitor
 function moveWindowMonitor(direction)
     local win = hs.window.frontmostWindow()
@@ -165,6 +169,9 @@ end)
 --]]
 
 --[[
+------------------------------------------------------------------------------
+-- spaces stuff
+
 -- hack to move a window left/right between spaces
 function moveWindowSpace(direction)
     local mouseOrigin = hs.mouse.absolutePosition()
@@ -182,11 +189,11 @@ function moveWindowSpace(direction)
     hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseDown, clickPoint):post()
     hs.timer.usleep(150000)
 
--- XXX Hack adding "fn" required for Mojave...
+    -- hack adding "fn" required for Mojave...
     hs.eventtap.event.newKeyEvent({"fn", "ctrl"}, direction, true):post()
     hs.timer.usleep(150000)
 
--- XXX Hack adding "fn" required for Mojave...
+    -- hack adding "fn" required for Mojave...
     hs.eventtap.event.newKeyEvent({"fn", "ctrl"}, direction, false):post()
     hs.timer.usleep(150000)
 
@@ -210,23 +217,9 @@ end)
 --]]
 
 --[[
--- watch for space changes (broken, always "-1")
-spaceWatch = hs.spaces.watcher.new(function(space)
-    hs.notify.show("Hammerspoon", "space changed: "..space, "");
-end)
-spaceWatch:start()
---]]
-
---[[
--- watch for screen changes (on mouse click, not movement)
-screenWatch = hs.screen.watcher.newWithActiveScreen(function()
-    hs.notify.show("Hammerspoon", "screen changed", "");
-end)
-screenWatch:start()
---]]
-
---[[
+------------------------------------------------------------------------------
 -- grid stuff
+
 hs.grid.setGrid("10x10")
 hs.grid.ui.textSize = 60
 
@@ -235,9 +228,7 @@ function()
     win_modal:exit()
     hs.grid.toggleShow()
 end)
---]]
 
---[[
 win_modal:bind({}, "w", "Move window up on grid",
 function()
     win_modal:exit()
@@ -279,6 +270,8 @@ pwm.scroll_window = CMD_ALT
 pwm.scroll_gain = 30
 
 pwm.window_filter:rejectApp("Stickies")
+pwm.window_filter:rejectApp("Finder")
+pwm.window_filter:setAppFilter("Google Chrome Beta", { rejectTitles = "Bitwarden" })
 
 pwm:start()
 
@@ -286,91 +279,170 @@ local pwm_a = pwm.actions.actions()
 
 local pwm_modal = NewModalKey(CMD, 'return', 'Modal PWM')
 
-pwm_modal:bind({}, "w", "PWM cycle width", pwm_a.cycle_width)
-pwm_modal:bind(SHIFT, "w", "PWM cycle height", pwm_a.cycle_height)
+pwm_modal:bind({}, "w", "PWM Cycle Width", pwm_a.cycle_width)
+pwm_modal:bind(SHIFT, "w", "PWM Cycle Height", pwm_a.cycle_height)
 
-pwm_modal:bind({}, "h", "PWM focus left", pwm_a.focus_left)
-pwm_modal:bind({}, "j", "PWM focus down", pwm_a.focus_down)
-pwm_modal:bind({}, "k", "PWM focus up", pwm_a.focus_up)
-pwm_modal:bind({}, "l", "PWM focus right", pwm_a.focus_right)
+pwm_modal:bind({}, "h", "PWM Focus Left", pwm_a.focus_left)
+pwm_modal:bind({}, "j", "PWM Focus Down", pwm_a.focus_down)
+pwm_modal:bind({}, "k", "PWM Focus Up", pwm_a.focus_up)
+pwm_modal:bind({}, "l", "PWM Focus Right", pwm_a.focus_right)
 
-pwm_modal:bind(CTRL, "h", "PWM move window left", pwm_a.swap_left)
-pwm_modal:bind(CTRL, "j", "PWM move window down", pwm_a.swap_down)
-pwm_modal:bind(CTRL, "k", "PWM move window up", pwm_a.swap_up)
-pwm_modal:bind(CTRL, "l", "PWM move window right", pwm_a.swap_right)
+pwm_modal:bind(CTRL, "h", "PWM Window Move Left", pwm_a.swap_left)
+pwm_modal:bind(CTRL, "j", "PWM Window Move Down", pwm_a.swap_down)
+pwm_modal:bind(CTRL, "k", "PWM Window Move Up", pwm_a.swap_up)
+pwm_modal:bind(CTRL, "l", "PWM Window Move Right", pwm_a.swap_right)
 
-pwm_modal:bind(CMD, "h", "PWM switch space left", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_l()
-end)
-
-pwm_modal:bind(CMD, "l", "PWM switch space right", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_r()
-end)
-
-pwm_modal:bind(CMD, "1", "PWM switch space 1", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_1()
-end)
-
-pwm_modal:bind(CMD, "2", "PWM switch space 2", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_2()
-end)
-
-pwm_modal:bind(CMD, "3", "PWM switch space 3", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_3()
-end)
-
-pwm_modal:bind(ALT, "1", "PWM move window space 1", function()
+pwm_modal:bind(ALT, "1", "PWM Window Move Space 1", function()
     pwm_modal:exit()
     pwm_a.move_window_1()
 end)
 
-pwm_modal:bind(ALT, "2", "PWM move window space 2", function()
+pwm_modal:bind(ALT, "2", "PWM Window Move Space 2", function()
     pwm_modal:exit()
     pwm_a.move_window_2()
 end)
 
-pwm_modal:bind(ALT, "3", "PWM move window space 3", function()
+pwm_modal:bind(ALT, "3", "PWM Window Move Space 3", function()
     pwm_modal:exit()
     pwm_a.move_window_3()
 end)
 
-pwm_modal:bind({}, "c", "PWM window center", function()
+pwm_modal:bind({}, "c", "PWM Window Center", function()
     pwm_modal:exit()
     pwm_a.center_window()
 end)
 
-pwm_modal:bind({}, "f", "PWM window full width", function()
+pwm_modal:bind({}, "f", "PWM Window Full Width", function()
     pwm_modal:exit()
     pwm_a.full_width()
 end)
 
-pwm_modal:bind(CMD, "i", "PWM slurp in", function()
+pwm_modal:bind({}, "i", "PWM Slurp In", function()
     pwm_modal:exit()
     pwm_a.slurp_in()
 end)
 
-pwm_modal:bind(CMD, "o", "PWM barf out", function()
+pwm_modal:bind({}, "o", "PWM Barf Out", function()
     pwm_modal:exit()
     pwm_a.barf_out()
 end)
 
-pwm_modal:bind(Shift, "r", "PWM refresh windows", function()
+pwm_modal:bind({}, "r", "PWM Refresh Windows", function()
     pwm_modal:exit()
     pwm_a.refresh_windows()
 end)
 
-pwm_modal:bind({}, "t", "PWM toggle floating", function()
+pwm_modal:bind({}, "t", "PWM Toggle Floating", function()
     pwm_modal:exit()
     pwm_a.toggle_floating()
 end)
 
-pwm_modal:bind(Shift, "t", "PWM focus floating", function()
+pwm_modal:bind(SHIFT, "t", "PWM Focus Floating", function()
     pwm_modal:exit()
     pwm_a.focus_floating()
+end)
+
+pwm_modal:bind(CMD, "h", "PWM Switch Space Left", function()
+    pwm_modal:exit()
+    pwm_a.switch_space_l()
+end)
+
+pwm_modal:bind(CMD, "l", "PWM Switch Space Right", function()
+    pwm_modal:exit()
+    pwm_a.switch_space_r()
+end)
+
+pwm_modal:bind(CMD, "1", "PWM Switch Space 1", function()
+    pwm_modal:exit()
+    pwm_a.switch_space_1()
+end)
+
+pwm_modal:bind(CMD, "2", "PWM Switch Space 2", function()
+    pwm_modal:exit()
+    pwm_a.switch_space_2()
+end)
+
+pwm_modal:bind(CMD, "3", "PWM Switch Space 3", function()
+    pwm_modal:exit()
+    pwm_a.switch_space_3()
+end)
+
+------------------------------------------------------------------------------
+
+local eventtap = require("hs.eventtap")
+local eventTypes = eventtap.event.types
+
+local armed = false
+local clickWatcher = nil
+
+local function printWindowInfo(win)
+    if not win then
+        print("No window found under cursor.")
+        return
+    end
+
+    local app = win:application()
+
+    local info = {
+        id           = win:id(),
+        title        = win:title(),
+        role         = win:role(),
+        subrole      = win:subrole(),
+        frame        = win:frame(),
+        isStandard   = win:isStandard(),
+        isFullScreen = win:isFullScreen(),
+
+        appName      = app and app:name() or "N/A",
+        bundleID     = app and app:bundleID() or "N/A",
+        pid          = app and app:pid() or "N/A",
+
+        screen       = win:screen() and win:screen():name() or "N/A",
+    }
+
+    print("----- Window Info -----")
+    print(hs.inspect(info))
+    print("-----------------------")
+end
+
+local function disarm()
+    armed = false
+
+    if clickWatcher then
+        clickWatcher:stop()
+        clickWatcher = nil
+    end
+
+    print("Window inspector: done")
+end
+
+local function arm()
+    armed = true
+
+    clickWatcher = eventtap.new({ eventTypes.leftMouseDown }, function(event)
+        local pos = hs.mouse.absolutePosition()
+        local geo = hs.geometry.point(pos.x, pos.y)
+
+        for _, win in ipairs(hs.window.allWindows()) do
+            if geo:inside(win:frame()) then
+                printWindowInfo(win)
+                break
+            end
+        end
+
+        disarm()
+        return false -- don't block the click
+    end)
+
+    clickWatcher:start()
+
+    print("Window inspector: click a window...")
+end
+
+hs.hotkey.bind(CMD_CTRL_SHIFT, "i", "Window Info", function()
+    if armed then
+        disarm()
+    else
+        arm()
+    end
 end)
 

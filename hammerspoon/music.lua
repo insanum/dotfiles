@@ -149,79 +149,79 @@ end
 
 local music_modal = NewModalKey(CMD_CTRL, 'u', 'Modal Music')
 
-music_modal:bind({}, "m", "Music run",
+music_modal:bind({}, "m", "Music Run",
 function()
     music_modal:exit()
     amCmd("run")
 end)
 
-music_modal:bind({}, "s", "Music stop",
+music_modal:bind({}, "s", "Music Stop",
 function()
     music_modal:exit()
     amCmd("stop")
 end)
 
-music_modal:bind({}, "t", "Music status",
+music_modal:bind({}, "t", "Music Status",
 function()
     music_modal:exit()
     amCmd("status")
 end)
 
-music_modal:bind({}, "p", "Music toggle play/pause",
+music_modal:bind({}, "p", "Music Toggle Play/Pause",
 function()
     music_modal:exit()
     amCmd("playpause")
 end)
 
-music_modal:bind({}, ".", "Music next track",
+music_modal:bind({}, ".", "Music Next Track",
 function()
     music_modal:exit()
     amCmd("next")
 end)
 
-music_modal:bind({}, ",", "Music previous track",
+music_modal:bind({}, ",", "Music Previous Track",
 function()
     music_modal:exit()
     amCmd("prev")
 end)
 
-music_modal:bind({}, "f", "Music shuffle toggle",
+music_modal:bind({}, "f", "Music Toggle Shuffle",
 function()
     music_modal:exit()
     amCmd("shuffle", "state")
 end)
 
-music_modal:bind({}, "r", "Music repeat toggle",
+music_modal:bind({}, "r", "Music Toggle Repeat",
 function()
     music_modal:exit()
     amCmd("repeat", "state")
 end)
 
-music_modal:bind({}, "Up", "Music volume up",
+music_modal:bind({}, "Up", "Music Volume Up",
 function()
     music_modal:exit()
     amCmd("volume", "up")
 end)
 
-music_modal:bind({}, "Down", "Music volume down",
+music_modal:bind({}, "Down", "Music Volume Down",
 function()
     music_modal:exit()
     amCmd("volume", "down")
 end)
 
-music_modal:bind({}, "Left", "Music seek backward",
+music_modal:bind({}, "Left", "Music Seek Backward",
 function()
     music_modal:exit()
     amCmd("seek", "backward")
 end)
 
-music_modal:bind({}, "Right", "Music seek forward",
+music_modal:bind({}, "Right", "Music Seek Forward",
 function()
     music_modal:exit()
     amCmd("seek", "forward")
 end)
 
-music_modal:bind({}, "l", "Music select playlist",
+music_modal:bind({}, "l", "Music Select Playlist",
 function()
     music_modal:exit()
     amCmd("playlists")

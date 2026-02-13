@@ -30,8 +30,6 @@ loadit("help")
 -- modal init
 loadit("modal")
 
--- # this is broken as the mouse move doesn't activate the x/close button
---loadit("notifications")
 -- notification manager
 -- # this is broken as the mouse move doesn't activate the x/close button
 --loadit("notifications")

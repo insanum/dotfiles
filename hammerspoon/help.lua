@@ -81,7 +81,7 @@ function ShowHelp(help)
     help_alert = hs.alert(format_two_columns(help), help_alert_loc, 5)
 end
 
-hs.hotkey.bind(CMD_CTRL, "q", "Show help",
+hs.hotkey.bind(CMD_CTRL, "q", "Show Help",
 function()
     local keys = hs.hotkey.getHotkeys()
     local key_list = ''

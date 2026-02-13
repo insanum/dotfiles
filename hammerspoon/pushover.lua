@@ -55,7 +55,7 @@ local function pushoverSend()
     end
 end
 
-hs.hotkey.bind(CMD_CTRL, "p", "Send message to Pushover",
+hs.hotkey.bind(CMD_CTRL, "p", "Send Pushover Message",
 function()
     pushoverSend()
 end)

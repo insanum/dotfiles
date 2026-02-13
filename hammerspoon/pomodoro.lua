@@ -238,6 +238,6 @@ pomo.menu:setMenu(
     })
 pomo_update()
 
-hs.hotkey.bind(CMD_CTRL, "9", "Pomodoro enable",  pomo_enable)
-hs.hotkey.bind(CMD_CTRL, "0", "Pomodoro disable", pomo_disable)
+hs.hotkey.bind(CMD_CTRL, "9", "Pomodoro Enable",  pomo_enable)
+hs.hotkey.bind(CMD_CTRL, "0", "Pomodoro Disable", pomo_disable)
 

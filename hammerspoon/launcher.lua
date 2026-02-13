@@ -60,7 +60,7 @@ local apps =
     --]]
 }
 
-hs.hotkey.bind(CMD_CTRL, "p", "Show application launcher",
+hs.hotkey.bind(CMD_CTRL, "p", "Application Launcher",
 function()
     local last_win = hs.window.focusedWindow()
 

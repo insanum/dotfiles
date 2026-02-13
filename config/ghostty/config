@@ -46,41 +46,82 @@ copy-on-select = clipboard
 quick-terminal-position = top
 quick-terminal-size = 50%,50%
 
-#keybind = ctrl+s>c=new_tab
-#keybind = ctrl+s>space=next_tab
-#keybind = ctrl+s>p=previous_tab
-keybind = cmd+.=next_tab
-keybind = cmd+,=previous_tab
-#keybind = ctrl+s>ctrl+s=last_active_tab
-keybind = ctrl+s>ctrl+s=ignore
-keybind = ctrl+s>a=text:\x01
-keybind = ctrl+s>t=prompt_surface_title
+#############################################################################
+# Keybinds with ctrl+s leader key for tab/split management...
+#
+# #keybind = ctrl+s>c=new_tab
+# #keybind = ctrl+s>space=next_tab
+# #keybind = ctrl+s>p=previous_tab
+# keybind = cmd+.=next_tab
+# keybind = cmd+,=previous_tab
+# #keybind = ctrl+s>ctrl+s=last_active_tab
+# keybind = ctrl+s>ctrl+s=ignore
+# keybind = ctrl+s>a=text:\x01
+# keybind = ctrl+s>s=text:\x13
+# keybind = ctrl+s>t=prompt_surface_title
+#
+# keybind = ctrl+s>1=goto_tab:1
+# keybind = ctrl+s>2=goto_tab:2
+# keybind = ctrl+s>3=goto_tab:3
+# keybind = ctrl+s>4=goto_tab:4
+# keybind = ctrl+s>5=goto_tab:5
+# keybind = ctrl+s>6=goto_tab:6
+# keybind = ctrl+s>7=goto_tab:7
+# keybind = ctrl+s>8=goto_tab:8
+# keybind = ctrl+s>9=goto_tab:9
+#
+# keybind = ctrl+s>s=new_split:down
+# keybind = ctrl+s>v=new_split:right
+#
+# keybind = ctrl+s>h=goto_split:left
+# keybind = ctrl+s>j=goto_split:bottom
+# keybind = ctrl+s>k=goto_split:top
+# keybind = ctrl+s>l=goto_split:right
+#
+# keybind = ctrl+s>z=toggle_split_zoom
+# keybind = ctrl+s>equal=equalize_splits
+#
+# keybind = cmd+shift+h=resize_split:left,11
+# keybind = cmd+shift+j=resize_split:down,10
+# keybind = cmd+shift+k=resize_split:up,10
+# keybind = cmd+shift+l=resize_split:right,10
+#############################################################################
 
-keybind = ctrl+s>1=goto_tab:1
-keybind = ctrl+s>2=goto_tab:2
-keybind = ctrl+s>3=goto_tab:3
-keybind = ctrl+s>4=goto_tab:4
-keybind = ctrl+s>5=goto_tab:5
-keybind = ctrl+s>6=goto_tab:6
-keybind = ctrl+s>7=goto_tab:7
-keybind = ctrl+s>8=goto_tab:8
-keybind = ctrl+s>9=goto_tab:9
+#############################################################################
+# Keybinds with ctrl+alt+ prefix (homerow mods) for tab/split management...
 
-keybind = ctrl+s>s=new_split:down
-keybind = ctrl+s>v=new_split:right
+keybind = ctrl+alt+c=new_tab
+keybind = ctrl+alt+.=next_tab
+keybind = ctrl+alt+,=previous_tab
+keybind = ctrl+alt+t=prompt_surface_title
 
-keybind = ctrl+s>h=goto_split:left
-keybind = ctrl+s>j=goto_split:bottom
-keybind = ctrl+s>k=goto_split:top
-keybind = ctrl+s>l=goto_split:right
+keybind = ctrl+alt+1=goto_tab:1
+keybind = ctrl+alt+2=goto_tab:2
+keybind = ctrl+alt+3=goto_tab:3
+keybind = ctrl+alt+4=goto_tab:4
+keybind = ctrl+alt+5=goto_tab:5
+keybind = ctrl+alt+6=goto_tab:6
+keybind = ctrl+alt+7=goto_tab:7
+keybind = ctrl+alt+8=goto_tab:8
+keybind = ctrl+alt+9=goto_tab:9
 
-keybind = ctrl+s>z=toggle_split_zoom
-keybind = ctrl+s>equal=equalize_splits
+keybind = ctrl+alt+b=new_split:down
+keybind = ctrl+alt+v=new_split:right
 
-keybind = cmd+shift+h=resize_split:left,11
-keybind = cmd+shift+j=resize_split:down,10
-keybind = cmd+shift+k=resize_split:up,10
-keybind = cmd+shift+l=resize_split:right,10
+keybind = ctrl+alt+h=goto_split:left
+keybind = ctrl+alt+j=goto_split:bottom
+keybind = ctrl+alt+k=goto_split:top
+keybind = ctrl+alt+l=goto_split:right
+
+keybind = ctrl+alt+o=toggle_split_zoom
+keybind = ctrl+alt+equal=equalize_splits
+
+keybind = ctrl+alt+shift+h=resize_split:left,11
+keybind = ctrl+alt+shift+j=resize_split:down,10
+keybind = ctrl+alt+shift+k=resize_split:up,10
+keybind = ctrl+alt+shift+l=resize_split:right,10
+
+#############################################################################
 
 keybind = global:cmd+grave_accent=toggle_quick_terminal
 
@@ -94,4 +135,6 @@ custom-shader = cursor_smear.glsl
 
 # AI agent entering multiline commands
 keybind = shift+enter=text:\x1b\r
+
+keybind = cmd+enter=ignore
 

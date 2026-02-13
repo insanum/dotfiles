@@ -10,8 +10,7 @@ local g = nil
 local delay = 0.2
 
 local function ghostty_tab_title_open(title)
-    et.keyStroke({ 'ctrl' }, 's', g)
-    et.keyStroke({}, 't', g)
+    et.keyStroke({ 'ctrl', 'alt' }, 't', g)
 end
 
 local function ghostty_tab_title_set(title)
@@ -20,16 +19,15 @@ local function ghostty_tab_title_set(title)
 end
 
 local function ghostty_hsplit()
-    et.keyStroke({ 'ctrl' }, 's', g)
-    et.keyStroke({}, 'v', g)
+    et.keyStroke({ 'ctrl', 'alt' }, 'v', g)
 end
 
 local function ghostty_new_tab()
-    et.keyStroke({ 'cmd' }, 't', g)
+    et.keyStroke({ 'ctrl', 'alt' }, 'c', g)
 end
 
 local function ghostty_goto_tab(tab_num)
-    et.keyStroke({ 'cmd' }, tab_num, g)
+    et.keyStroke({ 'ctrl', 'alt' }, tab_num, g)
 end
 
 local function ghostty_send_cmd(cmd)
@@ -113,7 +111,7 @@ local function ghostty_dispatch_actions()
     next_step()
 end
 
-hs.hotkey.bind(CMD_CTRL_SHIFT, 'w', 'Ghostty Work',
+hs.hotkey.bind(CMD_CTRL_SHIFT, 'w', 'Ghostty Work Session',
 function()
     g = app.find('Ghostty')
     if g == nil then
