@@ -1,12 +1,12 @@
 
---local win_modal = NewModalKey(CMD_CTRL, 'w', 'Modal Window')
+local win_modal = NewModalKey(CMD_CTRL, 'i', 'Modal Window')
 
 --[[
 ------------------------------------------------------------------------------
 -- window stuff
 
 -- maximize window
-win_modal:bind({}, "f", "Maximize window",
+win_modal:bind(NONE, "f", "Maximize window",
 function()
     win_modal:exit()
     local ad = hs.window.animationDuration
@@ -33,7 +33,7 @@ local function winMove(win, x, y, w, h)
 end
 
 -- center window
-win_modal:bind({}, "c", "Center window",
+win_modal:bind(NONE, "c", "Center window",
 function()
     win_modal:exit()
     local win = hs.window.frontmostWindow()
@@ -45,7 +45,7 @@ function()
 end)
 
 -- window left half of screen
-win_modal:bind({}, "h", "Move/Resize window left half of screen",
+win_modal:bind(NONE, "h", "Move/Resize window left half of screen",
 function()
     win_modal:exit()
     local win = hs.window.focusedWindow()
@@ -57,7 +57,7 @@ function()
 end)
 
 -- window right half of screen
-win_modal:bind({}, "l", "Move/Resize window right half of screen",
+win_modal:bind(NONE, "l", "Move/Resize window right half of screen",
 function()
     win_modal:exit()
     local win = hs.window.focusedWindow()
@@ -69,7 +69,7 @@ function()
 end)
 
 -- window top half of screen
-win_modal:bind({}, "k", "Move/Resize window top half of screen",
+win_modal:bind(NONE, "k", "Move/Resize window top half of screen",
 function()
     win_modal:exit()
     local win = hs.window.focusedWindow()
@@ -81,7 +81,7 @@ function()
 end)
 
 -- window bottom half of screen
-win_modal:bind({}, "j", "Move/Resize window bottom half of screen",
+win_modal:bind(NONE, "j", "Move/Resize window bottom half of screen",
 function()
     win_modal:exit()
     local win = hs.window.focusedWindow()
@@ -203,246 +203,248 @@ function moveWindowSpace(direction)
     hs.mouse.absolutePosition(mouseOrigin)
 end
 
-win_modal:bind({}, "n", "Move window one space to the left",
+win_modal:bind(NONE, "n", "Move window one space to the left",
 function()
     win_modal:exit()
     moveWindowSpace("left")
 end)
 
-win_modal:bind({}, "m", "Move window one space to the right",
+win_modal:bind(NONE, "m", "Move window one space to the right",
 function()
     win_modal:exit()
     moveWindowSpace("right")
 end)
 --]]
 
---[[
 ------------------------------------------------------------------------------
 -- grid stuff
 
-hs.grid.setGrid("10x10")
-hs.grid.ui.textSize = 60
+hs.grid.setGrid("6x6") -- make sure even numbers
+hs.grid.ui.textSize = 32
+hs.grid.ui.showExtraKeys = false
+hs.grid.setMargins(hs.geometry({ 10, 10 }))
 
-win_modal:bind({}, "g", "Show window grid",
+win_modal:bind(NONE, "g", "Show Window Grid",
 function()
     win_modal:exit()
-    hs.grid.toggleShow()
+    hs.grid.show()
 end)
 
-win_modal:bind({}, "w", "Move window up on grid",
+win_modal:bind(NONE, "s", "Snap Window",
 function()
     win_modal:exit()
-    hs.grid.pushWindowUp(hs.window.focusedWindow())
+    hs.grid.snap(hs.window.focusedWindow())
 end)
 
-win_modal:bind({}, "a", "Move window left on grid",
+win_modal:bind(SHIFT, "s", "Snap All Windows",
 function()
     win_modal:exit()
+    local screen = hs.screen.mainScreen()
+
+    for _, win in ipairs(hs.window.allWindows()) do
+        if win:isStandard() and win:isVisible() and win:screen() == screen then
+            hs.grid.snap(win)
+        end
+    end
+end)
+
+win_modal:bind(NONE, "f", "Maximize Window",
+function()
+    win_modal:exit()
+    hs.grid.maximizeWindow(hs.window.focusedWindow())
+end)
+
+win_modal:bind(NONE, "h", "Move Window Left",
+function()
+    --win_modal:exit()
     hs.grid.pushWindowLeft(hs.window.focusedWindow())
 end)
 
-win_modal:bind({}, "s", "Move window down on grid",
+win_modal:bind(NONE, "j", "Move Window Down",
 function()
-    win_modal:exit()
+    --win_modal:exit()
     hs.grid.pushWindowDown(hs.window.focusedWindow())
 end)
 
-win_modal:bind({}, "d", "Move window right on grid",
+win_modal:bind(NONE, "k", "Move Window Up",
 function()
-    win_modal:exit()
+    --win_modal:exit()
+    hs.grid.pushWindowUp(hs.window.focusedWindow())
+end)
+
+win_modal:bind(NONE, "l", "Move Window Right",
+function()
+    --win_modal:exit()
     hs.grid.pushWindowRight(hs.window.focusedWindow())
 end)
---]]
 
-------------------------------------------------------------------------------
+win_modal:bind(SHIFT, "j", "Resize Window Height",
+function()
+    --win_modal:exit()
+    local win = hs.window.focusedWindow()
+    local g = hs.grid.getGrid()
+    local r = hs.grid.get(win)
 
--- mkdir .hammerspoon/Spoons; cd .hammerspoon/Spoons
--- git clone https://github.com/mogenson/PaperWM.spoon
-
-local pwm = hs.loadSpoon("PaperWM")
-
-pwm.window_gap = 16
-pwm.window_ratios = { 0.25, 0.50, 0.75, 0.90 }
-
-pwm.lift_window = CMD_SHIFT
---pwm.drag_window = CMD_ALT
-pwm.scroll_window = CMD_ALT
-pwm.scroll_gain = 30
-
-pwm.window_filter:rejectApp("Stickies")
-pwm.window_filter:rejectApp("Finder")
-pwm.window_filter:setAppFilter("Google Chrome Beta", { rejectTitles = "Bitwarden" })
-
-pwm:start()
-
-local pwm_a = pwm.actions.actions()
-
-local pwm_modal = NewModalKey(CMD, 'return', 'Modal PWM')
-
-pwm_modal:bind({}, "w", "PWM Cycle Width", pwm_a.cycle_width)
-pwm_modal:bind(SHIFT, "w", "PWM Cycle Height", pwm_a.cycle_height)
-
-pwm_modal:bind({}, "h", "PWM Focus Left", pwm_a.focus_left)
-pwm_modal:bind({}, "j", "PWM Focus Down", pwm_a.focus_down)
-pwm_modal:bind({}, "k", "PWM Focus Up", pwm_a.focus_up)
-pwm_modal:bind({}, "l", "PWM Focus Right", pwm_a.focus_right)
-
-pwm_modal:bind(CTRL, "h", "PWM Window Move Left", pwm_a.swap_left)
-pwm_modal:bind(CTRL, "j", "PWM Window Move Down", pwm_a.swap_down)
-pwm_modal:bind(CTRL, "k", "PWM Window Move Up", pwm_a.swap_up)
-pwm_modal:bind(CTRL, "l", "PWM Window Move Right", pwm_a.swap_right)
-
-pwm_modal:bind(ALT, "1", "PWM Window Move Space 1", function()
-    pwm_modal:exit()
-    pwm_a.move_window_1()
-end)
-
-pwm_modal:bind(ALT, "2", "PWM Window Move Space 2", function()
-    pwm_modal:exit()
-    pwm_a.move_window_2()
-end)
-
-pwm_modal:bind(ALT, "3", "PWM Window Move Space 3", function()
-    pwm_modal:exit()
-    pwm_a.move_window_3()
-end)
-
-pwm_modal:bind({}, "c", "PWM Window Center", function()
-    pwm_modal:exit()
-    pwm_a.center_window()
-end)
-
-pwm_modal:bind({}, "f", "PWM Window Full Width", function()
-    pwm_modal:exit()
-    pwm_a.full_width()
-end)
-
-pwm_modal:bind({}, "i", "PWM Slurp In", function()
-    pwm_modal:exit()
-    pwm_a.slurp_in()
-end)
-
-pwm_modal:bind({}, "o", "PWM Barf Out", function()
-    pwm_modal:exit()
-    pwm_a.barf_out()
-end)
-
-pwm_modal:bind({}, "r", "PWM Refresh Windows", function()
-    pwm_modal:exit()
-    pwm_a.refresh_windows()
-end)
-
-pwm_modal:bind({}, "t", "PWM Toggle Floating", function()
-    pwm_modal:exit()
-    pwm_a.toggle_floating()
-end)
-
-pwm_modal:bind(SHIFT, "t", "PWM Focus Floating", function()
-    pwm_modal:exit()
-    pwm_a.focus_floating()
-end)
-
-pwm_modal:bind(CMD, "h", "PWM Switch Space Left", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_l()
-end)
-
-pwm_modal:bind(CMD, "l", "PWM Switch Space Right", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_r()
-end)
-
-pwm_modal:bind(CMD, "1", "PWM Switch Space 1", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_1()
-end)
-
-pwm_modal:bind(CMD, "2", "PWM Switch Space 2", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_2()
-end)
-
-pwm_modal:bind(CMD, "3", "PWM Switch Space 3", function()
-    pwm_modal:exit()
-    pwm_a.switch_space_3()
-end)
-
-------------------------------------------------------------------------------
-
-local eventtap = require("hs.eventtap")
-local eventTypes = eventtap.event.types
-
-local armed = false
-local clickWatcher = nil
-
-local function printWindowInfo(win)
-    if not win then
-        print("No window found under cursor.")
-        return
-    end
-
-    local app = win:application()
-
-    local info = {
-        id           = win:id(),
-        title        = win:title(),
-        role         = win:role(),
-        subrole      = win:subrole(),
-        frame        = win:frame(),
-        isStandard   = win:isStandard(),
-        isFullScreen = win:isFullScreen(),
-
-        appName      = app and app:name() or "N/A",
-        bundleID     = app and app:bundleID() or "N/A",
-        pid          = app and app:pid() or "N/A",
-
-        screen       = win:screen() and win:screen():name() or "N/A",
-    }
-
-    print("----- Window Info -----")
-    print(hs.inspect(info))
-    print("-----------------------")
-end
-
-local function disarm()
-    armed = false
-
-    if clickWatcher then
-        clickWatcher:stop()
-        clickWatcher = nil
-    end
-
-    print("Window inspector: done")
-end
-
-local function arm()
-    armed = true
-
-    clickWatcher = eventtap.new({ eventTypes.leftMouseDown }, function(event)
-        local pos = hs.mouse.absolutePosition()
-        local geo = hs.geometry.point(pos.x, pos.y)
-
-        for _, win in ipairs(hs.window.allWindows()) do
-            if geo:inside(win:frame()) then
-                printWindowInfo(win)
-                break
-            end
-        end
-
-        disarm()
-        return false -- don't block the click
-    end)
-
-    clickWatcher:start()
-
-    print("Window inspector: click a window...")
-end
-
-hs.hotkey.bind(CMD_CTRL_SHIFT, "i", "Window Info", function()
-    if armed then
-        disarm()
+    if r.h == g.h then
+        r = hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - 1))
+    elseif r.y == 0 then
+        r = hs.geometry.rect(r.x, r.y, r.w, (r.h + 1))
+    elseif (r.y + r.h) == g.h then
+        if r.h == 2 then return end
+        r = hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - 1))
     else
-        arm()
+        -- window not on a top or bottom edge, so shrink in both directions
+        if r.h == 2 then return end
+        local d = 2
+        if r.h == 3 then d = 1 end
+        r = hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - d))
     end
+
+    hs.grid.set(win, r)
+end)
+
+win_modal:bind(SHIFT, "k", "Resize Window Height",
+function()
+    --win_modal:exit()
+    local win = hs.window.focusedWindow()
+    local g = hs.grid.getGrid()
+    local r = hs.grid.get(win)
+
+    if (r.h == g.h) then
+        r = hs.geometry.rect(r.x, r.y, r.w, (r.h - 1))
+    elseif r.y == 0 then
+        if r.h == 2 then return end
+        r = hs.geometry.rect(r.x, r.y, r.w, (r.h - 1))
+    elseif (r.y + r.h) == g.h then
+        r = hs.geometry.rect(r.x, (r.y - 1), r.w, (r.h + 1))
+    else
+        -- window not on a top or bottom edge, so grow in both directions
+        local d = 2
+        if (r.h + 1) == g.h then d = 1 end
+        r = hs.geometry.rect(r.x, (r.y - 1), r.w, (r.h + d))
+    end
+
+    hs.grid.set(win, r)
+end)
+
+win_modal:bind(SHIFT, "h", "Resize Window Width",
+function()
+    --win_modal:exit()
+    local win = hs.window.focusedWindow()
+    local g = hs.grid.getGrid()
+    local r = hs.grid.get(win)
+
+    if (r.w == g.w) then
+        r = hs.geometry.rect(r.x, r.y, (r.w - 1), r.h)
+    elseif r.x == 0 then
+        if r.w == 2 then return end
+        r = hs.geometry.rect(r.x, r.y, (r.w - 1), r.h)
+    elseif (r.x + r.w) == g.w then
+        r = hs.geometry.rect((r.x - 1), r.y, (r.w + 1), r.h)
+    else
+        -- window not on a right or left edge, so shrink in both directions
+        if r.w == 2 then return end
+        local d = 2
+        if r.w == 3 then d = 1 end
+        r = hs.geometry.rect((r.x + 1), r.y, (r.w - d), r.h)
+    end
+
+    hs.grid.set(win, r)
+end)
+
+win_modal:bind(SHIFT, "l", "Resize Window Width",
+function()
+    --win_modal:exit()
+    local win = hs.window.focusedWindow()
+    local g = hs.grid.getGrid()
+    local r = hs.grid.get(win)
+
+    if r.w == g.w then
+        r = hs.geometry.rect((r.x + 1), r.y, (r.w - 1), r.h)
+    elseif r.x == 0 then
+        r = hs.geometry.rect(r.x, r.y, (r.w + 1), r.h)
+    elseif (r.x + r.w) == g.w then
+        if r.w == 2 then return end
+        r = hs.geometry.rect((r.x + 1), r.y, (r.w - 1), r.h)
+    else
+        -- window not on a right or left edge, so grow in both directions
+        local d = 2
+        if (r.w + 1) == g.w then d = 1 end
+        r = hs.geometry.rect((r.x - 1), r.y, (r.w + d), r.h)
+    end
+
+    hs.grid.set(win, r)
+end)
+
+win_modal:bind(NONE, "1", "Window Top Left",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect(0, 0, (g.w / 2), (g.h / 2))
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "2", "Window Top Half",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect(0, 0, g.w, (g.h / 2))
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "3", "Window Top Right",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect((g.w - (g.w / 2)), 0, (g.w / 2), (g.h / 2))
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "6", "Window Right Half",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect((g.w - (g.w / 2)), 0, (g.w / 2), g.h)
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "9", "Window Botttom Right",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect((g.w / 2), (g.h / 2), (g.w / 2), (g.h / 2))
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "8", "Window Bottom Half",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect(0, (g.h - (g.h / 2)), g.w, (g.h / 2))
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "7", "Window Botttom Left",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect(0, (g.h / 2), (g.w / 2), (g.h / 2))
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "4", "Window Left Half",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect(0, 0, (g.w / 2), g.h)
+    hs.grid.set(hs.window.focusedWindow(), r)
+end)
+
+win_modal:bind(NONE, "5", "Window Center",
+function()
+    --win_modal:exit()
+    local g = hs.grid.getGrid()
+    local r = hs.geometry.rect(1, 1, (g.w - 2), (g.h - 2))
+    hs.grid.set(hs.window.focusedWindow(), r)
 end)
 

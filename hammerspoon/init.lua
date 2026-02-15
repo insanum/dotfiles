@@ -1,4 +1,5 @@
 
+NONE               = { }
 CMD                = { "cmd "}
 CTRL               = { "ctrl "}
 ALT                = { "alt "}
@@ -43,6 +44,9 @@ loadit("audiodevice")
 
 -- window management
 loadit("window")
+
+-- window management w/ PaperWM
+--loadit("pwm")
 
 -- application launcher (like spotlight)
 --loadit("launcher")
