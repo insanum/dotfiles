@@ -35,10 +35,15 @@ local function focus_or_launch_app(appName)
     end
 end
 
-MISC_MODAL:bind('', 'c', 'Focus Chrome', function()
+MISC_MODAL:bind('', 'a', 'Focus Alacritty', function()
     MISC_MODAL:exit()
-    focus_or_launch_app('Chrome')
+    focus_or_launch_app('Alacritty')
 end)
+
+-- MISC_MODAL:bind('', 'c', 'Focus Chrome', function()
+--     MISC_MODAL:exit()
+--     focus_or_launch_app('Chrome')
+-- end)
 
 MISC_MODAL:bind('', 'e', 'Focus Finder', function()
     MISC_MODAL:exit()
@@ -50,14 +55,19 @@ MISC_MODAL:bind('', 'e', 'Focus Finder', function()
     finder:activate()
 end)
 
-MISC_MODAL:bind('', 'f', 'Focus Firefox', function()
-    MISC_MODAL:exit()
-    focus_or_launch_app('Firefox')
-end)
+-- MISC_MODAL:bind('', 'f', 'Focus Firefox', function()
+--     MISC_MODAL:exit()
+--     focus_or_launch_app('Firefox')
+-- end)
 
 MISC_MODAL:bind('', 'g', 'Focus Ghostty', function()
     MISC_MODAL:exit()
     focus_or_launch_app('Ghostty')
+end)
+
+MISC_MODAL:bind('', 'h', 'Focus Helium', function()
+    MISC_MODAL:exit()
+    focus_or_launch_app('Helium')
 end)
 
 MISC_MODAL:bind('', 'p', 'Focus PDF Expert', function()

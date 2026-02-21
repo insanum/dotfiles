@@ -1,129 +1,139 @@
 
-# Colors: https://github.com/aaron-williamson/base16-alacritty
+# Colors: https://github.com/alacritty/alacritty-theme
 
-[colors]
-draw_bold_text_with_bright_colors = false
-
-# TOKYONIGHT ########################################################
+# ONEDARK ###########################################################
 
 [colors.primary]
-background = '#1a1b26'
-foreground = '#a9b1d6'
+background = '#282c34'
+foreground = '#abb2bf'
 
 [colors.cursor]
 text   = '#1a1b26'
 cursor = '#a9b1d6'
 
 [colors.normal]
-black   = '#1a1b26'
-red     = '#f7768e'
-green   = '#9ece6a'
-yellow  = '#cbccd1'
-blue    = '#0db9d7'
-magenta = '#bb9af7'
-cyan    = '#2ac3de'
-white   = '#a9b1d6'
+black   = '#1e2127'
+red     = '#e06c75'
+green   = '#98c379'
+yellow  = '#d19a66'
+blue    = '#61afef'
+magenta = '#c678dd'
+cyan    = '#56b6c2'
+white   = '#abb2bf'
 
 [colors.bright]
-black   = '#444b6a'
-red     = '#f7768e'
-green   = '#9ece6a'
-yellow  = '#cbccd1'
-blue    = '#0db9d7'
-magenta = '#bb9af7'
-cyan    = '#2ac3de'
-white   = '#d5d6db'
+black   = '#5c6370'
+red     = '#e06c75'
+green   = '#98c379'
+yellow  = '#d19a66'
+blue    = '#61afef'
+magenta = '#c678dd'
+cyan    = '#56b6c2'
+white   = '#ffffff'
+
+# TOKYONIGHT ########################################################
+
+# [colors.primary]
+# background = '#1a1b26'
+# foreground = '#a9b1d6'
+#
+# [colors.normal]
+# black   = '#1a1b26'
+# red     = '#f7768e'
+# green   = '#9ece6a'
+# yellow  = '#cbccd1'
+# blue    = '#0db9d7'
+# magenta = '#bb9af7'
+# cyan    = '#2ac3de'
+# white   = '#a9b1d6'
+#
+# [colors.bright]
+# black   = '#444b6a'
+# red     = '#f7768e'
+# green   = '#9ece6a'
+# yellow  = '#cbccd1'
+# blue    = '#0db9d7'
+# magenta = '#bb9af7'
+# cyan    = '#2ac3de'
+# white   = '#d5d6db'
 
 # NORD ##############################################################
 
-#[colors.primary]
-#background = '#2e3440'
-#foreground = '#e5e9f0'
+# [colors.primary]
+# background = '#2e3440'
+# foreground = '#e5e9f0'
 #
-#[colors.cursor]
-#text   = '#2e3440'
-#cursor = '#e5e9f0'
+# [colors.cursor]
+# text   = '#2e3440'
+# cursor = '#e5e9f0'
 #
-#[colors.normal]
-#black   = '#2e3440'
-#red     = '#bf616a'
-#green   = '#a3be8c'
-#yellow  = '#ebcb8b'
-#blue    = '#81a1c1'
-#magenta = '#b48ead'
-#cyan    = '#88c0d0'
-#white   = '#e5e9f0'
+# [colors.normal]
+# black   = '#2e3440'
+# red     = '#bf616a'
+# green   = '#a3be8c'
+# yellow  = '#ebcb8b'
+# blue    = '#81a1c1'
+# magenta = '#b48ead'
+# cyan    = '#88c0d0'
+# white   = '#e5e9f0'
 #
-#[colors.bright]
-#black   = '#4c566a'
-#red     = '#d08770'
-#green   = '#3b4252'
-#yellow  = '#434c5e'
-#blue    = '#d8dee9'
-#magenta = '#eceff4'
-#cyan    = '#5e81ac'
-#white   = '#8fbcbb'
+# [colors.bright]
+# black   = '#4c566a'
+# red     = '#d08770'
+# green   = '#3b4252'
+# yellow  = '#434c5e'
+# blue    = '#d8dee9'
+# magenta = '#eceff4'
+# cyan    = '#5e81ac'
+# white   = '#8fbcbb'
 
 # GRUVBOX ###########################################################
 
-#[colors.primary]
-#background = '#1d2021'
-#foreground = '#d5c4a1'
+# [colors.primary]
+# background = '#1d2021'
+# foreground = '#d5c4a1'
 #
-#[colors.cursor]
-#text   = '#1d2021'
-#cursor = '#d5c4a1'
+# [colors.cursor]
+# text   = '#1d2021'
+# cursor = '#d5c4a1'
 #
-#[colors.normal]
-#black   = '#1d2021'
-#red     = '#fb4934'
-#green   = '#b8bb26'
-#yellow  = '#fabd2f'
-#blue    = '#83a598'
-#magenta = '#d3869b'
-#cyan    = '#8ec07c'
-#white   = '#d5c4a1'
+# [colors.normal]
+# black   = '#1d2021'
+# red     = '#fb4934'
+# green   = '#b8bb26'
+# yellow  = '#fabd2f'
+# blue    = '#83a598'
+# magenta = '#d3869b'
+# cyan    = '#8ec07c'
+# white   = '#d5c4a1'
 #
-#[colors.bright]
-#black   = '#665c54'
-#red     = '#fe8019'
-#green   = '#3c3836'
-#yellow  = '#504945'
-#blue    = '#bdae93'
-#magenta = '#ebdbb2'
-#cyan    = '#d65d0e'
-#white   = '#fbf1c7'
+# [colors.bright]
+# black   = '#665c54'
+# red     = '#fe8019'
+# green   = '#3c3836'
+# yellow  = '#504945'
+# blue    = '#bdae93'
+# magenta = '#ebdbb2'
+# cyan    = '#d65d0e'
+# white   = '#fbf1c7'
 
 #####################################################################
 
+[colors]
+transparent_background_colors = true
+
 [font]
-size = 16
+size        = 16
+normal      = { family = "Hack Nerd Font", style = "Regular" }
+bold        = { family = "Hack Nerd Font", style = "Bold" }
+italic      = { family = "Hack Nerd Font", style = "Italic" }
+bold_italic = { family = "Hack Nerd Font", style = "Bold Italic" }
 
-[font.bold]
-family = "Hack Nerd Font"
-style = "Bold"
-
-[font.bold_italic]
-family = "Hack Nerd Font"
-style = "Bold Italic"
-
-[font.italic]
-family = "Hack Nerd Font"
-style = "Italic"
-
-[font.normal]
-family = "Hack Nerd Font"
-style = "Regular"
-
-[[keyboard.bindings]]
-action = "None"
-key = "Q"
-mods = "Command"
-
-[[keyboard.bindings]]
-action = "None"
-key = "W"
-mods = "Command"
+[keyboard]
+bindings = [
+    { mods = "Command", key = "Q", action = "None" },
+    { mods = "Command", key = "W", action = "None" },
+]
 
 [scrolling]
 history = 0
@@ -131,18 +141,16 @@ history = 0
 [selection]
 save_to_clipboard = true
 
-[terminal.shell]
-args = ["--login"]
-program = "/opt/homebrew/bin/bash"
-
 [window]
-decorations = "transparent"
-opacity = 0.9
-startup_mode = "Maximized"
+decorations     = "Transparent"
+opacity         = 0.9
+blur            = true
+#startup_mode    = "Maximized"
+dynamic_title   = false
+padding         = { x = 4, y = 2 }
+dynamic_padding = true
+option_as_alt   = "Both"
 
-[window.padding]
-x = 6
-y = 2
-
-[terminal]
+# [terminal]
+# shell = { program = "/opt/homebrew/bin/bash", args = [ "--login" ] }
 

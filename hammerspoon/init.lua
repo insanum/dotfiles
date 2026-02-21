@@ -20,6 +20,8 @@ hs.console.outputBackgroundColor({ white = 0 })
 hs.console.consolePrintColor({ white = 1 })
 hs.console.consoleCommandColor({ green = 1 })
 
+hs.hotkey.bind(CMD, "h", "NOPE!", function() end)
+
 local function loadit(module)
     print("----> require " .. module)
     require(module)

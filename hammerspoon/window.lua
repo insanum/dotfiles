@@ -186,7 +186,8 @@ function moveWindowSpace(direction)
         clickPoint.y = clickPoint.y - clickPoint.h
     end
 
-    hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseDown, clickPoint):post()
+    hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseDown,
+                                    clickPoint):post()
     hs.timer.usleep(150000)
 
     -- hack adding "fn" required for Mojave...
@@ -197,7 +198,8 @@ function moveWindowSpace(direction)
     hs.eventtap.event.newKeyEvent({"fn", "ctrl"}, direction, false):post()
     hs.timer.usleep(150000)
 
-    hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseUp, clickPoint):post()
+    hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseUp,
+                                    clickPoint):post()
     hs.timer.usleep(150000)
 
     hs.mouse.absolutePosition(mouseOrigin)
@@ -219,10 +221,179 @@ end)
 ------------------------------------------------------------------------------
 -- grid stuff
 
-hs.grid.setGrid("6x6") -- make sure even numbers
+hs.window.animationDuration = 0.2
+
+hs.grid.setGrid("8x8") -- make sure even numbers
 hs.grid.ui.textSize = 32
 hs.grid.ui.showExtraKeys = false
 hs.grid.setMargins(hs.geometry({ 10, 10 }))
+
+local function wins_with_cell_left_edge(col, row)
+  local screen = hs.screen.mainScreen()
+  local results = {}
+  for _, win in ipairs(hs.window.allWindows()) do
+    if win:screen() == screen then
+      local cell = hs.grid.get(win)
+      if cell and
+         col == cell.x and
+         row >= cell.y and
+         row < cell.y + cell.h then
+        table.insert(results, win)
+      end
+    end
+  end
+  return results
+end
+
+local function wins_with_cell_top_edge(col, row)
+  local screen = hs.screen.mainScreen()
+  local results = {}
+  for _, win in ipairs(hs.window.allWindows()) do
+    if win:screen() == screen then
+      local cell = hs.grid.get(win)
+      if cell and
+         row == cell.y and
+         col >= cell.x and
+         col < cell.x + cell.w then
+        table.insert(results, win)
+      end
+    end
+  end
+  return results
+end
+
+local function wins_with_cell_right_edge(col, row)
+  local screen = hs.screen.mainScreen()
+  local results = {}
+  for _, win in ipairs(hs.window.allWindows()) do
+    if win:screen() == screen then
+      local cell = hs.grid.get(win)
+      if cell and
+         col == cell.x + cell.w - 1 and
+         row >= cell.y and
+         row < cell.y + cell.h then
+        table.insert(results, win)
+      end
+    end
+  end
+  return results
+end
+
+local function wins_with_cell_bottom_edge(col, row)
+  local screen = hs.screen.mainScreen()
+  local results = {}
+  for _, win in ipairs(hs.window.allWindows()) do
+    if win:screen() == screen then
+      local cell = hs.grid.get(win)
+      if cell and
+         row == cell.y + cell.h - 1 and
+         col >= cell.x and
+         col < cell.x + cell.w then
+        table.insert(results, win)
+      end
+    end
+  end
+  return results
+end
+
+local function win_full_width(g, r)
+    return r.w == g.w
+end
+
+local function win_full_height(g, r)
+    return r.h == g.h
+end
+
+local function win_left_edge(g, r)
+    return r.x == 0
+end
+
+local function win_top_edge(g, r)
+    return r.y == 0
+end
+
+local function win_right_edge(g, r)
+    return (r.x + r.w) == g.w
+end
+
+local function win_bottom_edge(g, r)
+    return (r.y + r.h) == g.h
+end
+
+local function win_shrink_left_edge(r)
+    if r.w == 2 then return r end
+    return hs.geometry.rect((r.x + 1), r.y, (r.w - 1), r.h)
+end
+
+local function win_shrink_top_edge(r)
+    if r.h == 2 then return r end
+    return hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - 1))
+end
+
+local function win_shrink_right_edge(r)
+    if r.w == 2 then return r end
+    return hs.geometry.rect(r.x, r.y, (r.w - 1), r.h)
+end
+
+local function win_shrink_bottom_edge(r)
+    if r.h == 2 then return r end
+    return hs.geometry.rect(r.x, r.y, r.w, (r.h - 1))
+end
+
+local function win_shrink_width_both_edges(r)
+    -- keep the window at least 2x grids wide
+    if r.w == 2 then return r end
+    local d = r.w == 3 and 1 or 2
+    return hs.geometry.rect((r.x + 1), r.y, (r.w - d), r.h)
+end
+
+local function win_shrink_height_both_edges(r)
+    local d = r.h == 3 and 2 or 1
+    return hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - d))
+end
+
+local function win_grow_left_edge(g, r)
+    if win_full_width(g, r) then return r end
+    return hs.geometry.rect((r.x - 1), r.y, (r.w + 1), r.h)
+end
+
+local function win_grow_top_edge(g, r)
+    if win_full_height(g, r) then return r end
+    return hs.geometry.rect(r.x, (r.y - 1), r.w, (r.h + 1))
+end
+
+local function win_grow_right_edge(g, r)
+    if win_full_width(g, r) then return r end
+    return hs.geometry.rect(r.x, r.y, (r.w + 1), r.h)
+end
+
+local function win_grow_bottom_edge(g, r)
+    if win_full_height(g, r) then return r end
+    return hs.geometry.rect(r.x, r.y, r.w, (r.h + 1))
+end
+
+local function win_grow_width_both_edges(g, r)
+    if win_full_width(g, r) then return r end
+    local d = (r.w + 1) == g.w and 1 or 2
+    return hs.geometry.rect((r.x - 1), r.y, (r.w + d), r.h)
+end
+
+local function win_grow_height_both_edges(g, r)
+    if win_full_height(g, r) then return r end
+    local d = (r.h + 1) == g.h and 1 or 2
+    return hs.geometry.rect(r.x, (r.y - 1), r.w, (r.h + d))
+end
+
+local function resize_neighbors(focused_win, neighbors, resize_fn)
+    if not neighbors then return end
+    for _, w in ipairs(neighbors) do
+        if w ~= focused_win then
+            hs.grid.set(w, resize_fn(hs.grid.get(w)))
+        end
+    end
+end
+
+------------------------------------------------------------------------------
 
 win_modal:bind(NONE, "g", "Show Window Grid",
 function()
@@ -285,19 +456,22 @@ function()
     local g = hs.grid.getGrid()
     local r = hs.grid.get(win)
 
-    if r.h == g.h then
-        r = hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - 1))
-    elseif r.y == 0 then
-        r = hs.geometry.rect(r.x, r.y, r.w, (r.h + 1))
-    elseif (r.y + r.h) == g.h then
-        if r.h == 2 then return end
-        r = hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - 1))
+    if win_full_height(g, r) then
+        r = win_shrink_top_edge(r)
+    elseif win_top_edge(g, r) then
+        r = win_grow_bottom_edge(g, r)
+        resize_neighbors(win,
+            wins_with_cell_top_edge(r.x, ((r.y + r.h) - 1)),
+            function(wr) return win_shrink_top_edge(wr) end)
+    elseif win_bottom_edge(g, r) then
+        r = win_shrink_top_edge(r)
+        resize_neighbors(win,
+            wins_with_cell_bottom_edge(r.x, (r.y - 2)),
+            function(wr) return win_grow_bottom_edge(g, wr) end)
     else
         -- window not on a top or bottom edge, so shrink in both directions
         if r.h == 2 then return end
-        local d = 2
-        if r.h == 3 then d = 1 end
-        r = hs.geometry.rect(r.x, (r.y + 1), r.w, (r.h - d))
+        r = win_shrink_height_both_edges(r)
     end
 
     hs.grid.set(win, r)
@@ -309,19 +483,22 @@ function()
     local win = hs.window.focusedWindow()
     local g = hs.grid.getGrid()
     local r = hs.grid.get(win)
+    if win_full_height(g, r) then
 
-    if (r.h == g.h) then
-        r = hs.geometry.rect(r.x, r.y, r.w, (r.h - 1))
-    elseif r.y == 0 then
-        if r.h == 2 then return end
-        r = hs.geometry.rect(r.x, r.y, r.w, (r.h - 1))
-    elseif (r.y + r.h) == g.h then
-        r = hs.geometry.rect(r.x, (r.y - 1), r.w, (r.h + 1))
+        r = win_shrink_bottom_edge(r)
+    elseif win_top_edge(g, r) then
+        r = win_shrink_bottom_edge(r)
+        resize_neighbors(win,
+            wins_with_cell_top_edge(r.x, ((r.y + r.h) + 1)),
+            function(wr) return win_grow_top_edge(g, wr) end)
+    elseif win_bottom_edge(g, r) then
+        r = win_grow_top_edge(g, r)
+        resize_neighbors(win,
+            wins_with_cell_bottom_edge(r.x, r.y),
+            function(wr) return win_shrink_bottom_edge(wr) end)
     else
         -- window not on a top or bottom edge, so grow in both directions
-        local d = 2
-        if (r.h + 1) == g.h then d = 1 end
-        r = hs.geometry.rect(r.x, (r.y - 1), r.w, (r.h + d))
+        r = win_grow_height_both_edges(g, r)
     end
 
     hs.grid.set(win, r)
@@ -334,19 +511,22 @@ function()
     local g = hs.grid.getGrid()
     local r = hs.grid.get(win)
 
-    if (r.w == g.w) then
-        r = hs.geometry.rect(r.x, r.y, (r.w - 1), r.h)
-    elseif r.x == 0 then
-        if r.w == 2 then return end
-        r = hs.geometry.rect(r.x, r.y, (r.w - 1), r.h)
-    elseif (r.x + r.w) == g.w then
-        r = hs.geometry.rect((r.x - 1), r.y, (r.w + 1), r.h)
+    if win_full_width(g, r) then
+        r = win_shrink_right_edge(r)
+    elseif win_left_edge(g, r) then
+        r = win_shrink_right_edge(r)
+        resize_neighbors(win,
+            wins_with_cell_left_edge(((r.x + r.w) + 1), r.y),
+            function(wr) return win_grow_left_edge(g, wr) end)
+    elseif win_right_edge(g, r) then
+        r = win_grow_left_edge(g, r)
+        resize_neighbors(win,
+            wins_with_cell_right_edge(r.x, r.y),
+            function(wr) return win_shrink_right_edge(wr) end)
     else
         -- window not on a right or left edge, so shrink in both directions
         if r.w == 2 then return end
-        local d = 2
-        if r.w == 3 then d = 1 end
-        r = hs.geometry.rect((r.x + 1), r.y, (r.w - d), r.h)
+        r = win_shrink_width_both_edges(r)
     end
 
     hs.grid.set(win, r)
@@ -359,21 +539,106 @@ function()
     local g = hs.grid.getGrid()
     local r = hs.grid.get(win)
 
-    if r.w == g.w then
-        r = hs.geometry.rect((r.x + 1), r.y, (r.w - 1), r.h)
-    elseif r.x == 0 then
-        r = hs.geometry.rect(r.x, r.y, (r.w + 1), r.h)
-    elseif (r.x + r.w) == g.w then
-        if r.w == 2 then return end
-        r = hs.geometry.rect((r.x + 1), r.y, (r.w - 1), r.h)
+    if win_full_width(g, r) then
+        r = win_shrink_left_edge(r)
+    elseif win_left_edge(g, r) then
+        r = win_grow_right_edge(g, r)
+        resize_neighbors(win,
+            wins_with_cell_left_edge(((r.x + r.w) - 1), r.y),
+            function(wr) return win_shrink_left_edge(wr) end)
+    elseif win_right_edge(g, r) then
+        r = win_shrink_left_edge(r)
+        resize_neighbors(win,
+            wins_with_cell_right_edge((r.x - 2), r.y),
+            function(wr) return win_grow_right_edge(g, wr) end)
     else
         -- window not on a right or left edge, so grow in both directions
-        local d = 2
-        if (r.w + 1) == g.w then d = 1 end
-        r = hs.geometry.rect((r.x - 1), r.y, (r.w + d), r.h)
+        r = win_grow_width_both_edges(g, r)
     end
 
     hs.grid.set(win, r)
+end)
+
+local function swap_window_horiz(find_fn, col, row)
+    local win = hs.window.focusedWindow()
+    local neighbors = find_fn(col, row)
+    if not neighbors then return end
+
+    for _, w in ipairs(neighbors) do
+        if w ~= win then
+            local r1 = hs.grid.get(win)
+            local r2 = hs.grid.get(w)
+            -- figure out who's left and who's right
+            local left_r, right_r = r1, r2
+            if r2.x < r1.x then left_r, right_r = r2, r1 end
+            -- right window moves to where left was, left window moves right of it
+            local new_left_x = left_r.x
+            local new_right_x = left_r.x + right_r.w
+            hs.grid.set(win, hs.geometry.rect(
+                r1 == left_r and new_right_x or new_left_x,
+                r1.y, r1.w, r1.h))
+            hs.grid.set(w, hs.geometry.rect(
+                r2 == left_r and new_right_x or new_left_x,
+                r2.y, r2.w, r2.h))
+            return
+        end
+    end
+end
+
+local function swap_window_vert(find_fn, col, row)
+    local win = hs.window.focusedWindow()
+    local neighbors = find_fn(col, row)
+    if not neighbors then return end
+
+    for _, w in ipairs(neighbors) do
+        if w ~= win then
+            local r1 = hs.grid.get(win)
+            local r2 = hs.grid.get(w)
+            -- figure out who's top and who's bottom
+            local top_r, bot_r = r1, r2
+            if r2.y < r1.y then top_r, bot_r = r2, r1 end
+            -- bottom window moves to where top was, top window moves below it
+            local new_top_y = top_r.y
+            local new_bot_y = top_r.y + bot_r.h
+            hs.grid.set(win, hs.geometry.rect(
+                r1.x, r1 == top_r and new_bot_y or new_top_y,
+                r1.w, r1.h))
+            hs.grid.set(w, hs.geometry.rect(
+                r2.x, r2 == top_r and new_bot_y or new_top_y,
+                r2.w, r2.h))
+            return
+        end
+    end
+end
+
+win_modal:bind(CTRL, "h", "Swap Window Left",
+function()
+    local r = hs.grid.get(hs.window.focusedWindow())
+    if r.x == 0 then return end
+    swap_window_horiz(wins_with_cell_right_edge, (r.x - 1), r.y)
+end)
+
+win_modal:bind(CTRL, "l", "Swap Window Right",
+function()
+    local g = hs.grid.getGrid()
+    local r = hs.grid.get(hs.window.focusedWindow())
+    if (r.x + r.w) == g.w then return end
+    swap_window_horiz(wins_with_cell_left_edge, (r.x + r.w), r.y)
+end)
+
+win_modal:bind(CTRL, "k", "Swap Window Up",
+function()
+    local r = hs.grid.get(hs.window.focusedWindow())
+    if r.y == 0 then return end
+    swap_window_vert(wins_with_cell_bottom_edge, r.x, (r.y - 1))
+end)
+
+win_modal:bind(CTRL, "j", "Swap Window Down",
+function()
+    local g = hs.grid.getGrid()
+    local r = hs.grid.get(hs.window.focusedWindow())
+    if (r.y + r.h) == g.h then return end
+    swap_window_vert(wins_with_cell_top_edge, r.x, (r.y + r.h))
 end)
 
 win_modal:bind(NONE, "1", "Window Top Left",
