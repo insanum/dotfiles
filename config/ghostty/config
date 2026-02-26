@@ -9,7 +9,7 @@ adjust-cursor-thickness = 2
 selection-foreground = black
 selection-background = #73b8f1
 
-font-family = Hack Nerd Font
+font-family = Hack
 font-size = 15
 
 font-thicken = true

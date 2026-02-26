@@ -124,10 +124,10 @@ transparent_background_colors = true
 
 [font]
 size        = 16
-normal      = { family = "Hack Nerd Font", style = "Regular" }
-bold        = { family = "Hack Nerd Font", style = "Bold" }
-italic      = { family = "Hack Nerd Font", style = "Italic" }
-bold_italic = { family = "Hack Nerd Font", style = "Bold Italic" }
+normal      = { family = "Hack", style = "Regular" }
+bold        = { family = "Hack", style = "Bold" }
+italic      = { family = "Hack", style = "Italic" }
+bold_italic = { family = "Hack", style = "Bold Italic" }
 
 [keyboard]
 bindings = [

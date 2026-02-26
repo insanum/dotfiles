@@ -2,7 +2,7 @@
 local volume_step = 10
 
 local function volumeAlert(name, volume)
-    local font = { name = "Hack Nerd Font", size = 16 }
+    local font = { name = "Hack", size = 16 }
 
     local numBars = math.floor(volume / volume_step)
     local numSpaces = (100 / volume_step) - numBars

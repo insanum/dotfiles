@@ -64,7 +64,7 @@ local function pomo_update_display()
                                time_sec,
                                pomo.work_count)
 
-    local font = { name = "Hack Nerd Font", size = 12 }
+    local font = { name = "Hack", size = 12 }
 
     local color = hs.drawing.color.x11.dimgray
     if pomo.is_active then

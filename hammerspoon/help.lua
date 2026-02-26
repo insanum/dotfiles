@@ -66,7 +66,7 @@ end
 
 local help_alert_loc = {
     radius = 0,
-    textFont = "Hack Nerd Font",
+    textFont = "Hack",
     textSize = 16,
     atScreenEdge = 2
 }

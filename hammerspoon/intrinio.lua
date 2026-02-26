@@ -30,7 +30,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
 
     local data = hs.json.decode(stdOut)
 
-    local font = { name = "Hack Nerd Font", size = 12 }
+    local font = { name = "Hack", size = 12 }
 
     local ticker_value = function(ticker, item)
         for i = 1, #data.data, 1 do

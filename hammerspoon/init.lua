@@ -14,7 +14,7 @@ CMD_ALT_SHIFT      = { "cmd", "alt", "shift" }
 
 hs.hotkey.alertDuration = 0
 
-hs.console.consoleFont({ name = "Hack Nerd Font", size = 14 })
+hs.console.consoleFont({ name = "Hack", size = 14 })
 hs.console.darkMode(true)
 hs.console.outputBackgroundColor({ white = 0 })
 hs.console.consolePrintColor({ white = 1 })
@@ -45,10 +45,10 @@ loadit("modal")
 loadit("audiodevice")
 
 -- window management
-loadit("window")
+--loadit("window")
 
 -- window management w/ PaperWM
---loadit("pwm")
+loadit("pwm")
 
 -- application launcher (like spotlight)
 --loadit("launcher")

@@ -30,7 +30,7 @@ local function stocksUpdate(exitCode, stdOut, stdErr)
     local data = hs.json.decode(stdOut)
     print(ticker .. " (finnhub) " .. hs.inspect(stdOut))
 
-    local font = { name = "Hack Nerd Font", size = 12 }
+    local font = { name = "Hack", size = 12 }
 
     local round_decimal = function(value)
         return (math.floor((tonumber(value) * 100) + 0.5) / 100)

@@ -1,7 +1,7 @@
 
 local modal_alert_loc = {
     radius = 0,
-    textFont = "Hack Nerd Font",
+    textFont = "Hack",
     textSize = 32,
     atScreenEdge = 0
 }

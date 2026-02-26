@@ -70,6 +70,11 @@ MISC_MODAL:bind('', 'h', 'Focus Helium', function()
     focus_or_launch_app('Helium')
 end)
 
+MISC_MODAL:bind('', 'k', 'Focus Kitty', function()
+    MISC_MODAL:exit()
+    focus_or_launch_app('Kitty')
+end)
+
 MISC_MODAL:bind('', 'p', 'Focus PDF Expert', function()
     MISC_MODAL:exit()
     focus_or_launch_app('PDF Expert')
