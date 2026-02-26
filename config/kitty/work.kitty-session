@@ -1,0 +1,39 @@
+
+new_tab notes
+layout splits
+cd /Volumes/work/notes
+launch --hold zsh -c "/opt/homebrew/bin/figlet notes | /opt/homebrew/bin/lolcat"
+launch --location=vsplit
+
+new_tab test
+layout splits
+launch --hold zsh -c "/opt/homebrew/bin/figlet test | /opt/homebrew/bin/lolcat"
+launch --location=vsplit
+
+new_tab uet-rdma-core
+layout splits
+cd /Volumes/work/sync/uec/uet-rdma-core.fork/wt_uet
+launch --hold zsh -c "/opt/homebrew/bin/figlet uet-rdma-core | /opt/homebrew/bin/lolcat"
+
+new_tab uet-ref-prov
+layout splits
+cd /Volumes/work/sync/uec/uet-ref-prov.fork/wt_pds
+launch --hold zsh -c "/opt/homebrew/bin/figlet uet-ref-prov | /opt/homebrew/bin/lolcat"
+
+new_tab libmrc
+layout splits
+cd /Volumes/work/sync/libmrc
+launch --hold zsh -c "/opt/homebrew/bin/figlet libmrc | /opt/homebrew/bin/lolcat"
+
+new_tab linux-kernels
+layout splits
+cd /Volumes/work/git/linux_kernels
+launch --hold zsh -c "/opt/homebrew/bin/figlet linux-kernels | /opt/homebrew/bin/lolcat"
+
+new_tab csg-drivers
+layout splits
+cd /Volumes/work/git/csg_drivers
+launch --hold zsh -c "/opt/homebrew/bin/figlet csg-drivers | /opt/homebrew/bin/lolcat"
+
+focus_tab title:"notes"
+
