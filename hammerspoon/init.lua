@@ -48,7 +48,7 @@ loadit("audiodevice")
 --loadit("window")
 
 -- window management w/ PaperWM
-loadit("pwm")
+--loadit("pwm")
 
 -- application launcher (like spotlight)
 --loadit("launcher")
