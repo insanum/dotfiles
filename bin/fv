@@ -174,28 +174,36 @@ elif [[ "$kind" = "x-xz" ||
 
 elif [[ "$category" = image ]]; then
 
-    if ! command -v chafa &>/dev/null; then
-        echo "Error: chafa not found. Install chafa." >&2
-        exit 1
-    fi
-
-    if [[ -n "$FZF_PREVIEW_COLUMNS" && -n "$FZF_PREVIEW_LINES" ]]; then
-        chafa -s ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear "$1"
+    if [ -n "$KITTY_WINDOW_ID" ]; then
+        kitten icat "$1"
     else
-        chafa --clear "$1"
+        if ! command -v chafa &>/dev/null; then
+            echo "Error: chafa not found. Install chafa." >&2
+            exit 1
+        fi
+
+        if [[ -n "$FZF_PREVIEW_COLUMNS" && -n "$FZF_PREVIEW_LINES" ]]; then
+            chafa -s ${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES} --clear "$1"
+        else
+            chafa --clear "$1"
+        fi
     fi
 
 elif [[ "$kind" = pdf ]]; then
 
-    if ! command -v pdftotext &>/dev/null; then
-        echo "Error: pdftotext not found. Install poppler." >&2
-        exit 1
-    fi
+    if [ -n "$KITTY_WINDOW_ID" ]; then
+        tdf "$1"
+    else
+        if ! command -v pdftotext &>/dev/null; then
+            echo "Error: pdftotext not found. Install poppler." >&2
+            exit 1
+        fi
 
-    pdftotext "$1" - 2>/dev/null | bat $bat_opts || {
-        echo "Error: Failed to extract text from PDF" >&2
-        exit 1
-    }
+        pdftotext "$1" - 2>/dev/null | bat $bat_opts || {
+            echo "Error: Failed to extract text from PDF" >&2
+            exit 1
+        }
+    fi
 
 elif [[ "$kind" = octet-stream &&
         "$extension" = cap ]]; then
