@@ -90,3 +90,83 @@ MISC_MODAL:bind('', 'z', 'Focus Zoom', function()
     focus_or_launch_app('Zoom')
 end)
 
+------------------------------------------------------------------------------
+
+local eventtap = require("hs.eventtap")
+local eventTypes = eventtap.event.types
+
+local armed = false
+local clickWatcher = nil
+
+local function printWindowInfo(win)
+    if not win then
+        print("No window found under cursor.")
+        return
+    end
+
+    local app = win:application()
+
+    local info = {
+        id           = win:id(),
+        title        = win:title(),
+        role         = win:role(),
+        subrole      = win:subrole(),
+        frame        = win:frame(),
+        isStandard   = win:isStandard(),
+        isFullScreen = win:isFullScreen(),
+
+        appName      = app and app:name() or "N/A",
+        bundleID     = app and app:bundleID() or "N/A",
+        pid          = app and app:pid() or "N/A",
+
+        screen       = win:screen() and win:screen():name() or "N/A",
+    }
+
+    print("----- Window Info -----")
+    print(hs.inspect(info))
+    print("-----------------------")
+end
+
+local function disarm()
+    armed = false
+
+    if clickWatcher then
+        clickWatcher:stop()
+        clickWatcher = nil
+    end
+
+    print("Window inspector: done")
+end
+
+local function arm()
+    armed = true
+
+    clickWatcher = eventtap.new({ eventTypes.leftMouseDown }, function(event)
+        local pos = hs.mouse.absolutePosition()
+        local geo = hs.geometry.point(pos.x, pos.y)
+
+        for _, win in ipairs(hs.window.allWindows()) do
+            if geo:inside(win:frame()) then
+                printWindowInfo(win)
+                break
+            end
+        end
+
+        disarm()
+        return false -- don't block the click
+    end)
+
+    clickWatcher:start()
+
+    print("Window inspector: click a window...")
+end
+
+MISC_MODAL:bind('', 'x', 'Window Info', function()
+    MISC_MODAL:exit()
+    if armed then
+        disarm()
+    else
+        arm()
+    end
+end)
+

@@ -3,7 +3,7 @@ local ticker  = "AVGO"
 local finnhub = "https://www.finnhub.io/api/v1/quote?symbol=" .. ticker
 
 local curl    = "/usr/bin/curl"
-local menubar = hs.menubar.new()
+local menubar = hs.menubar.new(true, "AVGO")
 local stocks  = nil
 
 local STOCKS_UPDATE_TIMER      = 5  -- minutes
