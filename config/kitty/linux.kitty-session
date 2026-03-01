@@ -1,0 +1,13 @@
+
+new_tab notes
+layout splits
+launch --cwd=/home/edavis/notes zsh -c "figlet notes | lolcat; exec zsh"
+launch --cwd=/home/edavis/notes --location=vsplit
+
+new_tab misc
+layout splits
+launch zsh -c "figlet misc | lolcat; exec zsh"
+launch --location=vsplit
+
+focus_tab title:"notes"
+

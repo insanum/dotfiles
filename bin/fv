@@ -224,7 +224,7 @@ else
     # Check if file is binary and dump with hex viewer
     if file -b "$1" | grep -q "binary\|executable\|data"; then
         if ! command -v hx &>/dev/null; then
-            echo "Error: hx not found. Install helix editor to view binary files as hex." >&2
+            echo "Error: hx not found. Install rust hx to view binary files as hex." >&2
             exit 1
         fi
         hx --color 1 "$1" | bat $bat_opts

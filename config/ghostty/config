@@ -25,7 +25,7 @@ working-directory = home
 window-inherit-working-directory = false
 
 macos-titlebar-style = tabs
-window-title-font-family = Hack Nerd Font
+window-title-font-family = Hack
 
 window-padding-x = 4
 window-padding-y = 4
