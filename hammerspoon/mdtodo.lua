@@ -3,7 +3,7 @@ local window = require("hs.window")
 local dialog = require("hs.dialog")
 
 local mdtodo = "/Users/edavis/.cargo/bin/mdtodo"
-local file   = "/Volumes/work/notes/INBOX.md"
+local inbox_file = "/Volumes/work/notes/INBOX.md"
 
 local function file_exists(name)
    local f = io.open(name, "r")
@@ -19,7 +19,7 @@ local function mdtodoNewTask()
         return
     end
 
-    if not file_exists(file) then
+    if not file_exists(inbox_file) then
         hs.alert("ERROR: INBOX.md does not exist!",
                  { radius = 0, atScreenEdge = 2 }, 4)
         return
@@ -36,7 +36,7 @@ local function mdtodoNewTask()
         return
     end
 
-    out, status = hs.execute(mdtodo .. " -f " .. file ..
+    out, status = hs.execute(mdtodo .. " -f " .. inbox_file ..
                              " -n \"" .. message .. "\"")
 
     if status ~= true then
@@ -56,5 +56,13 @@ MISC_MODAL:bind("", "i", "New INBOX Task",
 function()
     MISC_MODAL:exit()
     mdtodoNewTask()
+end)
+
+hs.hotkey.bind(HYPER, "t", function()
+    hs.task.new("/Applications/kitty.app/Contents/MacOS/kitty", nil, {
+        "--title", "INBOX",
+        "--override", "tab_bar_style=hidden",
+        "/bin/zsh", "-li", "-c", "proxychains4 nvim " .. inbox_file
+    }):start()
 end)
 

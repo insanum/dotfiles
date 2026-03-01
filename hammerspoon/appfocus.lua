@@ -80,10 +80,10 @@ MISC_MODAL:bind('', 'p', 'Focus PDF Expert', function()
     focus_or_launch_app('PDF Expert')
 end)
 
-MISC_MODAL:bind('', 's', 'Focus Stickies', function()
-    MISC_MODAL:exit()
-    focus_or_launch_app('Stickies')
-end)
+-- MISC_MODAL:bind('', 's', 'Focus Stickies', function()
+--     MISC_MODAL:exit()
+--     focus_or_launch_app('Stickies')
+-- end)
 
 MISC_MODAL:bind('', 'z', 'Focus Zoom', function()
     MISC_MODAL:exit()
@@ -122,9 +122,7 @@ local function printWindowInfo(win)
         screen       = win:screen() and win:screen():name() or "N/A",
     }
 
-    print("----- Window Info -----")
     print(hs.inspect(info))
-    print("-----------------------")
 end
 
 local function disarm()
@@ -145,12 +143,13 @@ local function arm()
         local pos = hs.mouse.absolutePosition()
         local geo = hs.geometry.point(pos.x, pos.y)
 
+        print("----- ALL WINDOWS -----")
         for _, win in ipairs(hs.window.allWindows()) do
             if geo:inside(win:frame()) then
                 printWindowInfo(win)
-                break
             end
         end
+        print("-----------------------")
 
         disarm()
         return false -- don't block the click
