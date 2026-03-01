@@ -35,10 +35,10 @@ local function focus_or_launch_app(appName)
     end
 end
 
-MISC_MODAL:bind('', 'a', 'Focus Alacritty', function()
-    MISC_MODAL:exit()
-    focus_or_launch_app('Alacritty')
-end)
+-- MISC_MODAL:bind('', 'a', 'Focus Alacritty', function()
+--     MISC_MODAL:exit()
+--     focus_or_launch_app('Alacritty')
+-- end)
 
 -- MISC_MODAL:bind('', 'c', 'Focus Chrome', function()
 --     MISC_MODAL:exit()

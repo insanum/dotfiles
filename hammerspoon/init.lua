@@ -11,6 +11,7 @@ CMD_CTRL_ALT       = { "cmd", "ctrl", "alt" }
 CMD_CTRL_SHIFT     = { "cmd", "ctrl", "shift" }
 CMD_CTRL_ALT_SHIFT = { "cmd", "ctrl", "alt", "shift" }
 CMD_ALT_SHIFT      = { "cmd", "alt", "shift" }
+HYPER              = CMD_CTRL_ALT_SHIFT
 
 hs.hotkey.alertDuration = 0
 
@@ -38,7 +39,7 @@ loadit("modal")
 --loadit("notifications")
 
 -- volume commands
--- # with Voyager keyboard layers, no longer need this
+-- # with custom keyboard layers, no longer need this
 --loadit("volume")
 
 -- audio device switcher
@@ -89,5 +90,5 @@ loadit("wincapture")
 loadit("appfocus")
 
 -- Ghostty hacks
-loadit("ghostty")
+--loadit("ghostty")
 

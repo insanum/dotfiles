@@ -1,5 +1,5 @@
 
-local win_modal = NewModalKey(CMD_CTRL, 'i', 'Modal Window')
+local win_modal = NewModalKey(HYPER, 'i', 'Modal Window')
 
 --[[
 ------------------------------------------------------------------------------

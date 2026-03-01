@@ -47,5 +47,5 @@ function NewModalKey(mods, key, msg)
     return m
 end
 
-MISC_MODAL = NewModalKey(CMD_CTRL, 'k', 'Modal Misc')
+MISC_MODAL = NewModalKey(HYPER, 'k', 'Modal Misc')
 
