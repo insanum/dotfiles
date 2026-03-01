@@ -138,7 +138,7 @@ default_orientation = "perpendicular"
 #   Use the display's UUID as the key (for example, from system profiler or via rift CLI).
 
 [settings.layout.gaps.outer]
-top = 10
+top = 6
 left = 10
 bottom = 10
 right = 10
@@ -332,6 +332,7 @@ app_rules = [
     { app_name = "kitty", title_substring="INBOX", floating = true },
     { title_substring = "Bitwarden", floating = true },
     { title_substring = "Hammerspoon Console", floating = true },
+    { title_substring = "Picture in Picture", floating = true },
 ]
 
 # Modifier combinations that can be reused in key bindings
