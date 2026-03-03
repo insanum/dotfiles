@@ -147,7 +147,7 @@ local function amCmd(...)
     end
 end
 
-local music_modal = NewModalKey(HYPER, 'u', 'Modal Music')
+local music_modal = NewModalKey(HYPER, "m", 'Modal Music')
 
 music_modal:bind(NONE, "m", "Music Run",
 function()

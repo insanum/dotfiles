@@ -58,7 +58,8 @@ function()
     mdtodoNewTask()
 end)
 
-hs.hotkey.bind(HYPER, "t", function()
+hs.hotkey.bind(HYPER, "t", "TODO Note",
+function()
     hs.task.new("/Applications/kitty.app/Contents/MacOS/kitty", nil, {
         "--title", "INBOX",
         "--override", "tab_bar_style=hidden",

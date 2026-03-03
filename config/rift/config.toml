@@ -330,7 +330,7 @@ app_rules = [
     { app_name = "Thaw", floating = true },
     { app_name = "Raycast", title_substring="Settings", floating = true },
     { app_name = "kitty", title_substring="INBOX", floating = true },
-    { title_substring = "Bitwarden", floating = true },
+    { app_name = "Helium", title_substring = "Bitwarden", floating = true },
     { title_substring = "Hammerspoon Console", floating = true },
     { title_substring = "Picture in Picture", floating = true },
 ]

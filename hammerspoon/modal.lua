@@ -43,7 +43,7 @@ function NewModalKey(mods, key, msg)
     function m:entered() modal_enter(msg) end
     function m:exited() modal_exit() end
     m:bind('', 'q', 'Show help', function() modal_help(m) end)
-    m:bind('', 'escape', function() m:exit() end)
+    m:bind('', 'escape', 'Exit Modal', function() m:exit() end)
     return m
 end
 

@@ -3,10 +3,11 @@ local function format_two_columns(text)
     local gap = 4
 
     -- replace unicode modifiers with text equivalents
-    text = text:gsub("⌘", "CMD-")
-    text = text:gsub("⌃", "CTRL-")
-    text = text:gsub("⌥", "ALT-")
-    text = text:gsub("⇧", "SHFT-")
+    -- text = text:gsub("⌘", "CMD-")
+    -- text = text:gsub("⌃", "CTRL-")
+    -- text = text:gsub("⌥", "ALT-")
+    -- text = text:gsub("⇧", "SHFT-")
+    -- text = text:gsub("✧", "HYPER-")
 
     local lines = {}
     local header = nil
@@ -78,10 +79,11 @@ function ShowHelp(help)
         hs.alert.closeSpecific(help_alert, 1)
     end
 
+    print("----> Help Keys\n" .. help)
     help_alert = hs.alert(format_two_columns(help), help_alert_loc, 5)
 end
 
-hs.hotkey.bind(CMD_CTRL, "q", "Show Help",
+hs.hotkey.bind(HYPER, "q", "Show Help",
 function()
     local keys = hs.hotkey.getHotkeys()
     local key_list = ''

@@ -8,8 +8,9 @@ local function wincapture()
     hs.task.new(screencap, nil, {"-l" .. winId, fileName }):start()
 end
 
-hs.hotkey.bind(CMD_SHIFT, "1", "Screenshot Current Window",
+hs.hotkey.bind(HYPER, "s", "Screenshot Current Window",
 function()
     wincapture()
+    hs.alert.show("Screenshot taken!", { radius = 0, atScreenEdge = 2 }, 4)
 end)
 
