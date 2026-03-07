@@ -7,6 +7,12 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+if [[ -d /opt/homebrew/bin ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 #-------------------------------------------------------------------------
 
 # clone antidote if necessary
@@ -36,21 +42,17 @@ prompt powerlevel10k
 
 zle_highlight+=(paste:none)
 
-if [[ -d /opt/homebrew/bin ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
 alias h="history"
 
-HISTFILE="${HISTFILE:-${ZDOTDIR:-$HOME}/.zsh_history}"
-HISTSIZE=10000
-SAVEHIST=$HISTSIZE
 setopt IGNORE_EOF
+
+HISTFILE="${HISTFILE:-${ZDOTDIR:-$HOME}/.zsh_history}"
+HISTSIZE=50000
+SAVEHIST=$HISTSIZE
 setopt BANG_HIST              # treat the '!' character specially during expansion
 setopt EXTENDED_HISTORY       # write the history file in the ':start:elapsed;command' format
-#setopt SHARE_HISTORY         # share history between all sessions
+setopt SHARE_HISTORY          # share history between all sessions
+setopt INC_APPEND_HISTORY     # write history immeditely, not when the shell exits
 setopt APPEND_HISTORY         # share history between all sessions (after exit)
 setopt HIST_EXPIRE_DUPS_FIRST # expire a duplicate event first when trimming history
 setopt HIST_IGNORE_DUPS       # do not record an event that was just recorded again

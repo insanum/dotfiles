@@ -12,5 +12,5 @@ zsh-users/zsh-autosuggestions
 
 joshskidmore/zsh-fzf-history-search
 
-romkatv/powerlevel10k  kind:fpath
+romkatv/powerlevel10k kind:fpath
 
