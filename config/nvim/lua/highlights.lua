@@ -79,6 +79,8 @@ themes.themes = {
                 options = { theme = 'onedark' }
             })
 
+            vim.cmd('hi CursorLine guibg=#181a1f')
+
             vim.cmd('hi FoobarTaskChecked guifg=#535965 gui=italic')
             vim.cmd('hi FoobarTaskPunted guifg=#535965 gui=italic,strikethrough')
 
