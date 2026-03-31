@@ -126,12 +126,21 @@ if (( $+commands[qlmanage] )); then
 fi
 
 if (( $+commands[nvim] )); then
-    alias vi="nvim"
+    if (( $+commands[proxychains4] )); then
+        #alias vi="NODE_TLS_REJECT_UNAUTHORIZED=0 proxychains4 nvim"
+        alias vi="proxychains4 nvim"
+    else
+        alias vi="nvim"
+    fi
 fi
 
 # if exists, override to a nightly neovim build
 if [[ -d $HOME/nvim/bin ]]; then
-    alias vi=$HOME/nvim/bin/nvim
+    if (( $+commands[proxychains4] )); then
+        alias vi="proxychains4 $HOME/nvim/bin/nvim"
+    else
+        alias vi="$HOME/nvim/bin/nvim"
+    fi
 fi
 
 if (( $+commands[dust] )); then
@@ -155,14 +164,12 @@ if [[ -d $HOME/.opencode/bin ]]; then
 fi
 
 if (( $+commands[proxychains4] )); then
-    #alias vi="NODE_TLS_REJECT_UNAUTHORIZED=0 proxychains4 nvim"
-    alias vi="proxychains4 nvim"
-    alias aider="proxychains4 aider --watch-files"
-    alias opencode="proxychains4 opencode"
     #alias claude="proxychains4 claude"
     alias claude="NODE_TLS_REJECT_UNAUTHORIZED=0 proxychains4 claude"
     alias codex="proxychains4 codex"
     alias gemini="proxychains4 gemini"
+    alias opencode="proxychains4 opencode"
+    alias docling="proxychains4 docling"
 fi
 
 alias bitz="$HOME/work/git/bitz/bitz.py"

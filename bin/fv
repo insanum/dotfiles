@@ -87,12 +87,19 @@ elif [[ "$extension" = "xml" ||
 elif [[ "$extension" = "md" ||
         "$extension" = "markdown" ]]; then
 
-    if ! command -v glow &>/dev/null; then
-        echo "Error: glow not found. Install glow." >&2
+    if ! command -v mdterm &>/dev/null; then
+        echo "Error: mdterm not found. Install mdterm." >&2
         exit 1
     fi
 
-    glow -s dark -p "$1"
+    mdterm --theme dark "$1"
+
+    # if ! command -v glow &>/dev/null; then
+    #     echo "Error: glow not found. Install glow." >&2
+    #     exit 1
+    # fi
+    #
+    # glow -s dark -p "$1"
 
 elif [[ "$extension" = "csv" ]]; then
 

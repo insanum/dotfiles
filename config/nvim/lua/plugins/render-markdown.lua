@@ -56,7 +56,7 @@ M.opts = {
     pipe_table = {
         preset = 'round',
         border_virtual = true,
-        cell = 'raw',
+        cell = 'trimmed',
     },
 }
 

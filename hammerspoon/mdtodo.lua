@@ -63,6 +63,9 @@ function()
     hs.task.new("/Applications/kitty.app/Contents/MacOS/kitty", nil, {
         "--title", "INBOX",
         "--override", "tab_bar_style=hidden",
+        "--override", "initial_window_width=100c",
+        "--override", "initial_window_height=60c",
+        "--override", "remember_window_size=no",
         "/bin/zsh", "-li", "-c", "proxychains4 nvim " .. inbox_file
     }):start()
 end)
