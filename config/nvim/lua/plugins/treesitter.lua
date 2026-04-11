@@ -1,7 +1,10 @@
 local M = {
     name = 'nvim-treesitter.configs',
     plug = {
-        'https://github.com/nvim-treesitter/nvim-treesitter',
+        {
+            src = 'https://github.com/nvim-treesitter/nvim-treesitter',
+            version = 'main',
+        }
     },
     priority = 5,
 }

@@ -361,7 +361,6 @@ comb1 = "Meta + Alt"
 # - move_window_to_workspace = N / move_window_to_workspace = { workspace = N, window_id = 123 } (optional window id)
 # - create_workspace
 # - switch_to_last_workspace
-# - set_workspace_layout = { workspace = N, mode = "traditional"|"bsp"|"master_stack"|"scrolling" }
 # - set_workspace_layout = { mode = "traditional"|"bsp"|"stack"|"master_stack"|"scrolling" } (active workspace)
 # - set_workspace_layout = { workspace = N, mode = "traditional"|"bsp"|"stack"|"master_stack"|"scrolling" }
 # - next_window / prev_window (focus wraps when it reaches last window in current workspace)
@@ -455,8 +454,10 @@ comb1 = "Meta + Alt"
 
 # if mission control is enabled
 # this will show an exploded view of the windows in the active workspace
+# "Alt + Ctrl + Shift + M" = "show_mission_control_current"
 "Alt + O" = "show_mission_control_current"
 # this will show the mission control view shown in the readme
+# "Alt + Ctrl + M" = "show_mission_control_all"
 "Alt + Meta + O" = "show_mission_control_all"
 
 #"Alt + Enter" = { "exec" = ["/bin/bash", "-c", "open -a \"/System/Applications/Utilities/Terminal.app\""] }

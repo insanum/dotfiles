@@ -49,6 +49,8 @@ kind=${mime##*/}
 filename_with_ext=$(basename "$1")
 extension="${filename_with_ext##*.}"
 
+#echo "Debug: m='$mime' c='$category' k='$kind' e='$extension'" >&2
+
 if [[ -d "$1" ]]; then
 
     eza -hlF --color=always --icons "$1" | bat $bat_opts
@@ -212,8 +214,8 @@ elif [[ "$kind" = pdf ]]; then
         }
     fi
 
-elif [[ "$kind" = octet-stream &&
-        "$extension" = cap ]]; then
+elif [[ ( "$kind" = octet-stream && "$extension" = cap ) ||
+        "$kind" = "vnd.tcpdump.pcap" ]]; then
 
     if ! command -v tshark &>/dev/null; then
         echo "Error: tshark not found. Install wireshark/tshark." >&2
