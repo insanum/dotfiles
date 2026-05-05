@@ -1,0 +1,118 @@
+
+# https://github.com/karinushka/paneru/blob/main/CONFIGURATION.md
+
+[options]
+
+focus_follows_mouse = true
+mouse_follows_focus = true
+
+preset_column_widths = [ 0.25, 0.33, 0.50, 0.66, 0.75 ]
+
+#auto_center = true
+
+[padding]
+
+top = 5
+bottom = 10
+left = 10
+right = 10
+
+[swipe]
+
+sensitivity = 0.2
+deceleration = 8.0
+continuous = true
+
+[swipe.scroll]
+
+modifier = "alt"
+vertical_modifier = "alt + shift"
+
+[bindings]
+
+window_focus_west = "alt - h"
+window_focus_east = "alt - l"
+window_focus_north = "alt - k"
+window_focus_south = "alt - j"
+
+window_swap_west = "cmd + alt - h"
+window_swap_east = "cmd + alt - l"
+window_swap_north = "cmd + alt - k"
+window_swap_south = "cmd + alt - j"
+
+window_center = "alt - c"
+window_resize = "alt - r"
+window_fullwidth = "alt - f"
+
+window_manage = "alt + shift - t"
+window_stack = "alt - ]"
+window_unstack = "alt + shift - ]"
+window_equalize = "alt + shift - e"
+
+window_virtual_north = "alt + shift - k"
+window_virtual_south = "alt + shift - j"
+window_virtualmove_north = "cmd + alt + shift - k"
+window_virtualmove_south = "cmd + alt + shift - j"
+
+quit = "ctrl + alt - q"
+
+[decorations.active.border]
+enabled = true
+color = "#ffa500"
+width = 2.0
+radius = 12.0
+
+[windows.finder]
+title = ".*"
+bundle_id = "com.apple.finder"
+floating = true
+
+[windows.reminders]
+title = ".*"
+bundle_id = "com.apple.reminders"
+floating = true
+
+[windows.settings]
+title = ".*"
+bundle_id = "com.apple.systempreferences"
+floating = true
+
+[windows.raycast]
+title = ".*"
+bundle_id = "com.raycast.macos"
+floating = true
+
+[windows.helium_bitwarden]
+title = "Bitwarden"
+bundle_id = "net.imput.helium"
+floating = true
+
+[windows.kitty]
+title = "INBOX"
+bundle_id = "net.kovidgoyal.kitty"
+floating = true
+
+[windows.stickies]
+title = ".*"
+bundle_id = "com.apple.Stickies"
+floating = true
+
+[windows.thaw]
+title = ".*"
+bundle_id = "com.stonerl.Thaw"
+floating = true
+
+[windows.hammerspoon]
+title = ".*"
+bundle_id = "org.hammerspoon.Hammerspoon"
+floating = true
+
+[windows.pip]
+title = "Picture.*(in)?.*[Pp]icture"
+floating = true
+
+[windows.all]
+title = ".*"
+horizontal_padding = 5
+vertical_padding = 0
+
