@@ -8,6 +8,8 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 if [[ -d /opt/homebrew/bin ]]; then
+    #export HOMEBREW_NO_ENV_HINTS=1
+    export HOMEBREW_NO_REQUIRE_TAP_TRUST=1
     eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [[ -d /home/linuxbrew/.linuxbrew/bin ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"

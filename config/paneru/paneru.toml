@@ -72,6 +72,11 @@ title = ".*"
 bundle_id = "com.apple.reminders"
 floating = true
 
+[windows.notes]
+title = ".*"
+bundle_id = "com.apple.Notes"
+floating = true
+
 [windows.settings]
 title = ".*"
 bundle_id = "com.apple.systempreferences"
@@ -109,6 +114,11 @@ floating = true
 
 [windows.pip]
 title = "Picture.*(in)?.*[Pp]icture"
+floating = true
+
+[windows.tv]
+title = ".*"
+bundle_id = "com.apple.TV"
 floating = true
 
 [windows.all]
