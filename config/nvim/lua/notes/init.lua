@@ -30,6 +30,7 @@ USAGE:
 --]]
 
 require('notes.config')
+require('notes.flashcards')
 require('notes.journal')
 require('notes.links')
 require('notes.markdown')
@@ -109,6 +110,18 @@ for _, m in ipairs(journal_week_maps) do
          { desc = m[3] })
 end
 
+-- <leader>nf<.> - Flashcards
+local flashcard_maps = {
+    { 'nfd', 'NotesFlashDecks',  '[N]otes [F]lashcard [D]ecks (pick + review)' },
+    { 'nfr', 'NotesFlashReview', '[N]otes [F]lashcard [R]eview current deck' },
+    { 'nfc', 'NotesFlashCram',   '[N]otes [F]lashcard [C]ram current deck' },
+    { 'nft', 'NotesFlashTag',    '[N]otes [F]lashcard by [T]ag' },
+    { 'nfR', 'NotesFlashReset',  '[N]otes [F]lashcard [R]eset current deck' },
+}
+for _, m in ipairs(flashcard_maps) do
+    kmap('n', '<leader>' .. m[1], '<Cmd>' .. m[2] .. '<CR>', { desc = m[3] })
+end
+
 -- <leader>nr<.> - Reading list
 local reading_maps = {
     { 'nra', 'NotesReadingAll',       '[N]otes [R]ead [A]ll' },
@@ -156,7 +169,7 @@ local notes_help = {
     '<leader>nto                        Search Open Tasks',
     '<leader>ntc                        Search Completed Tasks',
     '<leader>ntp                        Search Punted Tasks',
-    '<leader>ntr                        Search Recent Tasks (Past Month)',
+    '<leader>ntr                        Search Recent Tasks (Past 6 Months)',
     '',
     '<leader>nc                         Toggle Task Completed',
     '<leader>np                         Toggle Task Punted',
@@ -174,6 +187,15 @@ local notes_help = {
     '',
     '<leader>jdm  :JournalMissing       Missing Journal Days',
     '<leader>jwm  :JournalWeekMissing   Missing Journal Week Days',
+    '',
+    '<leader>nfd                        Flashcard Decks (pick + review)',
+    '<leader>nfr                        Flashcard Review current deck',
+    '<leader>nfc                        Flashcard Cram current deck (no schedule)',
+    '<leader>nft                        Flashcard Review by tag',
+    '<leader>nfR                        Flashcard Reset current deck state',
+    '',
+    '  In a review:  <space> flip · j/n again · h hard · k/y good · l easy',
+    '                p prev · u undo · e edit · s suspend · q quit',
     '',
     '<leader>nra                        Reading List All',
     '<leader>nrt                        Reading List Todo',
