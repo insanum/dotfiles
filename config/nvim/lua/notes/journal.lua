@@ -65,9 +65,42 @@ local function open_journal_date_entry(date_str)
     vim.cmd('edit ' .. journal_file)
 end
 
+-- Timestamp (noon, standard time) of the Sunday of the week containing
+-- Jan 1st of `year`. By convention this Sunday begins week 1 (w01) of
+-- that year. Anchoring to standard time (isdst = false) keeps week-to-week
+-- differences exact multiples of 7 days regardless of DST.
+local function jan1_week_sunday_t(year)
+    local jan1_t = os.time({
+        year = year,
+        month = 1,
+        day = 1,
+        isdst = false,
+    })
+
+    local jan1_tbl = os.date('!*t', jan1_t)
+
+    -- if Jan 1st is not a Sunday, back up into the prior December
+    -- (wday: 1 = Sunday .. 7 = Saturday)
+    if jan1_tbl.wday > 1 then
+        return os.time({
+            year = year - 1,
+            month = 12,
+            day = (31 - (jan1_tbl.wday - 1) + 1),
+            isdst = false,
+        })
+    end
+
+    return jan1_t
+end
+
 -- In { YYYY-MM-DD }, out { year, week_number, sunday_date, saturday_date }
 local function date_to_week(date_str)
     local y, m, d = date_str:match('^(%d+)%-(%d+)%-(%d+)$')
+    if not y then
+        return nil
+    end
+
+    y = tonumber(y)
 
     -- the time defaults to 12pm/noon on the specified date
     -- could include { hour = 0, min = 0, sec = 0 } to get midnight
@@ -78,15 +111,7 @@ local function date_to_week(date_str)
         isdst = false
     })
 
-    local jan1_t = os.time({
-        year = y,
-        month = 1,
-        day = 1,
-        isdst = false
-    })
-
     local date_tbl = os.date('!*t', date_t)
-    local jan1_tbl = os.date('!*t', jan1_t)
 
     -- the Sunday of the date's week
     local date_sun_t = os.time({
@@ -96,27 +121,21 @@ local function date_to_week(date_str)
         isdst = false,
     })
 
-    -- the Sunday of Jan 1st's week
-    -- if Jan 1 is not on a Sunday, adjust the year/month/day
-    local jan1_sun_year = y
-    local jan1_sun_month = 1
-    local jan1_sun_day = 1
-    if jan1_tbl.wday > 1 then
-        jan1_sun_year = (y - 1)
-        jan1_sun_month = 12
-        jan1_sun_day = (31 - (jan1_tbl.wday - 1) + 1)
+    -- The week containing Jan 1st is always w01. So if this date's week
+    -- already contains *next* year's Jan 1st (i.e. its Sunday is the
+    -- Sunday that begins next year's w01), the date rolls forward into
+    -- that year's week numbering rather than landing in a phantom w52/w53.
+    local week_year = y
+    if date_sun_t >= jan1_week_sunday_t(y + 1) then
+        week_year = y + 1
     end
 
-    local jan1_sun_t = os.time({
-        year = jan1_sun_year,
-        month = jan1_sun_month,
-        day = jan1_sun_day,
-        isdst = false,
-    })
+    local jan1_sun_t = jan1_week_sunday_t(week_year)
 
-    local week_num = (((os.difftime(date_sun_t, jan1_sun_t) / 86400) / 7) + 1)
+    local week_num =
+        math.floor((os.difftime(date_sun_t, jan1_sun_t) / 86400) / 7) + 1
 
-    return y, week_num,
+    return week_year, week_num,
            os.date('%m/%d', date_sun_t),
            os.date('%m/%d', (date_sun_t + (6 * 86400)))
 end
@@ -125,32 +144,8 @@ end
 local function week_to_date(week_str)
     local y, wn = week_str:match('^(%d+)%-w(%d+)$')
 
-    local jan1_t = os.time({
-        year = y,
-        month = 1,
-        day = 1,
-        isdst = false
-    })
-
-    local jan1_tbl = os.date('*t', jan1_t)
-
-    -- the Sunday of Jan 1st's week
-    -- if Jan 1 is not on a Sunday, adjust the year/month/day
-    local jan1_sun_year = y
-    local jan1_sun_month = 1
-    local jan1_sun_day = 1
-    if jan1_tbl.wday > 1 then
-        jan1_sun_year = (y - 1)
-        jan1_sun_month = 12
-        jan1_sun_day = (31 - (jan1_tbl.wday - 1) + 1)
-    end
-
-    local jan1_sun_t = os.time({
-        year = jan1_sun_year,
-        month = jan1_sun_month,
-        day = jan1_sun_day,
-        isdst = false,
-    })
+    -- the Sunday of Jan 1st's week begins week 1 (w01)
+    local jan1_sun_t = jan1_week_sunday_t(tonumber(y))
 
     -- add the number of weeks to Jan 1st's Sunday
     local sun_t = (jan1_sun_t + (86400 * (7 * (wn - 1))))
@@ -259,28 +254,38 @@ local function open_week(opts)
         end
     end
 
-    local year, week = date_to_week(date)
-    if not year or not week then
+    -- shift by whole weeks using date arithmetic, then re-derive the
+    -- year/week from the resulting date. this lets the offset cross a
+    -- year boundary (before/after Jan 1st) and wrap naturally into the
+    -- adjacent year instead of producing an out-of-range week number
+    local target_date = adjust_date(date, offset * 7)
+    if not target_date then
         vim.notify('Could not determine target week', vim.log.levels.ERROR)
         return
     end
 
-    -- FIXME handle week/year wrapping before or after Jan 1st
-    local target_week = (week + offset)
-    local target_year = year
-
-    if target_week < 1 or target_week >= 53 then
-        vim.notify('Wrapping week number', vim.log.levels.ERROR)
+    local target_year, target_week = date_to_week(target_date)
+    if not target_year or not target_week then
+        vim.notify('Could not determine target week', vim.log.levels.ERROR)
         return
     end
 
     open_journal_week_entry(target_year, target_week)
 end
 
+-- Timestamp anchored at noon today. Stepping back by whole days/weeks
+-- from a noon anchor keeps the ±1h DST wobble away from midnight, so no
+-- calendar day is ever skipped or duplicated across a DST transition.
+local function noon_today_t()
+    local now = os.date('*t')
+    return os.time({ year = now.year, month = now.month, day = now.day,
+                     hour = 12, min = 0, sec = 0 })
+end
+
 -- Show missing journal day entries
 local function missing_days()
     local missing_dates = {}
-    local date_t = os.time()
+    local date_t = noon_today_t()
 
     for i = 0, 365 do
         local tmp_date_t = (date_t - (i * 86400)) -- subtract i days
@@ -310,10 +315,10 @@ end
 -- Show missing journal week entries
 local function missing_weeks()
     local missing = {}
-    local date_t = os.time()
+    local date_t = noon_today_t()
 
     for i = 0, 52 do
-        local tmp_date_t = (date_t - (i * 608400)) -- subtract i weeks
+        local tmp_date_t = (date_t - (i * 7 * 86400)) -- subtract i weeks
 
         local tmp_date_str = os.date('%Y-%m-%d', tmp_date_t)
         local year, week = date_to_week(tmp_date_str)

@@ -220,14 +220,15 @@ vim.api.nvim_create_user_command('NotesTasksPunted', function()
 end, { desc = 'Search punted tasks' })
 
 vim.api.nvim_create_user_command('NotesTasksRecent', function()
-    local one_month_ago = os.time() - (6 * 30 * 24 * 60 * 60)
+    -- ~6 months ago (approx 180 days); fuzzy cutoff, exactness not needed
+    local six_months_ago = os.time() - (6 * 30 * 24 * 60 * 60)
     search_tasks({
         pattern = [[^\s*- \[x\] |^\s*- \[-\] ]],
         name = 'Recent Completed/Punted Tasks (Past 6 Months)',
         sort_by_task_date = true,
         type_extractor = extract_task_type_and_date,
         time_filter = function(task_ts)
-            return task_ts == nil or task_ts >= one_month_ago
+            return task_ts == nil or task_ts >= six_months_ago
         end,
     })
 end, { desc = 'Search recent completed/punted tasks (past 6 months)' })
