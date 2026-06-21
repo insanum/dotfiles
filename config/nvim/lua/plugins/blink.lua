@@ -127,7 +127,7 @@ M.opts = {
         default = {
             'copilot',
             -- 'codecompanion',
-            -- 'minuet',
+            'minuet',
             'lsp',
             -- 'markdown',
             'buffer',
@@ -143,6 +143,14 @@ M.opts = {
                 module = "blink-copilot",
                 score_offset = 100,
                 async = true,
+            },
+            minuet = {
+                name = "minuet",
+                module = "minuet.blink",
+                score_offset = 100,
+                async = true,
+                -- Local LLMs can be slow; give it room before blink gives up.
+                --timeout_ms = 3000,
             },
         },
     },
