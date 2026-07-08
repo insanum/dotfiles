@@ -35,7 +35,7 @@ SERVER_PEER="192.168.224.13"       # data-plane IP of the CLIENT (server's peer)
 CLIENT_PEER="192.168.224.42"       # data-plane IP of the SERVER (client's peer)
 
 REMOTE_DIR=""                      # default: derived from $PWD
-BUILD="clean"                      # clean | make | none
+BUILD="make"                       # clean | make | none
 SETTLE_DELAY=5                     # seconds to let mutagen flush before building
 SERVER_DELAY=2                     # seconds between starting server and client
 
@@ -46,36 +46,55 @@ REMOTE_ROOT="/home/edavis/sync"
 SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new)
 TEST_TIMEOUT=900                   # hard cap (seconds) on each side's test run
 
-# GNU `timeout` (or `gtimeout` from coreutils) wraps each side's run as a
-# backstop. macOS ships neither by default, so detect and gracefully skip
-# (falling back to `env` as a harmless pass-through prefix). Using `env` rather
-# than an empty array keeps this safe under bash 3.2 + `set -u`.
-if command -v timeout >/dev/null 2>&1; then
-    TIMEOUT_CMD=(timeout "$TEST_TIMEOUT")
-elif command -v gtimeout >/dev/null 2>&1; then
-    TIMEOUT_CMD=(gtimeout "$TEST_TIMEOUT")
-else
-    TIMEOUT_CMD=(env)
-    echo "NOTE: no 'timeout'/'gtimeout' found locally; running without a hard time cap." >&2
-fi
-
 usage() {
     cat <<EOF
 Usage: run-uet-test.sh [options]
 
-  --test <t>        test selector       (default: $TEST)
-  --pds <p>         pds selector        (default: $PDS)
-  --shim <s>        shim                 (default: $SHIM)
-  --ifname <if>     network interface    (default: $IFNAME)
-  --server-ssh <u@h>                     (default: $SERVER_SSH)
-  --client-ssh <u@h>                     (default: $CLIENT_SSH)
-  --server-peer <ip> client data IP      (default: $SERVER_PEER)
-  --client-peer <ip> server data IP      (default: $CLIENT_PEER)
-  --remote-dir <p>  remote working dir   (default: derived from \$PWD)
-  --build <mode>    clean|make|none      (default: $BUILD)
-  --settle-delay <s>                     (default: $SETTLE_DELAY)
-  --server-delay <s>                     (default: $SERVER_DELAY)
-  -h|--help
+Build the uet app on the client+server Linux VMs and run a client/server test
+via ./scripts/uet_test.sh, then report PASS/FAIL. Local edits (under
+/Volumes/work/sync) are synced to both VMs (/home/edavis/sync) by mutagen. Runs
+from any clone/fork; the remote dir is derived from the local cwd.
+
+PHASES (run over SSH, both VMs in parallel):
+  1. settle  - wait ${SETTLE_DELAY}s for mutagen to flush recent edits
+  2. build   - make clean && make on both VMs; aborts on failure (exit 1).
+               --build make = incremental; --build none = skip build
+  3. test    - server test in background, then client, via:
+                 ./scripts/uet_test.sh server <ifname> <server-peer> <test> <pds> <shim>
+                 ./scripts/uet_test.sh client <ifname> <client-peer> <test> <pds> <shim>
+               PASS on "--> Done!"; FAIL on "ERROR: Test failed!" (or no marker).
+
+OPTIONS:
+  --test <t>          test selector: all, rma, atomic, tag, …   (default: $TEST)
+  --pds <p>           pds selector: sng, pds, pds_direct, …      (default: $PDS)
+  --shim <s>          shim: rawsock|xdp                          (default: $SHIM)
+  --ifname <if>       network interface on the VMs               (default: $IFNAME)
+  --server-ssh <u@h>  server VM ssh target                       (default: $SERVER_SSH)
+  --client-ssh <u@h>  client VM ssh target                       (default: $CLIENT_SSH)
+  --server-peer <ip>  client data-plane IP (server's peer)       (default: $SERVER_PEER)
+  --client-peer <ip>  server data-plane IP (client's peer)       (default: $CLIENT_PEER)
+  --remote-dir <p>    remote working dir                         (default: derived from \$PWD)
+  --build <mode>      clean|make|none                            (default: $BUILD)
+  --settle-delay <s>  mutagen settle secs                        (default: $SETTLE_DELAY)
+  --server-delay <s>  server->client start gap                   (default: $SERVER_DELAY)
+  -h|--help           show this help and exit
+
+EXAMPLES:
+  # Default: incremental build + run the full test suite
+  run-uet-test.sh
+
+  # Force a from-scratch rebuild of everything
+  run-uet-test.sh --build clean
+
+  # Run only the rma test with the xdp shim
+  run-uet-test.sh --test rma --shim xdp
+
+  # Faster iteration: don't rebuild, just rerun the test
+  run-uet-test.sh --build none
+
+EXIT CODES:
+  0 = PASS            2 = test FAIL
+  1 = build failure   3 = usage/ssh error
 EOF
 }
 
@@ -97,6 +116,20 @@ while [[ $# -gt 0 ]]; do
         *) echo "Unknown option: $1" >&2; usage >&2; exit 3;;
     esac
 done
+
+# GNU `timeout` (or `gtimeout` from coreutils) wraps each side's run as a
+# backstop. macOS ships neither by default, so detect and gracefully skip
+# (falling back to `env` as a harmless pass-through prefix). Using `env` rather
+# than an empty array keeps this safe under bash 3.2 + `set -u`. Done after arg
+# parsing so `--help` doesn't emit the NOTE below.
+if command -v timeout >/dev/null 2>&1; then
+    TIMEOUT_CMD=(timeout "$TEST_TIMEOUT")
+elif command -v gtimeout >/dev/null 2>&1; then
+    TIMEOUT_CMD=(gtimeout "$TEST_TIMEOUT")
+else
+    TIMEOUT_CMD=(env)
+    echo "NOTE: no 'timeout'/'gtimeout' found locally; running without a hard time cap." >&2
+fi
 
 # ----------------------------------------------------------------------------
 # Derive the remote working directory from the local cwd if not given.

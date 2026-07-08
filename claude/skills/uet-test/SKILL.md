@@ -66,7 +66,7 @@ and on the client VM:
 | `--pds` | `pds` | pds selector (sng, pds, pds_direct, pds_cluster, …) |
 | `--shim` | `rawsock` | rawsock or xdp |
 | `--ifname` | `enp10s0` | network interface on the VMs |
-| `--build` | `clean` | `clean` (make clean && make), `make`, or `none` |
+| `--build` | `make` | `make` (incremental; **default**), `clean` (make clean && make), or `none` (skip build) |
 | `--server-ssh` | `edavis@172.16.71.42` | server VM (mgmt IP) |
 | `--client-ssh` | `edavis@172.16.71.13` | client VM (mgmt IP) |
 | `--server-peer` | `192.168.224.13` | client data-plane IP (server's peer) |
@@ -78,8 +78,11 @@ and on the client VM:
 Examples:
 
 ```bash
-# Run only the rma test with the xdp shim, skipping the clean rebuild
-~/.claude/skills/uet-test/run-uet-test.sh --test rma --shim xdp --build make
+# Force a from-scratch rebuild of everything
+~/.claude/skills/uet-test/run-uet-test.sh --build clean
+
+# Run only the rma test with the xdp shim
+~/.claude/skills/uet-test/run-uet-test.sh --test rma --shim xdp
 
 # Faster iteration: don't rebuild, just rerun the test
 ~/.claude/skills/uet-test/run-uet-test.sh --build none
