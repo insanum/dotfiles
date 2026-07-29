@@ -16,7 +16,8 @@
 # Success marker in output: "--> Done!"
 # Failure marker in output: "ERROR: Test failed!"
 #
-# Exit codes: 0 = PASS, 1 = build failure, 2 = test FAIL/unknown, 3 = usage/ssh error.
+# Exit codes: 0 = PASS (or build-only build OK), 1 = build failure,
+#             2 = test FAIL/unknown, 3 = usage/ssh error.
 
 set -u
 
@@ -36,6 +37,9 @@ CLIENT_PEER="192.168.224.42"       # data-plane IP of the SERVER (client's peer)
 
 REMOTE_DIR=""                      # default: derived from $PWD
 BUILD="make"                       # clean | make | none
+BUILD_ONLY=0                       # 1 = build both VMs then stop (skip the test)
+DRY_RUN=0                          # 1 = print the server/client ssh commands, run nothing
+IMPAIRMENT=""                      # remote path to an imp_shim TOML (enables Tx drop/delay)
 SETTLE_DELAY=5                     # seconds to let mutagen flush before building
 SERVER_DELAY=2                     # seconds between starting server and client
 
@@ -58,15 +62,22 @@ from any clone/fork; the remote dir is derived from the local cwd.
 PHASES (run over SSH, both VMs in parallel):
   1. settle  - wait ${SETTLE_DELAY}s for mutagen to flush recent edits
   2. build   - make clean && make on both VMs; aborts on failure (exit 1).
-               --build make = incremental; --build none = skip build
+               --build make = incremental; --build none = skip build.
+               --build-only stops here (build OK => exit 0), skipping the test.
   3. test    - server test in background, then client, via:
                  ./scripts/uet_test.sh server <ifname> <server-peer> <test> <pds> <shim>
                  ./scripts/uet_test.sh client <ifname> <client-peer> <test> <pds> <shim>
                PASS on "--> Done!"; FAIL on "ERROR: Test failed!" (or no marker).
 
 OPTIONS:
-  --test <t>          test selector: all, rma, atomic, tag, …   (default: $TEST)
-  --pds <p>           pds selector: sng, pds, pds_direct, …      (default: $PDS)
+  --test <t>          test: all rma rudi uud sync_rma atomic sync_atomic tag
+                            tag_any_src unexp_untag unexp_tag defer_send
+                            defer_tag defer_tag_any_src           (default: $TEST)
+                            (test=all also runs a forced-RUDI rma pass and a
+                             forced-UUD datagram pass on every pds* backend;
+                             'rudi'/'uud' run standalone, pds only)
+  --pds <p>           pds: all sng pds pds_direct pds_cluster pds_cluster_ssi
+                           pds_server_ssi                        (default: $PDS)
   --shim <s>          shim: rawsock|xdp                          (default: $SHIM)
   --ifname <if>       network interface on the VMs               (default: $IFNAME)
   --server-ssh <u@h>  server VM ssh target                       (default: $SERVER_SSH)
@@ -75,8 +86,13 @@ OPTIONS:
   --client-peer <ip>  server data-plane IP (client's peer)       (default: $CLIENT_PEER)
   --remote-dir <p>    remote working dir                         (default: derived from \$PWD)
   --build <mode>      clean|make|none                            (default: $BUILD)
+  --build-only        build both VMs then stop (skip the test)   (default: off)
+  --dry-run           print the server/client ssh commands and stop (nothing run)
+  --impairment <path> remote path to an imp_shim TOML; enables Tx packet drop/delay
+                      (sets UET_IMPAIRMENT_SHIM on both VMs) to exercise retransmit
   --settle-delay <s>  mutagen settle secs                        (default: $SETTLE_DELAY)
   --server-delay <s>  server->client start gap                   (default: $SERVER_DELAY)
+  --timeout <s>       per-side hard cap on the VMs               (default: $TEST_TIMEOUT)
   -h|--help           show this help and exit
 
 EXAMPLES:
@@ -92,9 +108,12 @@ EXAMPLES:
   # Faster iteration: don't rebuild, just rerun the test
   run-uet-test.sh --build none
 
+  # Build-only pre-check: compile on both VMs, don't run the test
+  run-uet-test.sh --build-only
+
 EXIT CODES:
-  0 = PASS            2 = test FAIL
-  1 = build failure   3 = usage/ssh error
+  0 = PASS (or build-only build OK)   2 = test FAIL
+  1 = build failure                   3 = usage/ssh error
 EOF
 }
 
@@ -110,8 +129,12 @@ while [[ $# -gt 0 ]]; do
         --client-peer) CLIENT_PEER="$2"; shift 2;;
         --remote-dir)  REMOTE_DIR="$2"; shift 2;;
         --build)       BUILD="$2"; shift 2;;
+        --build-only)  BUILD_ONLY=1; shift;;
+        --dry-run)     DRY_RUN=1; shift;;
+        --impairment)  IMPAIRMENT="$2"; shift 2;;
         --settle-delay) SETTLE_DELAY="$2"; shift 2;;
         --server-delay) SERVER_DELAY="$2"; shift 2;;
+        --timeout)     TEST_TIMEOUT="$2"; shift 2;;
         -h|--help)     usage; exit 0;;
         *) echo "Unknown option: $1" >&2; usage >&2; exit 3;;
     esac
@@ -128,7 +151,7 @@ elif command -v gtimeout >/dev/null 2>&1; then
     TIMEOUT_CMD=(gtimeout "$TEST_TIMEOUT")
 else
     TIMEOUT_CMD=(env)
-    echo "NOTE: no 'timeout'/'gtimeout' found locally; running without a hard time cap." >&2
+    echo "NOTE: no local 'timeout'/'gtimeout'; relying on the remote ${TEST_TIMEOUT}s per-side cap applied on the VMs." >&2
 fi
 
 # ----------------------------------------------------------------------------
@@ -171,8 +194,16 @@ trap show_logs EXIT
 # portable way to get unbuffered, line-by-line prefixing as output arrives.
 prefix_stream() { awk -v p="$1" '{ print p, $0; fflush() }'; }
 
-SERVER_CMD="./scripts/uet_test.sh server $IFNAME $SERVER_PEER $TEST $PDS $SHIM"
-CLIENT_CMD="./scripts/uet_test.sh client $IFNAME $CLIENT_PEER $TEST $PDS $SHIM"
+# Cap each side on the REMOTE (Linux) host, where `timeout` always exists — the
+# local wrapper is absent on macOS. `-k 10` escalates to SIGKILL 10s after
+# SIGTERM so a wedged run can't ignore the cap.
+RUN_TIMEOUT="timeout -k 10 $TEST_TIMEOUT"
+# Optional impairment shim: uet_test.sh reads UET_IMPAIRMENT_SHIM from its env
+# and re-injects it into the app command, enabling Tx packet drop/delay.
+IMPAIR_ENV=""
+[[ -n "$IMPAIRMENT" ]] && IMPAIR_ENV="UET_IMPAIRMENT_SHIM='$IMPAIRMENT' "
+SERVER_CMD="${IMPAIR_ENV}$RUN_TIMEOUT ./scripts/uet_test.sh server $IFNAME $SERVER_PEER $TEST $PDS $SHIM"
+CLIENT_CMD="${IMPAIR_ENV}$RUN_TIMEOUT ./scripts/uet_test.sh client $IFNAME $CLIENT_PEER $TEST $PDS $SHIM"
 
 case "$BUILD" in
     clean) MAKE_CMD="make clean && make";;
@@ -181,14 +212,30 @@ case "$BUILD" in
     *) echo "ERROR: --build must be clean|make|none (got '$BUILD')" >&2; exit 3;;
 esac
 
+if [[ $BUILD_ONLY -eq 1 && "$BUILD" == "none" ]]; then
+    echo "ERROR: --build-only with --build none has nothing to do." >&2
+    exit 3
+fi
+
 echo "=============================================================="
 echo " uet test run"
 echo "   remote dir : $REMOTE_DIR"
-echo "   build      : ${BUILD}"
+echo "   build      : ${BUILD}$([[ $BUILD_ONLY -eq 1 ]] && echo '   (build-only: test skipped)')"
 echo "   test/pds/shim : $TEST / $PDS / $SHIM   ifname: $IFNAME"
 echo "   server     : $SERVER_SSH   (peer $SERVER_PEER)"
 echo "   client     : $CLIENT_SSH   (peer $CLIENT_PEER)"
 echo "=============================================================="
+
+# --dry-run: print the exact server/client commands (copy/paste-able) and stop.
+if [[ $DRY_RUN -eq 1 ]]; then
+    echo ""
+    echo "# ---- DRY RUN (nothing executed) ----"
+    echo "# server ($SERVER_SSH):"
+    echo "ssh $SERVER_SSH \"cd '$REMOTE_DIR' && $SERVER_CMD\""
+    echo "# client ($CLIENT_SSH):"
+    echo "ssh $CLIENT_SSH \"cd '$REMOTE_DIR' && $CLIENT_CMD\""
+    exit 0
+fi
 
 # ----------------------------------------------------------------------------
 # 1. Let mutagen settle.
@@ -225,6 +272,17 @@ if [[ -n "$MAKE_CMD" ]]; then
         exit 1
     fi
     echo "--> Build OK on both VMs."
+fi
+
+# ----------------------------------------------------------------------------
+# 2b. Build-only pre-check: stop here (build succeeded) before running the test.
+# ----------------------------------------------------------------------------
+if [[ $BUILD_ONLY -eq 1 ]]; then
+    echo
+    echo "############################################################"
+    echo "#  RESULT: BUILD OK  (--build-only; test skipped)"
+    echo "############################################################"
+    exit 0
 fi
 
 # ----------------------------------------------------------------------------

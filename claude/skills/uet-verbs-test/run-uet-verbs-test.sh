@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# run-uet-rdma-test.sh — Build the uet RDMA app on the client+server VMs and
+# run-uet-verbs-test.sh — Build the uet RDMA app on the client+server VMs and
 # run a test.
 #
 # The local source tree (under /Volumes/work/sync) is continuously synced to
@@ -27,7 +27,8 @@
 #   sudo LD_LIBRARY_PATH=<remote>/build/lib UET_PDS=<pds> build/bin/<app> \
 #        -d <dev> -g <gid> -s <size> -n <iters> [-e] -c [-t <rma-test>|-N] [<host>]
 #
-# Exit codes: 0 = PASS, 1 = build failure, 2 = test FAIL/unknown, 3 = usage/ssh error,
+# Exit codes: 0 = PASS (or build-only build OK), 1 = build failure,
+#             2 = test FAIL/unknown, 3 = usage/ssh error,
 #             4 = uprot device setup failure.
 
 set -u
@@ -45,6 +46,12 @@ GID=1                              # -g local port gid index
 RMA_TEST="rma_ex64"                # -t (ibv_ru_rma only): rma | rma_ex | rma_ex64
 EVENTS=1                           # -e sleep on CQ events (on; disable w/ --no-events)
 NEW_SEND=0                         # -N new post-send WR API (ibv_ru_pingpong only)
+# Passthrough flags forwarded verbatim to the example app command line. These let
+# the skill drive ANY flag the apps support without a dedicated option for each
+# (ru_rma: -Q -D -A -J -u -b -j -m -r -p -c ...; ru_pingpong: -N -Q -I ...).
+EXTRA_APP_ARGS=""                  # --app-args: appended to BOTH sides
+SERVER_APP_ARGS=""                 # --server-app-args: appended to the SERVER only
+CLIENT_APP_ARGS=""                 # --client-app-args: appended to the CLIENT only
 
 SERVER_SSH="edavis@172.16.71.42"   # management IP, server VM
 CLIENT_SSH="edavis@172.16.71.13"   # management IP, client VM
@@ -54,6 +61,8 @@ CLIENT_PEER="192.168.224.42"       # data-plane IP of the SERVER (client's peer)
 
 REMOTE_DIR=""                      # default: derived from $PWD
 BUILD="make"                       # clean | make | none
+BUILD_ONLY=0                       # 1 = build both VMs then stop (skip device + test)
+DRY_RUN=0                          # 1 = print the server/client ssh commands, run nothing
 SETTLE_DELAY=5                     # seconds to let mutagen flush before building
 SERVER_DELAY=2                     # seconds between starting server and client
 
@@ -79,7 +88,7 @@ TEST_TIMEOUT=900                   # hard cap (seconds) on each side's test run
 
 usage() {
     cat <<EOF
-Usage: run-uet-rdma-test.sh [options]
+Usage: run-uet-verbs-test.sh [options]
 
 Build the uet RDMA app on the client+server Linux VMs, ensure the uprot rdma
 device is up, run a test binary on each, and report PASS/FAIL. Local edits
@@ -92,7 +101,9 @@ PHASES (run over SSH, both VMs in parallel):
                  stage 1: make clean && make   in the uet-ref-prov dir
                  stage 2: UET_REF_PROV_PATH=<ref-prov> ./build.sh   (RDMA apps)
                  stage 3: make clean && make   in providers/uprot/kmod (kmod)
-               --build make = incremental; --build none = skip build
+               --build make = incremental; --build none = skip build.
+               --build-only stops after this phase (build OK => exit 0),
+               skipping device setup and the test.
   3. device  - ensure the uprot kmod is loaded and the rdma device exists
                (insmod + rdma link add if missing). --reload forces a teardown
                (rdma link delete + rmmod) and recreate. Verified via lsmod +
@@ -113,6 +124,10 @@ OPTIONS:
   --rma-test <t>          -t rma only: rma|rma_ex|rma_ex64  (default: $RMA_TEST)
   --no-events             disable -e (CQ events; on by default)
   --new-send              -N new post-send WR API (pingpong only; default: off)
+  --app-args "<flags>"        extra app flags appended to BOTH sides
+  --server-app-args "<flags>" extra app flags appended to the SERVER only
+  --client-app-args "<flags>" extra app flags appended to the CLIENT only
+                          (forward ANY example-app flag; see APP FLAGS below)
   --ifname <if>           rdma device netdev            (default: $IFNAME)
   --server-ssh <u@h>      server VM ssh target          (default: $SERVER_SSH)
   --client-ssh <u@h>      client VM ssh target          (default: $CLIENT_SSH)
@@ -121,34 +136,64 @@ OPTIONS:
   --remote-dir <p>        remote working dir            (default: derived from \$PWD)
   --uet-ref-prov-dir <p>  uet-ref-prov dependency dir   (default: $UET_REF_PROV_DIR)
   --build <mode>          build: clean|make|none        (default: $BUILD)
+  --build-only            build both VMs then stop (skip device + test) (default: off)
+  --dry-run               print the server/client ssh commands and stop (nothing run)
   --rdma-dev <name>       uprot rdma device name        (default: $RDMA_DEV)
   --reload                force reload of kmod + device (default: off)
   --settle-delay <s>      mutagen settle secs           (default: $SETTLE_DELAY)
   --server-delay <s>      server->client start gap      (default: $SERVER_DELAY)
+  --timeout <s>           per-side hard cap on the VMs  (default: $TEST_TIMEOUT)
   -h|--help               show this help and exit
 
 EXAMPLES:
   # Default: incremental build + ensure device + run ibv_ru_pingpong
-  run-uet-rdma-test.sh
+  run-uet-verbs-test.sh
 
   # Force a from-scratch rebuild of everything
-  run-uet-rdma-test.sh --build clean
+  run-uet-verbs-test.sh --build clean
 
   # ibv_ru_rma with the rma_ex test type
-  run-uet-rdma-test.sh --app rma --rma-test rma_ex
+  run-uet-verbs-test.sh --app rma --rma-test rma_ex
 
   # Pingpong with the new post-send WR API and polling (no CQ events)
-  run-uet-rdma-test.sh --new-send --no-events
+  run-uet-verbs-test.sh --new-send --no-events
 
   # Faster iteration: don't rebuild, just rerun the test
-  run-uet-rdma-test.sh --build none
+  run-uet-verbs-test.sh --build none
 
   # Force-reload the freshly-built kmod + rdma device before testing
-  run-uet-rdma-test.sh --reload
+  run-uet-verbs-test.sh --reload
+
+  # Build-only pre-check: compile all stages on both VMs, skip device + test
+  run-uet-verbs-test.sh --build-only
+
+  # rma feature flags via the both-sides passthrough
+  run-uet-verbs-test.sh --app rma --app-args "-J"                 # job-restricted MR
+  run-uet-verbs-test.sh --app rma --app-args "-u 13"             # user-assigned RKey
+  run-uet-verbs-test.sh --app rma --app-args "-D"                # derived MR
+  run-uet-verbs-test.sh --app rma --app-args "-A"                # job address table
+
+  # pingpong SEND-with-immediate (32b or 64b)
+  run-uet-verbs-test.sh --app pingpong --app-args "-I 64"
+
+  # absolute addressing: server and client need DISTINCT JobIDs -> per-side args
+  run-uet-verbs-test.sh --app rma \\
+      --server-app-args "--absolute --job-id 46" \\
+      --client-app-args "--absolute --job-id 47"
+
+APP FLAGS (forward these via --app-args / --server-app-args / --client-app-args):
+  ibv_ru_rma:       -p <port> -d <dev> -i <ibport> -s <size> -m <mtu>
+                    -r <rxdepth> -n <iters> -e -g <gididx> -c
+                    -t <rma|rma_ex|rma_ex64>  -Q(auto-qpn)  -D(derive-mr)
+                    -A(addr-table)  -J(job-mr)  -u <rkey>  -b(absolute)  -j <jobid>
+  ibv_ru_pingpong:  -p -d -i -s -m -r -n -e -g -c  -N(new-send)  -Q(auto-qpn)
+                    -I <32|64>(send-with-immediate)
+  (COMMON_ARGS already supplies -d -g -s -n [-e] -c; --rma-test supplies -t; a
+   duplicate flag in a passthrough simply overrides, since the apps use getopt.)
 
 EXIT CODES:
-  0 = PASS            2 = test FAIL          4 = device setup failure
-  1 = build failure   3 = usage/ssh error
+  0 = PASS (or build-only build OK)   2 = test FAIL          4 = device setup failure
+  1 = build failure                   3 = usage/ssh error
 EOF
 }
 
@@ -162,6 +207,9 @@ while [[ $# -gt 0 ]]; do
         --rma-test)    RMA_TEST="$2"; shift 2;;
         --no-events)   EVENTS=0; shift;;
         --new-send)    NEW_SEND=1; shift;;
+        --app-args)        EXTRA_APP_ARGS="$2";  shift 2;;
+        --server-app-args) SERVER_APP_ARGS="$2"; shift 2;;
+        --client-app-args) CLIENT_APP_ARGS="$2"; shift 2;;
         --ifname)      IFNAME="$2"; shift 2;;
         --server-ssh)  SERVER_SSH="$2"; shift 2;;
         --client-ssh)  CLIENT_SSH="$2"; shift 2;;
@@ -170,10 +218,13 @@ while [[ $# -gt 0 ]]; do
         --remote-dir)  REMOTE_DIR="$2"; shift 2;;
         --uet-ref-prov-dir) UET_REF_PROV_DIR="$2"; shift 2;;
         --build)       BUILD="$2"; shift 2;;
+        --build-only)  BUILD_ONLY=1; shift;;
+        --dry-run)     DRY_RUN=1; shift;;
         --rdma-dev)    RDMA_DEV="$2"; shift 2;;
         --reload)      RELOAD=1; shift;;
         --settle-delay) SETTLE_DELAY="$2"; shift 2;;
         --server-delay) SERVER_DELAY="$2"; shift 2;;
+        --timeout)     TEST_TIMEOUT="$2"; shift 2;;
         -h|--help)     usage; exit 0;;
         *) echo "Unknown option: $1" >&2; usage >&2; exit 3;;
     esac
@@ -190,7 +241,7 @@ elif command -v gtimeout >/dev/null 2>&1; then
     TIMEOUT_CMD=(gtimeout "$TEST_TIMEOUT")
 else
     TIMEOUT_CMD=(env)
-    echo "NOTE: no 'timeout'/'gtimeout' found locally; running without a hard time cap." >&2
+    echo "NOTE: no local 'timeout'/'gtimeout'; relying on the remote ${TEST_TIMEOUT}s per-side cap applied on the VMs." >&2
 fi
 
 # ----------------------------------------------------------------------------
@@ -261,10 +312,16 @@ if [[ "$APP" == "rma" ]]; then
 elif [[ "$APP" == "pingpong" && $NEW_SEND -eq 1 ]]; then
     APP_ARGS="-N"
 fi
+# Passthrough: --app-args on both sides, then per-side --server/--client-app-args.
+[[ -n "$EXTRA_APP_ARGS" ]] && APP_ARGS="${APP_ARGS:+$APP_ARGS }$EXTRA_APP_ARGS"
 
-RUN_PREFIX="sudo LD_LIBRARY_PATH='$REMOTE_DIR/build/lib' UET_PDS='$PDS'"
-SERVER_CMD="$RUN_PREFIX $TEST_BIN $COMMON_ARGS${APP_ARGS:+ $APP_ARGS}"
-CLIENT_CMD="$RUN_PREFIX $TEST_BIN $COMMON_ARGS${APP_ARGS:+ $APP_ARGS} $CLIENT_PEER"
+# Cap each side on the REMOTE (Linux) host, where `timeout` always exists — the
+# local wrapper below is absent on macOS. `-k 10` escalates to SIGKILL 10s after
+# SIGTERM so a wedged test can't ignore the cap. `timeout` runs under sudo so it
+# is the test's direct parent (can signal it); `env` sets the runtime vars.
+RUN_PREFIX="sudo timeout -k 10 $TEST_TIMEOUT env LD_LIBRARY_PATH='$REMOTE_DIR/build/lib' UET_PDS='$PDS'"
+SERVER_CMD="$RUN_PREFIX $TEST_BIN $COMMON_ARGS${APP_ARGS:+ $APP_ARGS}${SERVER_APP_ARGS:+ $SERVER_APP_ARGS}"
+CLIENT_CMD="$RUN_PREFIX $TEST_BIN $COMMON_ARGS${APP_ARGS:+ $APP_ARGS}${CLIENT_APP_ARGS:+ $CLIENT_APP_ARGS} $CLIENT_PEER"
 
 # Three-stage build command, run per VM (each stage cd's to its own dir).
 # Each stage only runs if the previous one succeeds ('&&'):
@@ -296,6 +353,11 @@ if [[ "$BUILD" == "none" ]]; then
     BUILD_CMD=""
 else
     BUILD_CMD="$REFPROV_BUILD_STAGE && $RDMA_BUILD_STAGE && $KMOD_BUILD_STAGE"
+fi
+
+if [[ $BUILD_ONLY -eq 1 && "$BUILD" == "none" ]]; then
+    echo "ERROR: --build-only with --build none has nothing to do." >&2
+    exit 3
 fi
 
 # ----------------------------------------------------------------------------
@@ -339,13 +401,27 @@ echo "=============================================================="
 echo " uet rdma test run"
 echo "   remote dir : $REMOTE_DIR"
 echo "   ref-prov   : $UET_REF_PROV_DIR"
-echo "   build      : ${BUILD}"
+echo "   build      : ${BUILD}$([[ $BUILD_ONLY -eq 1 ]] && echo '   (build-only: device + test skipped)')"
 echo "   rdma dev   : ${RDMA_DEV}   reload: $([[ $RELOAD -eq 1 ]] && echo yes || echo no)"
 echo "   app        : ${APP}   UET_PDS: ${PDS}   ifname: ${IFNAME}"
 echo "   test args  : ${COMMON_ARGS}${APP_ARGS:+ $APP_ARGS}   (client dials ${CLIENT_PEER})"
+[[ -n "$SERVER_APP_ARGS" ]] && echo "   server args: +${SERVER_APP_ARGS}"
+[[ -n "$CLIENT_APP_ARGS" ]] && echo "   client args: +${CLIENT_APP_ARGS}"
 echo "   server     : $SERVER_SSH   (peer $SERVER_PEER)"
 echo "   client     : $CLIENT_SSH   (peer $CLIENT_PEER)"
 echo "=============================================================="
+
+# --dry-run: print the exact server/client commands (copy/paste-able) and stop.
+# Nothing is synced, built, or run.
+if [[ $DRY_RUN -eq 1 ]]; then
+    echo ""
+    echo "# ---- DRY RUN (nothing executed) ----"
+    echo "# server ($SERVER_SSH):"
+    echo "ssh $SERVER_SSH \"cd '$REMOTE_DIR' && $SERVER_CMD\""
+    echo "# client ($CLIENT_SSH):"
+    echo "ssh $CLIENT_SSH \"cd '$REMOTE_DIR' && $CLIENT_CMD\""
+    exit 0
+fi
 
 # ----------------------------------------------------------------------------
 # 1. Let mutagen settle.
@@ -382,6 +458,18 @@ if [[ -n "$BUILD_CMD" ]]; then
         exit 1
     fi
     echo "--> Build OK on both VMs."
+fi
+
+# ----------------------------------------------------------------------------
+# 2b. Build-only pre-check: stop here (build succeeded) before device setup and
+#     the test.
+# ----------------------------------------------------------------------------
+if [[ $BUILD_ONLY -eq 1 ]]; then
+    echo
+    echo "############################################################"
+    echo "#  RESULT: BUILD OK  (--build-only; device setup + test skipped)"
+    echo "############################################################"
+    exit 0
 fi
 
 # ----------------------------------------------------------------------------

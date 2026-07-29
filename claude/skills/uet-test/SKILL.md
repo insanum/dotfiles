@@ -1,7 +1,7 @@
 ---
 name: uet-test
 description: Build and run the uet client/server test across the two Linux VMs. Builds the locally-edited code (synced via mutagen) on both the server VM (edavis@172.16.71.42) and client VM (edavis@172.16.71.13), runs ./scripts/uet_test.sh on each, and reports PASS/FAIL with full client+server output on failure. Use when the user wants to test, run, or verify the uet app, run the uet_test suite, or check that changes pass on the VMs. Works from any clone/fork under /Volumes/work/sync/uec.
-argument-hint: "[--test all] [--pds pds] [--shim rawsock] [--build clean|make|none] [other overrides]"
+argument-hint: "[--test all] [--pds pds] [--shim rawsock] [--build clean|make|none] [--build-only] [other overrides]"
 allowed-tools: Bash(bash:*), Bash(~/.claude/skills/uet-test/run-uet-test.sh:*)
 ---
 
@@ -62,11 +62,12 @@ and on the client VM:
 
 | Flag | Default | Meaning |
 |------|---------|---------|
-| `--test` | `all` | test selector (all, rma, atomic, tag, …) |
-| `--pds` | `pds` | pds selector (sng, pds, pds_direct, pds_cluster, …) |
-| `--shim` | `rawsock` | rawsock or xdp |
+| `--test` | `all` | test: `all`, `rma`, `sync_rma`, `atomic`, `sync_atomic`, `tag`, `tag_any_src`, `unexp_untag`, `unexp_tag`, `defer_send`, `defer_tag`, `defer_tag_any_src` |
+| `--pds` | `pds` | pds: `all`, `sng`, `pds`, `pds_direct`, `pds_cluster`, `pds_cluster_ssi`, `pds_server_ssi` |
+| `--shim` | `rawsock` | `rawsock` or `xdp` |
 | `--ifname` | `enp10s0` | network interface on the VMs |
 | `--build` | `make` | `make` (incremental; **default**), `clean` (make clean && make), or `none` (skip build) |
+| `--build-only` | (off) | build both VMs then stop — skip the test (build OK → exit 0). Incompatible with `--build none` |
 | `--server-ssh` | `edavis@172.16.71.42` | server VM (mgmt IP) |
 | `--client-ssh` | `edavis@172.16.71.13` | client VM (mgmt IP) |
 | `--server-peer` | `192.168.224.13` | client data-plane IP (server's peer) |
@@ -86,12 +87,17 @@ Examples:
 
 # Faster iteration: don't rebuild, just rerun the test
 ~/.claude/skills/uet-test/run-uet-test.sh --build none
+
+# Build-only pre-check: compile on both VMs, don't run the test
+~/.claude/skills/uet-test/run-uet-test.sh --build-only
 ```
 
 ## Reporting back to the user
 
-- The script's exit code: `0` = PASS, `1` = build failure, `2` = test FAIL,
-  `3` = usage/ssh error.
+- The script's exit code: `0` = PASS (or, with `--build-only`, build succeeded),
+  `1` = build failure, `2` = test FAIL, `3` = usage/ssh error.
+- With **`--build-only`**, the script stops after a successful build (prints
+  `RESULT: BUILD OK`) and exits `0` without running the test.
 - On **PASS**, confirm success briefly (it already prints output tails).
 - On **build failure**, surface the printed build error so the user can fix it.
 - On **test FAIL**, the script prints the full client and server logs — review
