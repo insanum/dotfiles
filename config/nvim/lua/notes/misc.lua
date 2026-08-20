@@ -322,7 +322,7 @@ vim.api.nvim_create_user_command('NotesQuote', random_quote,
     { desc = 'Show random quote' })
 
 vim.api.nvim_create_user_command('NotesRecent', function()
-    recent_files({ exclude = { 'Journal', 'templates', } })
+    recent_files({ exclude = { 'Journal', 'templates', 'PDFs', } })
 end, { desc = 'Show recent notes' })
 
 vim.api.nvim_create_user_command('NotesPdfOpen', open_pdf,

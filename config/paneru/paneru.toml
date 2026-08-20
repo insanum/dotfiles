@@ -121,6 +121,11 @@ title = ".*"
 bundle_id = "com.apple.TV"
 floating = true
 
+[windows.iina]
+title = ".*"
+bundle_id = "com.colliderli.iina"
+floating = true
+
 [windows.all]
 title = ".*"
 horizontal_padding = 5

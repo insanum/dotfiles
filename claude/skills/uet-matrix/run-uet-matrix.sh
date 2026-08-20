@@ -16,9 +16,32 @@ set -u
 # ---- harnesses + remote dirs ------------------------------------------------
 HARNESS_V="${UET_RDMA_HARNESS:-$HOME/.claude/skills/uet-verbs-test/run-uet-verbs-test.sh}"
 HARNESS_RP="${UET_REFPROV_HARNESS:-$HOME/.claude/skills/uet-test/run-uet-test.sh}"
-RD_V="${UET_REMOTE_DIR:-/home/edavis/sync/uec/uet-rdma-core.fork/wt_uet}"
-RD_RP="${UET_REFPROV_DIR:-/home/edavis/sync/uec/uet-ref-prov.fork/wt_pds}"
 OUT="${UET_MATRIX_OUT:-/tmp/uet_matrix}"
+
+# mutagen mirrors the local tree to both VMs: /Volumes/work/sync -> /home/edavis/sync
+LOCAL_ROOT="${UET_LOCAL_ROOT:-/Volumes/work/sync}"
+REMOTE_ROOT="${UET_REMOTE_ROOT:-/home/edavis/sync}"
+
+# The verbs remote dir is DERIVED FROM THE LOCAL CWD (same rule as the
+# uet-verbs-test harness), so the matrix always tests the clone/fork you are
+# actually sitting in. There is deliberately no hardcoded fallback: a stale
+# default would silently build and test the wrong repo and report a clean
+# TOTAL: n/n PASS that says nothing about your changes. If the cwd is not under
+# $LOCAL_ROOT we leave this empty and fail loudly later (see the guard below),
+# but only for runs that actually need it -- --list/--help still work anywhere.
+if [[ -n "${UET_REMOTE_DIR:-}" ]]; then
+  RD_V="$UET_REMOTE_DIR"
+  RD_V_SRC="UET_REMOTE_DIR"
+else
+  case "$PWD" in
+    "$LOCAL_ROOT"/*) RD_V="${REMOTE_ROOT}/${PWD#"$LOCAL_ROOT"/}"; RD_V_SRC="cwd" ;;
+    *)               RD_V="";                                     RD_V_SRC="none" ;;
+  esac
+fi
+
+# The ref-prov suite lives in a different repo than the cwd, so it keeps an
+# explicit default (overridable with UET_REFPROV_DIR).
+RD_RP="${UET_REFPROV_DIR:-$REMOTE_ROOT/uec/uet-ref-prov.fork/wt_pds}"
 
 # GID indices per the uprot kmod (see ibv_devinfo): 0 = IPv6 link-local,
 # 1 = IPv4-mapped. (verbs suite only)
@@ -56,6 +79,8 @@ VERBS_CONFIGS=(
   "R10 rma      legacy-32b SYMMETRIC           :: rma :: rma      :: --pidonfep 51 --ri 2 ::  :: "
   "R11 rma_ex64 multi-SGE -S 4 (RMA S/G)       :: rma :: rma_ex64 :: -S 4 --pidonfep 51 --ri 2 ::  :: "
   "R12 rma      legacy multi-SGE -S 4          :: rma :: rma      :: -S 4 --pidonfep 51 --ri 2 ::  :: "
+  "R13 rma_ex64 32b-RKey write -W -u           :: rma :: rma_ex64 :: -u 0x1234 -W --pidonfep 51 --ri 2 ::  :: "
+  "R14 rma_ex64 32b-RKey read -R -u            :: rma :: rma_ex64 :: -u 0x1234 -R --pidonfep 51 --ri 2 ::  :: "
   "P01 pingpong app-spec SYMMETRIC {51,2}      :: pingpong :: - :: --pidonfep 51 --ri 2 ::  :: "
   "P02 pingpong app-spec ASYMMETRIC 42/1|51/2  :: pingpong :: - ::  :: --pidonfep 42 --ri 1 :: --pidonfep 51 --ri 2"
   "P03 pingpong provider-assigned -Q           :: pingpong :: - :: -Q ::  :: "
@@ -65,6 +90,10 @@ VERBS_CONFIGS=(
   "P07 pingpong multi-SGE -N -S 4 (builder)    :: pingpong :: - :: -N -S 4 --pidonfep 51 --ri 2 ::  :: "
   "P08 pingpong imm64 + multi-SGE -I 64 -S 4   :: pingpong :: - :: -I 64 -S 4 --pidonfep 51 --ri 2 ::  :: "
   "P09 pingpong imm32 + multi-SGE -I 32 -S 4   :: pingpong :: - :: -I 32 -S 4 --pidonfep 51 --ri 2 ::  :: "
+  "P10 pingpong lkey32 -L legacy               :: pingpong :: - :: -L --pidonfep 51 --ri 2 ::  :: "
+  "P11 pingpong lkey32 -L -N builder           :: pingpong :: - :: -L -N --pidonfep 51 --ri 2 ::  :: "
+  "P12 pingpong lkey32 -L -S 4                 :: pingpong :: - :: -L -S 4 --pidonfep 51 --ri 2 ::  :: "
+  "P13 pingpong mixed keys 64|32 sides         :: pingpong :: - ::  :: --pidonfep 42 --ri 1 :: -L --pidonfep 51 --ri 2"
 )
 
 # ---- refprov cells: one per PDS/security mode (test=all). "<pds-mode> <desc>"
@@ -107,6 +136,15 @@ OPTIONS
                          refprov cell runs test=all and uses its own cap
                          (\$UET_RP_TIMEOUT, default $RP_TIMEOUT).
   -h, --help             this help
+
+REMOTE DIRS
+  The verbs suite tests whatever clone/fork your CWD is in: the remote dir is
+  derived by mapping $LOCAL_ROOT -> $REMOTE_ROOT.
+  There is no hardcoded fallback -- if the cwd is outside $LOCAL_ROOT the run
+  aborts rather than quietly testing some other tree. Override with
+  UET_REMOTE_DIR; the ref-prov suite uses UET_REFPROV_DIR
+  (default $REMOTE_ROOT/uec/uet-ref-prov.fork/wt_pds).
+  Both are echoed at startup -- check them before trusting a result.
 
 SUITES
   verbs    ibv_ru_rma / ibv_ru_pingpong (uprot provider). IPv4 = -g $GID_V4,
@@ -204,6 +242,18 @@ if [[ "$MODE" == list ]]; then
   exit 0
 fi
 
+# ---- verbs remote dir must be resolvable ------------------------------------
+# Only enforced when the verbs suite is actually selected; --list/--help above
+# have already exited, so those keep working from any directory.
+if printf '%s\n' "${SUITES[@]}" | grep -qx verbs && [[ -z "$RD_V" ]]; then
+  echo "ERROR: cwd ($PWD) is not under $LOCAL_ROOT, so the verbs remote dir" >&2
+  echo "       cannot be derived. cd into the clone/fork you want to test, or" >&2
+  echo "       set UET_REMOTE_DIR explicitly, e.g.:" >&2
+  echo "         UET_REMOTE_DIR=$REMOTE_ROOT/uec/rdma-core.fork/wt_uet $0 ..." >&2
+  echo "       (Use --suite refprov to run only the ref-prov suite instead.)" >&2
+  exit 3
+fi
+
 # ---- IPv6 link-local discovery (per side; only when v6 cells are in play) ----
 discover_ll() {  # $1 = ssh target ; prints "<iface> <linklocal>"
   ssh -o ConnectTimeout=10 "$1" "
@@ -234,6 +284,15 @@ if printf '%s\n' "${FAMS[@]}" | grep -qx v6; then
 fi
 
 # ---- run / debug ------------------------------------------------------------
+# Always announce which tree is under test (and how we picked it) -- testing the
+# wrong clone is the failure mode this is here to make impossible to miss.
+if printf '%s\n' "${SUITES[@]}" | grep -qx verbs; then
+  echo "verbs remote dir  : $RD_V   [from: $RD_V_SRC]" >&2
+fi
+if printf '%s\n' "${SUITES[@]}" | grep -qx refprov; then
+  echo "refprov remote dir: $RD_RP" >&2
+fi
+
 [[ "$MODE" == run ]] && { mkdir -p "$OUT"; : > "$OUT/summary.txt"; }
 if [[ "$MODE" == debug ]]; then
   echo "# UET matrix — exact commands"

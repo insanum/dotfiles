@@ -39,6 +39,15 @@ local function extract_link_target(link)
     return target:gsub('^%s*(.-)%s*$', '%1')
 end
 
+-- Strip inline code spans from a line. A wikilink inside backticks is code,
+-- not a link -- Obsidian and markdown_oxide both ignore them, and notes that
+-- document link syntax would otherwise report as broken.
+local function strip_inline_code(s)
+    s = s:gsub('``[^`]*``', '')
+    s = s:gsub('`[^`]*`', '')
+    return s
+end
+
 -- Find all broken links in notes
 local function find()
     pick.builtin.cli(
@@ -70,8 +79,10 @@ local function find()
                         goto continue_line
                     end
 
-                    -- check each link on the line
-                    for link in content:gmatch('%[%[([^%]]+)%]%]') do
+                    -- check each link on the line, ignoring inline code
+                    local scan = strip_inline_code(content)
+
+                    for link in scan:gmatch('%[%[([^%]]+)%]%]') do
                         local target = extract_link_target(link)
 
                         if target ~= '' and not file_cache[target:lower()] then

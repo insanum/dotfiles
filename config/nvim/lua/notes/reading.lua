@@ -26,6 +26,15 @@ local function reading_list(reading_type)
 
                 for _, line in ipairs(lines) do
                     local p_value = nil
+
+                    -- skip docling conversions (generated text sitting
+                    -- next to the PDF) and the directory's CLAUDE.md;
+                    -- neither is a reading list entry
+                    if line:match('CLAUDE%.md$') or
+                       yaml.yaml_get_property(line, 'docling') then
+                        goto continue
+                    end
+
                     if p_name then
                         p_value = yaml.yaml_get_property(line, p_name)
                     else
@@ -41,6 +50,8 @@ local function reading_list(reading_type)
                             date = p_value,
                         })
                     end
+
+                    ::continue::
                 end
 
                 -- property is expected to be a date (YYYY-MM-DD format)

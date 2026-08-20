@@ -46,7 +46,11 @@ local function search_tasks(opts)
         {
             command = {
                 'rg', '--no-heading', '--line-number', '--color=never',
-                rg_pattern, '--glob', '*.md'
+                rg_pattern, '--glob', '*.md',
+                -- archived task lists and personal checklists are not work
+                '--glob', '!todo/**',
+                '--glob', '!Gifts.md',
+                '--glob', '!Productivity Books.md',
             },
             postprocess = function(lines)
                 local tasks = {}

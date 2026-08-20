@@ -1,6 +1,6 @@
 ---
 name: uet-matrix
-description: Run the UET test matrix across two suites and both address families on the two Linux VMs, or a selected subset. Suite "verbs" = ibv_ru_rma / ibv_ru_pingpong via the uet-verbs-test harness (rdma-core uprot provider): every feature axis (app-specified vs provider-assigned QPN, symmetric/asymmetric/absolute addressing, plain/derived/job/user-key MRs, address table, 64/32-bit keys, legacy vs builder ops, multi-SGE, 32/64-bit immediates). Suite "refprov" = ./scripts/uet_test.sh via the uet-test harness (uet-ref-prov standalone ./uet app): one cell per PDS/security mode (sng, pds, pds_direct, pds_cluster, pds_cluster_ssi, pds_server_ssi), each running all test types, shim=rawsock. Both suites sweep IPv4 (GID 1) and IPv6 link-local (GID 0), reporting per-cell PASS/FAIL and a final TOTAL. Use when the user wants to run the test matrix, the full compliance sweep, all the tests, IPv4+IPv6 coverage, the verbs and/or ref-prov suites; to list the available tests; to run one/some tests; or to dump the exact per-test command lines. IPv6 link-local peers are discovered dynamically from each VM's data-plane interface. Works from any clone/fork under /Volumes/work/sync/uec.
+description: Run the UET test matrix across two suites and both address families on the two Linux VMs, or a selected subset. Suite "verbs" = ibv_ru_rma / ibv_ru_pingpong via the uet-verbs-test harness (rdma-core uprot provider): every feature axis (app-specified vs provider-assigned QPN, symmetric/asymmetric/absolute addressing, plain/derived/job/user-key MRs, address table, 64/32-bit keys, legacy vs builder ops, multi-SGE, 32/64-bit immediates). Suite "refprov" = ./scripts/uet_test.sh via the uet-test harness (uet-ref-prov standalone ./uet app): one cell per PDS/security mode (sng, pds, pds_direct, pds_cluster, pds_cluster_ssi, pds_server_ssi), each running all test types, shim=rawsock. Both suites sweep IPv4 (GID 1) and IPv6 link-local (GID 0), reporting per-cell PASS/FAIL and a final TOTAL. Use when the user wants to run the test matrix, the full compliance sweep, all the tests, IPv4+IPv6 coverage, the verbs and/or ref-prov suites; to list the available tests; to run one/some tests; or to dump the exact per-test command lines. IPv6 link-local peers are discovered dynamically from each VM's data-plane interface. Works from any clone/fork under /Volumes/work/sync/uec: the verbs suite tests whichever repo the current working directory is in (the remote dir is derived from cwd, with no hardcoded fallback), so cd to the fork you want to test before running.
 argument-hint: "[--list] [--debug] [--suite verbs|refprov|both] [--family v4|v6|both] [--build clean|make|none] [--iters N] [--timeout S] [TEST ...]"
 allowed-tools: Bash(bash:*), Bash(~/.claude/skills/uet-matrix/run-uet-matrix.sh:*)
 ---
@@ -16,8 +16,9 @@ harness (which does the build + client/server run).
 ## Suites
 
 - **verbs** — `ibv_ru_rma` / `ibv_ru_pingpong` via the **uet-verbs-test** skill
-  (rdma-core `uprot` provider). **21 cells** (`R01`–`R12` RMA, `P01`–`P09`
-  pingpong) exercising every feature axis. Addressing: IPv4 = `-g 1`, IPv6
+  (rdma-core `uprot` provider). **27 cells** (`R01`–`R14` RMA, `P01`–`P13`
+  pingpong) exercising every feature axis, including the 32-bit and 64-bit
+  memory-key paths. Addressing: IPv4 = `-g 1`, IPv6
   link-local = `-g 0`; the client dials the server's link-local for v6.
 - **refprov** — `./scripts/uet_test.sh` via the **uet-test** skill (the
   uet-ref-prov standalone `./uet` app). **6 cells**, one per PDS/security mode:
@@ -26,7 +27,7 @@ harness (which does the build + client/server run).
   `shim=rawsock`. Addressing is peer-to-peer (each side dials the other's
   data-plane address; link-local for v6).
 
-A full sweep is **both suites × both families** = (21+6) × 2 = **54 cells**.
+A full sweep is **both suites × both families** = (27+6) × 2 = **66 cells**.
 
 ## Background
 
@@ -96,12 +97,39 @@ run-uet-matrix.sh -d -s refprov       # print ref-prov commands, run nothing
 run-uet-matrix.sh -b make R03         # incremental build, run one cell
 ```
 
+## Which repo gets tested
+
+The **verbs** remote dir is **derived from the local cwd**, by mapping
+`/Volumes/work/sync` → `/home/edavis/sync` (the same rule the `uet-verbs-test`
+harness uses). So the matrix always tests the clone/fork you are sitting in —
+run it from the repo you care about.
+
+There is deliberately **no hardcoded fallback**. If the cwd is outside
+`/Volumes/work/sync`, a run that includes the verbs suite aborts with exit 3
+rather than quietly testing some other tree; a stale default would build the
+wrong repo and report a clean `TOTAL: n/n PASS` that says nothing about your
+changes. (`--list` and `--help` still work from anywhere.)
+
+Both remote dirs are echoed to stderr at startup, e.g.
+
+```
+verbs remote dir  : /home/edavis/sync/uec/rdma-core.fork/wt_uet   [from: cwd]
+refprov remote dir: /home/edavis/sync/uec/uet-ref-prov.fork/wt_pds
+```
+
+`[from: cwd]` vs `[from: UET_REMOTE_DIR]` tells you how it was chosen — check it
+before trusting a result. The **refprov** suite lives in a different repo than
+the cwd, so it keeps an explicit default (override with `UET_REFPROV_DIR`).
+
 ## Config (env overrides)
 
 - `UET_RDMA_HARNESS` / `UET_REFPROV_HARNESS` — paths to the verbs / refprov
   harnesses (default the sibling skills `uet-verbs-test` / `uet-test`).
-- `UET_REMOTE_DIR` / `UET_REFPROV_DIR` — remote repo dirs on the VMs (rdma-core
-  `wt_uet` / ref-prov `wt_pds`).
+- `UET_REMOTE_DIR` — override the cwd-derived verbs remote dir (rdma-core
+  `wt_uet`). Normally unnecessary; just `cd` to the fork you want to test.
+- `UET_REFPROV_DIR` — ref-prov remote dir (`wt_pds`).
+- `UET_LOCAL_ROOT` / `UET_REMOTE_ROOT` — the mutagen mapping used for the
+  derivation (defaults `/Volumes/work/sync` and `/home/edavis/sync`).
 - `UET_SERVER_SSH` / `UET_CLIENT_SSH` — the two VM ssh targets (for v6 discovery
   and, for refprov, peer addressing).
 - `UET_DP_SUBNET` — data-plane IPv4 subnet used to locate the interface.

@@ -5,6 +5,73 @@ local pick   = require('mini.pick')
 local utils  = require('notes.utils')
 local yaml   = require('notes.yaml')
 
+-- Resolve a (possibly relative) picker path to an absolute path so file reads
+-- don't depend on Neovim's current working directory
+local function abs(filepath)
+    if filepath:sub(1, 1) == '/' then
+        return filepath
+    end
+    return config.notes_dir .. '/' .. filepath
+end
+
+-- List md files that declare a YAML 'tags:' property. Pre-filtering with rg
+-- keeps this cheap -- only these files need their frontmatter parsed.
+local function files_with_yaml_tags()
+    return vim.fn.systemlist({
+        'rg', '-l', '--glob', '*.md', '--color=never',
+        '-e', '^tags:',
+        config.notes_dir,
+    })
+end
+
+-- YAML tags declared by a file, as a list
+local function yaml_tags_of(filepath)
+    local data = yaml.yaml_get(abs(filepath))
+    local tags = data and data.tags
+    if type(tags) == 'table' then
+        return tags
+    elseif type(tags) == 'string' then
+        return { tags }
+    end
+    return {}
+end
+
+-- Line number of a specific tag entry inside the YAML frontmatter (1 if absent)
+local function yaml_tag_lnum(filepath, tag)
+    local file = io.open(abs(filepath), 'r')
+    if not file then
+        return 1
+    end
+
+    local lnum, in_fm, in_tags = 0, false, false
+    for line in file:lines() do
+        lnum = lnum + 1
+        if lnum == 1 then
+            if line ~= '---' then break end
+            in_fm = true
+        elseif in_fm and line == '---' then
+            break
+        elseif in_fm then
+            if line:match('^tags:') then
+                in_tags = true
+            elseif in_tags then
+                local t = line:match('^%s*-%s*(.+)$')
+                if t then
+                    if t:gsub('%s+$', '') == tag then
+                        file:close()
+                        return lnum
+                    end
+                else
+                    in_tags = false
+                end
+            end
+        end
+    end
+
+    file:close()
+    return 1
+end
+
 -- Helper function to check if a tag is valid (not a number or color code)
 local function is_valid_tag(tag)
     return not tag:match('^%d') and
@@ -25,25 +92,61 @@ local function search_tag(tag)
             postprocess = function(lines)
                 local results = {}
                 local file_cache = {}
+                local cb_cache = {}
+                local seen = {}
 
+                local function timestamp_of(filepath)
+                    if not file_cache[filepath] then
+                        local updated =
+                            yaml.yaml_get_property(abs(filepath), 'updated')
+                        file_cache[filepath] =
+                            utils.utils_date_to_ts(updated) or 0
+                    end
+                    return file_cache[filepath]
+                end
+
+                -- inline hashtags in the body
                 for _, line in ipairs(lines) do
                     local filepath, line_num, content =
                         line:match('^([^:]+):(%d+):(.*)$')
 
                     if filepath and line_num and content then
-                        if not file_cache[filepath] then
-                            local updated = yaml.yaml_get_property(filepath,
-                                                                   'updated')
-                            file_cache[filepath] =
-                                utils.utils_date_to_ts(updated) or 0
+                        line_num = tonumber(line_num)
+
+                        -- a tag inside a fenced code block is code, not a tag
+                        if not cb_cache[filepath] then
+                            cb_cache[filepath] =
+                                utils.utils_get_codeblock_ranges(abs(filepath))
                         end
 
-                        table.insert(results, {
-                            path = filepath,
-                            lnum = tonumber(line_num),
-                            content = content,
-                            timestamp = file_cache[filepath]
-                        })
+                        if not utils.utils_is_in_codeblock(line_num,
+                                                           cb_cache[filepath]) then
+                            seen[filepath] = true
+                            table.insert(results, {
+                                path = filepath,
+                                lnum = line_num,
+                                content = content,
+                                timestamp = timestamp_of(filepath),
+                            })
+                        end
+                    end
+                end
+
+                -- tags declared in YAML frontmatter (invisible to the rg scan
+                -- above, since frontmatter entries carry no '#')
+                for _, filepath in ipairs(files_with_yaml_tags()) do
+                    for _, t in ipairs(yaml_tags_of(filepath)) do
+                        if t == tag then
+                            local rel = filepath:gsub(
+                                '^' .. vim.pesc(config.notes_dir) .. '/', '')
+                            table.insert(results, {
+                                path = rel,
+                                lnum = yaml_tag_lnum(filepath, tag),
+                                content = 'tags: ' .. tag,
+                                timestamp = timestamp_of(rel),
+                            })
+                            break
+                        end
                     end
                 end
 
@@ -107,12 +210,22 @@ local function select_and_search()
 
                         if not file_cache[filepath] then
                             file_cache[filepath] =
-                                utils.utils_get_codeblock_ranges(filepath)
+                                utils.utils_get_codeblock_ranges(abs(filepath))
                         end
 
                         if not utils.utils_is_in_codeblock(line_num,
                                                            file_cache[filepath]) then
                             tag_counts[tag] = (tag_counts[tag] or 0) + 1
+                        end
+                    end
+                end
+
+                -- tags declared in YAML frontmatter, which the rg scan
+                -- above cannot see (frontmatter entries carry no '#')
+                for _, filepath in ipairs(files_with_yaml_tags()) do
+                    for _, t in ipairs(yaml_tags_of(filepath)) do
+                        if is_valid_tag(t) then
+                            tag_counts[t] = (tag_counts[t] or 0) + 1
                         end
                     end
                 end
