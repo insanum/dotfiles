@@ -70,7 +70,7 @@ VERBS_CONFIGS=(
   "R01 rma_ex64 app-spec SYMMETRIC {51,2}      :: rma :: rma_ex64 :: --pidonfep 51 --ri 2 ::  :: "
   "R02 rma_ex64 app-spec ASYMMETRIC 42/1|51/2  :: rma :: rma_ex64 ::  :: --pidonfep 42 --ri 1 :: --pidonfep 51 --ri 2"
   "R03 rma_ex64 provider-assigned -Q           :: rma :: rma_ex64 :: -Q ::  :: "
-  "R04 rma_ex64 ABSOLUTE -b ASYMMETRIC         :: rma :: rma_ex64 :: -b :: --pidonfep 42 --ri 1 :: --pidonfep 51 --ri 2"
+  "R04 rma_ex64 ABSOLUTE -b ASYMMETRIC         :: rma :: rma_ex64 :: -b :: --pidonfep 42 --ri 1 -j 42 :: --pidonfep 51 --ri 2 -j 43"
   "R05 rma_ex64 derived-MR -D ASYMMETRIC       :: rma :: rma_ex64 :: -D :: --pidonfep 42 --ri 1 :: --pidonfep 51 --ri 2"
   "R06 rma_ex64 addr-table -A SYMMETRIC        :: rma :: rma_ex64 :: -A --pidonfep 51 --ri 2 ::  :: "
   "R07 rma_ex64 job-MR -J SYMMETRIC            :: rma :: rma_ex64 :: -J --pidonfep 51 --ri 2 ::  :: "

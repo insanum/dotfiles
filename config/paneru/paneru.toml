@@ -56,6 +56,10 @@ window_virtualmove_south = "cmd + alt + shift - j"
 
 quit = "ctrl + alt - q"
 
+[decorations]
+workspace_menu_status = false
+workspace_popup_status = false
+
 [decorations.active.border]
 enabled = true
 color = "#ffa500"

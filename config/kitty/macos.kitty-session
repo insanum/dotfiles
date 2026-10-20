@@ -11,23 +11,31 @@ launch --location=vsplit
 
 new_tab uet-rdma-core
 layout splits
-launch --cwd=/Volumes/work/sync/uec/uet-rdma-core.fork/wt_uet zsh -c "/opt/homebrew/bin/figlet uet-rdma-core | /opt/homebrew/bin/lolcat; exec zsh"
+launch --cwd=/Volumes/work/sync/uec/rdma-core.fork/wt_uet zsh -c "/opt/homebrew/bin/figlet uet-rdma-core | /opt/homebrew/bin/lolcat; exec zsh"
 
 new_tab uet-ref-prov
 layout splits
 launch --cwd=/Volumes/work/sync/uec/uet-ref-prov.fork/wt_pds zsh -c "/opt/homebrew/bin/figlet uet-ref-prov | /opt/homebrew/bin/lolcat; exec zsh"
 
-new_tab libmrc
-layout splits
-launch --cwd=/Volumes/work/sync/libmrc zsh -c "/opt/homebrew/bin/figlet libmrc | /opt/homebrew/bin/lolcat; exec zsh"
-
 new_tab linux-kernels
 layout splits
 launch --cwd=/Volumes/work/git/linux_kernels zsh -c "/opt/homebrew/bin/figlet linux-kernels | /opt/homebrew/bin/lolcat; exec zsh"
 
+new_tab barfly
+layout splits
+launch --cwd=/Volumes/work/git/BARfly zsh -c "/opt/homebrew/bin/figlet BARfly | /opt/homebrew/bin/lolcat; exec zsh"
+
 new_tab csg-drivers
 layout splits
 launch --cwd=/Volumes/work/git/csg_drivers zsh -c "/opt/homebrew/bin/figlet csg-drivers | /opt/homebrew/bin/lolcat; exec zsh"
+
+new_tab csg-nx
+layout splits
+launch --cwd=/Volumes/work/git/csg_nx zsh -c "/opt/homebrew/bin/figlet csg-nx | /opt/homebrew/bin/lolcat; exec zsh"
+
+new_tab libmrc
+layout splits
+launch --cwd=/Volumes/work/sync/libmrc zsh -c "/opt/homebrew/bin/figlet libmrc | /opt/homebrew/bin/lolcat; exec zsh"
 
 focus_tab title:"notes"
 

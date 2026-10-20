@@ -69,6 +69,7 @@
 	####################
 	# STATUS...
 	s            = status
+	ss           = status --short
 	si           = status --ignored
 	####################
 	# BRANCH...

@@ -165,9 +165,12 @@ if [[ -d $HOME/.opencode/bin ]]; then
     export PATH="$HOME/.opencode/bin:$PATH"
 fi
 
+source ~/.claude-profiles.sh
+alias claude="echo 'ERROR: use claude-work or claude-personal'"
+
 if (( $+commands[proxychains4] )); then
     #alias claude="proxychains4 claude"
-    alias claude="NODE_TLS_REJECT_UNAUTHORIZED=0 proxychains4 claude"
+    #alias claude="NODE_TLS_REJECT_UNAUTHORIZED=0 PIP_BREAK_SYSTEM_PACKAGES=1 proxychains4 claude"
     alias codex="proxychains4 codex"
     alias gemini="proxychains4 gemini"
     alias opencode="proxychains4 opencode"

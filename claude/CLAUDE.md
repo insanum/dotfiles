@@ -32,9 +32,33 @@ Use instead:
 - **Writing** — prefer the Write tool. If Bash is required: `/bin/cat > file <<'EOF'`
   or `tee`.
 
+**`ls` is aliased too** — a bare `ls` can block on a pager until the Bash tool
+times out (a 120s hang with no output). Use `/bin/ls`.
+
 Assume other standard commands may be aliased too. If output looks decorated, or a
 file you just wrote is unexpectedly large, suspect an alias and rerun with an
 absolute path.
+
+## `cp` and `mv` are interactive
+
+`cp` is aliased to `cp -i` (assume `mv` is too). In a non-interactive tool call
+this does **not** fail — it prints `overwrite <file>? (y/n [n])` and **blocks
+until the command times out**, leaving the copy undone.
+
+This is worse than the `cat` problem, because it fails in the wrong direction: a
+command you believe restored a file has actually left the old contents in place,
+and anything chained after it never runs either.
+
+It is especially dangerous for **revert** steps — restoring a backup over an
+edited file, undoing a temporary change — because the thing you were trying to
+undo stays live. On a mutagen-synced tree it then keeps propagating to every
+remote host.
+
+**Always use `/bin/cp -f` and `/bin/mv -f`** (or `command cp`) for anything
+non-interactive. After a revert that matters, verify rather than assume:
+
+    /bin/cp -f backup.c target.c
+    diff -q backup.c target.c && echo REVERTED
 
 ## Heredocs
 

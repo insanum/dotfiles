@@ -1,5 +1,6 @@
 local M = {
     name = 'typr',
+    disabled = true,
     plug = {
         'https://github.com/nvzone/typr',
     },

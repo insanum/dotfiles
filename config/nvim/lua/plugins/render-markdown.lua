@@ -54,9 +54,11 @@ M.opts = {
         right_pad = 1,
     },
     pipe_table = {
-        preset = 'round',
-        border_virtual = true,
+        -- preset = 'round',
+        -- border_virtual = true,
         cell = 'trimmed',
+        wrap = true,
+        style = 'normal',
     },
 }
 

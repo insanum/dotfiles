@@ -63,6 +63,8 @@ M.post_setup = function()
 
     require('mini.git').setup()
 
+    require('mini.statuscolumn').setup()
+
     ---------------------------------------------------------------------
     -- mini.keymap ------------------------------------------------------
     ---------------------------------------------------------------------
@@ -374,6 +376,24 @@ M.post_setup = function()
     ---------------------------------------------------------------------
     -- MISC -------------------------------------------------------------
     ---------------------------------------------------------------------
+
+    -- mini.move
+    -- mini.operators
+    -- mini.pairs
+    -- mini.snippets
+    -- mini.basics
+    -- mini.bufremove
+    -- mini.cmdline
+    -- mini.input
+    -- mini.misc
+    -- mini.visits
+    -- mini.base16
+    -- mini.colors
+    -- mini.hues
+    -- mini.map
+    -- mini.doc
+    -- mini.fuzzy
+    -- mini.test
 
     -- HACK: mini.tabline
     -- Doesn't support tabs, just a dumb buffer list.
